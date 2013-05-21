@@ -62,6 +62,8 @@ public class PhotosFragment extends Fragment {
 	ImageAdapter imageAdapter;
 	private String albumName = "Moment";
 
+    //Static Man
+
 	private void getBitmapThumbnailFromURL(Photo photo) {
 		final int id = photo.getId(); 
 		AsyncHttpClient client = new AsyncHttpClient();
