@@ -12,14 +12,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Moment/libs/maps.jar" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Moment/.gitignore" afterPath="$PROJECT_DIR$/Moment/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/libraries/maps.xml" afterPath="$PROJECT_DIR$/.idea/libraries/maps.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="momentandroid.iws" />
     <ignored path=".idea/workspace.xml" />
-    <file path="/Dummy.txt" changelist="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" time="1369151010697" ignored="false" />
+    <file path="/Dummy.txt" changelist="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" time="1369151494777" ignored="false" />
     <file path="/MomentInfosActivity.java" changelist="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" time="1369135072308" ignored="false" />
     <file path="/fragment.java" changelist="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" time="1369135667682" ignored="false" />
     <file path="/CreationActivity.java" changelist="4d78a41c-1a4f-4d43-ae35-1f5d70b05cc4" time="1369139721055" ignored="false" />
@@ -414,7 +411,7 @@
       <workItem from="1369139021862" duration="5781000" />
       <workItem from="1369145540504" duration="1791000" />
       <workItem from="1369147517924" duration="2692000" />
-      <workItem from="1369150947166" duration="527000" />
+      <workItem from="1369150947166" duration="577000" />
     </task>
     <task id="LOCAL-00001" summary="Android Studio">
       <created>1369139187617</created>
@@ -428,11 +425,15 @@
       <created>1369151021054</created>
       <updated>1369151021054</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="maps.jar local">
+      <created>1369151505572</created>
+      <updated>1369151505572</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="16009000" />
+    <option name="totallyTimeSpent" value="16059000" />
   </component>
   <component name="TodoView" selected-index="0">
     <todo-panel id="selected-file">
@@ -524,7 +525,7 @@
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="false" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="gitignore .idea" />
+    <option name="LAST_COMMIT_MESSAGE" value="maps.jar local" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -540,6 +541,7 @@
     <option name="FILE_HISTORY_SPLITTER_PROPORTION" value="0.6" />
     <MESSAGE value="Android Studio" />
     <MESSAGE value="gitignore .idea" />
+    <MESSAGE value="maps.jar local" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager />
