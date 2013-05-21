@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Moment</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_moment">Moment</string>
+
+    <!-- Ecran de connection -->
+    <string name="connection">Connection</string>
+    <string name="title_activity_timeline">Timeline</string>
+    <string name="title_activity_creation">CreationActivity</string>
+    <string name="title_activity_moment_infos">MomentInfo</string>
+    <string name="title_activity_fragment_infos">FragmentInfos</string>
+    <string name="title_activity_facebook_events">FacebookEvents</string>
+    <string name="creation_moment">CRÉEZ UN MOMENT</string>
+    <string name="edit_nom_moment">NOM DU MOMENT</string>
+
+    <color name="gris_texte">#646464</color>
+    <color name="blanc">#ffffff</color>
+    <color name="gris_fond_description_transp">#25808080</color>
+    <color name="black_detail_photo_trans">#83000000</color>
+    <color name="gris_chat">#e9e8e8</color>
+    <color name="white">#ffffff</color>
+    <color name="white_transparent">#60ffffff</color>
+
+    <string name="import_facebook">IMPORTER DEPUIS FACEBOOK</string>
+    <string name="alert_nom_creation_moment">Veuillez rentrer un nom afin de créer un moment</string>
+    <string name="title_activity_creation_details">CreationDetailsActivity</string>
+    <string name="step_creation_1">Step 1/3</string>
+    <string name="creation_info_lieu_label">ndiquez des infos sur le lieu :</string>
+    <string name="creation_info_lieu_edit">NOM DU LIEU</string>
+    <string name="crea_text_adresse">dresse du lieu :</string>
+    <string name="edit_adresse">Adresse</string>
+    <string name="edit_adresse_code_postale">CODE POSTAL</string>
+    <string name="edit_adresse_ville">VILLE</string>
+    <string name="creation_text_home">HOME</string>
+    <string name="creation_text_amis">AMIS</string>
+    <string name="creation_text_info_lieu">NFO LIEU</string>
+    <string name="fl_creation_text_info_lieu">I</string>
+    <string name="creation_edit_etage">ETAGE, DIGICODE, ...</string>
+    <string name="fl_creation_text_info_transport">I</string>
+    <string name="creation_text_info_transport">NFO TRANSPORT</string>
+    <string name="creation_edit_adresse_info_transport">METRO, BUS, TRAMWAY, KAYAK, ...</string>
+    <string name="spinner_date_debut">DATE DE DÉBUT</string>
+    <string name="spinner_date_fin">DATE DE FIN</string>
+    <string name="spinner_heure">HEURE</string>
+    <string name="step_creation_2">STEP 2/3</string>
+
+    <color name="orange">#ff9A04</color>
+
+    <string name="step_creation_3">STEP 3/3</string>
+    <string name="edit_description">DESCRIPTION</string>
+    <string name="fl_photos_temps_reel">P</string>
+    <string name="photos_temps_reel">HOTOS EN TEMPS RÉEL</string>
+    <string name="fl_hashtag">H</string>
+    <string name="hashtag">ASHTAG</string>
+    <string name="edit_hashtag">#NOM</string>
+    <string name="explication_hashtag">TOUTES LES PHOTOS AJOUTÊES SUR CES PLATEFORMES AVEC CE #HASHTAG SERONT AUTOMATIQUEMENT AJOUTÊES Á VOTRE MOMENT.</string>
+    <string name="btn_creer_moment">RÉER LE MOMENT</string>
+    <string name="fl_btn_creer_moment">C</string>
+    <string name="text_picto_when">UAND </string>
+    <string name="fl_text_picto_when">Q</string>
+    <string name="text_picto_where">U </string>
+    <string name="fl_text_picto_where">O</string>
+    <string name="string_interrogation"> \?</string>
+    <string name="text_picto_what">UOI</string>
+    <string name="fl_text_picto_what">Q</string>
+    <string name="fl_creation_info_lieu_label">I</string>
+    <string name="fl_crea_text_adresse">A</string>
+    <string name="log_in_fb">OG IN WITH FACEBOOK</string>
+    <string name="fl_log_in_fb">L</string>
+    <string name="fl_log_in_connection">S</string>
+    <string name="log_in_connection">E CONNECTER</string>
+    <string name="fl_log_in_inscription">S</string>
+    <string name="log_in_inscription">\'INSCRIRE</string>
+    <string name="infos_moment_invites">invités</string>
+
+    <!-- Detail Photo -->
+
+    <string name="fl_detail_par">\P</string>
+    <string name="detail_par">\AR</string>
+    <string name="title_activity_detail_photo">DetailPhoto</string>
+    <string name="title_activity_profil">ProfilActivity</string>
+
+    <!-- Profil -->
+    <string name="btn_amis">AMIS</string>
+    <string name="btn_photos">PHOTOS</string>
+    <string name="btn_moments">MOMENTS</string>
+    <string name="btn_badges">BADGES</string>
+    <string name="btn_stats">STATS</string>
+    <string name="btn_infos">INFOS</string>
+
+    <!-- Volet -->
+    <string name="fl_invitations">I</string>
+    <string name="invitations">NVITATIONS</string>
+    <string name="fl_notifications">N</string>
+    <string name="notifications">OTIFICATIONS</string>
+    <string name="title_activity_inscription">InscriptionActivity</string>
+
+    <!-- Création Moment Step 1 -->
+    <string name="creation_moment_step_1">ETAPE 1/2</string>
+    <string name="creation_moment_change_image">Changer l\'image ></string>
+
+    <!-- Création Moment Step 2 -->
+    <string name="creation_moment_step_2">ETAPE 2/2</string>
+    <string name="creation_moment_description_evenement">Description de l\'évènement</string>
+    <string name="creation_moment_adresse">Adresse</string>
+    <string name="creation_moment_infos_lieu">Infos lieu</string>
+    <string name="creation_moment_description_hashtag">Toutes les photos ajoutées sur ces plateformes avec ce #HASHTAG seront automatiquement récupérées.</string>
+
+    <!-- Creation Moment Menu -->
+    <string name="next_step">Prochaine étape</string>
+    <string name="previous_step">Etape précédente</string>
+    <string name="valider">Créer</string>
+    <string name="title_activity_invitation">InvitationActivity</string>
+    <string name="title_activity_invitations_fragment">InvitationsFragment</string>
+    
+    <!-- Facebook App Id -->
+	<string name="app_id">445031162214877</string>
+</resources>

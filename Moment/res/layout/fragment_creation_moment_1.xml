@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingBottom="0dp" >
+
+    <ImageView
+        android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:background="@color/orange" />
+    
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:weightSum="3">
+        
+        <RelativeLayout android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+            
+            <ImageView android:id="@+id/creation_moment_image"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:src="@drawable/photoevent"
+                android:scaleType="centerCrop"/>
+            <TextView android:id="@+id/creation_moment_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20sp"
+                android:textColor="@color/gris_texte"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="15dp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="10dp"
+                style="@style/ShadowOnText"
+                android:text="TEST"/>
+            <Button android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textColor="@color/gris_texte"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="15dp"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="10dp"
+               	style="@style/ShadowOnText"
+               	android:background="@null"
+                android:text="@string/creation_moment_change_image"
+                android:onClick="changePhoto"/>
+            
+        </RelativeLayout>
+        
+        <LinearLayout android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:orientation="vertical">
+            
+            <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="60dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+                
+                 <RelativeLayout
+			            android:layout_width="155dp"
+			            android:layout_height="wrap_content" >
+			
+			            <ImageView
+			                android:layout_width="154dp"
+			                android:layout_height="wrap_content"
+			                android:contentDescription="separation"
+			                android:src="@drawable/step_box" />
+			
+			            <ImageView
+			                android:id="@+id/picto_when"
+			                android:layout_width="27dp"
+			                android:layout_height="27dp"
+			                android:layout_marginLeft="15dp"
+			                android:layout_marginTop="6dp"
+			                android:contentDescription="picto_when"
+			                android:src="@drawable/when" />
+			
+			            <LinearLayout
+			                android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:layout_marginLeft="48dp"
+			                android:layout_marginTop="7dp"
+			                android:orientation="horizontal" >
+			
+			                <TextView 
+			                    android:layout_width="wrap_content"
+			                    android:layout_height="wrap_content"
+			                    android:text="@string/fl_text_picto_when"
+			                    android:textColor="@color/orange"
+			                    android:textSize="20sp" />
+			
+			                <TextView 
+			                    android:layout_width="wrap_content"
+			                    android:layout_height="wrap_content"
+			                    android:text="@string/text_picto_when"
+			                    android:textColor="@color/gris_texte"
+			                    android:textSize="14sp" />
+			
+			                <TextView 
+			                    android:layout_width="wrap_content"
+			                    android:layout_height="wrap_content"
+			                    android:layout_marginLeft="5dp"
+			                    android:text="@string/string_interrogation"
+			                    android:textColor="@color/gris_texte"
+			                    android:textSize="20sp" />
+			            </LinearLayout>
+			        </RelativeLayout>
+			        <TextView android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:text="@string/creation_moment_step_1"
+			            android:textSize="12dp"
+			            android:layout_marginLeft="5dp"
+			            android:textColor="@color/gris_texte"/>
+                
+            </LinearLayout>
+            
+            <RelativeLayout android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+                
+                <LinearLayout android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_centerInParent="true"
+                    android:layout_marginBottom="20dp">
+                    
+                    <LinearLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <Button android:id="@+id/date_debut_button"
+                            android:layout_width="180dp"
+                            android:layout_height="40dp"
+                            android:text="Date début"
+                            android:background="@color/orange"
+                            android:textSize="14dp"
+                            android:textColor="@color/gris_texte"
+                            android:layout_marginRight="10dp"
+                            android:onClick="dateDebut"/>
+                        <Button android:id="@+id/heure_debut_button"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:text="Heure début"
+                            android:background="@color/orange"
+                            android:textSize="14dp"
+                            android:textColor="@color/gris_texte"
+                            android:onClick="heureDebut"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="20dp">
+                        <Button android:id="@+id/date_fin_button"
+                            android:layout_width="180dp"
+                            android:layout_height="40dp"
+                            android:text="Date Fin"
+                            android:background="@null"
+                            android:textSize="14dp"
+                            android:textColor="@color/gris_texte"
+                            android:layout_marginRight="10dp"
+                            android:onClick="dateFin"/>
+                        <Button android:id="@+id/heure_fin_button"
+                            android:layout_width="100dp"
+                            android:layout_height="40dp"
+                            android:text="Heure Fin"
+                            android:background="@null"
+                            android:textSize="14dp"
+                            android:textColor="@color/gris_texte"
+                            android:onClick="heureFin"/>
+                    </LinearLayout>
+                    
+                </LinearLayout>
+                
+                
+            </RelativeLayout>
+            
+        </LinearLayout>
+        
+        
+    </LinearLayout>
+
+</RelativeLayout>

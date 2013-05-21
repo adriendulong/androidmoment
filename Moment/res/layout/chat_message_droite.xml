@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    			android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <LinearLayout android:layout_width="fill_parent"
+		                android:layout_height="wrap_content"
+		                android:orientation="horizontal"
+		                android:weightSum="10"
+		                android:paddingLeft="10dp"
+		                android:paddingRight="10dp"
+		                android:paddingTop="0dp"
+		                android:layout_marginTop="5dp">
+	                 <RelativeLayout android:layout_width="0dp"
+	                    android:layout_height="wrap_content"
+	                    android:minHeight="10dp"
+	                    android:layout_weight="8"
+	                    android:background="@drawable/box_right">
+	                    <TextView android:id="@+id/chat_message_text"
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content"
+	                        android:textSize="10sp"
+	                        android:textColor="@color/orange"
+	                        android:textAllCaps="false"
+	                        android:layout_centerInParent="true"
+	                        android:paddingRight="5dp"
+	                        android:lineSpacingExtra="0dp"/>
+	                </RelativeLayout>
+	                <RelativeLayout android:layout_width="0dp"
+	                    android:layout_height="fill_parent"
+	                    android:layout_weight="2"
+	                    android:background="@drawable/back_photo">
+	                    <ImageView android:id="@+id/photo_user"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:src="@drawable/profile_image"
+	                        android:layout_centerHorizontal="true"
+	                        android:layout_margin="1dp"/>
+	                </RelativeLayout>
+            </LinearLayout>
+            <LinearLayout android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:weightSum="10">
+	                <RelativeLayout android:layout_width="0dp"
+	                    android:layout_height="wrap_content"
+	                    android:layout_weight="8"
+	                    android:paddingLeft="5dp"
+	                    android:paddingRight="10dp">
+	                   <TextView android:layout_width="wrap_content"
+	                       android:layout_height="wrap_content"
+	                       android:textColor="@color/gris_texte"
+	                       android:textSize="10sp"
+	                       android:text="Adrien"/>
+	                   <TextView android:layout_width="wrap_content"
+	                       android:layout_height="wrap_content"
+	                       android:textColor="@color/gris_texte"
+	                       android:textSize="10sp"
+	                       android:text="19:37"
+	                       android:layout_alignParentRight="true"/>
+	                </RelativeLayout>
+                
+            </LinearLayout>
+</LinearLayout>

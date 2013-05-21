@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:background="@drawable/background">
+    <ScrollView android:id="@+id/scroll_chat"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginBottom="65dp"
+        android:layout_alignParentTop="true"
+        android:paddingTop="10dp">
+        <LinearLayout android:id="@+id/chat_message_layout"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout android:id="@+id/layout_post_message"
+        android:layout_width="fill_parent"
+        android:layout_height="65dp"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@color/gris_chat"
+        android:weightSum="10"
+        android:gravity="bottom"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <EditText android:id="@+id/edit_chat_post_message"
+            android:onClick="editMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="8"
+            android:textSize="10sp"
+            android:layout_marginBottom="5dp"
+            android:hint="VOTRE MESSAGE"
+            android:inputType="textMultiLine"/>
+        <RelativeLayout android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:layout_marginLeft="5dp">
+            <ImageButton android:id="@+id/profile_picture_message_bar_chat"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:src="@drawable/envoyer_chat_button"
+                android:background="@drawable/envoyer_chat_button"
+                android:onClick="postMessage"/>
+        </RelativeLayout>
+     </LinearLayout>
+</RelativeLayout>

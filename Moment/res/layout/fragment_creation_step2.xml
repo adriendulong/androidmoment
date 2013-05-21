@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:paddingBottom="0dp" >
+
+    <ImageView
+        android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:background="@color/orange" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="7dp"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:layout_width="155dp"
+            android:layout_height="wrap_content" >
+
+            <ImageView
+                android:layout_width="154dp"
+                android:layout_height="wrap_content"
+                android:contentDescription="separation"
+                android:src="@drawable/step_box" />
+
+            <ImageView
+                android:id="@+id/picto_when"
+                android:layout_width="27dp"
+                android:layout_height="27dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="6dp"
+                android:contentDescription="picto_when"
+                android:src="@drawable/when" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="48dp"
+                android:layout_marginTop="7dp"
+                android:orientation="horizontal" >
+
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fl_text_picto_when"
+                    android:textColor="@color/orange"
+                    android:textSize="20sp" />
+
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/text_picto_when"
+                    android:textColor="@color/gris_texte"
+                    android:textSize="14sp" />
+
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:text="@string/string_interrogation"
+                    android:textColor="@color/gris_texte"
+                    android:textSize="20sp" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:gravity="right"
+            android:orientation="horizontal" >
+
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:text="@string/step_creation_2"
+                android:textColor="@color/gris_texte"
+                android:textSize="16sp" />
+
+            <ImageButton
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:layout_marginLeft="5dp"
+                android:background="@drawable/background"
+                android:contentDescription="up2"
+                android:onClick="upTwo"
+                android:src="@drawable/up" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="23dp"
+        android:layout_marginRight="23dp"
+        android:orientation="vertical" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="3" >
+
+            <Button 
+                android:id="@+id/spinner_date_debut"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="2"
+                android:onClick="dateDebut"
+                android:text="@string/spinner_date_debut"
+                android:textColor="@color/gris_texte"
+                android:textSize="14sp" />
+
+            <TextView 
+                android:id="@+id/spinner_heure_debut"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:onClick="heureDebut"
+                android:text="@string/spinner_heure"
+                android:textColor="@color/gris_texte"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal"
+            android:weightSum="3" >
+
+            <Button 
+                android:id="@+id/spinner_date_fin"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="2"
+                android:onClick="dateFin"
+                android:text="@string/spinner_date_fin"
+                android:textColor="@color/gris_texte"
+                android:textSize="14sp" />
+
+            <TextView 
+                android:id="@+id/spinner_heure_fin"
+                android:layout_width="0dp"
+                android:layout_height="35dp"
+                android:layout_weight="1"
+                android:onClick="heureFin"
+                android:text="@string/spinner_heure"
+                android:textColor="@color/gris_texte"
+                android:textSize="14sp" />
+        </LinearLayout>
+    </LinearLayout>
+	<LinearLayout android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:paddingBottom="10dp"
+	    android:layout_alignParentBottom="true"
+        android:layout_alignRight="@+id/linearLayout1">
+	    <ImageButton
+	        android:layout_width="46dp"
+	        android:layout_height="46dp"
+	        android:background="@drawable/background"
+	        android:contentDescription="down2"
+	        android:onClick="downTwo"
+	        android:src="@drawable/down" />
+	</LinearLayout>
+</RelativeLayout>

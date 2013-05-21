@@ -1,0 +1,215 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp">
+    
+    
+    <ImageView android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:src="@drawable/bar"/>
+    
+    
+    <LinearLayout android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:orientation="vertical">
+    
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="50dp"
+	        android:orientation="horizontal"
+	        android:layout_marginTop="7dp"
+	        >
+	        <RelativeLayout 
+	            android:layout_width="155dp"
+	            android:layout_height="50dp">
+	            <ImageView 
+	                android:src="@drawable/step_box"
+	                android:layout_width="154dp"
+	                android:layout_height="48dp"
+	                android:contentDescription="separation"/>
+	            <ImageView 
+	                android:src="@drawable/picto_geoloc"
+	                android:layout_marginTop="5dp"
+	                android:layout_marginLeft="15dp"
+	                android:layout_width="23dp"
+	                android:layout_height="33dp"
+	                android:contentDescription="picto_lieu"/>
+	            
+	        </RelativeLayout>
+	        <LinearLayout 
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:gravity="right"
+	            android:orientation="horizontal">
+	            <TextView 
+	                android:text="@string/step_creation_1"
+	                android:textSize="16sp"
+	                android:layout_marginTop="15dp"
+	                android:textColor="@color/gris_texte"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"/>
+	            <ImageButton 
+	                android:src="@drawable/down"
+	                android:layout_marginTop="2dp"
+	                android:layout_marginLeft="5dp"
+	                android:layout_width="46dp"
+	                android:layout_height="46dp"
+	                android:background="@drawable/down"
+	                android:contentDescription="down"/>
+	            
+	        </LinearLayout>
+	     </LinearLayout>
+	        
+	        <TextView 
+	            android:text="@string/creation_info_lieu_label"
+	            android:layout_marginLeft="22dp"
+	            android:layout_marginTop="20dp"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:textSize="14sp"
+	            android:textColor="@color/gris_texte"
+	            android:textAllCaps="true"/>
+	        <LinearLayout 
+	            android:layout_width="fill_parent"
+	            android:layout_height="31dp"
+	            android:orientation="horizontal"
+	            android:weightSum="9"
+	            android:layout_marginLeft="22dp"
+	            android:layout_marginRight="11dp">
+	             <EditText android:id="@+id/edit_lieu"
+			        android:layout_width="0dp"
+			        android:layout_height="wrap_content"
+			        android:textSize="14sp"
+			        android:hint="@string/creation_info_lieu_edit"
+			        android:singleLine="true" 
+			        android:inputType="textCapCharacters"
+			        android:layout_weight="8"/>
+	             <ImageButton android:layout_width="28dp"
+			        android:layout_height="31dp"
+			        android:src="@drawable/btn_geoloc"
+			        android:contentDescription="btn_geoloc"
+			        android:layout_marginLeft="15dp"/>
+	        </LinearLayout>
+	        <LinearLayout android:layout_width="fill_parent"
+	            android:layout_height="30dp"
+	            android:orientation="horizontal"
+	            android:layout_marginTop="10dp"
+	            android:weightSum="2">
+	            <RelativeLayout android:layout_width="0dp"
+		            android:layout_height="30dp"
+		            android:layout_marginRight="10dp"
+		            android:layout_weight="1">
+		                <ImageButton android:id="@+id/btn_at_home"
+		                    android:src="@drawable/btn_at"
+			                android:layout_width="89dp"
+			                android:layout_height="29dp"
+			                android:contentDescription="at_home"
+			                android:layout_alignParentRight="true"/>
+		                <TextView 
+				            android:text="@string/creation_text_home"
+				            android:layout_alignLeft="@id/btn_at_home"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:textSize="14sp"
+				            android:textColor="@color/gris_texte"
+				            android:layout_marginTop="4dp"
+				            android:layout_marginLeft="34dp"
+				            android:textAllCaps="true"/>
+	            </RelativeLayout>
+	            <RelativeLayout android:layout_width="0dp"
+		            android:layout_height="30dp"
+		            android:layout_marginRight="10dp"
+		            android:layout_weight="1">
+		                <ImageButton android:id="@+id/btn_at_friends"
+		                    android:src="@drawable/btn_at"
+		                	android:layout_width="89dp"
+		                	android:layout_height="29dp"
+		                	android:contentDescription="at_friends"
+		                	android:layout_alignParentLeft="true"/>
+		                <TextView 
+				            android:text="@string/creation_text_amis"
+				            android:layout_alignLeft="@id/btn_at_friends"
+				            android:layout_width="wrap_content"
+				            android:layout_height="wrap_content"
+				            android:textSize="14sp"
+				            android:textColor="@color/gris_texte"
+				            android:layout_marginTop="4dp"
+				            android:layout_marginLeft="34dp"
+				            android:textAllCaps="true"/>
+	            </RelativeLayout>
+	        </LinearLayout>
+	        <LinearLayout android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:paddingLeft="23dp"
+			    android:paddingRight="25dp"
+			    android:layout_marginTop="10dp"
+			    android:orientation="vertical">
+	             <TextView 
+	                android:text="@string/crea_text_adresse"
+	                android:textSize="14sp"
+	                android:textColor="@color/gris_texte"
+	                android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textAllCaps="true"/>
+	             <LinearLayout android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal"
+		            android:layout_marginTop="5dp"
+		            android:weightSum="2">
+		            <EditText android:id="@+id/edit_adresse_code_postale"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:textSize="14sp"
+				        android:hint="@string/edit_adresse_code_postale"
+				        android:singleLine="true" 
+				        android:inputType="textCapCharacters"
+				        android:layout_weight="1"
+				        android:layout_marginRight="5dp"/>
+		            <EditText android:id="@+id/edit_adresse_ville"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:textSize="14sp"
+				        android:hint="@string/edit_adresse_ville"
+				        android:singleLine="true" 
+				        android:inputType="textCapCharacters"
+				        android:layout_weight="1"
+				        android:layout_marginLeft="5dp"/>
+		                </LinearLayout>
+		            <TextView 
+		                android:text="@string/creation_text_info_lieu"
+		                android:textSize="14sp"
+		                android:textColor="@color/gris_texte"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_marginTop="20dp"
+		                android:textAllCaps="true"/>
+		            <EditText android:id="@+id/edit_adresse_etage"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:textSize="14sp"
+				        android:hint="@string/creation_edit_etage"
+				        android:inputType="textCapCharacters|textMultiLine"/>
+		            <TextView 
+		                android:text="@string/creation_text_info_transport"
+		                android:textSize="14sp"
+		                android:textColor="@color/gris_texte"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"
+		                android:layout_marginTop="20dp"
+		                android:textAllCaps="true"/>
+		            <EditText android:id="@+id/edit_adresse_info_transport"
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:textSize="14sp"
+				        android:hint="@string/creation_edit_adresse_info_transport"
+				        android:inputType="textCapCharacters|textMultiLine"/>
+	            </LinearLayout>
+        
+    </LinearLayout>
+
+</RelativeLayout>

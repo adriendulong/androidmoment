@@ -1,0 +1,53 @@
+<resources>
+
+    
+   	<style name="Theme.Styled" parent="Theme.Sherlock.Light">
+	    <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
+	    <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
+	    <item name="android:editTextStyle">@style/EditTextMomentTheme</item>
+    	 <item name="android:buttonStyle">@style/ButtonMomentTheme</item>
+	</style>   
+	
+   	<style name="Theme.Styled.NoActionBar" parent="Theme.Sherlock.Light.NoActionBar">
+	    <item name="android:editTextStyle">@style/EditTextMomentTheme</item>
+    	 <item name="android:buttonStyle">@style/ButtonMomentTheme</item>
+	</style>   
+	
+	
+	<style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
+	    <item name="background">@color/white</item>
+	    <item name="android:background">@color/white</item>
+	</style>
+	
+	<style name="EditTextMomentTheme" parent="android:Widget.EditText">
+		  <item name="android:background">@drawable/edit_text_holo_light</item>
+	  </style>
+	
+	  <style name="ButtonMomentTheme" parent="android:Widget.Button">
+		  <item name="android:background">@drawable/btn_default_holo_light</item>
+		  <item name="android:minHeight">48dip</item>
+		  <item name="android:minWidth">64dip</item>
+		  <item name="android:textColor">#000000</item>
+	  </style>
+
+	<!--  <style name="LightThemeSelector" parent="android:Theme.Holo.Light">
+    	<item name="android:actionBarTabBarStyle">@style/customTabBar</item>
+    	<item name="android:actionBarTabStyle">@style/customTabStyle</item>
+	</style>
+	
+	<style name="customTabStyle" parent="@android:style/Widget.Holo.ActionBar.TabView">
+    	<item name="android:showDividers">none</item>
+    	<item name="android:measureWithLargestChild">true</item>
+    	<item name="android:background">@drawable/tab_line</item>
+    	<item name="android:gravity">center</item>
+	</style>-->
+	
+	
+	<style name="ShadowOnText">
+	    <item name="android:shadowColor">#646464</item>
+	    <item name="android:shadowDx">1</item>
+	    <item name="android:shadowDy">1</item>
+	    <item name="android:shadowRadius">1</item>
+  </style>
+	
+</resources>

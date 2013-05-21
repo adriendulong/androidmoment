@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black_detail_photo_trans">
+    <LinearLayout android:id="@+id/top_photo"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/cadre_photo"
+        android:layout_marginBottom="-60dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:background="@drawable/top_photo"
+        android:weightSum="2"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp">
+        <LinearLayout android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingTop="7dp"
+            android:layout_weight="1">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="@string/fl_detail_par"
+                android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="@string/detail_par"
+                android:textSize="10sp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="Adrien"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:paddingTop="7dp"
+            android:paddingRight="15dp"
+            android:orientation="horizontal">
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="@string/fl_detail_par"
+                android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="@string/detail_par"
+                android:textSize="10sp"/>
+            <TextView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gris_texte"
+                android:text="Adrien"
+                android:layout_marginLeft="10dp"
+                android:textSize="10sp"/>
+        </LinearLayout>
+        
+    </LinearLayout>
+    <ImageButton android:id="@+id/close"
+        	android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/close"
+            android:src="@drawable/close"
+            android:layout_marginBottom="12dp"
+            android:layout_above="@id/cadre_photo"
+            android:layout_centerHorizontal="true"
+            android:layout_alignRight="@id/top_photo"
+            android:layout_marginRight="-12dp"/>
+    <LinearLayout android:id="@+id/top_photo"
+        android:layout_width="275dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/cadre_photo"
+        android:layout_marginTop="-40dp"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal"
+        android:background="@drawable/top_photo"
+        android:paddingTop="40dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:weightSum="5">
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ImageButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/trash"
+            android:background="@drawable/trash"
+            android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ImageButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/download"
+            android:background="@drawable/download"
+            android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ImageButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/facebook_badge"
+            android:background="@drawable/facebook_badge"
+            android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ImageButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/twitter_badge"
+            android:background="@drawable/twitter_badge"
+            android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ImageButton android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/coeur"
+            android:background="@drawable/coeur"
+            android:layout_centerHorizontal="true"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <ImageView android:id="@id/cadre_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cadre_photo"
+        android:layout_centerInParent="true"/>
+
+    <ImageView
+        android:id="@+id/photo_moment_detail"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:scaleType="centerCrop"
+        android:layout_centerInParent="true"
+        android:src="@drawable/photo_photo" />
+
+    <ImageButton android:id="@+id/previous" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/previous_photo"
+        android:background="@drawable/previous_photo"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@id/cadre_photo"
+        android:layout_marginRight="-30dp"/>
+    <ImageButton android:id="@+id/next"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/next_photo"
+        android:background="@drawable/next_photo"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/cadre_photo"
+        android:layout_marginLeft="-30dp"/>
+</RelativeLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bg_cell_invitations"
+    android:layout_width="fill_parent"
+    android:layout_height="55dp"
+    android:background="@drawable/background">
+    <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:orientation="horizontal"
+	    android:weightSum="4" 
+	    android:layout_marginTop="3dp"
+	    android:layout_marginBottom="3dp">
+	    
+		    <RelativeLayout android:layout_width="0dp"
+		        android:layout_height="fill_parent"
+		        android:layout_weight="1">
+		    	<ImageView android:layout_width="45dp"
+		    	    android:layout_height="45dp"
+		    	    android:background="@drawable/back_photo"
+		    	    android:layout_centerInParent="true"/>
+		    	<ImageView android:id="@+id/photo_invitation"
+		    	    android:layout_width="40dp"
+		    	    android:layout_height="40dp"
+		    	    android:background="@drawable/back_goldphoto"
+		    	    android:layout_centerInParent="true"/>
+		    	    
+		    </RelativeLayout>
+		    
+		    <LinearLayout android:layout_width="0dp"
+		        android:layout_height="fill_parent"
+		        android:layout_weight="3"
+		        android:orientation="vertical"
+		        android:gravity="left"
+		        android:layout_marginTop="8dp">
+		        
+		        <LinearLayout android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal">
+		            
+		            <TextView android:id="@+id/firstname_invitations"
+		                android:layout_width="wrap_content"
+		                android:layout_height="fill_parent"
+		                android:textSize="14dp"
+		                android:textColor="@color/gris_texte"
+		                android:text="Adrien"/>
+		            <TextView android:id="@+id/lastname_invitations" 
+		                android:layout_marginLeft="5dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="fill_parent"
+		                android:textSize="14dp"
+		                android:textColor="@color/gris_texte"
+		                android:text="Adrien"/>
+		            
+		        </LinearLayout>
+		        <LinearLayout android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:orientation="horizontal">
+		            
+		            <TextView android:layout_width="wrap_content"
+		                android:layout_height="fill_parent"
+		                android:textSize="12dp"
+		                android:textColor="@color/gris_texte"
+		                android:text="Adrien"/>
+		            <TextView android:layout_width="wrap_content"
+		                android:layout_height="fill_parent"
+		                android:textSize="12dp"
+		                android:textColor="@color/gris_texte"
+		                android:text=","/>
+		            <TextView android:layout_marginLeft="5dp"
+		                android:layout_width="wrap_content"
+		                android:layout_height="fill_parent"
+		                android:textSize="12dp"
+		                android:textColor="@color/gris_texte"
+		                android:text="Adrien"/>
+
+		        </LinearLayout>
+		        
+		        
+		    </LinearLayout>
+	    
+	
+	</LinearLayout>
+    
+    
+    
+    
+</RelativeLayout>
+
+

@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:background="@drawable/background"
+    android:orientation="vertical"
+    android:weightSum="19" >
+
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+         <Button
+             android:id="@+id/button_facebook"
+	        android:layout_width="275dp"
+	        android:layout_height="48dp"
+	        android:background="@drawable/fb"
+	        android:layout_centerInParent="true"
+	        android:textSize="13sp"
+	        android:gravity="left"
+	        android:paddingLeft="10dp"
+	        android:paddingTop="12dp"
+	        android:textColor="@color/gris_texte"
+	        android:text="@string/import_facebook"
+	        android:onClick="facebook"/>
+    </RelativeLayout>
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+         <LinearLayout android:layout_width="fill_parent"
+            android:layout_height="12dp"
+            android:orientation="horizontal"
+            android:weightSum="13"
+            android:gravity="center">
+            <ImageView android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@drawable/pointilles"
+                android:layout_weight="6"/>
+            <TextView android:text="OU"
+                android:textSize="10dp"
+                android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:layout_weight="1"
+                android:gravity="center"/>
+            <ImageView android:layout_width="0dp"
+                android:layout_height="2dp"
+                android:background="@drawable/pointilles"
+                android:layout_weight="6"/>
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9">
+         <TextView 
+             android:id="@+id/text_creation_moment"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_centerHorizontal="true"
+             android:paddingTop="60dp"
+             android:textSize="13sp"
+             android:gravity="center"
+             android:textColor="@color/gris_texte"
+             android:text="@string/creation_moment"/>
+         <LinearLayout android:layout_width="fill_parent"
+             android:layout_height="wrap_content"
+             android:layout_centerHorizontal="true"
+             android:layout_below="@id/text_creation_moment"
+             android:orientation="horizontal"
+             android:paddingLeft="10dp"
+             android:paddingRight="10dp"
+             android:weightSum="10"
+             android:gravity="right">
+             <EditText android:id="@+id/edit_nom_moment"
+		        android:layout_width="0dp"
+		        android:layout_height="wrap_content"
+		        android:textSize="13sp"
+		        android:paddingTop="20dp"
+		        android:hint="@string/edit_nom_moment"
+		        android:singleLine="true"
+		        android:layout_weight="9"/>
+	         <Button
+		        android:layout_width="40dp"
+		        android:layout_height="44dp"
+				android:background="@drawable/btn_name"
+		        android:onClick="valideNom"/>
+         </LinearLayout>
+         
+    </RelativeLayout>
+</LinearLayout>

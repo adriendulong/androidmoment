@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_volet" >
+    <LinearLayout android:id="@+id/btn_volet_layout"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="30dp">
+        <RelativeLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <ImageButton android:background="@drawable/btn_volet"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="moments"/>
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/picto_bulle"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <ImageButton android:background="@drawable/btn_volet"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="profil"/>
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/picto_profil"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"/>
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+            <ImageButton android:background="@drawable/btn_volet"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:onClick="parametres"/>
+            <ImageView android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/picto_param"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="5dp"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <ImageView android:id="@+id/sep"
+        android:layout_marginTop="10dp"
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@drawable/pointilles"
+        android:alpha="0.6"
+        android:layout_below="@id/btn_volet_layout"/>
+    <ScrollView android:layout_width="fill_parent"
+        android:layout_below="@+id/sep"
+        android:layout_height="250dp">
+        <LinearLayout android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp">
+            <RelativeLayout android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:layout_marginTop="10dp">
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/picto_info_volet"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+             <RelativeLayout android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:layout_marginTop="10dp">
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/picto_photo_volet"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+             <RelativeLayout android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@color/white"
+                android:layout_marginTop="10dp">
+                <ImageView android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/picto_message_volet"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="10dp"/>
+            </RelativeLayout>
+        </LinearLayout>
+    </ScrollView>
+    
+    <LinearLayout android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:weightSum="2">
+        <RelativeLayout android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:paddingLeft="10dp">
+            <LinearLayout android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/fl_invitations"
+	                android:textSize="20dp"
+	                android:textColor="@color/orange"/>
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/invitations"
+	                android:textSize="14dp"
+	                android:textColor="@color/gris_texte"/>
+            </LinearLayout>
+            <RelativeLayout android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="10dp">
+                <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textSize="10dp"
+	                android:textColor="@color/orange"
+	                android:text="21"
+	                android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            
+        </RelativeLayout>
+        <RelativeLayout android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@drawable/btn_notif_down">
+            <LinearLayout android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true">
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/fl_notifications"
+	                android:textSize="20dp"
+	                android:textColor="@color/orange"/>
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:text="@string/notifications"
+	                android:textSize="14dp"
+	                android:textColor="@color/gris_texte"/>
+            </LinearLayout>
+            <RelativeLayout android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_notif_down"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="5dp"
+                android:layout_marginTop="5dp">
+	            <TextView android:layout_width="wrap_content"
+	                android:layout_height="wrap_content"
+	                android:textSize="10dp"
+	                android:textColor="@color/white"
+	                android:text="21"
+	                android:layout_centerInParent="true"/>
+                
+            </RelativeLayout>
+            
+        </RelativeLayout>
+    </LinearLayout>
+
+</RelativeLayout>

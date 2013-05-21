@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp">
+    <ImageView android:layout_width="3dp"
+        android:layout_height="fill_parent"
+        android:background="@color/orange"/>
+    <LinearLayout android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:orientation="vertical">
+		    <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="50dp"
+		        android:orientation="horizontal"
+		        android:layout_marginTop="7dp"
+		        >
+		        <RelativeLayout 
+		            android:layout_width="155dp"
+		            android:layout_height="50dp">
+		            <ImageView 
+		                android:src="@drawable/step_box"
+		                android:layout_width="154dp"
+		                android:layout_height="48dp"
+		                android:contentDescription="separation"/>
+		            <ImageView 
+		                android:src="@drawable/picto_info"
+		                android:layout_marginTop="6dp"
+		                android:layout_marginLeft="15dp"
+		                android:layout_width="13dp"
+		                android:layout_height="29dp"
+		                android:contentDescription="picto_info"/>
+		            <LinearLayout android:layout_width="wrap_content"
+						   	       android:layout_height="wrap_content"
+						   	       android:orientation="horizontal"
+						   	       android:layout_marginLeft="40dp"
+						   	       android:layout_marginTop="7dp">
+						   	       <TextView  android:layout_width="wrap_content"
+							   	        android:layout_height="wrap_content"
+							   	        android:text="@string/fl_text_picto_what"
+							   	        android:textColor="@color/orange"
+							   	        android:textSize="20sp" />
+							   	 <TextView  android:layout_width="wrap_content"
+							   	        android:layout_height="wrap_content"
+							   	        android:textColor="@color/gris_texte"
+							   	        android:textSize="14sp"
+							   	        android:text="@string/text_picto_what"/>
+							   	  <TextView  android:layout_width="wrap_content"
+							   	        android:layout_height="wrap_content"
+							   	        android:textColor="@color/gris_texte"
+							   	        android:textSize="20sp"
+							   	        android:layout_marginLeft="5dp"
+							   	        android:text="@string/string_interrogation"/>
+				</LinearLayout>
+		            
+		        </RelativeLayout>
+		        <LinearLayout 
+		            android:layout_width="fill_parent"
+		            android:layout_height="fill_parent"
+		            android:gravity="right"
+		            android:orientation="horizontal">
+		            <TextView  
+		                android:text="@string/step_creation_3"
+		                android:textSize="16sp"
+		                android:layout_marginTop="15dp"
+		                android:textColor="@color/gris_texte"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content"/>
+		            <ImageButton 
+		                android:src="@drawable/up"
+		                android:background="@drawable/background"
+		                android:layout_marginTop="2dp"
+		                android:layout_marginLeft="5dp"
+		                android:layout_width="46dp"
+		                android:layout_height="46dp"
+		                android:contentDescription="up2"
+		                android:onClick="upThree"/>
+		            
+		        </LinearLayout>
+		       </LinearLayout>
+		    <LinearLayout 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		        android:layout_marginTop="7dp"
+		        android:layout_marginLeft="23dp"
+		        android:layout_marginRight="23dp"
+		        >
+			        <EditText android:id="@+id/edit_description"
+					        android:layout_width="fill_parent"
+					        android:layout_height="wrap_content"
+					        android:textSize="12sp"
+					        android:hint="@string/edit_description"
+					        android:inputType="textCapCharacters|textMultiLine"/>
+			        <LinearLayout 
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:orientation="horizontal"
+				        android:layout_marginTop="20dp">
+						<ImageView 
+			                android:src="@drawable/picto_photo"
+			                android:layout_width="21dp"
+			                android:layout_height="15dp"
+			                android:contentDescription="picto_photos"/>	
+			            <TextView  android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:textColor="@color/gris_texte"
+			                android:text="@string/fl_photos_temps_reel"
+			                android:textSize="16sp"
+			                android:layout_marginLeft="10dp"/>
+			           	<TextView  android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:textColor="@color/gris_texte"
+			                android:text="@string/photos_temps_reel"
+			                android:textSize="12sp"/>		            
+			            
+		            </LinearLayout>
+		            <LinearLayout 
+				        android:layout_width="fill_parent"
+				        android:layout_height="wrap_content"
+				        android:orientation="horizontal"
+				        android:layout_marginTop="5dp">
+			            <TextView  android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:textColor="@color/orange"
+			                android:text="#"
+			                android:textSize="16sp"/>
+			           	<TextView  android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:textColor="@color/gris_texte"
+			                android:text="@string/fl_hashtag"
+			                android:layout_marginLeft="3dp"
+			                android:textSize="12sp"/>
+			           	<TextView  android:layout_width="wrap_content"
+			                android:layout_height="wrap_content"
+			                android:textColor="@color/gris_texte"
+			                android:text="@string/hashtag"
+			                android:textSize="9sp"/>	           
+		            </LinearLayout>
+		            <EditText android:id="@+id/edit_hashtag"
+					        android:layout_width="fill_parent"
+					        android:layout_height="wrap_content"
+					        android:textSize="12sp"
+					        android:hint="@string/edit_hashtag"
+					        android:inputType="textCapCharacters"/>	
+					<RelativeLayout android:layout_width="fill_parent"
+					    android:layout_height="wrap_content"
+					    android:layout_marginTop="10dp">
+			           	<LinearLayout android:layout_width="wrap_content"
+				           	    android:layout_height="wrap_content"
+				           	    android:orientation="vertical"
+				           	    android:layout_centerHorizontal="true"
+				           	    android:gravity="center_horizontal">
+				           	<LinearLayout android:id="@+id/badges"
+				           	    android:layout_width="wrap_content"
+				           	    android:layout_height="wrap_content"
+				           	    android:orientation="horizontal">
+				           	    <ImageView 
+					                android:src="@drawable/insta_badge"
+					                android:layout_width="41dp"
+					                android:layout_height="41dp"
+					                android:contentDescription="insta_badge"
+					                android:layout_marginRight="5dp"/>
+				           	    <ImageView 
+					                android:src="@drawable/twitter_badge"
+					                android:layout_width="41dp"
+					                android:layout_height="41dp"
+					                android:layout_marginLeft="5dp"
+					                android:contentDescription="twitter_badge"/>
+				           	</LinearLayout>
+						   	<TextView  android:layout_below="@id/badges"
+						   	    android:layout_width="200dp"
+				                android:layout_height="wrap_content"
+				                android:textColor="@color/gris_texte"
+				                android:text="@string/explication_hashtag"
+				                android:textSize="8sp"
+				                android:gravity="center"
+				                android:layout_marginTop="10dp"/>
+						   	<ImageButton android:layout_height="wrap_content"
+						   	    android:layout_width="wrap_content"
+						   	    android:src="@drawable/btn_round_creer"
+						   	    android:background="@drawable/background"
+						   	    android:layout_marginTop="10dp"
+						   	    android:onClick="creerMoment"/>
+						   <RelativeLayout android:layout_width="wrap_content"
+						       android:layout_height="wrap_content"
+						       android:layout_marginTop="10dp">
+						       <ImageButton android:layout_height="38dp"
+						   	    android:layout_width="215dp"
+						   	    android:src="@drawable/btn_creer"
+						   	    android:onClick="creerMoment"/>	
+						   	   <LinearLayout android:layout_width="wrap_content"
+						   	       android:layout_height="wrap_content"
+						   	       android:orientation="horizontal"
+						   	       android:layout_centerInParent="true"
+						   	       android:onClick="creerMoment">
+						   	       <TextView  android:id="@+id/fl_btn_creer_moment"
+							   	        android:layout_width="wrap_content"
+							   	        android:layout_height="wrap_content"
+							   	        android:text="@string/fl_btn_creer_moment"
+							   	        android:textColor="@color/orange"
+							   	        android:textSize="16sp" />
+							   	 <TextView  android:id="@+id/btn_creer_moment"
+							   	        android:layout_width="wrap_content"
+							   	        android:layout_height="wrap_content"
+							   	        android:textColor="@color/gris_texte"
+							   	        android:textSize="14sp"
+							   	        android:text="@string/btn_creer_moment"/>
+						   	   </LinearLayout>
+						   	  
+						   </RelativeLayout>
+						   	
+			           </LinearLayout>	
+					</RelativeLayout> 
+		        </LinearLayout>
+	</LinearLayout>
+</RelativeLayout>
