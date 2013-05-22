@@ -115,9 +115,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
    		pager.setAdapter(this.mPagerAdapter);
-   		
-   		
-   		
+
+
+
 
    		pager.setCurrentItem(position, false);
         
@@ -172,11 +172,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 				
 			}
 		});
-        
-        
-        
-        
-       
+
+
+
+
+
     }
 
     
@@ -190,8 +190,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 		return true;
 	}
     
-    
-    
+
+
     
     
 /**
