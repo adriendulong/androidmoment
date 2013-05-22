@@ -205,9 +205,7 @@ public class PhotosFragment extends Fragment {
     }
 
     /**
-     *
-     * @author adriendulong
-     *
+     * ImageAdapter
      */
 
     public class ImageAdapter extends BaseAdapter {
@@ -344,6 +342,10 @@ public class PhotosFragment extends Fragment {
         File image = File.createTempFile(imageFileName, ".jpg", getAlbumDir());
         return image;
     }
+
+    /**
+     * Chargement asynchrone des thumbnails
+     */
 
     public class ThumbnailLoadTask extends AsyncTask<String, Void, Bitmap> {
 

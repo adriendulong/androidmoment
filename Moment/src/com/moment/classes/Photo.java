@@ -1,28 +1,8 @@
 package com.moment.classes;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-
+import android.graphics.Bitmap;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.moment.R;
-
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 
 public class Photo {
 	
@@ -33,7 +13,6 @@ public class Photo {
 	private Bitmap bitmap_thumbnail;
 	private String url_original;
 	private String url_thumbnail;
-	private PhotoListAdapter photo_adapter;
 	
 	public int getId() {
 		return id;
@@ -93,12 +72,6 @@ public class Photo {
 
 	public PhotoListAdapter getAdapter(PhotoListAdapter pa){
 		return pa;
-	}
-	
-	public void loadPhoto(ImageView imageView) {
-		if(url_original != null && !url_original.equals("")) {
-			new ImageLoadTask(imageView).execute(url_original);
-		}
 	}
 	
 	public void photoFromJSON(JSONObject photoObject){
