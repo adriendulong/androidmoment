@@ -43,7 +43,7 @@ import java.util.Date;
 public class PhotosFragment extends Fragment {
 
     static final int PICK_CAMERA_PHOTOS = 0;
-
+    private LayoutInflater layoutInflater;
     private RelativeLayout detailPhoto;
     private GridView gridView;
     private ImageAdapter imageAdapter;
@@ -297,20 +297,18 @@ public class PhotosFragment extends Fragment {
 
         private final WeakReference<Photo> weakPhoto;
         private final WeakReference<ImageAdapter> weakAdapter;
-        private ProgressDialog progressDialog;
+
 
 
         public ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
             this.weakPhoto = new WeakReference<Photo>(photo);
             this.weakAdapter = new WeakReference<ImageAdapter>(imageAdapter);
-            this.progressDialog = new ProgressDialog(activity);
+
         }
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            this.progressDialog.setMessage("Loading...");
-            this.progressDialog.show();
         }
 
         protected Bitmap doInBackground(String... params) {
@@ -326,10 +324,6 @@ public class PhotosFragment extends Fragment {
                 if(photo != null)
                     photo.setBitmap_thumbnail(bitmap);
                 adapter.notifyDataSetChanged();
-            }
-            if(progressDialog != null){
-                progressDialog.dismiss();
-                progressDialog = null;
             }
         }
 
