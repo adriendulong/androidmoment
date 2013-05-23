@@ -1,25 +1,7 @@
 package com.moment.infos.fragments;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
-import android.os.AsyncTask;
-import com.moment.MomentInfosActivity;
-import com.moment.classes.*;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -27,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -36,33 +19,34 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import com.moment.DetailPhoto;
-import com.moment.MomentInfosActivity.*;
+import com.moment.MomentInfosActivity.Exchanger;
 import com.moment.R;
+import com.moment.classes.MomentApi;
+import com.moment.classes.Photo;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.*;
+import java.lang.ref.WeakReference;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 public class PhotosFragment extends Fragment {
 
     static final int PICK_CAMERA_PHOTOS = 0;
 
-    public View view;
-    LayoutInflater inflater;
-    LinearLayout momentDetail;
-    RelativeLayout detailPhoto;
-    GridView gridView;
-    ImageAdapter imageAdapter;
+    private RelativeLayout detailPhoto;
+    private GridView gridView;
+    private ImageAdapter imageAdapter;
     private String albumName = "Moment";
 
     @Override
@@ -83,7 +67,7 @@ public class PhotosFragment extends Fragment {
                             photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                             Exchanger.photos.add(photo);
                             imageAdapter.notifyDataSetChanged();
-                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter);
+                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                             imageLoadTask.execute(photo.getUrl_thumbnail());
                         }
 
@@ -177,32 +161,56 @@ public class PhotosFragment extends Fragment {
         return view;
     }
 
-    private void getBitmapThumbnailFromURL(Photo photo) {
-        final int id = photo.getId();
-        AsyncHttpClient client = new AsyncHttpClient();
-        String[] allowedContentTypes = new String[] {"image/png", "image/jpeg"};
-        client.get(photo.getUrl_thumbnail(), new BinaryHttpResponseHandler(allowedContentTypes) {
-            @Override
-            public void onSuccess(byte[] fileData)
-            {
-                InputStream is = new ByteArrayInputStream(fileData);
-                Bitmap bmp = BitmapFactory.decodeStream(is);
-                setPhotoBitmapThumbnail(id, bmp);
-            }
-        });
-    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode,Intent data) {
 
-    public void setPhotoBitmapThumbnail(int id, Bitmap bitmap_thumbnail){
-        for(Photo p : Exchanger.photos)
-        {
-            if(p.getId() == id)
-            {
-                p.setBitmap_thumbnail(bitmap_thumbnail);
-                imageAdapter.notifyDataSetChanged();
-                return ;
+        if (requestCode == PICK_CAMERA_PHOTOS) {
+
+            Bundle extras = data.getExtras();
+
+            Bitmap mImageBitmap = (Bitmap) extras.get("data");
+            //mImageBitmap = Images.getResizedBitmap(mImageBitmap, 1500, 1500);
+
+            Photo photo = new Photo();
+
+            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/Moment";
+            File dir = new File(filePath);
+            if(!dir.exists())
+                dir.mkdirs();
+            File file = new File(dir, "moment" + photo.getId() + ".jpg");
+            try {
+                FileOutputStream stream = new FileOutputStream(file);
+                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                stream.flush();
+                stream.close();
+
+            } catch (FileNotFoundException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+
+
+            RequestParams params = new RequestParams();
+            try { params.put("photo", file); } catch (FileNotFoundException e) { e.printStackTrace(); }
+
+            MomentApi.post("addphoto/" + Exchanger.moment.getId(), params, new JsonHttpResponseHandler() {});
+            photo.setBitmap_thumbnail(mImageBitmap);
+            addPhoto(photo);
         }
     }
+
+
+    public void addPhoto(Photo photo){
+        Log.d("ADD PHOTOS", "IN PHOTOS FRAG");
+        Exchanger.photos.add(photo);
+        //imageAdapter.addPhoto(image);
+        imageAdapter.notifyDataSetChanged();
+    }
+
+
 
     /**
      * ImageAdapter
@@ -269,68 +277,6 @@ public class PhotosFragment extends Fragment {
 
     }
 
-
-    public void detailPhoto(){
-        Log.d("Detail", "DETAIL");
-    }
-
-
-
-    public void addPhoto(Photo photo){
-        Log.d("ADD PHOTOS", "IN PHOTOS FRAG");
-        Exchanger.photos.add(photo);
-        //imageAdapter.addPhoto(image);
-        imageAdapter.notifyDataSetChanged();
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode,
-                                 Intent data) {
-        //super.onActivityResult(requestCode, resultCode, data);
-        Log.d("TEST", "TEST");
-        if (requestCode == PICK_CAMERA_PHOTOS) {
-            //if (resultCode == RESULT_OK) {
-            // A contact was picked.  Here we will just display it
-            // to the user.
-
-            Bundle extras = data.getExtras();
-
-            Bitmap mImageBitmap = (Bitmap) extras.get("data");
-            mImageBitmap = Images.resizeBitmap(mImageBitmap, 1500);
-
-            Photo photo = new Photo();
-                /* Bitemap a uploader -> byte array */
-            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/Moment";
-            File dir = new File(filePath);
-            if(!dir.exists())
-                dir.mkdirs();
-            File file = new File(dir, "moment" + photo.getId() + ".jpg");
-            try {
-                FileOutputStream stream = new FileOutputStream(file);
-                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                stream.flush();
-                stream.close();
-
-            } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-                	
-                /* Upload nouvelle photo */
-
-            RequestParams params = new RequestParams();
-            try { params.put("photo", file); } catch (FileNotFoundException e) { e.printStackTrace(); }
-
-            MomentApi.post("addphoto/" + Exchanger.moment.getId(), params, new JsonHttpResponseHandler() {});
-            photo.setBitmap_thumbnail(mImageBitmap);
-            addPhoto(photo);
-        }
-    }
-
     private File getAlbumDir(){
         File storageDir = new File(Environment.getExternalStorageDirectory() + "Pictures/" + this.albumName);
         return storageDir;
@@ -351,15 +297,20 @@ public class PhotosFragment extends Fragment {
 
         private final WeakReference<Photo> weakPhoto;
         private final WeakReference<ImageAdapter> weakAdapter;
+        private ProgressDialog progressDialog;
 
-        public ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter) {
+
+        public ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
             this.weakPhoto = new WeakReference<Photo>(photo);
             this.weakAdapter = new WeakReference<ImageAdapter>(imageAdapter);
+            this.progressDialog = new ProgressDialog(activity);
         }
 
         @Override
         protected void onPreExecute() {
-            Log.i("ImageLoadingTask","Loading images ...");
+            super.onPreExecute();
+            this.progressDialog.setMessage("Loading...");
+            this.progressDialog.show();
         }
 
         protected Bitmap doInBackground(String... params) {
@@ -374,7 +325,11 @@ public class PhotosFragment extends Fragment {
                 final ImageAdapter adapter = weakAdapter.get();
                 if(photo != null)
                     photo.setBitmap_thumbnail(bitmap);
-                    adapter.notifyDataSetChanged();
+                adapter.notifyDataSetChanged();
+            }
+            if(progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
             }
         }
 

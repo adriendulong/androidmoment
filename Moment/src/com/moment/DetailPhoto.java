@@ -1,6 +1,8 @@
 package com.moment;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
@@ -21,6 +23,7 @@ import java.net.URL;
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
     private int position;
+    private Context context = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,9 +33,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         final ImageView imageView = (ImageView) findViewById(R.id.photo_moment_detail);
 
         position = getIntent().getIntExtra("position", 0);
-        System.out.println("POSITION " + position);
 
-        ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
+        ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
         imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
 
 
@@ -45,30 +47,34 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             }
         });
 
-        ImageButton nextButton = (ImageButton) findViewById(R.id.next);
+        final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
+        final ImageButton nextButton = (ImageButton) findViewById(R.id.next);
+
         if(position == Exchanger.photos.size()-1){nextButton.setVisibility(View.INVISIBLE);}
+        if(position == 0){previousButton.setVisibility(View.INVISIBLE);}
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                    position++;
-                    ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
-                    imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
+                position++;
+                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
+                imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
                 if(position == Exchanger.photos.size()-1){v.setVisibility(View.INVISIBLE);}
-                }
+                if(position > 0){previousButton.setVisibility(View.VISIBLE);}
+            }
         });
 
-        ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
-        if(position == 0){previousButton.setVisibility(View.INVISIBLE);}
         previousButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                    position--;
-                    ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
-                    imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
+                position--;
+                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
+                imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
                 if(position == 0){v.setVisibility(View.INVISIBLE);}
-                }
+                if(position < Exchanger.photos.size()-1){nextButton.setVisibility(View.VISIBLE);}
+            }
         });
     }
 
@@ -85,20 +91,22 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         private final Photo photo;
         private final WeakReference<ImageView> weakImageView;
+        private ProgressDialog progressDialog;
 
-        public ImageLoadTask(ImageView imageView, Photo photo) {
+        public ImageLoadTask(ImageView imageView, Photo photo, Context context) {
             this.weakImageView = new WeakReference<ImageView>(imageView);
             this.photo = photo;
+            this.progressDialog = new ProgressDialog(context);
         }
 
         @Override
         protected void onPreExecute() {
-            Log.e("ImageLoadingTask", "Loading images ...");
+            this.progressDialog.setMessage("Loading...");
+            this.progressDialog.show();
         }
 
         protected Bitmap doInBackground(String... params) {
             Log.e("ImageLoadTask", "Attempting to load image URL:" + params[0]);
-            //final Photo photo = weakPhoto.get();
             if(photo.getBitmap_original() == null){
                 Log.e("ImageLoadTask", "Va chercher le bitmap " + params[0]);
                 final Bitmap bitmap = getBitmapFromURL(params[0]);
@@ -113,11 +121,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         protected void onPostExecute(Bitmap bitmap) {
             if(bitmap != null) {
                 final ImageView imageView = weakImageView.get();
-                //final Photo photo = weakPhoto.get();
                 if(photo.getBitmap_original() == null)
                     photo.setBitmap_original(bitmap);
                 if(imageView != null)
                     imageView.setImageBitmap(bitmap);
+            }
+            if(progressDialog != null){
+                progressDialog.dismiss();
+                progressDialog = null;
             }
         }
 
