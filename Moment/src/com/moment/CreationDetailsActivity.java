@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
 
+import android.text.format.DateUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -284,49 +285,77 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
     
     public void downTwo() {
-	       Log.d("Down", "DOWN OK");  
+       Log.d("Down", "DOWN OK");
+       GregorianCalendar calendarDebut;
+       GregorianCalendar calendarFin;
+
+
+       /**
+        * On enregistre les dates
+        */
+
+       Button dateDebutEdit = (Button)findViewById(R.id.date_debut_button);
+       Button heureDebutEdit = (Button)findViewById(R.id.heure_debut_button);
+       Button dateFinEdit = (Button)findViewById(R.id.date_fin_button);
+       Button heureFinEdit = (Button)findViewById(R.id.heure_fin_button);
+
+
+
+
+       //
+       // Date de début
+       //
+
+       int jourDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[0]);
+       int moisDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[1])-1;
+       int anneeDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[2]);
+
+
+
+       if (heureDebutEdit.getText().toString().split(":").length ==2){
+           int heureDebut = Integer.parseInt(heureDebutEdit.getText().toString().split(":")[0]);
+           int minuteDebut = Integer.parseInt(heureDebutEdit.getText().toString().split(":")[1]);
+           calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut, heureDebut, minuteDebut);
+       }
+       else{
+           calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut);
+       }
+
+       System.out.println(calendarDebut.toString());
+
+
+       //On enregistre la date de d�but
+       moment.setDateDebut(calendarDebut.getTime());
+       System.out.println(moment.getDateDebut().toString());
+
+
+       //
+       // Date de fin
+       //
+
+       int jourFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[0]);
+       int moisFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[1])-1;
+       int anneeFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[2]);
+
+
+       if(heureFinEdit.getText().toString().split(":").length ==2){
+           int heureFin = Integer.parseInt(heureFinEdit.getText().toString().split(":")[0]);
+           int minuteFin = Integer.parseInt(heureFinEdit.getText().toString().split(":")[1]);
+           calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin, heureFin, minuteFin);
+       }
+        else{
+           calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin);
+       }
+
+       System.out.println(calendarFin.toString());
+
+
+       //On enregistre la date de fin
+       moment.setDateFin(calendarFin.getTime());
+
+       System.out.println(moment.getDateFin().toString());
 	       
-	       
-	       /**
-	        * On enregistre les dates
-	        */
-	       
-	       Button dateDebutEdit = (Button)findViewById(R.id.date_debut_button);
-	       Button heureDebutEdit = (Button)findViewById(R.id.heure_debut_button);
-	       Button dateFinEdit = (Button)findViewById(R.id.date_fin_button);
-	       Button heureFinEdit = (Button)findViewById(R.id.heure_fin_button);
-	       
-	       
-	       //On cr�� la date de d�but
-	       int jourDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[0]);
-	       int moisDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[1])-1;
-	       int anneeDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[2]);
-	       
-	       GregorianCalendar calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut);
-	       
-	       System.out.println(calendarDebut.toString());
-	       
-	       
-	       //On enregistre la date de d�but
-	       moment.setDateDebut(calendarDebut.getTime());
-	       System.out.println(moment.getDateDebut().toString());
-	       
-	       //On cr�� la date de fin
-	       int jourFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[0]);
-	       int moisFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[1])-1;
-	       int anneeFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[2]);
-	       
-	       GregorianCalendar calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin);
-	       
-	       System.out.println(calendarFin.toString());
-	       
-	       
-	       //On enregistre la date de fin
-	       moment.setDateFin(calendarFin.getTime());
-	       
-	       System.out.println(moment.getDateFin().toString());
-	       
-	    }
+	 }
     
     
     /**
@@ -489,7 +518,10 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			// Do something with the time chosen by the user
-				this.heureEdit.setText(""+hourOfDay+":"+minute);
+
+				if(minute>9) this.heureEdit.setText(""+hourOfDay+":"+minute);
+                else this.heureEdit.setText(""+hourOfDay+":0"+minute);
+
 				
 			}
 		}

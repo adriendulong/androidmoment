@@ -76,7 +76,7 @@ public class PlacePickerActivity extends SherlockActivity {
                         Place customPlace = new Place(s.toString());
                         places.add(customPlace);
 
-                        System.out.println(Locale.getDefault().getDisplayLanguage());
+                        System.out.println(Locale.getDefault().getLanguage());
                         getPlaces(s.toString(), "fr");
                     }
                     else{

@@ -32,6 +32,7 @@ public class Moment implements Parcelable {
 	private String infoLieu;
 	private String infoTransport;
 	private Date dateDebut;
+
 	private Date dateFin;
 	private String hashtag;
 	//private Adresse adresse;
@@ -49,6 +50,7 @@ public class Moment implements Parcelable {
 	public Moment(){
 			this.chats = new ArrayList<Chat>();
 			this.photos = new ArrayList<Photo>();
+
 	}
 	
 	/**
@@ -288,10 +290,12 @@ public class Moment implements Parcelable {
 		startDate.setTime(this.dateDebut);
 		momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
 		System.out.println("startDate "+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
+        momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
 		
 		Calendar endDate = Calendar.getInstance();
 		endDate.setTime(this.dateFin);
 		momentPrams.put("endDate", ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH));
+        momentPrams.put("endTime", endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE));
 		
 		if (this.description != null) momentPrams.put("description", this.description);
         if (this.infoLieu != null) momentPrams.put("placeInformations", this.infoLieu);
