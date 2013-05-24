@@ -185,7 +185,8 @@
             android:editable="false"
             android:clickable="false"
             android:background="@null"
-            />
+            android:layout_marginBottom="2dp"
+            android:layout_alignParentStart="false"/>
 
     <ProgressBar
             style="?android:attr/progressBarStyleLarge"

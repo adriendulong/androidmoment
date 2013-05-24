@@ -42,7 +42,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         position = getIntent().getIntExtra("position", 0);
 
-        ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
+        ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
         imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
 
 
@@ -65,20 +65,34 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         editText.setClickable(false);
         editText.setEnabled(false);
 
-        if(Exchanger.photos.get(position).getNb_like() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); editText.setTextColor(Color.parseColor("#FFFFFF"));; editText.setText(""+Exchanger.photos.get(position).getNb_like()); editText.setVisibility(EditText.VISIBLE);}
-        if(position == Exchanger.photos.size()-1){nextButton.setVisibility(View.INVISIBLE);}
-        if(position == 0){previousButton.setVisibility(View.INVISIBLE);}
+        if(Exchanger.photos.get(position).getNb_like() > 0)
+        {
+            petitCoeur.setVisibility(ImageButton.VISIBLE);
+            editText.setTextColor(Color.parseColor("#FFFFFF"));
+            editText.setText(""+Exchanger.photos.get(position).getNb_like());
+            editText.setVisibility(EditText.VISIBLE);
+        }
+
+        if(position == Exchanger.photos.size()-1)
+        {
+            nextButton.setVisibility(View.INVISIBLE);
+        }
+
+        if(position == 0)
+        {
+            previousButton.setVisibility(View.INVISIBLE);
+        }
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 position++;
-                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
+                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
                 imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
                 if(position == Exchanger.photos.size()-1){v.setVisibility(View.INVISIBLE);}
                 if(position > 0){previousButton.setVisibility(View.VISIBLE);}
                 if(Exchanger.photos.get(position).getNb_like() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); editText.setTextColor(Color.parseColor("#FFFFFF"));; editText.setText(""+Exchanger.photos.get(position).getNb_like()); editText.setVisibility(EditText.VISIBLE);}
-                if(Exchanger.photos.get(position).getNb_like() == 0){petitCoeur.setVisibility(ImageButton.GONE);}
+                if(Exchanger.photos.get(position).getNb_like() == 0){petitCoeur.setVisibility(ImageButton.GONE); editText.setVisibility(EditText.GONE);}
             }
         });
 
@@ -86,12 +100,12 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 position--;
-                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position), context);
+                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
                 imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
                 if(position == 0){v.setVisibility(View.INVISIBLE);}
                 if(position < Exchanger.photos.size()-1){nextButton.setVisibility(View.VISIBLE);}
                 if(Exchanger.photos.get(position).getNb_like() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); editText.setTextColor(Color.parseColor("#FFFFFF"));; editText.setText(""+Exchanger.photos.get(position).getNb_like()); editText.setVisibility(EditText.VISIBLE);}
-                if(Exchanger.photos.get(position).getNb_like() == 0){petitCoeur.setVisibility(ImageButton.GONE);}
+                if(Exchanger.photos.get(position).getNb_like() == 0){petitCoeur.setVisibility(ImageButton.GONE); editText.setVisibility(EditText.GONE);}
             }
         });
 
@@ -104,11 +118,18 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                         try {
                             int nbLike = response.getInt("nb_likes");
                             Exchanger.photos.get(position).setNb_like(nbLike);
-                            editText.setText(""+nbLike);
-                            editText.setTextColor(Color.parseColor("#FFFFFF"));
-                            petitCoeur.setVisibility(ImageButton.VISIBLE);
-                            editText.setVisibility(EditText.VISIBLE);
-                            Log.e("LIKE", " " + nbLike);
+                            if(nbLike > 0)
+                            {
+                                editText.setText(""+nbLike);
+                                editText.setTextColor(Color.parseColor("#FFFFFF"));
+                                petitCoeur.setVisibility(ImageButton.VISIBLE);
+                                editText.setVisibility(EditText.VISIBLE);
+                            }
+                            else
+                            {
+                                petitCoeur.setVisibility(ImageButton.GONE);
+                                editText.setVisibility(EditText.GONE);
+                            }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -134,7 +155,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         private final WeakReference<ImageView> weakImageView;
         private ProgressBar spinner;
 
-        public ImageLoadTask(ImageView imageView, Photo photo, Context context) {
+        public ImageLoadTask(ImageView imageView, Photo photo) {
             this.weakImageView = new WeakReference<ImageView>(imageView);
             this.photo = photo;
             this.spinner = (ProgressBar) findViewById(R.id.progressBar);
@@ -165,7 +186,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     photo.setBitmap_original(bitmap);
                 if(imageView != null)
                     spinner.setVisibility(ProgressBar.GONE);
-                    imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bitmap);
             }
         }
 

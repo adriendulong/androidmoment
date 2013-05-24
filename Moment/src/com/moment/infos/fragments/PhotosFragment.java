@@ -78,7 +78,6 @@ public class PhotosFragment extends Fragment {
             });
         } else {
             //TODO La liste des photos n'est pas vide, checker si nouvelles photos sur serveur
-            Log.e("CREATE RESUME", "Photos");
         }
     }
 
@@ -124,7 +123,6 @@ public class PhotosFragment extends Fragment {
 
         Log.d("PHOTO", "Photo création");
 
-        //On recupere le template
         detailPhoto = (RelativeLayout)inflater.inflate(R.layout.detail_photo, null);
 
         imageAdapter = new ImageAdapter(view.getContext(), Exchanger.photos);
@@ -132,14 +130,11 @@ public class PhotosFragment extends Fragment {
         gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
 
-
-        //Listener onClick sur une miniature
         gridView.setOnItemClickListener(new OnItemClickListener()
         {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id)
             {
-                //Si l'utilisateur decide d'ajouter une photo
                 if(position==0){
                     Log.d("Ajout Photo", "Ajout PHOTO");
                     Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -169,7 +164,6 @@ public class PhotosFragment extends Fragment {
             Bundle extras = data.getExtras();
 
             Bitmap mImageBitmap = (Bitmap) extras.get("data");
-            //mImageBitmap = Images.getResizedBitmap(mImageBitmap, 1500, 1500);
 
             Photo photo = new Photo();
 
@@ -185,13 +179,10 @@ public class PhotosFragment extends Fragment {
                 stream.close();
 
             } catch (FileNotFoundException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-
 
             RequestParams params = new RequestParams();
             try { params.put("photo", file); } catch (FileNotFoundException e) { e.printStackTrace(); }
@@ -202,37 +193,24 @@ public class PhotosFragment extends Fragment {
         }
     }
 
-
     public void addPhoto(Photo photo){
-        Log.d("ADD PHOTOS", "IN PHOTOS FRAG");
         Exchanger.photos.add(photo);
-        //imageAdapter.addPhoto(image);
         imageAdapter.notifyDataSetChanged();
     }
-
-
 
     /**
      * ImageAdapter
      */
 
     public class ImageAdapter extends BaseAdapter {
-        private Context mContext;
+
+        private Context context;
         private ArrayList<Photo> photos;
 
-        public ImageAdapter(Context c) {
-            mContext = c;
-            this.photos = new ArrayList<Photo>();
-        }
-
-        public ImageAdapter(Context c, ArrayList<Photo> photos) {
-            mContext = c;
+        public ImageAdapter(Context context, ArrayList<Photo> photos) {
+            this.context = context;
             this.photos = new ArrayList<Photo>();
             this.photos = photos;
-        }
-
-        public void addPhoto(Photo photo){
-            photos.add(photo);
         }
 
         @Override
@@ -255,14 +233,14 @@ public class PhotosFragment extends Fragment {
             LinearLayout layoutView;
             Resources r = Resources.getSystem();
 
-            layoutView = new LinearLayout(mContext);
+            layoutView = new LinearLayout(context);
 
             float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());
             layoutView.setLayoutParams(new GridView.LayoutParams((int)px, (int)px));
             layoutView.setBackgroundColor(Color.WHITE);
             layoutView.setPadding(10,10,10,10);
 
-            ImageView imageView = new ImageView(mContext);
+            ImageView imageView = new ImageView(context);
             float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, r.getDisplayMetrics());
 
             imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
@@ -293,17 +271,14 @@ public class PhotosFragment extends Fragment {
      * Chargement asynchrone des thumbnails
      */
 
-    public class ThumbnailLoadTask extends AsyncTask<String, Void, Bitmap> {
+    private class ThumbnailLoadTask extends AsyncTask<String, Void, Bitmap> {
 
         private final WeakReference<Photo> weakPhoto;
         private final WeakReference<ImageAdapter> weakAdapter;
 
-
-
-        public ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
+        private ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
             this.weakPhoto = new WeakReference<Photo>(photo);
             this.weakAdapter = new WeakReference<ImageAdapter>(imageAdapter);
-
         }
 
         @Override
@@ -327,7 +302,7 @@ public class PhotosFragment extends Fragment {
             }
         }
 
-        public Bitmap getBitmapFromURL(String src) {
+        private Bitmap getBitmapFromURL(String src) {
             try {
                 URL url = new URL(src);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
