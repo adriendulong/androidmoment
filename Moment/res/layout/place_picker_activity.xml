@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/bg">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="50dp"
+                  android:orientation="horizontal"
+                  android:layout_marginLeft="10dp"
+                  android:layout_marginRight="10dp"
+                  android:gravity="center_vertical"
+                  android:paddingBottom="10dp">
+        <EditText android:id="@+id/places_search"
+                  android:layout_width="0dp"
+                  android:layout_height="fill_parent"
+                  android:layout_weight="9"
+                  android:hint="Rechercher un lieu"
+                  android:textSize="16dp"/>
+        <ImageView android:layout_width="0dp"
+                   android:layout_height="wrap_content"
+                   android:layout_weight="1"
+                   android:layout_gravity="center"
+                   android:src="@drawable/picto_loupe"/>
+    </LinearLayout>
+    <ListView android:id="@+id/list_places"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:divider="@drawable/separation_point"></ListView>
+
+</LinearLayout>

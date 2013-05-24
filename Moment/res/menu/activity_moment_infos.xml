@@ -1,11 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
      <item android:id="@+id/tab_photo"
         android:icon="@drawable/picto_photo_up"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Photos"/>
     <item android:id="@+id/tab_infos"
         android:icon="@drawable/picto_info_down"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Infos"/>
      <item android:id="@+id/tab_chat"
         android:icon="@drawable/picto_chat_up"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Chat"/>
 </menu>

@@ -3,6 +3,7 @@ package com.moment.classes;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.view.View;
 
 public final class CommonUtilities {
 
@@ -69,5 +70,12 @@ public final class CommonUtilities {
     	  } else {
     	    return Character.toUpperCase(first) + s.substring(1);
     	  }
-    	} 
+    	}
+
+
+    public static void disableHardwareRendering(View v) {
+        if(android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            v.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
+    }
 }

@@ -54,14 +54,13 @@ public class InvitationActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
         
-        //On initialise la liste des user invitŽs
+        //On initialise la liste des user invitï¿½s
         invitesUser = new ArrayList<User>();
         nb_invites = (TextView)findViewById(R.id.invites_selected);
         
-        //ON recupere l'id du moment que l'on vient de crŽer
+        //ON recupere l'id du moment que l'on vient de crï¿½er
         idMoment = getIntent().getIntExtra("id", 1);
-        
-        System.out.println("Hauteur Action Bar :" + actionBar.getHeight());
+
         
         
         //Initi les fragments
@@ -79,7 +78,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
         
         
         
-        // Le page adapter qui va gerer le passage d'une page ˆ l'autre
+        // Le page adapter qui va gerer le passage d'une page ï¿½ l'autre
         mInvitationCollectionPagerAdapter =
                 new InvitationCollectionPagerAdapter(
                         getSupportFragmentManager());
@@ -245,7 +244,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 			} 
 	       
 			//On lance la progress dialog
-			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Ajout d'invitŽs");
+			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Ajout d'invitï¿½s");
 			
 	       MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
 	            @Override

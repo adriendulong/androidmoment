@@ -12,23 +12,24 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:orientation="vertical">
-    
-	    <LinearLayout 
+    android:orientation="vertical"
+    android:gravity="center">
+
+	    <LinearLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="50dp"
 	        android:orientation="horizontal"
 	        android:layout_marginTop="7dp"
 	        android:gravity="center_vertical">
-	        <RelativeLayout 
+	        <RelativeLayout
 	            android:layout_width="155dp"
 	            android:layout_height="50dp">
-	            <ImageView 
+	            <ImageView
 	                android:src="@drawable/step_box"
 	                android:layout_width="154dp"
 	                android:layout_height="48dp"
 	                android:contentDescription="separation"/>
-	            <ImageView 
+	            <ImageView
 	                android:src="@drawable/picto_geoloc"
 	                android:layout_marginTop="5dp"
 	                android:layout_marginLeft="15dp"
@@ -57,7 +58,7 @@
 							   	        android:layout_marginLeft="5dp"
 							   	        android:text="@string/string_interrogation"/>
 				</LinearLayout>
-	            
+
 	        </RelativeLayout>
 	         <TextView android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
@@ -65,52 +66,55 @@
 			            android:textSize="12dp"
 			            android:layout_marginLeft="5dp"
 			            android:textColor="@color/gris_texte"/>
-	        
-	        
+
+
 	     </LinearLayout>
-	     
-	    <EditText android:id="@+id/creation_moment_description"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:lines="3"
-	        android:hint="@string/creation_moment_description_evenement"
-	        android:textSize="14sp"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_marginTop="15dp"/>
-	    <TextView android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="16sp"
-	        android:textColor="@color/orange"
-	        android:text="LIEU"
-	        android:layout_marginLeft="25dp"
-	        android:layout_marginTop="25dp"/>
-	    <ImageView android:layout_width="fill_parent"
-	        android:layout_height="1dp"
-	        android:background="@color/orange"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_marginTop="3dp"/>
-	     <EditText android:id="@+id/creation_moment_adresse"
-	         android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:singleLine="true"
-	        android:hint="@string/creation_moment_adresse"
-	        android:textSize="14sp"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_marginTop="15dp"/>
-	      <EditText android:id="@+id/creation_moment_infos_lieu"
-	          android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:lines="3"
-	        android:hint="@string/creation_moment_infos_lieu"
-	        android:textSize="14sp"
-	        android:layout_marginLeft="20dp"
-	        android:layout_marginRight="20dp"
-	        android:layout_marginTop="15dp"/>
-	      
-	      <LinearLayout android:layout_width="fill_parent"
+
+        <Button android:id="@+id/creation_moment_adresse"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_place"
+            android:onClick="choosePlace"
+            android:text="@string/creation_moment_adresse"
+            android:textSize="18dp"
+            android:textColor="@color/gris_texte"
+            android:gravity="left|center_vertical"
+            android:paddingLeft="10dp"
+            android:layout_margin="20dp"/>
+        <EditText android:id="@+id/creation_moment_infos_lieu"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="3"
+            android:hint="@string/creation_moment_infos_lieu"
+            android:textSize="14sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"/>
+        <TextView android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left"
+            android:text="Description"
+            android:textColor="@color/orange"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="40dp"/>
+        <ImageView android:layout_width="fill_parent"
+            android:layout_height="2dp"
+            android:background="@color/orange"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"/>
+        <EditText android:id="@+id/creation_moment_description"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:lines="4"
+            android:hint="@string/creation_moment_description_evenement"
+            android:textSize="14sp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"/>
+
+        <!--
+	    <LinearLayout android:layout_width="fill_parent"
 	          android:layout_height="wrap_content"
 	          android:orientation="horizontal"
 	          android:gravity="center_vertical"
@@ -132,9 +136,9 @@
 	              android:src="@drawable/back_onoff"
 	              android:layout_weight="1"/>
 	          
-	      </LinearLayout>
+	    </LinearLayout>
 	      
-	      <LinearLayout android:layout_width="fill_parent"
+	    <LinearLayout android:layout_width="fill_parent"
 	          android:layout_height="wrap_content"
 	          android:orientation="horizontal"
 	          android:gravity="center"
@@ -157,7 +161,7 @@
 	              android:textColor="@color/gris_texte"
 	              android:text="@string/creation_moment_description_hashtag"/>
 	          
-	      </LinearLayout>
+	    </LinearLayout> -->
 	    
     </LinearLayout>
 

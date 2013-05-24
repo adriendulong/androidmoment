@@ -75,6 +75,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	public static int validateInfosLieu = 0;
 	private Uri outputFileUri;
 	private int YOUR_SELECT_PICTURE_REQUEST_CODE = 1;
+    private int PLACE_CHOOSE = 10;
 	private ProgressDialog dialog;
 	
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
@@ -242,7 +243,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     public void prepareTwo(){
     	
     	EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
-    	EditText adresseEdit = (EditText)findViewById(R.id.creation_moment_adresse);
     	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
 
     	descriptionEdit.addTextChangedListener(new TextWatcher(){
@@ -259,22 +259,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             	
             	CreationDetailsActivity.validateSecondFields();
             }
-        }); 
-    	
-    	
-    	adresseEdit.addTextChangedListener(new TextWatcher(){
-            @Override
-			public void afterTextChanged(Editable s) {}
-            @Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            @Override
-			public void onTextChanged(CharSequence s, int start, int before, int count){
-            	if(count >0) validateAdress = 1;
-            	else validateAdress = 0;
-            	
-            	CreationDetailsActivity.validateSecondFields();
-            }
-        }); 
+        });
     	
     	
     	infosLieuEdit.addTextChangedListener(new TextWatcher(){
@@ -296,7 +281,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     
     /**
      * GEre le passage � la 2eme etape
-     * @param view
      */
     
     public void downTwo() {
@@ -347,7 +331,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     
     /**
      * Gere le retour � la step 1
-     * @param v
      */
     
     public void upOne(){
@@ -367,10 +350,10 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     		this.moment.setInfoLieu(infosLieu.getText().toString());
     	}
     	
-    	EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
+    	/*EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
     	if(hashtag.getText()!=null){
     		this.moment.setHashtag(hashtag.getText().toString());
-    	}
+    	}*/
 
     }
     
@@ -565,17 +548,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     
     /**
      * Fonction appel�e quand on clique sur cr�ation d'un moment
-     * @param view
      * @throws JSONException 
      *  
      */
     
     public void creerMoment() throws JSONException {
     	EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
-    	EditText adresseEdit = (EditText)findViewById(R.id.creation_moment_adresse);
+    	Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
     	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	
-    	EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
+    	//EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
     	
     	
     	
@@ -583,9 +565,9 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	
     	Log.d("Description", descriptionEdit.getText().toString());
     	moment.setDescription(descriptionEdit.getText().toString());
-    	moment.setAdresse(adresseEdit.getText().toString());
-    	moment.setInfoLieu(infosLieuEdit.getText().toString());
-    	if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
+    	moment.setAdresse(adressButton.getText().toString());
+    	if(infosLieuEdit.getText().toString().length()>0) moment.setInfoLieu(infosLieuEdit.getText().toString());
+    	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
     
     	dialog = ProgressDialog.show(this, null, "Cr�ation en cours");
     	MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
@@ -700,6 +682,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     public void changePhoto(View view){
     	openImageIntent();
     }
+
+
+    /**
+     * Fonction qui detecte clic sur bouton Lieu et envoie vers le choix du lieu
+     */
+
+    public void choosePlace(View view) {
+        Intent intent = new Intent(this, PlacePickerActivity.class);
+        startActivityForResult(intent, PLACE_CHOOSE);
+    }
     
     
     
@@ -752,6 +744,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode, resultCode, data);
+
         if(resultCode == RESULT_OK)
         {
             if(requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE)
@@ -847,6 +841,22 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 					e.printStackTrace();
 				}
             }
+        }
+        if(requestCode == PLACE_CHOOSE){
+
+            System.out.println("PLACES RESULT PAS ENCORE REPONSE");
+
+            if(data.getExtras().containsKey("place_label")){
+                Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
+                adressButton.setText(data.getStringExtra("place_label"));
+
+                if(data.getStringExtra("place_label").length()>0){
+                    validateAdress=1;
+                    CreationDetailsActivity.validateSecondFields();
+                }
+                else CreationDetailsActivity.validateSecondFields();
+            }
+
         }
     }
    

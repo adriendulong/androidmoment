@@ -81,7 +81,7 @@ public class ChatFragment extends Fragment {
 		view = inflater.inflate(R.layout.fragment_chat, container, false);	
 		this.inflater = inflater;
 		
-		Log.d("CHAT", "Chat cr�ation");
+		Log.d("CHAT", "Chat création");
 		
 		MomentApi.get("lastchats/"+Exchanger.idMoment, null, new JsonHttpResponseHandler() {
             @Override
@@ -141,7 +141,6 @@ public class ChatFragment extends Fragment {
 	
 	/**
      * Poste le message de droite (utilisateur de l'application)
-     * @param messagePost
      */
     
     public void messageRight(Chat chat){
@@ -186,8 +185,7 @@ public class ChatFragment extends Fragment {
     
     
     /**
-     * Poste le message de gauche 
-     * @param messagePost
+     * Poste le message de gauche
      */
     
     public void messageLeft(Chat chat){

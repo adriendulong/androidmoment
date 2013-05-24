@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/back_places_cell"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="60dp"
+              android:gravity="left">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal">
+        <ImageView android:id="@+id/places_pitco"
+                   android:layout_width="wrap_content"
+                   android:layout_height="fill_parent"
+                   android:src="@drawable/picto_places"
+                   android:layout_marginRight="10dp"
+                   android:visibility="gone"/>
+        <LinearLayout android:layout_width="fill_parent"
+                      android:layout_height="60dp"
+                      android:orientation="vertical"
+                      android:layout_gravity="left|center_vertical"
+                      android:gravity="center_vertical">
+            <TextView android:id="@+id/place_main_info"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:textSize="14dp"
+                      android:textStyle="bold"
+                      android:textColor="@color/gris_texte"
+                      android:text="Test"/>
+            <LinearLayout android:orientation="horizontal"
+                          android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:paddingTop="5dp">
+                <TextView android:id="@+id/secondText_place"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textSize="12dp"
+                          android:textColor="@color/gris_texte"
+                          android:text="text"/>
+                <TextView android:id="@+id/comma_place"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textSize="12dp"
+                          android:textColor="@color/gris_texte"
+                          android:text=", "/>
+                <TextView android:id="@+id/thirdText_place"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:textSize="12dp"
+                          android:textColor="@color/gris_texte"
+                          android:text="text"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
