@@ -161,7 +161,6 @@ public class InscriptionActivity extends SherlockActivity {
 		            	try {
 							id = response.getInt("id");
 						} catch (JSONException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 		            	
@@ -192,7 +191,7 @@ public class InscriptionActivity extends SherlockActivity {
 						       				InscriptionActivity.this);
 						        
 						       			// set title
-						       			alertDialogBuilder.setTitle("Compte crŽŽ");
+						       			alertDialogBuilder.setTitle("Compte crééŽŽ");
 						        
 						       			// set dialog message
 						       			alertDialogBuilder

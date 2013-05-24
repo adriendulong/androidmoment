@@ -29,9 +29,6 @@ import java.net.URL;
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
     private int position;
-    private Context context = this;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,7 +42,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, Exchanger.photos.get(position));
         imageLoadTask.execute(Exchanger.photos.get(position).getUrl_original());
 
-
         ImageButton closeButton = (ImageButton) findViewById(R.id.close);
         closeButton.setClickable(true);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -54,7 +50,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 finish();
             }
         });
-
 
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
         final ImageButton nextButton     = (ImageButton) findViewById(R.id.next);
@@ -141,9 +136,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {
-
-    }
+    public void onClick(View v) {}
 
     /**
      * Chargement asynchrone des originaux
@@ -167,14 +160,11 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         }
 
         protected Bitmap doInBackground(String... params) {
-            Log.e("ImageLoadTask", "Attempting to load image URL:" + params[0]);
             if(photo.getBitmap_original() == null){
-                Log.e("ImageLoadTask", "Va chercher le bitmap " + params[0]);
                 final Bitmap bitmap = getBitmapFromURL(params[0]);
                 return bitmap;
             }
             else{
-                Log.e("ImageLoadTask", "On a deja l'image: " + params[0]);
                 return photo.getBitmap_original();
             }
         }

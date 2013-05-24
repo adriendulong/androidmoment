@@ -77,7 +77,6 @@
     <string name="infos_moment_invites">invités</string>
 
     <!-- Detail Photo -->
-
     <string name="fl_detail_par">\P</string>
     <string name="detail_par">\AR</string>
     <string name="title_activity_detail_photo">DetailPhoto</string>

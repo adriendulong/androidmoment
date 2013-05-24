@@ -60,8 +60,7 @@ public class Images {
 
 	    return output;
 	    }
-	
-	
+
 	public static boolean saveImageToInternalStorage(Bitmap image, Context context, String filename, int compression) {
 
 		try {
@@ -96,9 +95,7 @@ public class Images {
 		return image;
 	
 	}
-	
-	
-	
+
 	public static Bitmap resizeBitmap(Bitmap bitmap, int maxSize){
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
