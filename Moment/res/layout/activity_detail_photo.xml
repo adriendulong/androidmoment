@@ -60,7 +60,7 @@
                 android:layout_marginLeft="10dp"
                 android:textSize="10sp"/>
         </LinearLayout>
-        
+
     </LinearLayout>
     <ImageButton android:id="@+id/close"
         	android:layout_width="wrap_content"
@@ -127,7 +127,8 @@
             android:layout_height="wrap_content"
             android:src="@drawable/coeur"
             android:background="@drawable/coeur"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:id="@+id/coeur"/>
         </RelativeLayout>
     </LinearLayout>
     <ImageView android:id="@id/cadre_photo"
@@ -160,4 +161,40 @@
         android:layout_centerVertical="true"
         android:layout_toRightOf="@id/cadre_photo"
         android:layout_marginLeft="-30dp"/>
+
+    <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/petit_coeur"
+            android:src="@drawable/petit_coeur"
+            android:background="@drawable/petit_coeur"
+            android:layout_alignTop="@+id/top_photo"
+            android:layout_alignRight="@+id/top_photo"
+            android:layout_marginRight="10dp"
+            android:layout_alignParentEnd="false"
+            android:layout_marginTop="-5dp"
+            android:visibility="invisible"/>
+
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:layout_alignBottom="@+id/petit_coeur"
+            android:layout_toLeftOf="@+id/petit_coeur"
+            android:visibility="visible"
+            android:editable="false"
+            android:clickable="false"
+            android:background="@null"
+            android:layout_marginBottom="2dp"
+            android:layout_alignParentStart="false"/>
+
+    <ProgressBar
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:visibility="invisible"/>
+
 </RelativeLayout>

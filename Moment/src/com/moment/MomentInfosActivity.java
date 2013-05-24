@@ -115,9 +115,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
    		pager.setAdapter(this.mPagerAdapter);
-   		
-   		
-   		
+
+
+
 
    		pager.setCurrentItem(position, false);
         
@@ -172,11 +172,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 				
 			}
 		});
-        
-        
-        
-        
-       
+
+
+
+
+
     }
 
     
@@ -190,8 +190,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 		return true;
 	}
     
-    
-    
+
+
     
     
 /**
@@ -203,7 +203,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
  public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
 
-    	protected final String[] CONTENT = new String[] { "PHOTOS","INFOS" , "CHAT"};
+    	protected final String[] CONTENT = new String[] {"PHOTOS","INFOS","CHAT"};
 
     	public MyPagerAdapter(FragmentManager fm) {
     		super(fm);
@@ -237,7 +237,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
              return true;
          case R.id.tab_infos:
          	pager.setCurrentItem(1);
-         	
          	break;
          
          case R.id.tab_photo:
@@ -254,9 +253,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
  }
 
 
-    
-    
-    
     /**
      * Recupere l'evenement lorsque l'on clique sur "envoyer" dans le chat
      * @param view

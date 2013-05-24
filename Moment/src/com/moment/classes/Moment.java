@@ -149,7 +149,6 @@ public class Moment implements Parcelable {
 	}
 	
 
-
 	public User getOwner() {
 		return owner;
 	}
@@ -209,7 +208,10 @@ public class Moment implements Parcelable {
 	public void setPhotos(ArrayList<Photo> photos) {
 		this.photos = photos;	
 	}
-	
+
+	public void addPhoto(Photo photo){
+        this.photos.add(photo);
+    }
 	
 	/**
 	 * On ajoute un chat ��� la liste
@@ -300,7 +302,6 @@ public class Moment implements Parcelable {
 			try {
 				momentPrams.put("photo", image);
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -319,7 +320,6 @@ public class Moment implements Parcelable {
 	 */
 	
 	public void updateInfos(Moment tempMoment){
-		
 
 		if(!name.equals(tempMoment.getName())) name = tempMoment.getName();
 		if(!adresse.equals(tempMoment.getAdresse())) adresse = tempMoment.getAdresse();
@@ -331,8 +331,7 @@ public class Moment implements Parcelable {
 		if(guests_not_coming!=tempMoment.getGuestsNotComing()) guests_not_coming = tempMoment.getGuestsNotComing();
 		if((tempMoment.getHashtag()!=null)&&(!hashtag.equals(tempMoment.getHashtag()))) hashtag = tempMoment.getHashtag();
 		if(state!=tempMoment.getState()) state = tempMoment.getState();
-		
-		
+
 	}
 	
 	

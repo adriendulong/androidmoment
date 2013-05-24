@@ -103,20 +103,20 @@ public class Images {
 		int width = bitmap.getWidth();
 		int height = bitmap.getHeight();
 		float ratio;
-		
-		
+
+
 		if(width > height){
 			ratio = Math.abs((float)width / (float)maxSize);
 		}
 		else {
 			ratio = Math.abs((float)height / (float)maxSize);
 		}
-		
+
 		int finalWidth = Math.round(width/ratio);
 		int finalHeight = Math.round(height/ratio);
-		
-		return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false); 
-		
+
+		return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false);
+
 	}
 	
 	
