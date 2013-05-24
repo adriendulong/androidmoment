@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+import android.widget.ImageButton;
+import com.moment.classes.CommonUtilities;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -57,6 +59,8 @@ public class CreationActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_creation);
+
+        CommonUtilities.disableHardwareRendering(getWindow().getDecorView());
         
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -74,9 +78,9 @@ public class CreationActivity extends SherlockActivity {
         
         //On recupere les elements dont on veut changer la police
         Button fb =(Button)findViewById(R.id.button_facebook);
-        fb.setTypeface(fontNumans);
+        /*fb.setTypeface(fontNumans);
         TextView Tfb =(TextView)findViewById(R.id.text_creation_moment);
-        Tfb.setTypeface(fontNumans);
+        Tfb.setTypeface(fontNumans);*/
         
     }
 
@@ -99,7 +103,7 @@ public class CreationActivity extends SherlockActivity {
     
     /**
      * Fonction appeler lorsqu'on appuie sur le bouton Facebook
-     * On recupere alors les évènements FB que l'utilisateurs a créé
+     * On recupere alors les ÔøΩvÔøΩnements FB que l'utilisateurs a crÔøΩÔøΩ
      * @param view
      */
     
@@ -116,7 +120,7 @@ public class CreationActivity extends SherlockActivity {
     
 
    /**
-    * Class utilise lorsque l'utilisateur se connecte à Facebook
+    * Class utilise lorsque l'utilisateur se connecte ÔøΩ Facebook
     * @author adriendulong
     *
     */
@@ -169,11 +173,11 @@ public class CreationActivity extends SherlockActivity {
      
     			}
      
-    			//Lorsque l'on a les evenements on les affiche dans une nouvelle activité
+    			//Lorsque l'on a les evenements on les affiche dans une nouvelle activitÔøΩ
     			CreationActivity.this.runOnUiThread(new Runnable() {
     				@Override
 					public void run() {
-    					//Creer et demarrer l'activité de choix des evenemts
+    					//Creer et demarrer l'activitÔøΩ de choix des evenemts
     		    	    Intent intent = new Intent(CreationActivity.this, FacebookEventsActivity.class);
     		    	    
     		    	   
@@ -218,8 +222,8 @@ public class CreationActivity extends SherlockActivity {
     
     
     /**
-     * L'utilisateur valide le nom du moment qu'il a créé
-     * Si un nom est bien rentré on passe à la création du moment
+     * L'utilisateur valide le nom du moment qu'il a crÔøΩÔøΩ
+     * Si un nom est bien rentrÔøΩ on passe ÔøΩ la crÔøΩation du moment
      * @param view
      */
     
@@ -229,20 +233,20 @@ public class CreationActivity extends SherlockActivity {
         EditText nomMoment = (EditText)findViewById(R.id.edit_nom_moment);
         
         
-        //On verifie qu'un nom a été rentré
+        //On verifie qu'un nom a ÔøΩtÔøΩ rentrÔøΩ
         if(!nomMoment.getText().toString().matches("")){
         	Log.d("edit", nomMoment.getText().toString());
         	
         	Bundle bundle = new Bundle();  
     	    bundle.putString("nomMoment", nomMoment.getText().toString());
         	
-        	//Creer et demarrer l'activité de création d'un moment
+        	//Creer et demarrer l'activitÔøΩ de crÔøΩation d'un moment
     	    Intent intent = new Intent(CreationActivity.this, CreationDetailsActivity.class);
     	    intent.putExtras(bundle);
     	    startActivity(intent);
         }
         else{
-        	//On previent l'utilisateur qu'il doit rentrer un nom afin de continuer la création
+        	//On previent l'utilisateur qu'il doit rentrer un nom afin de continuer la crÔøΩation
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
         	builder.setMessage(R.string.alert_nom_creation_moment)
         	       .setCancelable(false)

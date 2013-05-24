@@ -1,5 +1,6 @@
 package com.moment.infos.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -51,20 +53,20 @@ public class CreationStep2Fragment extends Fragment {
 		}
 		
 		if(this.moment.getInfoLieu()!=null){
-			EditText infosLieu = (EditText)view.findViewById(R.id.creation_moment_infos_lieu);
+			Button infosLieu = (Button)view.findViewById(R.id.creation_moment_infos_lieu);
 			infosLieu.setText(this.moment.getInfoLieu());
 		}
 		
-		if(this.moment.getHashtag()!=null){
+		/*if(this.moment.getHashtag()!=null){
 			EditText hashtag = (EditText)view.findViewById(R.id.creation_moment_hashtag);
 			hashtag.setText(this.moment.getHashtag());
-		}
+		}*/
 		
 		
 		
 		//On prepare le listening de tous les champs oibligatoires
 		EditText descriptionEdit = (EditText)view.findViewById(R.id.creation_moment_description);
-    	EditText adresseEdit = (EditText)view.findViewById(R.id.creation_moment_adresse);
+    	//EditText adresseEdit = (EditText)view.findViewById(R.id.creation_moment_adresse);
     	EditText infosLieuEdit = (EditText)view.findViewById(R.id.creation_moment_infos_lieu);
 
     	descriptionEdit.addTextChangedListener(new TextWatcher(){
@@ -83,7 +85,7 @@ public class CreationStep2Fragment extends Fragment {
             }
         }); 
     	
-    	
+    	/*
     	adresseEdit.addTextChangedListener(new TextWatcher(){
             @Override
 			public void afterTextChanged(Editable s) {}
@@ -96,9 +98,9 @@ public class CreationStep2Fragment extends Fragment {
             	
             	CreationDetailsActivity.validateSecondFields();
             }
-        }); 
+        }); */
     	
-    	
+
     	infosLieuEdit.addTextChangedListener(new TextWatcher(){
             @Override
 			public void afterTextChanged(Editable s) {}
@@ -111,7 +113,7 @@ public class CreationStep2Fragment extends Fragment {
             	
             	CreationDetailsActivity.validateSecondFields();
             }
-        }); 
+        });
 		
 		
 		return view;
@@ -121,7 +123,7 @@ public class CreationStep2Fragment extends Fragment {
 	
 	
 	/**
-	 * Fonction qui permet de recupŽrer la date de dŽbut stocker dans le text view
+	 * Fonction qui permet de recupï¿½rer la date de dï¿½but stocker dans le text view
 	 * @return dateDebut
 	 */
 	

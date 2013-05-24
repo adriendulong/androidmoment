@@ -294,6 +294,8 @@ public class Moment implements Parcelable {
 		momentPrams.put("endDate", ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH));
 		
 		if (this.description != null) momentPrams.put("description", this.description);
+        if (this.infoLieu != null) momentPrams.put("placeInformations", this.infoLieu);
+        if (this.hashtag != null) momentPrams.put("hashtag", this.hashtag);
 		
 		if(this.keyBitmap!=null){
 			File image = context.getFileStreamPath("cover_picture");
@@ -374,14 +376,15 @@ public class Moment implements Parcelable {
     	    @Override
     	    public void onSuccess(byte[] fileData) {
     	        
-    	    	
-    	    	InputStream is = new ByteArrayInputStream(fileData);
-    	    	Bitmap bmp = BitmapFactory.decodeStream(is);
-    	    	AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+name.toLowerCase(), bmp);
-    	    	keyBitmap = "cover_moment_"+name.toLowerCase();
-    	    	
-    	    	if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
-    	    	else targetView.setImageBitmap(bmp);
+    	    	if(fileData!=null){
+                    InputStream is = new ByteArrayInputStream(fileData);
+                    Bitmap bmp = BitmapFactory.decodeStream(is);
+                    AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+name.toLowerCase(), bmp);
+                    keyBitmap = "cover_moment_"+name.toLowerCase();
+
+                    if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
+                    else targetView.setImageBitmap(bmp);
+                }
     	    }
     	    
     	    @Override

@@ -21,36 +21,37 @@
         <RelativeLayout android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
-            
             <ImageView android:id="@+id/creation_moment_image"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:src="@drawable/photoevent"
                 android:scaleType="centerCrop"/>
+            <Button android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:textSize="16sp"
+                android:layout_centerHorizontal="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="10dp"
+               	android:background="@drawable/change_cover"
+                android:src="@drawable/change_cover"
+                android:text="@string/creation_moment_change_image"
+                android:textColor="@color/orange"
+                android:onClick="changePhoto"/>
+            <ImageView android:layout_width="fill_parent"
+                android:layout_height="35dp"
+                android:background="@color/black_detail_photo_trans"/>
             <TextView android:id="@+id/creation_moment_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="20sp"
-                android:textColor="@color/gris_texte"
+                android:textSize="16sp"
+                android:textColor="@color/white"
                 android:layout_alignParentLeft="true"
                 android:layout_marginLeft="15dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="10dp"
-                style="@style/ShadowOnText"
-                android:text="TEST"/>
-            <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="18sp"
-                android:textColor="@color/gris_texte"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="15dp"
                 android:layout_alignParentTop="true"
                 android:layout_marginTop="10dp"
-               	style="@style/ShadowOnText"
-               	android:background="@null"
-                android:text="@string/creation_moment_change_image"
-                android:onClick="changePhoto"/>
-            
+                style="@style/ShadowOnText"
+                android:text="TEST"/>
         </RelativeLayout>
         
         <LinearLayout android:layout_width="fill_parent"

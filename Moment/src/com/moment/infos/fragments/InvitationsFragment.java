@@ -119,7 +119,7 @@ public class InvitationsFragment extends Fragment {
 	
 	
 	/**
-	 * Recupere tous les contacts et en créé des users
+	 * Recupere tous les contacts et en crÔøΩÔøΩ des users
 	 */
 	
 
@@ -175,7 +175,7 @@ public class InvitationsFragment extends Fragment {
                     //Il a des telephones
                     
                     
-                    //On rajoute le user à la liste
+                    //On rajoute le user ÔøΩ la liste
                     users.add(user);
                 	
                 }
@@ -235,7 +235,7 @@ public class InvitationsFragment extends Fragment {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			Toast.makeText(getActivity().getApplicationContext(), "Début du traitement asynchrone", Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getApplicationContext(), "DÔøΩbut du traitement asynchrone", Toast.LENGTH_LONG).show();
 			dialog = ProgressDialog.show(getActivity(), null, "Chargements des contacts");
 			
 		}
@@ -243,7 +243,7 @@ public class InvitationsFragment extends Fragment {
 		@Override
 		protected void onProgressUpdate(Integer... values){
 			super.onProgressUpdate(values);
-			// Mise à jour de la ProgressBar
+			// Mise ÔøΩ jour de la ProgressBar
 			
 		}
 
@@ -260,7 +260,7 @@ public class InvitationsFragment extends Fragment {
 		protected void onPostExecute(Void result) {
 			InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
-			Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est terminé", Toast.LENGTH_LONG).show();
+			Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est terminÔøΩ", Toast.LENGTH_LONG).show();
 			dialog.dismiss();
 		}
 	}
@@ -288,7 +288,7 @@ public class InvitationsFragment extends Fragment {
 		@Override
 		protected void onProgressUpdate(Integer... values){
 			super.onProgressUpdate(values);
-			// Mise à jour de la ProgressBar
+			// Mise ÔøΩ jour de la ProgressBar
 			
 		}
 
@@ -366,7 +366,6 @@ public class InvitationsFragment extends Fragment {
 	
 	/**
 	 * Lorsqu'on arrive dans facebook onglet
-	 * @param view
 	 */
 	
 	public void facebook() {
@@ -381,7 +380,7 @@ public class InvitationsFragment extends Fragment {
 	    }
 	
 	/**
-	    * Class utilisé lrsque l'utilisateur se connecte à Facebook 
+	    * Class utilisÔøΩ lrsque l'utilisateur se connecte ÔøΩ Facebook 
 	    * @author adriendulong
 	    *
 	    */
@@ -420,7 +419,7 @@ public class InvitationsFragment extends Fragment {
 	 */
 	
 	/**
-     * Class utilisée lorsque l'on recupere les évènements FB de l'utilisateur
+     * Class utilisÔøΩe lorsque l'on recupere les ÔøΩvÔøΩnements FB de l'utilisateur
      * @author adriendulong
      *
      */
@@ -453,7 +452,7 @@ public class InvitationsFragment extends Fragment {
 	     
     			
      
-    			//Lorsque l'on a les evenements on les affiche dans une nouvelle activité
+    			//Lorsque l'on a les evenements on les affiche dans une nouvelle activitÔøΩ
     			getActivity().runOnUiThread(new Runnable() {
     				@Override
 					public void run() {

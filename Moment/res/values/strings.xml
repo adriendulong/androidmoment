@@ -99,12 +99,12 @@
 
     <!-- Création Moment Step 1 -->
     <string name="creation_moment_step_1">ETAPE 1/2</string>
-    <string name="creation_moment_change_image">Changer l\'image ></string>
+    <string name="creation_moment_change_image">Changer la cover</string>
 
     <!-- Création Moment Step 2 -->
     <string name="creation_moment_step_2">ETAPE 2/2</string>
     <string name="creation_moment_description_evenement">Description de l\'évènement</string>
-    <string name="creation_moment_adresse">Adresse</string>
+    <string name="creation_moment_adresse">Lieu</string>
     <string name="creation_moment_infos_lieu">Infos lieu</string>
     <string name="creation_moment_description_hashtag">Toutes les photos ajoutées sur ces plateformes avec ce #HASHTAG seront automatiquement récupérées.</string>
 
@@ -117,4 +117,10 @@
     
     <!-- Facebook App Id -->
 	<string name="app_id">445031162214877</string>
+
+
+    <!-- Ecran de recherche de lieu -->
+    <string name="custome_loc">Votre localisation</string>
+
+
 </resources>

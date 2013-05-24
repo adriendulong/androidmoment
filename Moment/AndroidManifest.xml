@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.moment"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="2"
+    android:versionName="0.02" >
 
     <uses-feature android:name="android.hardware.camera" />
     
@@ -136,9 +136,13 @@
             android:label="@string/title_activity_invitation" >
         </activity>
         <activity
-            android:name="com.moment.InvitationsFragment"
-            android:label="@string/title_activity_invitations_fragment" >
-        </activity>
+            android:name=".PlacePickerActivity"
+            android:label="PlacePickerActivity">
+                <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.moment.CreationDetailsActivity" />
+            </activity>
+
         <meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
         <meta-data
 		    android:name="com.google.android.maps.v2.API_KEY"
