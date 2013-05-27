@@ -1,7 +1,12 @@
 package com.moment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -52,25 +57,25 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	private GoogleMap mMap;
 	
 	ArrayList<Fragment> fragments;
+
+    private Uri outputFileUri;
+    private String path;
+    Bitmap bitmap = null;
 	
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         super.setContentView(R.layout.activity_moment_infos);
-        // setup action bar for tabs
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        
-        //On regarde de ou l'on vient
+
         String precedente = getIntent().getStringExtra("precedente");        
-        //if(precedente.equals("creation")) 
-        
-        
-        //Si on vient de la timeline on recupere la position � laquelle on doit se mettre
+
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1); 
         int idMoment = getIntent().getIntExtra("id", 1);
         System.out.println(idMoment);
@@ -78,16 +83,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         System.out.println(moments.size());
         Exchanger.moment = AppMoment.getInstance().user.getMoment(idMoment);
         Exchanger.idMoment = idMoment;
-        
-        
-        
-        
-        //Dans tous les cas on recupere le moment que l'on doit afficher
-        //Exchanger.moment = extras.getParcelable("moment");
-        
-        
-        
-        
+
         if (moment==null) Log.d("NULL", "NULL");
         else{
         	Log.d("Description", ""+Exchanger.moment.getDescription());
@@ -95,44 +91,27 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         	Log.d("Date Debut", ""+Exchanger.moment.getDateDebut().toString());	
         }
 
-        
-        
-        
-        // Cr�ation de la liste de Fragments que fera d�filer le PagerAdapter
         fragments = new ArrayList<Fragment>();
 
      	Bundle args = new Bundle();
         args.putParcelable("moment", moment);
-     	// Ajout des Fragments dans la liste
+
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
      	fragments.add(Fragment.instantiate(this,InfosFragment.class.getName(), args));
    		fragments.add(Fragment.instantiate(this,ChatFragment.class.getName(), args));
-   		
-   		
-   		
-   		// Cr�ation de l'adapter qui s'occupera de l'affichage de la liste de
-   		// Fragments
+
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
    		pager.setAdapter(this.mPagerAdapter);
 
-
-
-
    		pager.setCurrentItem(position, false);
-        
-   		
-        //Inflater 
+
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        
-        //Exchanger.mMapView = new MapView(this, "0SvfMFBiO0svOHR50Ed3noqFcTqNJVgTlgYR1vQ");
-        
-        
+
         this.pager.setOnPageChangeListener(new OnPageChangeListener() {
 			
 			@Override
 			public void onPageSelected(int arg0) {
-				// TODO Auto-generated method stub
 				System.out.println("Page SELECTIONNE :" + arg0);
 				//Contacts
 				if(arg0 == 1){
@@ -157,30 +136,19 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	            	myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
 	            	myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_down);
 				}
-				
 			}
 			
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
 			}
 		});
-
-
-
-
-
     }
 
-    
-    
+
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -189,11 +157,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 		getSupportMenuInflater().inflate(R.menu.activity_moment_infos, menu);
 		return true;
 	}
-    
 
-
-    
-    
 /**
  * FragmentPagerAdapter
  * @author adriendulong

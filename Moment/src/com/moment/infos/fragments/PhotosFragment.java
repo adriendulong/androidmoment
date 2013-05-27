@@ -1,7 +1,9 @@
 package com.moment.infos.fragments;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -21,11 +24,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.DetailPhoto;
 import com.moment.MomentInfosActivity.Exchanger;
 import com.moment.R;
+import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.classes.Photo;
 import org.json.JSONArray;
@@ -42,12 +47,21 @@ import java.util.Date;
 
 public class PhotosFragment extends Fragment {
 
-    static final int PICK_CAMERA_PHOTOS = 0;
+    static final int PICK_CAMERA_PHOTOS = 1;
+    //static final int PICK_FROM_FILE = 1;
     private LayoutInflater layoutInflater;
     private RelativeLayout detailPhoto;
     private GridView gridView;
     private ImageAdapter imageAdapter;
+
     private String albumName = "Moment";
+    private Uri outputFileUri;
+    private String path;
+
+    Bitmap bitmap = null;
+    NotificationManager notificationManager;
+    NotificationCompat.Builder mBuilder;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -121,8 +135,6 @@ public class PhotosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
 
-        Log.d("PHOTO", "Photo création");
-
         detailPhoto = (RelativeLayout)inflater.inflate(R.layout.detail_photo, null);
 
         imageAdapter = new ImageAdapter(view.getContext(), Exchanger.photos);
@@ -136,17 +148,20 @@ public class PhotosFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View v, int position, long id)
             {
                 if(position==0){
-                    Log.d("Ajout Photo", "Ajout PHOTO");
-                    Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    File file = new File(Environment.getExternalStorageDirectory(), "tmp_"
+                            + String.valueOf(System.currentTimeMillis())
+                            +".jpg");
+                    outputFileUri = Uri.fromFile(file);
 
                     try {
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(createImageFile()));
-                    } catch (IOException e) {e.printStackTrace();}
-
-
-                    startActivityForResult(takePictureIntent, PICK_CAMERA_PHOTOS);
-                }
-                else{
+                        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+                        intent.putExtra("return-data", true);
+                        startActivityForResult(intent, PICK_CAMERA_PHOTOS);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
                     intent.putExtra("position", (position-1));
                     startActivity(intent);
@@ -157,40 +172,9 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode,Intent data) {
-
-        if (requestCode == PICK_CAMERA_PHOTOS) {
-
-            Bundle extras = data.getExtras();
-
-            Bitmap mImageBitmap = (Bitmap) extras.get("data");
-
-            Photo photo = new Photo();
-
-            String filePath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Pictures/Moment";
-            File dir = new File(filePath);
-            if(!dir.exists())
-                dir.mkdirs();
-            File file = new File(dir, "moment" + photo.getId() + ".jpg");
-            try {
-                FileOutputStream stream = new FileOutputStream(file);
-                mImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                stream.flush();
-                stream.close();
-
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            RequestParams params = new RequestParams();
-            try { params.put("photo", file); } catch (FileNotFoundException e) { e.printStackTrace(); }
-
-            MomentApi.post("addphoto/" + Exchanger.moment.getId(), params, new JsonHttpResponseHandler() {});
-            photo.setBitmap_thumbnail(mImageBitmap);
-            addPhoto(photo);
-        }
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        UploadTask uploadTask = new UploadTask();
+        uploadTask.execute();
     }
 
     public void addPhoto(Photo photo){
@@ -315,6 +299,59 @@ public class PhotosFragment extends Fragment {
                 e.printStackTrace();
                 return null;
             }
+        }
+    }
+
+    private class UploadTask extends AsyncTask<Void, Void, Bitmap>
+    {
+        @Override
+        public void onPreExecute(){
+            Log.e("PreExec","");
+            notificationManager = (NotificationManager) getActivity().getSystemService(getActivity().NOTIFICATION_SERVICE);
+            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getActivity());
+            mBuilder.setContentTitle("Picture upload")
+                    .setContentText("Gooooo")
+                    .setSmallIcon(R.drawable.petit_coeur)
+                    .setProgress(0, 0, true);
+
+            notificationManager.notify(0, mBuilder.build());
+
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+
+            File file = new File(outputFileUri.getPath());
+            bitmap = BitmapFactory.decodeFile(file.getPath());
+
+
+            try {
+                FileOutputStream stream = new FileOutputStream(file);
+                Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
+                bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                stream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            RequestParams requestParams = new RequestParams();
+            try {
+                requestParams.put("photo",file);
+            } catch (Exception e) { e.printStackTrace(); }
+
+            MomentApi.post("addphoto/" + Exchanger.moment.getId(), requestParams, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Log.e("GOO", ""+response.toString());
+                }
+
+                @Override
+                public void onFailure(Throwable e,JSONObject response){
+                    Log.e("DOWN",""+response.toString());
+                }
+
+            });
+            return null;
         }
     }
 
