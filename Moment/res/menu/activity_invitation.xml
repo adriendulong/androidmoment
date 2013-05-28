@@ -1,11 +1,14 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
      <item android:id="@+id/invitation_facebook"
         android:icon="@drawable/picto_fbup"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Facebook"/>
     <item android:id="@+id/invitation_contacts"
         android:icon="@drawable/picto_phonedown"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Contacts"/>
      <item android:id="@+id/invitation_favoris"
         android:icon="@drawable/picto_starup"
-         android:showAsAction="ifRoom"/>
+         android:showAsAction="ifRoom"
+         android:title="Favoris"/>
 </menu>

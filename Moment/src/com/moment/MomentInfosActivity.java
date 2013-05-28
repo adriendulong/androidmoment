@@ -1,6 +1,7 @@
 package com.moment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,8 +37,12 @@ import java.util.Date;
 
 public class MomentInfosActivity extends SherlockFragmentActivity {
 
+    //Request codes
 	static final int PICK_CAMERA_COVER = 1;
 	static final int PICK_CAMERA_PHOTOS = 2;
+    static final int NEW_INVIT = 3;
+    static final int LIST_INVIT = 4;
+
 	
 	LayoutInflater inflater;
 	Boolean stateAcceptVolet = false;
@@ -71,21 +76,16 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         
         
         //Si on vient de la timeline on recupere la position � laquelle on doit se mettre
-        if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1); 
+        if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
+
+        //We get the moment id
         int idMoment = getIntent().getIntExtra("id", 1);
-        System.out.println(idMoment);
-        ArrayList<Moment> moments = AppMoment.getInstance().user.getMoments();
-        System.out.println(moments.size());
+
+        //We get the moment thans to its id
         Exchanger.moment = AppMoment.getInstance().user.getMoment(idMoment);
         Exchanger.idMoment = idMoment;
         
-        
-        
-        
-        //Dans tous les cas on recupere le moment que l'on doit afficher
-        //Exchanger.moment = extras.getParcelable("moment");
-        
-        
+
         
         
         if (moment==null) Log.d("NULL", "NULL");
@@ -135,28 +135,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 				// TODO Auto-generated method stub
 				System.out.println("Page SELECTIONNE :" + arg0);
 				//Contacts
-				if(arg0 == 1){
-					System.out.println("INFOS");
-	            	myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
-	            	myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_down);
-	            	myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
-				}
-				//Facebook
-				else if (arg0 == 0){
-					System.out.println("PHOTOS");
-	            	myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_down);
-	            	myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
-	            	myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
-	            	
-	            	
-				}
-				//Favoris
-				else{
-					System.out.println("CHATS");
-	            	myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
-	            	myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
-	            	myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_down);
-				}
+                updateMenuItem(arg0);
 				
 			}
 			
@@ -174,21 +153,34 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 		});
 
 
-
+        //If we come from the creation, we directly launch the invit screen
+        if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
 
     }
 
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        super.onRestoreInstanceState(savedInstanceState);
+    }
     
     
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		myMenu = menu;
-		
 		getSupportMenuInflater().inflate(R.menu.activity_moment_infos, menu);
+        updateMenuItem(position);
 		return true;
 	}
+
+
     
 
 
@@ -253,6 +245,20 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
  }
 
 
+    ////////////////////
+    ///// LISTENERS DU FRAGMENT INFOS
+    ///////////////////////////
+
+
+    public void listInvit(View view){
+        callInvit(NEW_INVIT);
+    }
+
+
+    ////////////////////
+    ///// LISTENERS DU FRAGMENT CHAT
+    ///////////////////////////
+
     /**
      * Recupere l'evenement lorsque l'on clique sur "envoyer" dans le chat
      * @param view
@@ -299,7 +305,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     
     /**
      * Poste le message de droite (utilisateur de l'application)
-     * @param messagePost
      */
     
     public void messageRight(Chat chat){
@@ -344,7 +349,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     
     /**
      * Poste le message de gauche 
-     * @param messagePost
      */
     
     public void messageLeft(Chat chat){
@@ -465,6 +469,75 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	    	InfosFragment infosFragment = (InfosFragment)fragments.get(1);
             infosFragment.touchedPhoto();
 	    }
+
+
+    /**
+     * Fonciton which modify the menu item in the top bar depending on the position
+     * @param position
+     */
+
+    public void updateMenuItem(int position){
+
+        if(position == 1){
+            System.out.println("INFOS");
+            myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
+            myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_down);
+            myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
+        }
+        //Facebook
+        else if (position == 0){
+            System.out.println("PHOTOS");
+            myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_down);
+            myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
+            myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
+
+
+        }
+        //Favoris
+        else{
+            System.out.println("CHATS");
+            myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
+            myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
+            myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_down);
+        }
+
+    }
+
+    /**
+     * This function start the right activity depending on the request code
+     * @param request_code
+     */
+
+
+    public void callInvit(int request_code){
+        Intent intent;
+
+        if(request_code==NEW_INVIT){
+            intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
+            intent.putExtra("id", Exchanger.moment.getId());
+            startActivityForResult(intent, request_code);
+        }
+        else if (request_code==LIST_INVIT){
+            intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
+            intent.putExtra("id", Exchanger.moment.getId());
+            startActivityForResult(intent, request_code);
+        }
+
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode==NEW_INVIT){
+            Log.d("FIN ACTIVITY", "NEW INVIT");
+        }
+        else if(requestCode==LIST_INVIT){
+            Log.d("FIN ACTIVITY", "LIST");
+        }
+    }
    
     
     

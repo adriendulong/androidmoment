@@ -91,7 +91,7 @@
     </RelativeLayout>
     <ImageView android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/pointilles"/>
+        android:background="@drawable/separation_point"/>
     
     <android.support.v4.view.ViewPager
 	    android:id="@+id/pager"

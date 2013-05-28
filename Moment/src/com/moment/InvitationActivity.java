@@ -59,7 +59,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
         nb_invites = (TextView)findViewById(R.id.invites_selected);
         
         //ON recupere l'id du moment que l'on vient de cr�er
-        idMoment = getIntent().getIntExtra("id", 1);
+        idMoment = getIntent().getIntExtra("id", -1);
 
         
         
@@ -157,8 +157,9 @@ public class InvitationActivity extends SherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+                //NavUtils.navigateUpFromSameTask(this);
+                finish();
+                break;
             case R.id.invitation_contacts:
             	mViewPager.setCurrentItem(1);
             	
@@ -224,6 +225,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	//On envoit l'invitation au serveur pour tout ces users
 	
 	public void invite(View view) throws JSONException{
+
 		
 	       JSONArray users = new JSONArray();
 	       for(int i=0;i<invitesUser.size();i++){
@@ -249,41 +251,18 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	       MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
 	            @Override
 	            public void onSuccess(String response) {
-		               System.out.println(response);
-		               
-		               
-		               
-		               
-		       		
-		       		
-		       		
-		       		MomentApi.get("moment/"+idMoment, null, new JsonHttpResponseHandler() {
-		                   @Override
-		                   public void onSuccess(JSONObject response) {
-		                   	
-		                   	System.out.println("OK");
-		                   	try {
-		                   		Moment tempMoment = new Moment();
-		                   		tempMoment.setMomentFromJson(response);
-		                   		
-		                   		//On recupere notre moment pour l'updater avec le tempMoment
-		                   		AppMoment.getInstance().user.getMoment(idMoment).updateInfos(tempMoment);
+		            System.out.println(response);
+                    dialog.dismiss();
 
-		       	
-		                   		dialog.dismiss();
-		                   		
-		                   		Intent intent = new Intent(InvitationActivity.this, MomentInfosActivity.class);
-		 		               intent.putExtra("precedente", "creation");
-		 		               intent.putExtra("id", idMoment);
-		 		               startActivity(intent);
-		       				} catch (JSONException e) {
-		       					// TODO Auto-generated catch block
-		       					e.printStackTrace();
-		       				}
-		                   }
-		               });
+                    finish();
 		               
 	            }
+
+               public void onFailure(Throwable error, String content) {
+                   // By default, call the deprecated onFailure(Throwable) for compatibility
+                   System.out.println(content);
+                   dialog.dismiss();
+               }
 	        });
 		
 		

@@ -8,6 +8,6 @@
     <ListView android:id="@+id/list_view_contacts"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:divider="@drawable/pointilles"></ListView>
+        android:divider="@drawable/separation_point"></ListView>
 
 </RelativeLayout>

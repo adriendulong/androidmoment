@@ -77,6 +77,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	private Uri outputFileUri;
 	private int YOUR_SELECT_PICTURE_REQUEST_CODE = 1;
     private int PLACE_CHOOSE = 10;
+    private int POP_UP_CREA = 11;
 	private ProgressDialog dialog;
 	
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
@@ -585,14 +586,13 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
     
     public void creerMoment() throws JSONException {
+
+
+
     	EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
     	Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
     	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
-    	
     	//EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
-    	
-    	
-    	
     	
     	
     	Log.d("Description", descriptionEdit.getText().toString());
@@ -601,27 +601,21 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	if(infosLieuEdit.getText().toString().length()>0) moment.setInfoLieu(infosLieuEdit.getText().toString());
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
     
-    	dialog = ProgressDialog.show(this, null, "Cr�ation en cours");
+    	dialog = ProgressDialog.show(this, null, "Création en cours");
     	MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
             		try {
             			dialog.dismiss();
-            			
-            			System.out.println("Cr�er !");
-            			
-						moment.setId(response.getInt("id"));
-						AppMoment.getInstance().user.addMoment(moment);
-						
-						
-						//On lance l'activit� en faisant passer le moment alors qu'on pourrait juste faire passer l'id et le recuperer de AppMoment
-						//On lance l'activit� Info Moment
-				    	Intent intent = new Intent(CreationDetailsActivity.this, InvitationActivity.class);
-				    	//intent.putExtra("precedente", "creation");
-				    	intent.putExtra("id", moment.getId());
-					    
-					    startActivity(intent);
-					    finish();
+
+                        //We set the moment id and it to the user moments
+                        moment.setId(response.getInt("id"));
+                        AppMoment.getInstance().user.addMoment(moment);
+
+                        Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);
+                        intent.putExtra("momentId", moment.getId());
+                        startActivityForResult(intent, POP_UP_CREA);
+
 						
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
@@ -635,16 +629,15 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	        			dialog.dismiss();
 	        	}
             });
+    	
 
-    	
-    	
-    	
-    	
-    	
-    	
-    	
     }
-    
+
+
+    /**
+     * Function that return the moment to the fracment
+     * @return Moment
+     */
     
     public Moment getMoment(){
     	return this.moment;
@@ -853,8 +846,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 					*/
 					
 					
-					bitmap = Images.resizeBitmap(bitmap, 600);
-					Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 100);
+					bitmap = Images.resizeBitmap(bitmap, 1000);
+					Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
 					
 					
 					AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
@@ -888,6 +881,18 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 }
                 else CreationDetailsActivity.validateSecondFields();
             }
+
+        }
+        //Finish activity
+        if(requestCode == POP_UP_CREA){
+
+            //We go the invit part, we pass the id of the moment
+            Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+            intent.putExtra("id", moment.getId());
+            intent.putExtra("precedente", "creation");
+
+            startActivity(intent);
+            finish();
 
         }
     }

@@ -38,7 +38,7 @@ import com.moment.classes.PositionOverlay;
 
 public class InfosFragment extends Fragment {
 	
-	private String[] mois = {"Janvier", "FŽvrier", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "DŽcembre"};
+	private String[] mois = {"Janvier", "Fï¿½vrier", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Dï¿½cembre"};
 	private String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
 	static final int PICK_CAMERA_COVER = 1;
 	private GoogleMap mMap;
@@ -47,11 +47,35 @@ public class InfosFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.e("Test", "hello");
-		//On recupere le moment passŽ 
+		//On recupere le moment passï¿½ 
 		
 	}
 
-	@Override
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.e("PAUSE", "Chats");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.e("RESUME", "Chats");
+    }
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.e("STOP", "Chats");
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.e("START", "Chats");
+    }
+
+    @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 
@@ -71,7 +95,7 @@ public class InfosFragment extends Fragment {
 		
 
 		
-		//Si elle existe dejˆ on supprime la map
+		//Si elle existe dejï¿½ on supprime la map
 		/*final ViewGroup parent = (ViewGroup) Exchanger.mMapView.getParent();
 		if (parent != null) parent.removeView(Exchanger.mMapView);
 		
@@ -88,7 +112,7 @@ public class InfosFragment extends Fragment {
 		
 		
 		
-		//On initialise les ŽlŽments graphiques
+		//On initialise les ï¿½lï¿½ments graphiques
 		
 		//Le Titre
 		TextView titreText = (TextView)view.findViewById(R.id.titre_moment);
@@ -160,6 +184,11 @@ public class InfosFragment extends Fragment {
 		return view;
 	}
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
 	
 
 	
@@ -205,7 +234,7 @@ public class InfosFragment extends Fragment {
 	  
 	  
 	  /**
-	   * AppelŽe lorsque l'utilisateur a touchŽ la photo de cover afin de la changer
+	   * Appelï¿½e lorsque l'utilisateur a touchï¿½ la photo de cover afin de la changer
 	   */
 	  
 	  public void touchedPhoto(){

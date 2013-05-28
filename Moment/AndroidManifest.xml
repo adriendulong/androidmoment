@@ -134,6 +134,9 @@
         <activity
             android:name="com.moment.InvitationActivity"
             android:label="@string/title_activity_invitation" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moment.MomentInfosActivity" />
         </activity>
         <activity
             android:name=".PlacePickerActivity"
@@ -142,6 +145,13 @@
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.moment.CreationDetailsActivity" />
             </activity>
+        <activity
+            android:name=".CreationPopUp"
+            android:label="CreationPopUp"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".ListGuestsActivity"
+            android:label="ListGuestsActivity"/>
 
         <meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
         <meta-data

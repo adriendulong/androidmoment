@@ -232,7 +232,8 @@
                     android:layout_centerInParent="true"
                     android:orientation="horizontal"
                     android:paddingBottom="5dp"
-                    android:gravity="bottom">
+                    android:gravity="bottom"
+                    android:onClick="listInvit">
                     <ImageView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/picto_invite"/>

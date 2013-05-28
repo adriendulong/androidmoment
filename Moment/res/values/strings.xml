@@ -123,4 +123,18 @@
     <string name="custome_loc">Votre localisation</string>
 
 
+    <!-- Pop Up de création de Moment -->
+    <string name="congrats">félicitations</string>
+    <string name="just_create">Tu viens de créer un moment !</string>
+    <string name="explanations_invit">Il ne te reste plus qu\'à inviter des amis à y participer.</string>
+    <string name="invits_can_invit">Les invités peuvent convier des amis</string>
+    <string name="invit_button">Inviter des amis</string>
+    <string name="expl_moment_public">Tout le monde peut voir ce moment</string>
+    <string name="expl_moment_visible">Les personnes qui te suivent peuvent voir ce moment</string>
+    <string name="expl_moment_private">Les invités peuvent voir ce moment</string>
+    <string name="label_visible">Visible :</string>
+    <string name="label_public">Public :</string>
+    <string name="label_private">Privé :</string>
+
+
 </resources>

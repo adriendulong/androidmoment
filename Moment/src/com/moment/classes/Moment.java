@@ -44,6 +44,8 @@ public class Moment implements Parcelable {
 	private int guests_number =0;
 	private int guests_coming = 0;
 	private int guests_not_coming = -1;
+    private int privacy;
+    private Boolean isOpenInvit;
 	private ArrayList<Chat> chats;
 	private ArrayList<Photo> photos;
 	
@@ -57,7 +59,24 @@ public class Moment implements Parcelable {
 	 * Getter and Setter
 	 * 
 	 */
-	
+
+    public int getPrivacy() {
+        return privacy;
+    }
+
+    public Boolean getOpenInvit() {
+        return isOpenInvit;
+    }
+
+    public void setOpenInvit(Boolean openInvit) {
+        isOpenInvit = openInvit;
+    }
+
+    public void setPrivacy(int privacy) {
+        this.privacy = privacy;
+    }
+
+
 	public String getAdresse() {
 		return adresse;
 	}
@@ -276,7 +295,8 @@ public class Moment implements Parcelable {
 	 * Renvoit l'object sous la forme d'un JSONObject
 	 * @return
 	 * @throws JSONException
-	 * @throws FileNotFoundException 
+	 * @throws FileNotFoundException
+     * //TODO: Prendre en charge de pas envoyer la date si y en a pas (Booelan journee entiere ou pas)
 	 */
 	
 	public RequestParams getMomentRequestParams(Context context) throws JSONException {

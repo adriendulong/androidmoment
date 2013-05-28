@@ -67,6 +67,9 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         else if(user.getFb_photo_url()!=null){
         	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFb_photo_url());
         }
+        else if(user.getPicture_profile_url()!=null){
+            Images.printImageFromUrl(holder.photo_thumbnail, true, user.getPicture_profile_url());
+        }
         else{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         }

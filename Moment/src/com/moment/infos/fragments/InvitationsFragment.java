@@ -7,6 +7,8 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.moment.classes.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,9 +44,6 @@ import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
 import com.moment.InvitationActivity;
 import com.moment.R;
-import com.moment.classes.AppMoment;
-import com.moment.classes.InvitationsAdapter;
-import com.moment.classes.User;
 
 public class InvitationsFragment extends Fragment {
 	
@@ -99,11 +98,36 @@ public class InvitationsFragment extends Fragment {
             }
             else {
             	users = new ArrayList<User>();
-            	User u = new User("&@&.com");
-            	u.setFirstname("OOO");
-            	users.add(u);
-            	InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
-                listView.setAdapter(adapter);
+
+
+                MomentApi.get("favoris", null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try{
+
+                            JSONArray favorisUsers = response.getJSONArray("favoris");
+
+                            for(int i=0;i<favorisUsers.length();i++){
+                                User tempUser = new User();
+                                tempUser.setUserFromJson(favorisUsers.getJSONObject(i));
+                                users.add(tempUser);
+                            }
+
+                            InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+                            listView.setAdapter(adapter);
+
+
+                        } catch (JSONException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+
+                    public void onFailure(Throwable error, String content) {
+                        // By default, call the deprecated onFailure(Throwable) for compatibility
+                        System.out.println(content);
+                    }
+                });
 
             }
         }
@@ -147,8 +171,8 @@ public class InvitationsFragment extends Fragment {
                     
                     //Photo
                     
-                    ImagesContactLoader imContact = new ImagesContactLoader();
-                    imContact.execute(user);
+                    //ImagesContactLoader imContact = new ImagesContactLoader();
+                    //imContact.execute(user);
                     
                     /*
                     if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
