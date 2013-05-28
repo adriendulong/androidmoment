@@ -373,8 +373,9 @@ public class PhotosFragment extends Fragment {
                 public void onSuccess(JSONObject response) {
                     Log.e("GOO", ""+response.toString());
                     createNotification("YEAH","FUCK",true);
-                    photo.setBitmap_thumbnail(bitmap);
+                    photo.setBitmap_thumbnail(Bitmap.createScaledBitmap(bitmap,90,90,false));
                     imageAdapter.notifyDataSetChanged();
+                    photo.setBitmap_original(bitmap);
                 }
 
                 @Override

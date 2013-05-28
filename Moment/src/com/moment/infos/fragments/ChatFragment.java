@@ -78,7 +78,7 @@ public class ChatFragment extends Fragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.fragment_chat, container, false);	
+		view = inflater.inflate(R.layout.fragment_chat, container, false);
 		this.inflater = inflater;
 		
 		Log.d("CHAT", "Chat création");
@@ -122,9 +122,11 @@ public class ChatFragment extends Fragment {
 					// Auto-generated catch block
 					e.printStackTrace();
 				}
+
+
             }
         });
-		
+
 		return view;
 	}
 		
