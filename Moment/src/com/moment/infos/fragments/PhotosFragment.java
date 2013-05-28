@@ -67,8 +67,7 @@ public class PhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(Exchanger.photos.isEmpty()){
-            MomentApi.get("photosmoment/"+Exchanger.idMoment, null, new JsonHttpResponseHandler() {
+            MomentApi.get("photosmoment/"+getActivity().getIntent().getIntExtra("id", 1), null, new JsonHttpResponseHandler() {
 
                 public void onSuccess(JSONObject response) {
                     try {
@@ -79,7 +78,8 @@ public class PhotosFragment extends Fragment {
                             Log.i("Fragment Photo","Load");
                             Photo photo = new Photo();
                             photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                            Exchanger.photos.add(photo);
+                            //Exchanger.photos.add(photo);
+                            imageAdapter.photos.add(photo);
                             imageAdapter.notifyDataSetChanged();
                             ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                             imageLoadTask.execute(photo.getUrl_thumbnail());
@@ -90,9 +90,7 @@ public class PhotosFragment extends Fragment {
                     }
                 }
             });
-        } else {
-            //TODO La liste des photos n'est pas vide, checker si nouvelles photos sur serveur
-        }
+
     }
 
     @Override
@@ -348,7 +346,6 @@ public class PhotosFragment extends Fragment {
         protected Bitmap doInBackground(Void... params) {
             createNotification("FUCK","YEAH",false);
 
-
             File file = new File(outputFileUri.getPath());
             bitmap = BitmapFactory.decodeFile(file.getPath());
 
@@ -372,8 +369,8 @@ public class PhotosFragment extends Fragment {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Log.e("GOO", ""+response.toString());
-                    createNotification("YEAH","FUCK",true);
-                    photo.setBitmap_thumbnail(Bitmap.createScaledBitmap(bitmap,90,90,false));
+                    createNotification("YEAH", "FUCK", true);
+                    photo.setBitmap_thumbnail(Bitmap.createScaledBitmap(bitmap, 90, 90, false));
                     imageAdapter.notifyDataSetChanged();
                     photo.setBitmap_original(bitmap);
                 }
