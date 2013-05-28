@@ -1,5 +1,6 @@
 package com.moment.infos.fragments;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,6 +13,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -48,7 +50,7 @@ import java.util.Date;
 public class PhotosFragment extends Fragment {
 
     static final int PICK_CAMERA_PHOTOS = 1;
-    //static final int PICK_FROM_FILE = 1;
+
     private LayoutInflater layoutInflater;
     private RelativeLayout detailPhoto;
     private GridView gridView;
@@ -59,9 +61,7 @@ public class PhotosFragment extends Fragment {
     private String path;
 
     Bitmap bitmap = null;
-    NotificationManager notificationManager;
-    NotificationCompat.Builder mBuilder;
-
+    Photo photo = new Photo();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -173,6 +173,9 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Bitmap bmp = null;
+        photo.setBitmap_thumbnail(bmp);
+        addPhoto(photo);
         UploadTask uploadTask = new UploadTask();
         uploadTask.execute();
     }
@@ -304,22 +307,47 @@ public class PhotosFragment extends Fragment {
 
     private class UploadTask extends AsyncTask<Void, Void, Bitmap>
     {
-        @Override
-        public void onPreExecute(){
-            Log.e("PreExec","");
-            notificationManager = (NotificationManager) getActivity().getSystemService(getActivity().NOTIFICATION_SERVICE);
-            NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(getActivity());
-            mBuilder.setContentTitle("Picture upload")
-                    .setContentText("Gooooo")
-                    .setSmallIcon(R.drawable.petit_coeur)
-                    .setProgress(0, 0, true);
 
-            notificationManager.notify(0, mBuilder.build());
+        private Context mContext;
+        private int NOTIFICATION_ID = 1;
+        private Notification mNotification;
+        private NotificationManager mNotificationManager;
 
+        public UploadTask(){
+
+            this.mContext = getActivity();
+
+            //Get the notification manager
+            mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        }
+
+        @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        private void createNotification(String contentTitle, String contentText, boolean stop) {
+
+            //Build the notification using Notification.Builder
+            Notification.Builder builder = new Notification.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setAutoCancel(true)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText);
+
+            if(stop == false)
+                builder.setProgress(0,0,true);
+            else
+                builder.setProgress(0,0,false);
+
+            //Get current notification
+            mNotification = builder.getNotification();
+
+            //Show the notification
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
         }
 
         @Override
         protected Bitmap doInBackground(Void... params) {
+            createNotification("FUCK","YEAH",false);
+
 
             File file = new File(outputFileUri.getPath());
             bitmap = BitmapFactory.decodeFile(file.getPath());
@@ -330,6 +358,7 @@ public class PhotosFragment extends Fragment {
                 Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
                 bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                 stream.close();
+                bitmap = bitmap2;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -343,6 +372,9 @@ public class PhotosFragment extends Fragment {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Log.e("GOO", ""+response.toString());
+                    createNotification("YEAH","FUCK",true);
+                    photo.setBitmap_thumbnail(bitmap);
+                    imageAdapter.notifyDataSetChanged();
                 }
 
                 @Override
@@ -351,7 +383,7 @@ public class PhotosFragment extends Fragment {
                 }
 
             });
-            return null;
+            return bitmap;
         }
     }
 
