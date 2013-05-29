@@ -76,9 +76,6 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         
         if(user.getIs_selected()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
 
-        
-        
-        
         return row;
     }
     

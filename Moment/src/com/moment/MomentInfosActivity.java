@@ -44,34 +44,26 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     static final int NEW_INVIT = 3;
     static final int LIST_INVIT = 4;
 
-	
 	LayoutInflater inflater;
 	Boolean stateAcceptVolet = false;
 	
 	private MyPagerAdapter mPagerAdapter;
 	private ViewPager pager;
 	private Moment moment;
+    private int momentID;
 	private int position = 1;
-	
-	// Le menu qui gere le passage d'une page � l'autre
+
 	Menu myMenu;
 	private GoogleMap mMap;
 	
 	ArrayList<Fragment> fragments;
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if ((keyCode == KeyEvent.KEYCODE_BACK))
-        {
-            finish();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-	
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        momentID = getIntent().getIntExtra("id", 1);
+
         super.setContentView(R.layout.activity_moment_infos);
         // setup action bar for tabs
         ActionBar actionBar = getSupportActionBar();
@@ -89,11 +81,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
 
         //We get the moment id
-        int idMoment = getIntent().getIntExtra("id", 1);
+
 
         //We get the moment thans to its id
-        Exchanger.moment = AppMoment.getInstance().user.getMoment(idMoment);
-        Exchanger.idMoment = idMoment;
+        Exchanger.moment = AppMoment.getInstance().user.getMoment(momentID);
+        Exchanger.idMoment = momentID;
         
 
         
@@ -105,9 +97,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         	Log.d("Date Debut", ""+Exchanger.moment.getDateDebut().toString());	
         }
 
-        
-        
-        
         // Cr�ation de la liste de Fragments que fera d�filer le PagerAdapter
         fragments = new ArrayList<Fragment>();
 
@@ -117,17 +106,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
      	fragments.add(Fragment.instantiate(this,InfosFragment.class.getName(), args));
    		fragments.add(Fragment.instantiate(this,ChatFragment.class.getName(), args));
-   		
-   		
-   		
+
    		// Cr�ation de l'adapter qui s'occupera de l'affichage de la liste de
    		// Fragments
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
    		pager.setAdapter(this.mPagerAdapter);
-
-
-
 
    		pager.setCurrentItem(position, false);
         

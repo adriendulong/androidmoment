@@ -27,8 +27,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.DetailPhoto;
-import com.moment.MomentInfosActivity.Exchanger;
+
+import com.moment.MomentInfosActivity;
 import com.moment.R;
+import com.moment.classes.AppMoment;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.classes.Photo;
@@ -40,9 +42,7 @@ import java.io.*;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
 public class PhotosFragment extends Fragment {
 
@@ -56,14 +56,15 @@ public class PhotosFragment extends Fragment {
     private String albumName = "Moment";
     private Uri outputFileUri;
 
+    private int momentID;
 
     Bitmap bitmap = null;
-    Photo photo = new Photo();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e("PhotoFragment","OnCreate");
+        momentID = getActivity().getIntent().getIntExtra("id", 1);
     }
 
     @Override
@@ -71,7 +72,7 @@ public class PhotosFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout)inflater.inflate(R.layout.detail_photo, null);
-        imageAdapter = new ImageAdapter(view.getContext(), Exchanger.photos);
+        imageAdapter = new ImageAdapter(view.getContext(), AppMoment.getInstance().user.getMoment(momentID).getPhotos());
         gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
 
@@ -81,7 +82,7 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        MomentApi.get("photosmoment/"+getActivity().getIntent().getIntExtra("id", 1), null, new JsonHttpResponseHandler() {
+        MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
 
             public void onSuccess(JSONObject response) {
                 try {
@@ -91,7 +92,7 @@ public class PhotosFragment extends Fragment {
                     {
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                        imageAdapter.photos.add(photo);
+                        AppMoment.getInstance().user.getMoment(momentID).addPhoto(photo);
                         imageAdapter.notifyDataSetChanged();
                         ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                         imageLoadTask.execute(photo.getUrl_thumbnail());
@@ -127,6 +128,8 @@ public class PhotosFragment extends Fragment {
                 } else {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
                     intent.putExtra("position", (position-1));
+                    intent.putExtra("momentID", momentID);
+                    Log.e("",""+AppMoment.getInstance().user.getMoment(momentID).getPhotos().size());
                     startActivity(intent);
                 }
             };
@@ -136,22 +139,18 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
-        imageAdapter.photos.clear();
         Log.e("PAUSE", "Photos");
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
-        Bitmap bmp = null;
-        photo.setBitmap_thumbnail(bmp);
-        addPhoto(photo);
+        Photo photo = new Photo();
+        photo.setBitmap_thumbnail(null);
+        //AppMoment.getInstance().user.getMoment(momentID).getPhotos().add(photo);
+        imageAdapter.photos.add(photo);
+        imageAdapter.notifyDataSetChanged();
         UploadTask uploadTask = new UploadTask();
         uploadTask.execute();
-    }
-
-    public void addPhoto(Photo photo){
-        Exchanger.photos.add(photo);
-        imageAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -165,7 +164,6 @@ public class PhotosFragment extends Fragment {
 
         public ImageAdapter(Context context, ArrayList<Photo> photos) {
             this.context = context;
-            this.photos = new ArrayList<Photo>();
             this.photos = photos;
         }
 
@@ -203,7 +201,7 @@ public class PhotosFragment extends Fragment {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { imageView.setImageBitmap(photos.get(position-1).getBitmap_thumbnail()); }
+            else { imageView.setImageBitmap(photos.get(position - 1).getBitmap_thumbnail()); }
 
             layoutView.addView(imageView);
             return layoutView;
@@ -262,6 +260,10 @@ public class PhotosFragment extends Fragment {
         }
     }
 
+    /**
+     * Upload asynchrone photo
+     */
+
     private class UploadTask extends AsyncTask<Void, Void, Bitmap>
     {
 
@@ -271,12 +273,8 @@ public class PhotosFragment extends Fragment {
         private NotificationManager mNotificationManager;
 
         public UploadTask(){
-
             this.mContext = getActivity();
-
-            //Get the notification manager
             mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
-
         }
 
         @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -324,14 +322,14 @@ public class PhotosFragment extends Fragment {
                 requestParams.put("photo",file);
             } catch (Exception e) { e.printStackTrace(); }
 
-            MomentApi.post("addphoto/" + Exchanger.moment.getId(), requestParams, new JsonHttpResponseHandler() {
+            MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     Log.e("GOO", ""+response.toString());
                     createNotification("YEAH", "FUCK", true);
-                    photo.setBitmap_thumbnail(Bitmap.createScaledBitmap(bitmap, 90, 90, false));
-                    imageAdapter.notifyDataSetChanged();
-                    photo.setBitmap_original(bitmap);
+                    //AppMoment.getInstance().user.getMoment(momentID).getPhotos().get(AppMoment.getInstance().user.getMoment(momentID).getPhotos().size() -1).setBitmap_thumbnail(Bitmap.createScaledBitmap(bitmap, 90, 90, false));
+                    //imageAdapter.notifyDataSetChanged();
+                    //AppMoment.getInstance().user.getMoment(momentID).getPhotos().get(AppMoment.getInstance().user.getMoment(momentID).getPhotos().size() -1).setBitmap_original(bitmap);
                 }
 
                 @Override

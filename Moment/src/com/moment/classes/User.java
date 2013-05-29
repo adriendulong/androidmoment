@@ -35,13 +35,11 @@ public class User {
 	private String description;
 	private int nb_followers = 0;
 	private int nb_follows = 0;
-	
-	
 
-	
 	private Bitmap photo_thumbnail;
+    private Bitmap photo_original;
 
-	public User(String email, String firstname, String lastname, String picture_profile_url) {
+    public User(String email, String firstname, String lastname, String picture_profile_url) {
 		// TODO Auto-generated constructor stub
 		this.setEmail(email);
 		this.setFirstname(firstname);
@@ -280,8 +278,14 @@ public class User {
 	public void setId_carnet_adresse(String id_carnet_adresse) {
 		this.id_carnet_adresse = id_carnet_adresse;
 	}
-	
-	
+
+    public Bitmap getPhoto_original() {
+        return photo_original;
+    }
+
+    public void setPhoto_original(Bitmap photo_original) {
+        this.photo_original = photo_original;
+    }
 	
 	/**
 	 * Renvoit l'object sous la forme d'un JSONObject
@@ -312,34 +316,24 @@ public class User {
 		
 		return userJson;
 	}
-	
-	
-	public void setUserFromJson(JSONObject userJson){
-		
-		try {
-			
-			this.setId(userJson.getInt("id"));
-			if(userJson.has("firstname")) this.setFirstname(userJson.getString("firstname"));
-			if(userJson.has("lastname")) this.setLastname(userJson.getString("lastname"));
-			if(userJson.has("email")) this.setEmail(userJson.getString("email"));
-			if(userJson.has("profile_picture_url")) this.setPicture_profile_url(userJson.getString("profile_picture_url"));
-			if(userJson.has("facebookId")) this.setFacebookId(userJson.getInt("facebookId"));
-			if(userJson.has("description")) this.setDescription(userJson.getString("description"));
-			if(userJson.has("nb_followers")) this.setNb_followers(userJson.getInt("nb_followers"));
-			if(userJson.has("nb_follows")) this.setNb_follows(userJson.getInt("nb_follows"));
-			
-			
-			
-			
-			
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		
-		
-	}
+
+
+    public void setUserFromJson(JSONObject userJson){
+        try {
+            this.setId(userJson.getInt("id"));
+            if(userJson.has("firstname")) this.setFirstname(userJson.getString("firstname"));
+            if(userJson.has("lastname")) this.setLastname(userJson.getString("lastname"));
+            if(userJson.has("email")) this.setEmail(userJson.getString("email"));
+            if(userJson.has("profile_picture_url")) this.setPicture_profile_url(userJson.getString("profile_picture_url"));
+            if(userJson.has("facebookId")) this.setFacebookId(userJson.getInt("facebookId"));
+            if(userJson.has("description")) this.setDescription(userJson.getString("description"));
+            if(userJson.has("nb_followers")) this.setNb_followers(userJson.getInt("nb_followers"));
+            if(userJson.has("nb_follows")) this.setNb_follows(userJson.getInt("nb_follows"));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	@Override 
 	public boolean equals(Object aThat) {
