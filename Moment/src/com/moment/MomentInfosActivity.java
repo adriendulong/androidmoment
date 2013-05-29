@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
@@ -57,7 +58,16 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	private GoogleMap mMap;
 	
 	ArrayList<Fragment> fragments;
-	
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,10 +190,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 		return true;
 	}
 
-
-    
-
-
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.e("MomentInfo","Destroy");
+    }
     
     
 /**

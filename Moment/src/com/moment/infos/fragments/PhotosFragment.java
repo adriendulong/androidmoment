@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -18,7 +17,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -26,7 +24,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.DetailPhoto;
@@ -58,7 +55,7 @@ public class PhotosFragment extends Fragment {
 
     private String albumName = "Moment";
     private Uri outputFileUri;
-    private String path;
+
 
     Bitmap bitmap = null;
     Photo photo = new Photo();
@@ -66,79 +63,45 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-            MomentApi.get("photosmoment/"+getActivity().getIntent().getIntExtra("id", 1), null, new JsonHttpResponseHandler() {
-
-                public void onSuccess(JSONObject response) {
-                    try {
-                        JSONArray jsonPhotos = response.getJSONArray("photos");
-
-                        for(int i=0;i<jsonPhotos.length();i++)
-                        {
-                            Log.i("Fragment Photo","Load");
-                            Photo photo = new Photo();
-                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                            //Exchanger.photos.add(photo);
-                            imageAdapter.photos.add(photo);
-                            imageAdapter.notifyDataSetChanged();
-                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
-                            imageLoadTask.execute(photo.getUrl_thumbnail());
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
+        Log.e("PhotoFragment","OnCreate");
     }
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
-        Log.e("SAVEINSTANCE", "Photos");
-        savedInstanceState.putBoolean("Sleep", true);
-        super.onSaveInstanceState(savedInstanceState);
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        Log.e("PAUSE", "Photos");
-    }
+        View view = inflater.inflate(R.layout.fragment_photos, container, false);
+        detailPhoto = (RelativeLayout)inflater.inflate(R.layout.detail_photo, null);
+        imageAdapter = new ImageAdapter(view.getContext(), Exchanger.photos);
+        gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView.setAdapter(imageAdapter);
 
-    @Override
-    public void onResume(){
-        super.onResume();
-        Log.e("RESUME", "Photos");
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        Log.e("STOP", "Photos");
+        return view;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        Log.e("START", "Photos");
-    }
+        MomentApi.get("photosmoment/"+getActivity().getIntent().getIntExtra("id", 1), null, new JsonHttpResponseHandler() {
 
-    @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
+            public void onSuccess(JSONObject response) {
+                try {
+                    JSONArray jsonPhotos = response.getJSONArray("photos");
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_photos, container, false);
+                    for(int i=0;i<jsonPhotos.length();i++)
+                    {
+                        Photo photo = new Photo();
+                        photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                        imageAdapter.photos.add(photo);
+                        imageAdapter.notifyDataSetChanged();
+                        ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
+                        imageLoadTask.execute(photo.getUrl_thumbnail());
+                    }
 
-        detailPhoto = (RelativeLayout)inflater.inflate(R.layout.detail_photo, null);
-
-        imageAdapter = new ImageAdapter(view.getContext(), Exchanger.photos);
-
-        gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         gridView.setOnItemClickListener(new OnItemClickListener()
         {
@@ -147,9 +110,11 @@ public class PhotosFragment extends Fragment {
             {
                 if(position==0){
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
                     File file = new File(Environment.getExternalStorageDirectory(), "tmp_"
                             + String.valueOf(System.currentTimeMillis())
                             +".jpg");
+
                     outputFileUri = Uri.fromFile(file);
 
                     try {
@@ -166,7 +131,13 @@ public class PhotosFragment extends Fragment {
                 }
             };
         });
-        return view;
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        imageAdapter.photos.clear();
+        Log.e("PAUSE", "Photos");
     }
 
     @Override
@@ -238,18 +209,6 @@ public class PhotosFragment extends Fragment {
             return layoutView;
         }
 
-    }
-
-    private File getAlbumDir(){
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "Pictures/" + this.albumName);
-        return storageDir;
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = timeStamp + "_";
-        File image = File.createTempFile(imageFileName, ".jpg", getAlbumDir());
-        return image;
     }
 
     /**
