@@ -136,9 +136,7 @@ public class ChatFragment extends Fragment {
 		Log.d("DESTROY", "DESTROY");
 			
 	}
-	
-	
-	
+
 	
 	
 	/**
