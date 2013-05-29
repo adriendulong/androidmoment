@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v4.view.ViewPager
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/pager_guests"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.view.PagerTabStrip
+        android:id="@+id/pager_tab_strip_guests"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:background="#FFFFFF"
+        android:textColor="@color/gris_texte"
+        android:paddingTop="4dp"
+        android:paddingBottom="4dp"/>
+
+</android.support.v4.view.ViewPager>

@@ -68,6 +68,7 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFb_photo_url());
         }
         else if(user.getPicture_profile_url()!=null){
+            //TODO : Verifier si existe pas dans le cache ?
             Images.printImageFromUrl(holder.photo_thumbnail, true, user.getPicture_profile_url());
         }
         else{

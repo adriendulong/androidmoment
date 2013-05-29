@@ -137,4 +137,10 @@
     <string name="label_private">Privé :</string>
 
 
+    <!-- Liste de guests -->
+    <string name="title_maybe">PEUT-ÊTRE</string>
+    <string name="title_coming">PRESENTS</string>
+    <string name="title_unknown">NON REPONDUS</string>
+
+
 </resources>

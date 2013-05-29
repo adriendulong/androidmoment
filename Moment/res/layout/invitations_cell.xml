@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/bg_cell_invitations"
     android:layout_width="fill_parent"
-    android:layout_height="55dp"
+    android:layout_height="70dp"
     android:background="@drawable/background">
     <LinearLayout 
 	    android:layout_width="fill_parent"
@@ -10,18 +10,19 @@
 	    android:orientation="horizontal"
 	    android:weightSum="4" 
 	    android:layout_marginTop="3dp"
-	    android:layout_marginBottom="3dp">
+	    android:layout_marginBottom="3dp"
+        android:gravity="center_vertical">
 	    
 		    <RelativeLayout android:layout_width="0dp"
 		        android:layout_height="fill_parent"
 		        android:layout_weight="1">
-		    	<ImageView android:layout_width="45dp"
-		    	    android:layout_height="45dp"
-		    	    android:background="@drawable/back_photo"
+		    	<ImageView android:layout_width="65dp"
+		    	    android:layout_height="65dp"
+		    	    android:background="@drawable/bg_profil"
 		    	    android:layout_centerInParent="true"/>
 		    	<ImageView android:id="@+id/photo_invitation"
-		    	    android:layout_width="40dp"
-		    	    android:layout_height="40dp"
+		    	    android:layout_width="55dp"
+		    	    android:layout_height="55dp"
 		    	    android:background="@drawable/back_goldphoto"
 		    	    android:layout_centerInParent="true"/>
 		    	    
@@ -32,7 +33,7 @@
 		        android:layout_weight="3"
 		        android:orientation="vertical"
 		        android:gravity="left"
-		        android:layout_marginTop="8dp">
+		        android:layout_marginTop="10dp">
 		        
 		        <LinearLayout android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
@@ -41,16 +42,18 @@
 		            <TextView android:id="@+id/firstname_invitations"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
-		                android:textSize="14dp"
+		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
-		                android:text="Adrien"/>
+		                android:text="Adrien"
+                        android:textAllCaps="true"/>
 		            <TextView android:id="@+id/lastname_invitations" 
 		                android:layout_marginLeft="5dp"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
-		                android:textSize="14dp"
+		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
-		                android:text="Adrien"/>
+		                android:text="Adrien"
+                        android:textAllCaps="true"/>
 		            
 		        </LinearLayout>
 		        <LinearLayout android:layout_width="fill_parent"
@@ -61,18 +64,18 @@
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
-		                android:text="Adrien"/>
+		                android:text=""/>
 		            <TextView android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
-		                android:text=","/>
+		                android:text=""/>
 		            <TextView android:layout_marginLeft="5dp"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
-		                android:text="Adrien"/>
+		                android:text=""/>
 
 		        </LinearLayout>
 		        

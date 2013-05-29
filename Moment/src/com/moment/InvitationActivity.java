@@ -159,6 +159,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
             case android.R.id.home:
                 //NavUtils.navigateUpFromSameTask(this);
                 finish();
+                overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
                 break;
             case R.id.invitation_contacts:
             	mViewPager.setCurrentItem(1);
@@ -255,6 +256,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                     dialog.dismiss();
 
                     finish();
+                    overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
 		               
 	            }
 

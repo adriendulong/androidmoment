@@ -1,5 +1,6 @@
 package com.moment;
 
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -251,7 +252,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     public void listInvit(View view){
-        callInvit(NEW_INVIT);
+        callInvit(LIST_INVIT);
     }
 
 
@@ -515,12 +516,26 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         if(request_code==NEW_INVIT){
             intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
             intent.putExtra("id", Exchanger.moment.getId());
-            startActivityForResult(intent, request_code);
+
+           // if (android.os.Build.VERSION.SDK_INT >= 16){
+                startActivityForResult(intent, request_code);
+                overridePendingTransition( R.anim.slide_in_left, R.anim.slide_out_left );
+            //} else{
+              //  startActivityForResult(intent, request_code);
+            //}
+
+
         }
         else if (request_code==LIST_INVIT){
-            intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
+            intent = new Intent(MomentInfosActivity.this, ListGuestsActivity.class);
             intent.putExtra("id", Exchanger.moment.getId());
-            startActivityForResult(intent, request_code);
+
+            if (android.os.Build.VERSION.SDK_INT >= 16){
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
+                startActivityForResult(intent, request_code, bndlanimation);
+            } else{
+                startActivityForResult(intent, request_code);
+            }
         }
 
     }
