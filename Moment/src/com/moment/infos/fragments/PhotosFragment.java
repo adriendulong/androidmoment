@@ -201,12 +201,11 @@ public class PhotosFragment extends Fragment {
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { imageView.setImageBitmap(photos.get(position - 1).getBitmap_thumbnail()); }
+            else { imageView.setImageBitmap(photos.get(position-1).getBitmap_thumbnail()); }
 
             layoutView.addView(imageView);
             return layoutView;
         }
-
     }
 
     /**

@@ -9,6 +9,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 import android.text.format.DateUtils;
+import com.moment.classes.dao.MomentsDataSource;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -79,6 +80,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     private int PLACE_CHOOSE = 10;
     private int POP_UP_CREA = 11;
 	private ProgressDialog dialog;
+    private MomentsDataSource momentsDataSource;
 	
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
 	static int pickerChosen = 2;
@@ -98,7 +100,9 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         moment = new Moment();
         
         moment.setName(nomMoment);
-        
+
+        momentsDataSource = new MomentsDataSource(this);
+        momentsDataSource.open();
         
         // On instantie le fragment manager et on vient ajouter le premier fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -163,10 +167,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             	       
             	    fragmentTransaction.replace(android.R.id.content, fragment);
             	    fragmentTransaction.commit();
-            	    
-            	    
-            	   
-            	}
+
+                }
             	return true;
             
             case R.id.right_options_creation:
@@ -602,6 +604,9 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
     
     	dialog = ProgressDialog.show(this, null, "Création en cours");
+
+        momentsDataSource.createMoment(moment.getName());
+
     	MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {

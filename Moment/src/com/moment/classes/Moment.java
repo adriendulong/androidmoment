@@ -32,7 +32,6 @@ public class Moment implements Parcelable {
 	private String infoLieu;
 	private String infoTransport;
 	private Date dateDebut;
-
 	private Date dateFin;
 	private String hashtag;
 	//private Adresse adresse;
