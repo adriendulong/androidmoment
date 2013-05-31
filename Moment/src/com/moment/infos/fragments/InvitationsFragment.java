@@ -131,10 +131,7 @@ public class InvitationsFragment extends Fragment {
 
             }
         }
-        
-        
-        
-        
+
         
         return rootView;
     }

@@ -96,7 +96,7 @@ public class CreationPopUp extends Activity {
             //We also put isInvit to false
             isInvit = false;
             isInvitToggle.setChecked(false);
-            isInvitToggle.setClickable(true);
+            isInvitToggle.setEnabled(true);
         }
     }
 
@@ -132,7 +132,7 @@ public class CreationPopUp extends Activity {
             //We also put isInvit to false
             isInvit = false;
             isInvitToggle.setChecked(false);
-            isInvitToggle.setClickable(true);
+            isInvitToggle.setEnabled(true);
         }
     }
 
@@ -168,7 +168,7 @@ public class CreationPopUp extends Activity {
             //We also put isInvit to yes
             isInvit = true;
             isInvitToggle.setChecked(true);
-            isInvitToggle.setClickable(false);
+            isInvitToggle.setEnabled(false);
         }
     }
 
