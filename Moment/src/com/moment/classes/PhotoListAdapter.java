@@ -4,15 +4,14 @@ import java.util.Collections;
 import java.util.List;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.moment.DetailPhoto;
 import com.moment.R;
+import com.moment.models.Photo;
 
 public class PhotoListAdapter extends BaseAdapter{
 	
@@ -52,7 +51,7 @@ public class PhotoListAdapter extends BaseAdapter{
 		ImageView photoView = (ImageView) convertView.findViewById(R.id.photo_moment_detail);
 		
 		Photo photo = getItem(position);
-		photoView.setImageBitmap(photo.getBitmap_original());
+		photoView.setImageBitmap(photo.getBitmapOriginal());
 		
 		return convertView;
 	}

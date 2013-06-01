@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.moment.R;
+import com.moment.models.Place;
 
 import java.util.ArrayList;
 

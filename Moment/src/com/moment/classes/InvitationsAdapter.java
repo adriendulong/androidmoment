@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.moment.R;
+import com.moment.models.User;
 
 public class InvitationsAdapter extends ArrayAdapter<User>{
 
@@ -64,18 +65,18 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         	System.out.println("NOT NULL");
             holder.photo_thumbnail.setImageBitmap(Images.getRoundedCornerBitmap(user.getPhoto_thumbnail()));
         }
-        else if(user.getFb_photo_url()!=null){
-        	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFb_photo_url());
+        else if(user.getFbPhotoUrl()!=null){
+        	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFbPhotoUrl());
         }
-        else if(user.getPicture_profile_url()!=null){
+        else if(user.getPictureProfileUrl()!=null){
             //TODO : Verifier si existe pas dans le cache ?
-            Images.printImageFromUrl(holder.photo_thumbnail, true, user.getPicture_profile_url());
+            Images.printImageFromUrl(holder.photo_thumbnail, true, user.getPictureProfileUrl());
         }
         else{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         }
         
-        if(user.getIs_selected()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
+        if(user.getSelected()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
 
         return row;
     }
