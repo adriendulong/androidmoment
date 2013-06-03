@@ -219,7 +219,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	       
 	       //Adresse adressTemp = new Adresse(numeroAdresse.getText().toString(), Integer.parseInt(adresseCodePostal.getText().toString()), adresseVille.getText().toString());
 	       
-	       moment.setPlaceInformations(adresseInfoLieu.getText().toString());
+	       moment.setInfoLieu(adresseInfoLieu.getText().toString());
 	       moment.setInfoTransport(adresseInfoTransport.getText().toString());
 	       moment.setAdresse(adresse.getText().toString());
 	       //moment.setTitre(nomLieu.getText().toString());
@@ -372,7 +372,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	
     	EditText infosLieu = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	if(infosLieu.getText()!=null){
-    		this.moment.setPlaceInformations(infosLieu.getText().toString());
+    		this.moment.setInfoLieu(infosLieu.getText().toString());
     	}
     	
     	/*EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
@@ -593,7 +593,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	Log.d("Description", descriptionEdit.getText().toString());
     	moment.setDescription(descriptionEdit.getText().toString());
     	moment.setAdresse(adressButton.getText().toString());
-    	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
+    	if(infosLieuEdit.getText().toString().length()>0) moment.setInfoLieu(infosLieuEdit.getText().toString());
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
     
     	dialog = ProgressDialog.show(this, null, "Création en cours");

@@ -225,8 +225,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
         // On recupère le template de moment
-        RelativeLayout momentLayout = (RelativeLayout) inflater.inflate(R.layout.moment,
-                null);
+        RelativeLayout momentLayout = (RelativeLayout) inflater.inflate(R.layout.moment, null);
         momentLayout.setId(moment.getId());
 
 

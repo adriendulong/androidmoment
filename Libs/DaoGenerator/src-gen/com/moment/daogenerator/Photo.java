@@ -1,5 +1,6 @@
 package com.moment.daogenerator;
 
+import android.graphics.Bitmap;
 import com.moment.daogenerator.DaoSession;
 import de.greenrobot.dao.DaoException;
 
