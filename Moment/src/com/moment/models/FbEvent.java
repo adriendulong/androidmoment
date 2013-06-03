@@ -10,11 +10,11 @@ public class FbEvent implements Parcelable {
     private String startTime;
 	private String location;
  
-	public FbEvent(String _id, String _title, String _sT, String _loc){
-		this.id = _id;
-		this.title = _title;
-		this.startTime = _sT;
-		this.location = _loc;
+	public FbEvent(String id, String title, String startTime, String location){
+		this.id = id;
+		this.title = title;
+		this.startTime = startTime;
+		this.location = location;
 	}
  
 	public String getId(){

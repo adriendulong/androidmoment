@@ -165,17 +165,17 @@ public class InfosFragment extends Fragment {
 			image_cover.setImageBitmap(image_cover_bmp);
 		}
 		
-		if(Exchanger.moment.getOwner()!=null){
+		if(Exchanger.moment.getUser()!=null){
 			final ImageView owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
 			
 			
-			if(Exchanger.moment.getOwner().getPictureProfileUrl()!=null) Exchanger.moment.getOwner().printProfilePicture(owner_picture, true);
+			if(Exchanger.moment.getUser().getPictureProfileUrl()!=null) Exchanger.moment.getUser().printProfilePicture(owner_picture, true);
 			
 			TextView firstname = (TextView)view.findViewById(R.id.firstname_owner);
-			firstname.setText(Exchanger.moment.getOwner().getFirstname());
+			firstname.setText(Exchanger.moment.getUser().getFirstname());
 			
 			TextView lastname = (TextView)view.findViewById(R.id.lastname_owner);
-			lastname.setText(Exchanger.moment.getOwner().getLastname());
+			lastname.setText(Exchanger.moment.getUser().getLastname());
 		}
 		
 		TextView hashtag = (TextView)view.findViewById(R.id.hashtag);

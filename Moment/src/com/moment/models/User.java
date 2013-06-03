@@ -42,7 +42,6 @@ public class User {
     private Bitmap photo_original;
 
     public User(String email, String firstname, String lastname, String pictureProfileUrl) {
-		// TODO Auto-generated constructor stub
 		this.setEmail(email);
 		this.setFirstname(firstname);
 		this.setLastname(lastname);
@@ -52,7 +51,6 @@ public class User {
 	}
 
 	public User(String email) {
-		// TODO Auto-generated constructor stub
 		this.setEmail(email);
 		
 		setMoments(new ArrayList<Moment>());

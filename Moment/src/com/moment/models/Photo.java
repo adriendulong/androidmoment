@@ -78,9 +78,9 @@ public class Photo {
 	public void photoFromJSON(JSONObject photoObject){
 		try {
 			this.setId(photoObject.getInt("id"));
-			this.setNbLike(photoObject.getInt("nbLike"));
-			this.setUrlOriginal(photoObject.getString("urlOriginal"));
-			this.setUrlThumbnail(photoObject.getString("urlThumbnail"));
+			this.setNbLike(photoObject.getInt("nb_like"));
+			this.setUrlOriginal(photoObject.getString("url_original"));
+			this.setUrlThumbnail(photoObject.getString("url_thumbnail"));
 			User user = new User();
 			user.setUserFromJson(photoObject.getJSONObject("taken_by"));
 			this.setUser(user);			

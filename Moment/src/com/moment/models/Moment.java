@@ -38,15 +38,15 @@ public class Moment implements Parcelable {
 
     private Date dateFin;
     private String hashtag;
-    //private Adresse adresse;
+
     private String adresse;
     private String keyBitmap;
-    private String url_cover;
-    private User owner;
+    private String urlCover;
+    private User user;
     private int state = 4;
-    private int guests_number =0;
-    private int guests_coming = 0;
-    private int guests_not_coming = -1;
+    private int guestsNumber =0;
+    private int guestsComing = 0;
+    private int guestsNotComing = -1;
     private int privacy;
     private Boolean isOpenInvit;
     private ArrayList<Chat> chats;
@@ -146,11 +146,11 @@ public class Moment implements Parcelable {
 
 
     public String getUrlCover(){
-        return this.url_cover;
+        return this.urlCover;
     }
 
     public void setUrlCover(String url_cover){
-        this.url_cover = url_cover;
+        this.urlCover = url_cover;
     }
 
 
@@ -173,13 +173,13 @@ public class Moment implements Parcelable {
     }
 
 
-    public User getOwner() {
-        return owner;
+    public User getUser() {
+        return user;
     }
 
 
-    public void setOwner(User owner) {
-        this.owner = owner;
+    public void setUser(User user) {
+        this.user = user;
     }
 
 
@@ -193,27 +193,27 @@ public class Moment implements Parcelable {
     }
 
     public void setGuestsNumber(int guests_number){
-        this.guests_number = guests_number;
+        this.guestsNumber = guests_number;
     }
 
     public int getGuestsNumber(){
-        return this.guests_number;
+        return this.guestsNumber;
     }
 
     public void setGuestsComing(int guests_coming){
-        this.guests_coming = guests_coming;
+        this.guestsComing = guests_coming;
     }
 
     public int getGuestsComing(){
-        return this.guests_coming;
+        return this.guestsComing;
     }
 
     public void setGuestsNotComing(int guests_not_coming){
-        this.guests_not_coming = guests_not_coming;
+        this.guestsNotComing = guests_not_coming;
     }
 
     public int getGuestsNotComing(){
-        return this.guests_not_coming;
+        return this.guestsNotComing;
     }
 
     public ArrayList<Chat> getChats() {
@@ -270,25 +270,25 @@ public class Moment implements Parcelable {
 
 
         if (moment.has("cover_photo_url")){
-            this.url_cover = moment.getString("cover_photo_url");
+            this.urlCover = moment.getString("cover_photo_url");
         }
 
         //Invites
-        this.guests_number = moment.getInt("guests_number");
-        this.guests_coming = moment.getInt("guests_coming");
-        this.guests_not_coming = moment.getInt("guests_not_coming");
+        this.guestsNumber = moment.getInt("guests_number");
+        this.guestsComing = moment.getInt("guests_coming");
+        this.guestsNotComing = moment.getInt("guests_not_coming");
 
         if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
         if(moment.has("description")) this.description = moment.getString("description");
 
         if (moment.has("owner")){
             JSONObject owner = moment.getJSONObject("owner");
-            this.owner = new User();
-            if(owner.has("email")) this.owner.setEmail(owner.getString("email"));
-            if(owner.has("firstname")) this.owner.setFirstname(owner.getString("firstname"));
-            if(owner.has("lastname")) this.owner.setLastname(owner.getString("lastname"));
-            if(owner.has("profile_picture_url")) this.owner.setPictureProfileUrl(owner.getString("profile_picture_url"));
-            if(owner.has("id")) this.owner.setId(owner.getInt("id"));
+            this.user = new User();
+            if(owner.has("email")) this.user.setEmail(owner.getString("email"));
+            if(owner.has("firstname")) this.user.setFirstname(owner.getString("firstname"));
+            if(owner.has("lastname")) this.user.setLastname(owner.getString("lastname"));
+            if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
+            if(owner.has("id")) this.user.setId(owner.getInt("id"));
         }
 
 
@@ -353,9 +353,9 @@ public class Moment implements Parcelable {
         if(dateDebut!=tempMoment.getDateDebut()) dateDebut = tempMoment.getDateDebut();
         if(dateFin!=tempMoment.getDateFin()) dateFin = tempMoment.getDateFin();
         if((tempMoment.getDescription()!=null)&&(description!=tempMoment.getDescription())) description = tempMoment.getDescription();
-        if(guests_number!=tempMoment.getGuestsNumber()) guests_number=tempMoment.getGuestsNumber();
-        if(guests_coming!=tempMoment.getGuestsComing()) guests_coming = tempMoment.getGuestsComing();
-        if(guests_not_coming!=tempMoment.getGuestsNotComing()) guests_not_coming = tempMoment.getGuestsNotComing();
+        if(guestsNumber !=tempMoment.getGuestsNumber()) guestsNumber =tempMoment.getGuestsNumber();
+        if(guestsComing !=tempMoment.getGuestsComing()) guestsComing = tempMoment.getGuestsComing();
+        if(guestsNotComing !=tempMoment.getGuestsNotComing()) guestsNotComing = tempMoment.getGuestsNotComing();
         if((tempMoment.getHashtag()!=null)&&(!hashtag.equals(tempMoment.getHashtag()))) hashtag = tempMoment.getHashtag();
         if(state!=tempMoment.getState()) state = tempMoment.getState();
 
@@ -393,12 +393,9 @@ public class Moment implements Parcelable {
 
 
     public void printCover(final ImageView targetView, final Boolean isRounded){
-        // On recupere la photo et on l'affiche lorsque on l'a
-        System.out.println("Print cover at address : "+ url_cover);
-
         AsyncHttpClient client = new AsyncHttpClient();
         String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
-        client.get(url_cover, new BinaryHttpResponseHandler(allowedContentTypes) {
+        client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
 
             @Override
             public void onSuccess(byte[] fileData) {
