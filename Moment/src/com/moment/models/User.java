@@ -62,39 +62,19 @@ public class User {
 		setMoments(new ArrayList<Moment>());
 	}
 
-	
-	
-	/**
-	 * Fonction qui permet de rajouter un moment
-	 * @param moment
-	 */
-	
 	public void addMoment(Moment moment){
 		this.moments.add(moment);
 	}
-	
-	
-	/**
-	 * Fonction qui renvoit un Moment en fonction de son id
-	 * @param id
-	 * @return Moment
-	 */
-	
+
 	public Moment getMoment(int id){
-		
-		for(int i=0; i<this.moments.size();i++){
-			if(this.moments.get(i).getId()==id) return this.moments.get(i);
+		for(int i=0; i<this.moments.size();i++)
+        {
+			if(this.moments.get(i).getId()==id)
+                return this.moments.get(i);
 		}
-		
-		return null;
+	    return null;
 	}
-	
-	
-	/**
-	 * Getters and Setters
-	 * 
-	 */
-	
+
 	public int getNbFollowers() {
 		return nbFollowers;
 	}
@@ -167,8 +147,6 @@ public class User {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
 
 	public String getKeyBitmap() {
 		return keyBitmap;
@@ -177,10 +155,8 @@ public class User {
 	public void setKeyBitmap(String keyBitmap) {
 		this.keyBitmap = keyBitmap;
 	}
-	
-	
+
 	public void printProfilePicture(final ImageView targetView, final Boolean isRounded){
-		// On recupere la photo et on l'affiche lorsque on l'a
 		System.out.println("Print cover at address : "+ pictureProfileUrl);
 		
 		if(AppMoment.getInstance().getBitmapFromMemCache("profile_picture_"+id)==null){
@@ -191,8 +167,6 @@ public class User {
 	    		
 	    	    @Override
 	    	    public void onSuccess(byte[] fileData) {
-	    	        
-	    	    	
 	    	    	InputStream is = new ByteArrayInputStream(fileData);
 	    	    	Bitmap bmp = BitmapFactory.decodeStream(is);
 	    	    	AppMoment.getInstance().addBitmapToMemoryCache("profile_picture_"+id, bmp);
@@ -204,7 +178,6 @@ public class User {
 	    	    
 	    	    @Override
 	    	    public void handleFailureMessage(Throwable e, byte[] responseBody) {
-	    	    	Log.d("RATEE", "RATEE");
 	    	        onFailure(e, responseBody);
 	    	    }
 	    	});
@@ -334,33 +307,23 @@ public class User {
             e.printStackTrace();
         }
     }
-	
-	@Override 
-	public boolean equals(Object aThat) {
-	    //check for self-comparison
-	    if ( this == aThat ) return true;
 
-	    //use instanceof instead of getClass here for two reasons
-	    //1. if need be, it can match any supertype, and not just one class;
-	    //2. it renders an explict check for "that == null" redundant, since
-	    //it does the check for null already - "null instanceof [type]" always
-	    //returns false. (See Effective Java by Joshua Bloch.)
-	    if ( !(aThat instanceof User) ) return false;
-	    //Alternative to the above line :
-	    //if ( aThat == null || aThat.getClass() != this.getClass() ) return false;
+    @Override
+    public boolean equals(Object aThat) {
 
-	    //cast to native object is now safe
-	    User that = (User)aThat;
+        if ( this == aThat )            return true;
+        if ( !(aThat instanceof User) ) return false;
 
-	    
-	    if(this.id == that.id) return true;
-	    else if (this.email.equals(that.email)) return true;
-	    else if(this.numTel.equals((that.numTel))) return true;
-	    else if(this.facebookId == that.facebookId) return true;
-	    
-	    return false;
-	     
-	  }
+        User that = (User)aThat;
+
+             if (this.id == that.id)                    return true;
+        else if (this.email.equals(that.email))         return true;
+        else if (this.numTel.equals((that.numTel)))     return true;
+        else if (this.facebookId == that.facebookId)    return true;
+
+        return false;
+
+    }
 
 	
 

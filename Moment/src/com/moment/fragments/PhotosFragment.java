@@ -138,7 +138,6 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onPause(){
         super.onPause();
-        Log.e("PAUSE", "Photos");
     }
 
     @Override
@@ -207,10 +206,6 @@ public class PhotosFragment extends Fragment {
         }
     }
 
-    /**
-     * Chargement asynchrone des thumbnails
-     */
-
     private class ThumbnailLoadTask extends AsyncTask<String, Void, Bitmap> {
 
         private final WeakReference<Photo> weakPhoto;
@@ -258,10 +253,6 @@ public class PhotosFragment extends Fragment {
         }
     }
 
-    /**
-     * Upload asynchrone photo
-     */
-
     private class UploadTask extends AsyncTask<Void, Void, Bitmap>
     {
 
@@ -278,9 +269,8 @@ public class PhotosFragment extends Fragment {
         @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
         private void createNotification(String contentTitle, String contentText, boolean stop) {
 
-            //Build the notification using Notification.Builder
             Notification.Builder builder = new Notification.Builder(mContext)
-                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setSmallIcon(android.R.drawable.stat_sys_upload)
                     .setAutoCancel(true)
                     .setContentTitle(contentTitle)
                     .setContentText(contentText);
@@ -290,10 +280,8 @@ public class PhotosFragment extends Fragment {
             else
                 builder.setProgress(0,0,false);
 
-            //Get current notification
             mNotification = builder.getNotification();
 
-            //Show the notification
             mNotificationManager.notify(NOTIFICATION_ID, mNotification);
         }
 
@@ -325,16 +313,12 @@ public class PhotosFragment extends Fragment {
                 public void onSuccess(JSONObject response) {
                     Log.e("GOO", ""+response.toString());
                     createNotification("YEAH", "FUCK", true);
-                    //AppMoment.getInstance().user.getMoment(momentID).getPhotos().get(AppMoment.getInstance().user.getMoment(momentID).getPhotos().size() -1).setBitmapThumbnail(Bitmap.createScaledBitmap(bitmap, 90, 90, false));
-                    //imageAdapter.notifyDataSetChanged();
-                    //AppMoment.getInstance().user.getMoment(momentID).getPhotos().get(AppMoment.getInstance().user.getMoment(momentID).getPhotos().size() -1).setBitmapOriginal(bitmap);
                 }
 
                 @Override
                 public void onFailure(Throwable e,JSONObject response){
                     Log.e("DOWN",""+response.toString());
                 }
-
             });
             return bitmap;
         }
