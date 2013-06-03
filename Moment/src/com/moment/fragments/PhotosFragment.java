@@ -6,7 +6,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -24,24 +23,29 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.moment.activities.DetailPhoto;
-
-import com.moment.R;
-import com.moment.AppMoment;
-import com.moment.classes.Images;
-import com.moment.classes.MomentApi;
-import com.moment.models.Photo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import com.moment.AppMoment;
+import com.moment.R;
+import com.moment.activities.DetailPhoto;
+import com.moment.classes.Images;
+import com.moment.classes.MomentApi;
+import com.moment.models.Photo;
 
 public class PhotosFragment extends Fragment {
 
@@ -57,24 +61,39 @@ public class PhotosFragment extends Fragment {
 
     private int momentID;
 
-    Bitmap bitmap = null;
+    private Bitmap bitmap = null;
+
+    private ArrayList<Photo> photos;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("PhotoFragment","OnCreate");
-        momentID = getActivity().getIntent().getIntExtra("id", 1);
+        if(savedInstanceState == null) {
+            Log.e("onCreate", "savedInstanceState null");
+            momentID = getActivity().getIntent().getIntExtra("id", 1);
+            photos = AppMoment.getInstance().user.getMoment(momentID).getPhotos();
+        }
+        else {
+            Log.e("onCreate", "savedInstanceState not null");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
-        imageAdapter = new ImageAdapter(view.getContext(), AppMoment.getInstance().user.getMoment(momentID).getPhotos());
-        gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
 
+        if(savedInstanceState == null) {
+            Log.e("onCreateView", "savedInstanceState null");
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+            gridView = (GridView) view.findViewById(R.id.gridview);
+            gridView.setAdapter(imageAdapter);
+        }
+        else {
+            Log.e("onCreate", "savedInstanceState not null");
+        }
         return view;
     }
 
@@ -128,7 +147,6 @@ public class PhotosFragment extends Fragment {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
                     intent.putExtra("position", (position-1));
                     intent.putExtra("momentID", momentID);
-                    Log.e("",""+AppMoment.getInstance().user.getMoment(momentID).getPhotos().size());
                     startActivity(intent);
                 }
             };
@@ -136,19 +154,14 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
-    public void onPause(){
-        super.onPause();
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        UploadTask uploadTask = new UploadTask();
+        uploadTask.execute();
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        Photo photo = new Photo();
-        photo.setBitmapThumbnail(null);
-        //AppMoment.getInstance().user.getMoment(momentID).getPhotos().add(photo);
-        imageAdapter.photos.add(photo);
-        imageAdapter.notifyDataSetChanged();
-        UploadTask uploadTask = new UploadTask();
-        uploadTask.execute();
+    public void onPause(){
+        super.onPause();
     }
 
     /**
@@ -158,11 +171,10 @@ public class PhotosFragment extends Fragment {
     public class ImageAdapter extends BaseAdapter {
 
         private Context context;
-        private ArrayList<Photo> photos;
+
 
         public ImageAdapter(Context context, ArrayList<Photo> photos) {
             this.context = context;
-            this.photos = photos;
         }
 
         @Override
@@ -182,27 +194,29 @@ public class PhotosFragment extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            LinearLayout layoutView;
-            Resources r = Resources.getSystem();
 
-            layoutView = new LinearLayout(context);
+            ImageView imageView;
 
-            float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, r.getDisplayMetrics());
-            layoutView.setLayoutParams(new GridView.LayoutParams((int)px, (int)px));
-            layoutView.setBackgroundColor(Color.WHITE);
-            layoutView.setPadding(10,10,10,10);
+            if(convertView == null) {
+                imageView = new ImageView(context);
+            }
 
-            ImageView imageView = new ImageView(context);
-            float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, r.getDisplayMetrics());
+            else {
+                ImageView restoringView = (ImageView) convertView;
+                imageView = restoringView;
+            }
 
-            imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+
+                imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setCropToPadding(true);
+                imageView.setPadding(10, 10, 10, 10);
+                imageView.setBackgroundColor(Color.WHITE);
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
             else { imageView.setImageBitmap(photos.get(position-1).getBitmapThumbnail()); }
-
-            layoutView.addView(imageView);
-            return layoutView;
+            return imageView;
         }
     }
 
@@ -222,7 +236,6 @@ public class PhotosFragment extends Fragment {
         }
 
         protected Bitmap doInBackground(String... params) {
-            Log.i("ImageLoadTask", "Attempting to load image URL:" + params[0]);
             final Bitmap bitmap = getBitmapFromURL(params[0]);
             return bitmap;
         }
@@ -292,7 +305,6 @@ public class PhotosFragment extends Fragment {
             File file = new File(outputFileUri.getPath());
             bitmap = BitmapFactory.decodeFile(file.getPath());
 
-
             try {
                 FileOutputStream stream = new FileOutputStream(file);
                 Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
@@ -311,13 +323,11 @@ public class PhotosFragment extends Fragment {
             MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
-                    Log.e("GOO", ""+response.toString());
                     createNotification("YEAH", "FUCK", true);
                 }
 
                 @Override
                 public void onFailure(Throwable e,JSONObject response){
-                    Log.e("DOWN",""+response.toString());
                 }
             });
             return bitmap;
