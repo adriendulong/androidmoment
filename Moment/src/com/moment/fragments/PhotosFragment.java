@@ -127,9 +127,11 @@ public class PhotosFragment extends Fragment {
                 if (position == 0) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-                    File file = new File(Environment.getExternalStorageDirectory(), "tmp_"
+
+                    File file = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/", "moment_"
                             + String.valueOf(System.currentTimeMillis())
                             + ".jpg");
+
 
                     outputFileUri = Uri.fromFile(file);
 

@@ -90,7 +90,7 @@
                 android:label="@string/title_activity_creation" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.TimelineActivity" />
+                    android:value="com.moment.activities.TimelineActivity" />
         </activity>
 
         <activity
@@ -99,7 +99,7 @@
                 android:label="@string/title_activity_moment_infos">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.TimelineActivity" />
+                    android:value="com.moment.activities.TimelineActivity" />
         </activity>
 
         <activity
@@ -108,7 +108,7 @@
                 android:label="@string/title_activity_facebook_events" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.CreationActivity" />
+                    android:value="com.moment.activities.CreationActivity" />
         </activity>
 
         <activity
@@ -118,7 +118,7 @@
                 android:windowSoftInputMode="adjustResize" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.CreationActivity" />
+                    android:value="com.moment..activitiesCreationActivity" />
         </activity>
 
         <activity
@@ -134,7 +134,7 @@
                 android:label="@string/title_activity_profil" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.TimelineActivity" />
+                    android:value="com.moment.activities.TimelineActivity" />
         </activity>
 
         <activity
@@ -145,7 +145,7 @@
                 android:theme="@style/Theme.Styled.NoActionBar" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.MomentActivity" />
+                    android:value="com.moment.activities.MomentActivity" />
         </activity>
 
         <activity
@@ -154,7 +154,7 @@
                 android:label="@string/title_activity_invitation" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.MomentInfosActivity" />
+                    android:value="com.moment.activities.MomentInfosActivity" />
         </activity>
 
         <activity
@@ -163,7 +163,7 @@
                 android:label="PlacePickerActivity">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.moment.CreationDetailsActivity" />
+                    android:value="com.moment.activities.CreationDetailsActivity" />
         </activity>
 
         <activity
