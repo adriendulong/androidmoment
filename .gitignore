@@ -36,3 +36,5 @@ local.properties
 .metadata
 .DS_Store
 .idea
+
+*.iml
