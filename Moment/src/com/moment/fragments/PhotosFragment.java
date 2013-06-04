@@ -35,7 +35,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -50,6 +49,7 @@ import com.moment.models.Photo;
 public class PhotosFragment extends Fragment {
 
     static final int PICK_CAMERA_PHOTOS = 1;
+    private int momentID;
 
     private LayoutInflater layoutInflater;
     private RelativeLayout detailPhoto;
@@ -58,8 +58,6 @@ public class PhotosFragment extends Fragment {
 
     private String albumName = "Moment";
     private Uri outputFileUri;
-
-    private int momentID;
 
     private Bitmap bitmap = null;
 
@@ -71,7 +69,6 @@ public class PhotosFragment extends Fragment {
         if(savedInstanceState == null) {
             Log.e("onCreate", "savedInstanceState null");
             momentID = getActivity().getIntent().getIntExtra("id", 1);
-            photos = AppMoment.getInstance().user.getMoment(momentID).getPhotos();
         }
         else {
             Log.e("onCreate", "savedInstanceState not null");
@@ -81,12 +78,12 @@ public class PhotosFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
 
         if(savedInstanceState == null) {
             Log.e("onCreateView", "savedInstanceState null");
+            photos = AppMoment.getInstance().user.getMoment(momentID).getPhotos();
             imageAdapter = new ImageAdapter(view.getContext(), photos);
             gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);
@@ -100,6 +97,8 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        Log.e("onStart", "PhotosFragment");
+
         MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
 
             public void onSuccess(JSONObject response) {
@@ -122,17 +121,15 @@ public class PhotosFragment extends Fragment {
             }
         });
 
-        gridView.setOnItemClickListener(new OnItemClickListener()
-        {
+        gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id)
-            {
-                if(position==0){
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (position == 0) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                     File file = new File(Environment.getExternalStorageDirectory(), "tmp_"
                             + String.valueOf(System.currentTimeMillis())
-                            +".jpg");
+                            + ".jpg");
 
                     outputFileUri = Uri.fromFile(file);
 
@@ -145,11 +142,13 @@ public class PhotosFragment extends Fragment {
                     }
                 } else {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    intent.putExtra("position", (position-1));
+                    intent.putExtra("position", (position - 1));
                     intent.putExtra("momentID", momentID);
                     startActivity(intent);
                 }
-            };
+            }
+
+            ;
         });
     }
 
@@ -164,6 +163,26 @@ public class PhotosFragment extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onStop () {
+        photos.clear();
+        imageAdapter.notifyDataSetChanged();
+        super.onStop();
+
+        Log.e("onStop", "PhotosFragment");
+    }
+
+    @Override
+    public void onSaveInstanceState (Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("onResume", "PhotosFragment");
+    }
+
     /**
      * ImageAdapter
      */
@@ -171,10 +190,11 @@ public class PhotosFragment extends Fragment {
     public class ImageAdapter extends BaseAdapter {
 
         private Context context;
-
+        private ArrayList<Photo> photos;
 
         public ImageAdapter(Context context, ArrayList<Photo> photos) {
             this.context = context;
+            this.photos = photos;
         }
 
         @Override
@@ -215,7 +235,7 @@ public class PhotosFragment extends Fragment {
                 imageView.setBackgroundColor(Color.WHITE);
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { imageView.setImageBitmap(photos.get(position-1).getBitmapThumbnail()); }
+            else { imageView.setImageBitmap(photos.get(position - 1).getBitmapThumbnail()); }
             return imageView;
         }
     }
@@ -311,6 +331,10 @@ public class PhotosFragment extends Fragment {
                 bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
                 stream.close();
                 bitmap = bitmap2;
+                Photo tempPhoto = new Photo();
+                tempPhoto.setBitmapThumbnail(bitmap2);
+                tempPhoto.setBitmapOriginal(bitmap2);
+                photos.add(tempPhoto);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -324,6 +348,7 @@ public class PhotosFragment extends Fragment {
                 @Override
                 public void onSuccess(JSONObject response) {
                     createNotification("YEAH", "FUCK", true);
+                    imageAdapter.notifyDataSetChanged();
                 }
 
                 @Override

@@ -96,7 +96,7 @@
         <activity
                 android:screenOrientation="portrait"
                 android:name=".activities.MomentInfosActivity"
-                android:label="@string/title_activity_moment_infos" >
+                android:label="@string/title_activity_moment_infos">
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
                     android:value="com.moment.TimelineActivity" />
