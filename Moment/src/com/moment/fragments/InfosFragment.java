@@ -178,8 +178,8 @@ public class InfosFragment extends Fragment {
 			lastname.setText(Exchanger.moment.getUser().getLastname());
 		}
 		
-		TextView hashtag = (TextView)view.findViewById(R.id.hashtag);
-		hashtag.setText(Exchanger.moment.getHashtag());
+		//TextView hashtag = (TextView)view.findViewById(R.id.hashtag);
+		//hashtag.setText(Exchanger.moment.getHashtag());
 		
 		return view;
 	}

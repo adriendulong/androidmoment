@@ -142,5 +142,10 @@
     <string name="title_coming">PRESENTS</string>
     <string name="title_unknown">NON REPONDUS</string>
 
+    <!-- Info Moment -->
+    <string name="rsvp_coming">Je serai présent au Moment</string>
+    <string name="rsvp_not_coming">Je ne serai pas présent au Moment</string>
+    <string name="rsvp_maybe">Je ne sais pas si je serai présent au Moment</string>
+
 
 </resources>

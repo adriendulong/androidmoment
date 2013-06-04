@@ -15,53 +15,19 @@
                 android:layout_height="fill_parent"
                 android:src="@drawable/photoevent"
                 android:scaleType="centerCrop"/>
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="40dp"
+                       android:background="@color/black_detail_photo_trans"
+                       android:layout_alignParentBottom="true"/>
             <RelativeLayout android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentLeft="true"
-                android:layout_marginLeft="15dp"
-                android:layout_marginBottom="10dp">
-                
-                <RelativeLayout android:layout_width="130dp"
-                    android:layout_height="30dp"
-                    android:background="@color/white"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="20dp">
-                    <LinearLayout android:layout_width="wrap_content"
-                        android:layout_height="14dp"
-                        android:orientation="horizontal"
-                        android:layout_alignParentTop="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginTop="2dp">
-                        <TextView android:id="@+id/firstname_owner" 
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="10dp"
-                            android:textColor="@color/gris_texte"
-                            android:layout_marginRight="4dp"/>
-                         <TextView android:id="@+id/lastname_owner" 
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textSize="10dp"
-                            android:textColor="@color/gris_texte"/>
-                        
-                        
-                    </LinearLayout>
-                    <TextView android:id="@+id/hashtag"
-                        android:layout_width="wrap_content"
-                        android:layout_height="14dp"
-                        android:layout_alignParentBottom="true"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginLeft="30dp"
-                        android:layout_marginBottom="2dp"
-                        android:textSize="10dp"
-                        android:textColor="@color/orange"/>
-                    
-                </RelativeLayout>
-                
-                <RelativeLayout android:layout_width="40dp"
-                    android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp">
+                <RelativeLayout android:id="@+id/box_image_owner"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
                     android:background="@drawable/bg_photo_profil"
                     android:padding="4dp"
                     android:layout_centerVertical="true">
@@ -69,15 +35,43 @@
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"/>
                 </RelativeLayout>
-                
-                
             </RelativeLayout>
+            <LinearLayout android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:layout_alignParentBottom="true"
+                          android:layout_alignParentLeft="true"
+                          android:layout_marginLeft="80dp"
+                          android:layout_marginBottom="20dp">
+                <TextView android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="par"
+                          android:textColor="@color/white"
+                        android:textSize="12dp"/>
+                <TextView android:id="@+id/firstname_owner"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="Test"
+                          android:textColor="@color/white"
+                          android:layout_marginLeft="4dp"
+                          android:textSize="12dp"/>
+                <TextView android:id="@+id/lastname_owner"
+                          android:layout_width="wrap_content"
+                          android:layout_height="wrap_content"
+                          android:text="Test"
+                          android:textColor="@color/white"
+                          android:layout_marginLeft="4dp"
+                          android:textSize="12dp"/>
+
+            </LinearLayout>
+
             <RelativeLayout android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentRight="true"
                 android:paddingRight="6dp"
-                android:paddingBottom="10dp">
+                android:paddingBottom="17dp"
+                android:visibility="invisible">
                <RelativeLayout android:id="@+id/volet_layout"
                    android:layout_height="30dp"
                     android:layout_width="40dp"
@@ -157,6 +151,51 @@
                     android:textSize="16sp" />
 
             </LinearLayout>
+            <RelativeLayout android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:layout_marginTop="5dp">
+                <LinearLayout android:orientation="horizontal"
+                              android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:layout_gravity="center"
+                              android:layout_alignParentTop="true"
+                              android:layout_centerHorizontal="true"
+                              android:layout_marginTop="20dp">
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:onClick=""
+                                 android:src="@drawable/picto_maybe"
+                                 android:background="@drawable/rsvp_left"/>
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:onClick=""
+                                 android:src="@drawable/picto_yes_down"
+                                 android:background="@drawable/rsvp_middle_down"/>
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:onClick=""
+                                 android:src="@drawable/picto_no"
+                                 android:background="@drawable/rsvp_right"/>
+                </LinearLayout>
+                <TextView   android:id="@+id/text_rsvp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bar_rsvp"
+                            android:text="@string/rsvp_maybe"
+                            android:gravity="center"
+                            android:textSize="12dp"
+                            android:textColor="@color/white"
+                            android:layout_alignParentTop="true"
+                            android:layout_centerHorizontal="true"/>
+
+            </RelativeLayout>
+
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="5dp"/>
             <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="5dp"
@@ -172,16 +211,11 @@
                     android:text="test test test test"
                     android:padding="4dp"/>
             </LinearLayout>
-            <LinearLayout android:layout_width="fill_parent"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="2dp"
-                android:layout_height="wrap_content"
-                android:background="@drawable/pointilles"
-                android:alpha="0.6"></LinearLayout>
             <ImageView android:layout_width="fill_parent"
-                android:layout_height="2dp"
-                android:background="@drawable/pointilles"
-                android:alpha="0"/>
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginBottom="5dp"/>
             <RelativeLayout android:id="@+id/mapHost"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -219,6 +253,11 @@
                     android:paddingBottom="17dp"
                     android:paddingLeft="32dp"/>
             </RelativeLayout>
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginBottom="5dp"/>
              <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
@@ -280,6 +319,11 @@
                         android:src="@drawable/picto_valid"/>
                 </LinearLayout>
             </RelativeLayout>
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginBottom="5dp"/>
             <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
@@ -344,6 +388,11 @@
                     </LinearLayout>
                 </RelativeLayout>
             </RelativeLayout>
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginBottom="5dp"/>
             <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="5dp"
