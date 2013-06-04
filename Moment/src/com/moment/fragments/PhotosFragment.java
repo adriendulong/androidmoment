@@ -348,6 +348,12 @@ public class PhotosFragment extends Fragment {
                 @Override
                 public void onSuccess(JSONObject response) {
                     createNotification("YEAH", "FUCK", true);
+                    Log.e("UploadPhoto", "ADD");
+                    try {
+                        wait(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     imageAdapter.notifyDataSetChanged();
                 }
 

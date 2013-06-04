@@ -136,7 +136,7 @@ public class MomentDaoGenerator {
         setRelationToOne(chat, user, "userId");
         setRelationToMany(user, chat, "chatId");
 
-        new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        //new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
     }
 
     private static void setRelationToOne(Entity entity, Entity entity2, String propertyName) {
