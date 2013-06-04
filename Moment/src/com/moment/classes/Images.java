@@ -22,6 +22,7 @@ import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
+import com.moment.fragments.PhotosFragment;
 
 public class Images {
 
@@ -104,7 +105,6 @@ public class Images {
             final int widthRatio = Math.round((float) width / (float) reqWidth);
             inSampleSize = heightRatio < widthRatio ? heightRatio : widthRatio;
         }
-
         return inSampleSize;
     }
 	
@@ -142,8 +142,6 @@ public class Images {
 
 
     public static void printImageFromUrl(final ImageView targetView, final Boolean isRounded, String url){
-
-        System.out.println("Get photo url : "+ url);
         AsyncHttpClient client = new AsyncHttpClient();
         String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
         client.get(url, new BinaryHttpResponseHandler(allowedContentTypes) {

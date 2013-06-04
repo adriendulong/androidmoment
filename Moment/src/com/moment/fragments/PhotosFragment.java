@@ -67,11 +67,7 @@ public class PhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
-            Log.e("onCreate", "savedInstanceState null");
             momentID = getActivity().getIntent().getIntExtra("id", 1);
-        }
-        else {
-            Log.e("onCreate", "savedInstanceState not null");
         }
     }
 
@@ -88,9 +84,7 @@ public class PhotosFragment extends Fragment {
             gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);
         }
-        else {
-            Log.e("onCreate", "savedInstanceState not null");
-        }
+
         return view;
     }
 
@@ -107,12 +101,22 @@ public class PhotosFragment extends Fragment {
 
                     for(int i=0;i<jsonPhotos.length();i++)
                     {
+
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                         AppMoment.getInstance().user.getMoment(momentID).addPhoto(photo);
                         imageAdapter.notifyDataSetChanged();
-                        ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
-                        imageLoadTask.execute(photo.getUrlThumbnail());
+
+                        if(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()) == null) {
+                            Log.e("Rien en cache","Suxxx");
+                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
+                            imageLoadTask.execute(photo.getUrlThumbnail());
+                        }
+                        else {
+                            Log.e("Je suis dispo en cache","Ouhouuuu");
+                            photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()));
+                            //imageAdapter.notify();
+                        }
                     }
 
                 } catch (JSONException e) {
@@ -127,6 +131,10 @@ public class PhotosFragment extends Fragment {
                 if (position == 0) {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
+                    File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/");
+                    if(!dir.exists()){
+                        dir.mkdirs();
+                    }
 
                     File file = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/", "moment_"
                             + String.valueOf(System.currentTimeMillis())
@@ -268,6 +276,7 @@ public class PhotosFragment extends Fragment {
                 final ImageAdapter adapter = weakAdapter.get();
                 if(photo != null)
                     photo.setBitmapThumbnail(bitmap);
+                    AppMoment.getInstance().addBitmapToMemoryCache("thumbnail_"+photo.getId(), photo.getBitmapThumbnail());
                 adapter.notifyDataSetChanged();
             }
         }
@@ -346,21 +355,18 @@ public class PhotosFragment extends Fragment {
                 requestParams.put("photo",file);
             } catch (Exception e) { e.printStackTrace(); }
 
+
             MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     createNotification("YEAH", "FUCK", true);
                     Log.e("UploadPhoto", "ADD");
-                    try {
-                        wait(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
                     imageAdapter.notifyDataSetChanged();
                 }
 
                 @Override
                 public void onFailure(Throwable e,JSONObject response){
+
                 }
             });
             return bitmap;
