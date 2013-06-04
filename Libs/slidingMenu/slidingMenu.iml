@@ -32,6 +32,7 @@
       </library>
     </orderEntry>
     <orderEntry type="module" module-name="actionbarsherlock" />
+    <orderEntry type="library" name="maps" level="project" />
   </component>
 </module>
 
