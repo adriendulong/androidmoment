@@ -29,9 +29,7 @@ import java.util.List;
 
 public class TimelineActivity extends SlidingActivity {
 
-    private ListView momentListView;
     private Intent intentMoment;
-    private int i=0;
     private LayoutInflater inflater;
     private int actuelMomentSelect = -1;
 
