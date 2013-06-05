@@ -1,11 +1,5 @@
 package com.moment.fragments;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -31,10 +24,16 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
-import com.moment.activities.MomentInfosActivity.Exchanger;
-import com.moment.R;
 import com.moment.AppMoment;
+import com.moment.R;
+import com.moment.activities.MomentInfosActivity.Exchanger;
 import com.moment.classes.PositionOverlay;
+
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 
 public class InfosFragment extends Fragment {
 	
@@ -145,15 +144,15 @@ public class InfosFragment extends Fragment {
 		dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
 		
 		//Nombres d'invites
-		if(Exchanger.moment.getGuestsNumber()>0){
+		if(Exchanger.moment.getGuestNumber()>0){
 			TextView guests_number = (TextView)view.findViewById(R.id.guests_number);
-			guests_number.setText(""+Exchanger.moment.getGuestsNumber());
+			guests_number.setText(""+Exchanger.moment.getGuestNumber());
 			
 			TextView guests_coming = (TextView)view.findViewById(R.id.guests_coming);
-			guests_coming.setText(""+Exchanger.moment.getGuestsComing());
+			guests_coming.setText(""+Exchanger.moment.getGuestComing());
 			
 			TextView guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
-			guests__not_coming.setText(""+Exchanger.moment.getGuestsNotComing());
+			guests__not_coming.setText(""+Exchanger.moment.getGuestNotComing());
 		}
 
 		

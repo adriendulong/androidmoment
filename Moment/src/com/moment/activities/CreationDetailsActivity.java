@@ -1,17 +1,5 @@
 package com.moment.activities;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-
-import com.moment.R;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -38,24 +26,28 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.TimePicker;
-
+import android.widget.*;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.Images;
-import com.moment.models.Moment;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.CreationStep1Fragment;
 import com.moment.fragments.CreationStep2Fragment;
+import com.moment.models.Moment;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
 
 @SuppressLint("ValidFragment")
 public class CreationDetailsActivity extends SherlockFragmentActivity {
@@ -219,7 +211,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	       
 	       //Adresse adressTemp = new Adresse(numeroAdresse.getText().toString(), Integer.parseInt(adresseCodePostal.getText().toString()), adresseVille.getText().toString());
 	       
-	       moment.setInfoLieu(adresseInfoLieu.getText().toString());
+	       moment.setPlaceInformations(adresseInfoLieu.getText().toString());
 	       moment.setInfoTransport(adresseInfoTransport.getText().toString());
 	       moment.setAdresse(adresse.getText().toString());
 	       //moment.setTitre(nomLieu.getText().toString());
@@ -372,7 +364,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	
     	EditText infosLieu = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	if(infosLieu.getText()!=null){
-    		this.moment.setInfoLieu(infosLieu.getText().toString());
+    		this.moment.setPlaceInformations(infosLieu.getText().toString());
     	}
     	
     	/*EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
@@ -593,7 +585,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	Log.d("Description", descriptionEdit.getText().toString());
     	moment.setDescription(descriptionEdit.getText().toString());
     	moment.setAdresse(adressButton.getText().toString());
-    	if(infosLieuEdit.getText().toString().length()>0) moment.setInfoLieu(infosLieuEdit.getText().toString());
+    	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
     
     	dialog = ProgressDialog.show(this, null, "Création en cours");

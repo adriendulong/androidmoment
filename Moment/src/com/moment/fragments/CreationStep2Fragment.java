@@ -51,9 +51,9 @@ public class CreationStep2Fragment extends Fragment {
 			adresse.setText(this.moment.getAdresse());
 		}
 		
-		if(this.moment.getInfoLieu()!=null){
+		if(this.moment.getPlaceInformations()!=null){
 			Button infosLieu = (Button)view.findViewById(R.id.creation_moment_infos_lieu);
-			infosLieu.setText(this.moment.getInfoLieu());
+			infosLieu.setText(this.moment.getPlaceInformations());
 		}
 		
 		/*if(this.moment.getHashtag()!=null){

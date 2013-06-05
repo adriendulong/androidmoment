@@ -23,6 +23,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.moment.AppMoment;
+import com.moment.R;
+import com.moment.activities.DetailPhoto;
+import com.moment.classes.Images;
+import com.moment.classes.MomentApi;
+import com.moment.models.Photo;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,16 +43,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import com.moment.AppMoment;
-import com.moment.R;
-import com.moment.activities.DetailPhoto;
-import com.moment.classes.Images;
-import com.moment.classes.MomentApi;
-import com.moment.models.Photo;
 
 public class PhotosFragment extends Fragment {
 
@@ -104,7 +102,7 @@ public class PhotosFragment extends Fragment {
 
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                        AppMoment.getInstance().user.getMoment(momentID).addPhoto(photo);
+                        AppMoment.getInstance().user.getMoment(momentID).getPhotos().add(photo);
                         imageAdapter.notifyDataSetChanged();
 
                         if(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()) == null) {
@@ -222,6 +220,7 @@ public class PhotosFragment extends Fragment {
             return 0;
         }
 
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 

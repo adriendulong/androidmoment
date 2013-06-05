@@ -215,7 +215,7 @@ public class CreationPopUp extends Activity {
 
                 //We set this two parameter in the moment
                 AppMoment.getInstance().user.getMoment(momentId).setPrivacy(privacy);
-                AppMoment.getInstance().user.getMoment(momentId).setOpenInvit(isInvit);
+                AppMoment.getInstance().user.getMoment(momentId).setIsOpenInvit(isInvit);
 
                 System.out.println(AppMoment.getInstance().user.getMoment(momentId).getPrivacy());
 

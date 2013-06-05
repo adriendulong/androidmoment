@@ -1,10 +1,5 @@
 package com.moment.activities;
 
-import com.moment.R;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -14,22 +9,23 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.widget.*;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
-import com.moment.models.Moment;
-import com.moment.classes.MomentApi;
+import com.moment.R;
 import com.moment.animations.TimelineAnimation;
+import com.moment.classes.MomentApi;
+import com.moment.models.Moment;
+import com.moment.models.MomentDao;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class TimelineActivity extends SlidingActivity {
 
@@ -39,90 +35,55 @@ public class TimelineActivity extends SlidingActivity {
     private LayoutInflater inflater;
     private int actuelMomentSelect = -1;
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_timeline);
-
-        //Sliding menu
         setBehindContentView(R.layout.volet_timeline);
-
-        //Customize Sliding view
         SlidingMenu sm = getSlidingMenu();
         sm.setBehindOffset(100);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        //Inflater 
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
 
-
+    @Override
+    public void onStart(){
+        super.onStart();
         MomentApi.get("moments", null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-
-                System.out.println("OK");
                 try {
                     System.out.println(response.toString());
                     JSONArray momentsArray = response.getJSONArray("moments");
-
-                    // Nombre de moment
                     int nbMoments = momentsArray.length();
-                    Toast.makeText(getApplicationContext(), "Nombre de Moments "+nbMoments, Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
 
-                    for(int j=0; j<nbMoments; j++){
-                        JSONObject momentJson = (JSONObject)momentsArray.get(j);
-
+                    for (int j = 0; j < nbMoments; j++) {
+                        JSONObject momentJson = (JSONObject) momentsArray.get(j);
                         Moment momentTemp = new Moment();
                         momentTemp.setMomentFromJson(momentJson);
-
                         System.out.println(momentTemp.getName());
-
                         AppMoment.getInstance().user.addMoment(momentTemp);
-
                         ajoutMoment(momentTemp);
 
-
+                        List queryMomentById =  AppMoment.getInstance().momentDao.queryBuilder()
+                                .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
+                        if(queryMomentById.size() == 0) {
+                            AppMoment.getInstance().momentDao.insert(momentTemp);
+                            AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
+                        }
                     }
-
-
                 } catch (JSONException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         });
-
-        //On rajoute des moments
-        /*for (i = 0; i < 10; i++) {
-        	 ajoutMoment(i, "Moment "+i);
-		}*/
-       
-        
-        
-        
-       /* momentListView = (ListView)findViewById(R.id.momentsListe);
-        String[] listeStrings = {"France","Allemagne","Russie"};
-        momentListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,listeStrings));
-        
-        
-        //List Click
-        momentListView.setOnItemClickListener(new OnItemClickListener() {
-        	  @Override
-        	  public void onItemClick(AdapterView<?> parent, View view,
-        	    int position, long id) {
-        	    Toast.makeText(getApplicationContext(),
-        	      "Click ListItem Number " + position, Toast.LENGTH_LONG)
-        	      .show();
-        	    Log.d("MOMENT","MOMMMMMENT");
-        	    lancerMomentInfos();
-        	  }
-        	}); */
-
     }
 
     @Override

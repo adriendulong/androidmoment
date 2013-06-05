@@ -283,7 +283,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 				//On construit un nouveau Chat
 			    Chat chat = new Chat(message, AppMoment.getInstance().user, new Date());
 			    	
-		    	Exchanger.moment.addChat(chat);
+		    	Exchanger.moment.getChats().add(chat);
 			        
 		    	messageRight(chat);
 			    	

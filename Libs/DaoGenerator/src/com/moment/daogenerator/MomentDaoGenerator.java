@@ -15,7 +15,8 @@ public class MomentDaoGenerator {
 
         Entity moment = schema.addEntity("Moment");
         moment.setTableName("moments");
-        moment.addIdProperty().index();
+
+        moment.addIntProperty("id").index();
 
         moment.addIntProperty("state");
         moment.addIntProperty("guestNumber");
@@ -63,9 +64,9 @@ public class MomentDaoGenerator {
 
         user.addBooleanProperty("isSelect");
 
-        /**
+/*        *//**//**
          * Photos
-         */
+         *//**//*
 
         Entity photo = schema.addEntity("Photo");
         photo.setTableName("photos");
@@ -76,9 +77,9 @@ public class MomentDaoGenerator {
         photo.addStringProperty("urlOriginal");
         photo.addStringProperty("urlThumbnail");
 
-        /**
+        *//**//**
          * Chats
-         */
+         *//**//*
 
         Entity chat = schema.addEntity("Chat");
         chat.setTableName("chats");
@@ -88,9 +89,9 @@ public class MomentDaoGenerator {
 
         chat.addDateProperty("date");
 
-        /**
+        *//**//**
          * Adresses
-         */
+         *//**//*
 
         Entity adresse = schema.addEntity("Adresse");
         adresse.setTableName("adresses");
@@ -100,9 +101,9 @@ public class MomentDaoGenerator {
         adresse.addStringProperty("numeroRue");
         adresse.addStringProperty("Ville");
 
-        /**
+        *//**//**
          * FbEvent
-         */
+         *//**//*
 
         Entity fbEvent = schema.addEntity("FbEvent");
         fbEvent.setTableName("fbevents");
@@ -112,9 +113,9 @@ public class MomentDaoGenerator {
         fbEvent.addStringProperty("startTime");
         fbEvent.addStringProperty("location");
 
-        /**
+        *//**//**
          * Place
-         */
+         *//**//*
 
         Entity place = schema.addEntity("Place");
         place.setTableName("places");
@@ -123,20 +124,22 @@ public class MomentDaoGenerator {
         place.addStringProperty("placeTwo");
         place.addStringProperty("placeThree");
 
-        /**
+        *//**//**
          * Relations
-         */
-
-        setRelationToOne(moment, user, "userId");
-        setRelationToMany(user, moment, "momentId");
+         *//**//*
 
         setRelationToOne(photo, user, "userId");
         setRelationToMany(user, photo, "photoId");
 
         setRelationToOne(chat, user, "userId");
         setRelationToMany(user, chat, "chatId");
+     */
+        setRelationToOne(moment, user, "userId");
+        setRelationToMany(user, moment, "momentId");
+
 
         //new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
     }
 
     private static void setRelationToOne(Entity entity, Entity entity2, String propertyName) {
