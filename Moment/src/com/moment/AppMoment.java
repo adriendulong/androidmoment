@@ -7,10 +7,7 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
-import com.moment.models.DaoMaster;
-import com.moment.models.DaoSession;
-import com.moment.models.MomentDao;
-import com.moment.models.User;
+import com.moment.models.*;
 
 public class AppMoment extends Application {
 	
@@ -28,6 +25,7 @@ public class AppMoment extends Application {
     public DaoMaster daoMaster;
     public DaoSession daoSession;
     public MomentDao momentDao;
+    public UserDao userDao;
 
     @Override
     public void onCreate() {
@@ -37,6 +35,7 @@ public class AppMoment extends Application {
         db = helper.getWritableDatabase();
         daoMaster = new DaoMaster(db);
         daoSession = daoMaster.newSession();
+        userDao = daoSession.getUserDao();
         momentDao = daoSession.getMomentDao();
 
         sInstance = this;

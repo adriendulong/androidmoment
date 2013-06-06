@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+
 import com.moment.R;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.models.User;
@@ -93,7 +94,6 @@ public class GuestsFragment extends Fragment {
 
     class Myonclicklistneer implements AdapterView.OnItemClickListener
     {
-
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 

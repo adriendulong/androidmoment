@@ -1,7 +1,5 @@
 package com.moment.fragments;
 
-import java.util.Calendar;
-
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,11 +10,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.moment.activities.CreationDetailsActivity;
-import com.moment.R;
 import com.moment.AppMoment;
+import com.moment.R;
+import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;
+
+import java.util.Calendar;
 
 public class CreationStep1Fragment extends Fragment {
 	private Moment moment;

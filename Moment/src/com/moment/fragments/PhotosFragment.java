@@ -77,7 +77,7 @@ public class PhotosFragment extends Fragment {
 
         if(savedInstanceState == null) {
             Log.e("onCreateView", "savedInstanceState null");
-            photos = AppMoment.getInstance().user.getMoment(momentID).getPhotos();
+            photos = AppMoment.getInstance().user.getMomentById(momentID).getPhotos();
             imageAdapter = new ImageAdapter(view.getContext(), photos);
             gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);
@@ -102,7 +102,7 @@ public class PhotosFragment extends Fragment {
 
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                        AppMoment.getInstance().user.getMoment(momentID).getPhotos().add(photo);
+                        AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
                         imageAdapter.notifyDataSetChanged();
 
                         if(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()) == null) {

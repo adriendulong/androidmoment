@@ -214,10 +214,10 @@ public class CreationPopUp extends Activity {
             public void onSuccess(JSONObject response) {
 
                 //We set this two parameter in the moment
-                AppMoment.getInstance().user.getMoment(momentId).setPrivacy(privacy);
-                AppMoment.getInstance().user.getMoment(momentId).setIsOpenInvit(isInvit);
+                AppMoment.getInstance().user.getMomentById(momentId).setPrivacy(privacy);
+                AppMoment.getInstance().user.getMomentById(momentId).setIsOpenInvit(isInvit);
 
-                System.out.println(AppMoment.getInstance().user.getMoment(momentId).getPrivacy());
+                System.out.println(AppMoment.getInstance().user.getMomentById(momentId).getPrivacy());
 
                 Log.d("SEND","OKKKKK");
 

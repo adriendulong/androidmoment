@@ -39,7 +39,6 @@ public class UserDao extends AbstractDao<User, Integer> {
         public final static Property IdCarnetAdresse = new Property(13, String.class, "idCarnetAdresse", false, "ID_CARNET_ADRESSE");
         public final static Property Description = new Property(14, String.class, "description", false, "DESCRIPTION");
         public final static Property IsSelect = new Property(15, Boolean.class, "isSelect", false, "IS_SELECT");
-        public final static Property MomentId = new Property(16, int.class, "momentId", false, "MOMENT_ID");
     };
 
     private DaoSession daoSession;
@@ -73,8 +72,7 @@ public class UserDao extends AbstractDao<User, Integer> {
                 "'FB_PHOTO_URL' TEXT," + // 12: fbPhotoUrl
                 "'ID_CARNET_ADRESSE' TEXT," + // 13: idCarnetAdresse
                 "'DESCRIPTION' TEXT," + // 14: description
-                "'IS_SELECT' INTEGER," + // 15: isSelect
-                "'MOMENT_ID' INTEGER NOT NULL );"); // 16: momentId
+                "'IS_SELECT' INTEGER);"); // 15: isSelect
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_users_ID ON users" +
                 " (ID);");
@@ -170,7 +168,6 @@ public class UserDao extends AbstractDao<User, Integer> {
         if (isSelect != null) {
             stmt.bindLong(16, isSelect ? 1l: 0l);
         }
-        stmt.bindLong(17, entity.getMomentId());
     }
 
     @Override
@@ -204,8 +201,7 @@ public class UserDao extends AbstractDao<User, Integer> {
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // fbPhotoUrl
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // idCarnetAdresse
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // description
-            cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0, // isSelect
-            cursor.getInt(offset + 16) // momentId
+            cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0 // isSelect
         );
         return entity;
     }
@@ -229,7 +225,6 @@ public class UserDao extends AbstractDao<User, Integer> {
         entity.setIdCarnetAdresse(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setDescription(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
         entity.setIsSelect(cursor.isNull(offset + 15) ? null : cursor.getShort(offset + 15) != 0);
-        entity.setMomentId(cursor.getInt(offset + 16));
      }
     
     /** @inheritdoc */

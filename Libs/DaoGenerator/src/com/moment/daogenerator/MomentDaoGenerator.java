@@ -15,7 +15,6 @@ public class MomentDaoGenerator {
 
         Entity moment = schema.addEntity("Moment");
         moment.setTableName("moments");
-        moment.implementsInterface("Parcelable");
 
         moment.addIntProperty("id").index().primaryKey();
 
@@ -135,23 +134,12 @@ public class MomentDaoGenerator {
         setRelationToOne(chat, user, "userId");
         setRelationToMany(user, chat, "chatId");
      */
-        setRelationToOne(moment, user, "userId");
-        setRelationToMany(user, moment, "momentId");
+        Property userId = moment.addIntProperty("userId").notNull().getProperty();
+        moment.addToOne(user,userId);
+        ToMany userToMoments = user.addToMany(moment, userId);
+        userToMoments.setName("moments");
 
-
-        new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        //new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
         //new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
-    }
-
-    private static void setRelationToOne(Entity entity, Entity entity2, String propertyName) {
-        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Int, propertyName).notNull();
-        Property property = propertyBuilder.getProperty();
-        entity.addToOne(entity2, property);
-    }
-
-    private static void setRelationToMany(Entity entity, Entity entity2, String propertyName) {
-        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Int, propertyName).notNull();
-        Property property = propertyBuilder.getProperty();
-        entity.addToMany(entity2, property);
     }
 }

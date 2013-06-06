@@ -1,9 +1,5 @@
 package com.moment.activities;
 
-import com.moment.R;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -18,20 +14,21 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
-
 import com.google.android.gcm.GCMRegistrar;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.CommonUtilities;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
+import com.moment.models.UserDao;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class MomentActivity extends Activity {
 
@@ -53,8 +50,7 @@ public class MomentActivity extends Activity {
         	
         	//On va chercher les infos concernant le user (pas à faire normalement on l'a en base
         	AppMoment.getInstance().user = new User();
-        	
-        	
+
         	MomentApi.get("user", null, new JsonHttpResponseHandler() {
 	            @Override
 	            public void onSuccess(JSONObject response) {
@@ -76,13 +72,17 @@ public class MomentActivity extends Activity {
 							String profile_picture_url = response.getString("profile_picture_url");
 							AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
 						}
-						
+
+                        List queryUserById =  AppMoment.getInstance().userDao.queryBuilder()
+                                .where(UserDao.Properties.Id.eq(id)).list();
+
+                        if(queryUserById == null)
+                            AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
 						
 						Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+
 					    startActivity(intent);
-				    	
-						
-						
+
 					} catch (JSONException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -320,20 +320,20 @@ public class MomentActivity extends Activity {
     	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
-    
-    
+
+
     /**
      * Fonction qui gère la recuperation de la conncetion avec le serveur
      */
     private void connectionserveur(){
-    	
-    	String email = ((EditText)findViewById(R.id.email_login)).getText().toString();
-    	String password = ((EditText)findViewById(R.id.password_login)).getText().toString();
-    	
-    	
+
+        String email = ((EditText)findViewById(R.id.email_login)).getText().toString();
+        String password = ((EditText)findViewById(R.id.password_login)).getText().toString();
+
+
         // Make sure the device has the proper dependencies.
         GCMRegistrar.checkDevice(this);
-        
+
         // Make sure the manifest was properly set - comment out this line
         // while developing the app, then uncomment it when it's ready.
         GCMRegistrar.checkManifest(this);
@@ -346,48 +346,48 @@ public class MomentActivity extends Activity {
             // Device is already registered on GCM, check server.
             if (GCMRegistrar.isRegisteredOnServer(this)) {
                 // Skips registration.
-            	Log.v("GCM", "Already registered and on server");
+                Log.v("GCM", "Already registered and on server");
 
             } else {
-                
-            	Log.v("GCM", "Not registered and on server");
+
+                Log.v("GCM", "Not registered and on server");
 
             }
         }
-           
-    	
-    	
-    	//On créé notre futur User
-		AppMoment.getInstance().user = new User();
+
+
+
+        //On créé notre futur User
+        AppMoment.getInstance().user = new User();
         AppMoment.getInstance().user.setEmail(email);
 
-    	RequestParams params = new RequestParams();
-    	params.put("email", email);
-    	params.put("password", password);
-    	if (!GCMRegistrar.getRegistrationId(this).equals("")) params.put("notif_id", GCMRegistrar.getRegistrationId(this));
-    	params.put("os", "1");
-    	params.put("os_version", android.os.Build.VERSION.RELEASE);
-    	params.put("model", CommonUtilities.getDeviceName());
-    	params.put("device_id", AppMoment.getInstance().tel_id);
-    	//params.put("lang", Locale.getDefault().getDisplayLanguage());
-    	
-    	MomentApi.initialize(getApplicationContext());
+        RequestParams params = new RequestParams();
+        params.put("email", email);
+        params.put("password", password);
+        if (!GCMRegistrar.getRegistrationId(this).equals("")) params.put("notif_id", GCMRegistrar.getRegistrationId(this));
+        params.put("os", "1");
+        params.put("os_version", android.os.Build.VERSION.RELEASE);
+        params.put("model", CommonUtilities.getDeviceName());
+        params.put("device_id", AppMoment.getInstance().tel_id);
+        //params.put("lang", Locale.getDefault().getDisplayLanguage());
+
+        MomentApi.initialize(getApplicationContext());
         MomentApi.post("login", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
                 String id = null;
-				try {
-					id = response.getString("id");
-					
-					// Dans les infos du user on rajoute son id
-					AppMoment.getInstance().user.setId(Integer.parseInt(id));
-					
-					System.out.println("Email et id :"+AppMoment.getInstance().user.getEmail()+" / "+AppMoment.getInstance().user.getId());
-					Log.d("Cookie", MomentApi.myCookieStore.getCookies().toString());
-					
-					/**
-					 * Test Invités
-					 */
+                try {
+                    id = response.getString("id");
+
+                    // Dans les infos du user on rajoute son id
+                    AppMoment.getInstance().user.setId(Integer.parseInt(id));
+
+                    System.out.println("Email et id :"+AppMoment.getInstance().user.getEmail()+" / "+AppMoment.getInstance().user.getId());
+                    Log.d("Cookie", MomentApi.myCookieStore.getCookies().toString());
+
+                    /**
+                     * Test Invités
+                     */
 					/*
 
 					JSONArray users = new JSONArray();
@@ -420,49 +420,47 @@ public class MomentActivity extends Activity {
 				            	}
 				            });
 				     */
-				     /**
-				      * FIN TEST
-				      */
-				       
-					
-					// On recupere les infos du user et go la timeline
-					MomentApi.get("user", null, new JsonHttpResponseHandler() {
-			            @Override
-			            public void onSuccess(JSONObject response) {
-			            	try {
-								String firstname = response.getString("firstname");
-								AppMoment.getInstance().user.setFirstName(firstname);
-								
-								String lastname = response.getString("lastname");
-								AppMoment.getInstance().user.setLastName(lastname);
-								
-								if (response.has("profile_picture_url")){
-									String profile_picture_url = response.getString("profile_picture_url");
-									AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
-								}
-								
-								
-								Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
-							    startActivity(intent);
-						    	
-								
-								
-							} catch (JSONException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
-							}
-			            }
-			        });
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                    /**
+                     * FIN TEST
+                     */
+
+
+                    // On recupere les infos du user et go la timeline
+                    MomentApi.get("user", null, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            try {
+                                String firstname = response.getString("firstname");
+                                AppMoment.getInstance().user.setFirstName(firstname);
+
+                                String lastname = response.getString("lastname");
+                                AppMoment.getInstance().user.setLastName(lastname);
+
+                                if (response.has("profile_picture_url")){
+                                    String profile_picture_url = response.getString("profile_picture_url");
+                                    AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
+                                }
+
+
+                                Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                                startActivity(intent);
+
+
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
                 // Do something with the response
                 System.out.println(id);
             }
         });
-    	
+
     }
-    
 }
