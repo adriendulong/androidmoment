@@ -15,8 +15,9 @@ public class MomentDaoGenerator {
 
         Entity moment = schema.addEntity("Moment");
         moment.setTableName("moments");
+        moment.implementsInterface("Parcelable");
 
-        moment.addIntProperty("id").index();
+        moment.addIntProperty("id").index().primaryKey();
 
         moment.addIntProperty("state");
         moment.addIntProperty("guestNumber");
@@ -44,7 +45,7 @@ public class MomentDaoGenerator {
 
         Entity user = schema.addEntity("User");
         user.setTableName("users");
-        user.addIdProperty().index();
+        user.addIntProperty("id").index().primaryKey();
 
         user.addIntProperty("facebookId");
         user.addIntProperty("nbFollows");
@@ -138,18 +139,18 @@ public class MomentDaoGenerator {
         setRelationToMany(user, moment, "momentId");
 
 
-        //new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
-        new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
+        new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        //new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
     }
 
     private static void setRelationToOne(Entity entity, Entity entity2, String propertyName) {
-        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Long, propertyName).notNull();
+        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Int, propertyName).notNull();
         Property property = propertyBuilder.getProperty();
         entity.addToOne(entity2, property);
     }
 
     private static void setRelationToMany(Entity entity, Entity entity2, String propertyName) {
-        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Long, propertyName).notNull();
+        Property.PropertyBuilder propertyBuilder = entity.addProperty(PropertyType.Int, propertyName).notNull();
         Property property = propertyBuilder.getProperty();
         entity.addToMany(entity2, property);
     }
