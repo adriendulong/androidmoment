@@ -321,28 +321,19 @@ public class Moment {
         this.adresse = moment.getString("address");
         this.state = moment.getInt("user_state");
         this.keyBitmap = "cover_moment_"+name.toLowerCase();
-
-
-        //Date de d???but
         String[] dateDedutTemp = moment.getString("startDate").split("-");
         GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1]), Integer.parseInt(dateDedutTemp[2]));
         this.dateDebut = dateDebutGreg.getTime();
-
-        //Date de fin
         String[] dateFinTemps = moment.getString("endDate").split("-");
         GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1]), Integer.parseInt(dateFinTemps[2]));
         this.dateFin = dateFinGreg.getTime();
-
-
         if (moment.has("cover_photo_url")){
             this.urlCover = moment.getString("cover_photo_url");
         }
 
-        //Invites
         this.guestNumber = moment.getInt("guests_number");
         this.guestComing = moment.getInt("guests_coming");
         this.guestNotComing = moment.getInt("guests_not_coming");
-
         if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
         if(moment.has("description")) this.description = moment.getString("description");
 

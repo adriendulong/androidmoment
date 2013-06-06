@@ -47,10 +47,8 @@ public class MomentActivity extends Activity {
         
         //Si on a dŽjˆ les cookie on a pas besoin de demander la connexion
         if (MomentApi.myCookieStore.getCookies().size()>0){
-        	
-        	//On va chercher les infos concernant le user (pas ˆ faire normalement on l'a en base
-        	AppMoment.getInstance().user = new User();
 
+            AppMoment.getInstance().user = new User();
         	MomentApi.get("user", null, new JsonHttpResponseHandler() {
 	            @Override
 	            public void onSuccess(JSONObject response) {
@@ -76,7 +74,7 @@ public class MomentActivity extends Activity {
                         List queryUserById =  AppMoment.getInstance().userDao.queryBuilder()
                                 .where(UserDao.Properties.Id.eq(id)).list();
 
-                        if(queryUserById == null)
+                        if(queryUserById.isEmpty())
                             AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
 						
 						Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
