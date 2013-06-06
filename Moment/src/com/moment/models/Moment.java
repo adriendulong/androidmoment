@@ -251,6 +251,7 @@ public class Moment implements Parcelable{
         this.name = moment.getString("name");
         this.adresse = moment.getString("address");
         this.state = moment.getInt("user_state");
+        this.keyBitmap = "cover_moment_"+name.toLowerCase();
 
 
         //Date de d���but
@@ -389,29 +390,35 @@ public class Moment implements Parcelable{
 
     public void printCover(final ImageView targetView, final Boolean isRounded){
         AsyncHttpClient client = new AsyncHttpClient();
-        String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
-        client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
+        if(AppMoment.getInstance().getBitmapFromMemCache(keyBitmap) == null) {
+            Log.e("Moment Cover","DISTANT");
+            AppMoment.getInstance().user.getMoment(id).setKeyBitmap("cover_moment_"+name.toLowerCase());
+            String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
+            client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
 
-            @Override
-            public void onSuccess(byte[] fileData) {
+                @Override
+                public void onSuccess(byte[] fileData) {
 
-                if(fileData!=null){
-                    InputStream is = new ByteArrayInputStream(fileData);
-                    Bitmap bmp = BitmapFactory.decodeStream(is);
-                    AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+name.toLowerCase(), bmp);
-                    keyBitmap = "cover_moment_"+name.toLowerCase();
-
-                    if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
-                    else targetView.setImageBitmap(bmp);
+                    if(fileData!=null){
+                        InputStream is = new ByteArrayInputStream(fileData);
+                        Bitmap bmp = BitmapFactory.decodeStream(is);
+                        AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+name.toLowerCase(), bmp);
+                        if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
+                        else targetView.setImageBitmap(bmp);
+                    }
                 }
-            }
 
-            @Override
-            public void handleFailureMessage(Throwable e, byte[] responseBody) {
-                Log.d("RATEE", "RATEE");
-                onFailure(e, responseBody);
-            }
-        });
+                @Override
+                public void handleFailureMessage(Throwable e, byte[] responseBody) {
+                    Log.d("RATEE", "RATEE");
+                    onFailure(e, responseBody);
+                }
+            });
+        }
+    else {
+            Log.e("Moment Cover","En cache");
+            targetView.setImageBitmap(Images.getRoundedCornerBitmap(AppMoment.getInstance().getBitmapFromMemCache(keyBitmap)));
+        }
     }
 
     public Moment(Parcel in){

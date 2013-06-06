@@ -3,6 +3,7 @@ package com.moment.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -38,7 +39,7 @@ public class TimelineActivity extends SlidingActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        Log.e("TimelineActivity","OnCreate");
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
         SlidingMenu sm = getSlidingMenu();
@@ -48,40 +49,43 @@ public class TimelineActivity extends SlidingActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        if(savedInstanceState == null){
+            MomentApi.get("moments", null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        System.out.println(response.toString());
+                        JSONArray momentsArray = response.getJSONArray("moments");
+                        int nbMoments = momentsArray.length();
+                        Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
+
+                        for (int j = 0; j < nbMoments; j++) {
+                            JSONObject momentJson = (JSONObject) momentsArray.get(j);
+                            Moment momentTemp = new Moment();
+                            momentTemp.setMomentFromJson(momentJson);
+                            System.out.println(momentTemp.getName());
+                            AppMoment.getInstance().user.addMoment(momentTemp);
+                            ajoutMoment(momentTemp);
+
+                            List queryMomentById =  AppMoment.getInstance().momentDao.queryBuilder()
+                                    .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
+                            if(queryMomentById.size() == 0) {
+                                AppMoment.getInstance().momentDao.insert(momentTemp);
+                                Bitmap bitmap = AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
+                            }
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        MomentApi.get("moments", null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                try {
-                    System.out.println(response.toString());
-                    JSONArray momentsArray = response.getJSONArray("moments");
-                    int nbMoments = momentsArray.length();
-                    Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
-
-                    for (int j = 0; j < nbMoments; j++) {
-                        JSONObject momentJson = (JSONObject) momentsArray.get(j);
-                        Moment momentTemp = new Moment();
-                        momentTemp.setMomentFromJson(momentJson);
-                        System.out.println(momentTemp.getName());
-                        AppMoment.getInstance().user.addMoment(momentTemp);
-                        ajoutMoment(momentTemp);
-
-                        List queryMomentById =  AppMoment.getInstance().momentDao.queryBuilder()
-                                .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
-                        if(queryMomentById.size() == 0) {
-                            AppMoment.getInstance().momentDao.insert(momentTemp);
-                            AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
     }
 
     @Override
@@ -92,16 +96,12 @@ public class TimelineActivity extends SlidingActivity {
 
     @Override
     public boolean onOptionsItemSelected (MenuItem item){
-        Log.d("Action", ""+item.getItemId());
-
         switch (item.getItemId()) {
             case android.R.id.home:
                 toggle();
                 return true;
 
             case R.id.menu_creer:
-                Log.d("Creer", "On va creer ! "+getSupportActionBar().getHeight());
-                //Creer et demarrer l'activitŽ de creation de moment
                 Intent intent = new Intent(this, CreationActivity.class);
                 startActivity(intent);
                 return true;
@@ -115,7 +115,6 @@ public class TimelineActivity extends SlidingActivity {
     public void tap(View view){
 
         if(view.getId()==actuelMomentSelect){
-
             intentMoment = new Intent(this, MomentInfosActivity.class);
             intentMoment.putExtra("precedente", "timeline");
             intentMoment.putExtra("position", 1);
