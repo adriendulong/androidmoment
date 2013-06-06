@@ -171,10 +171,10 @@ public class InfosFragment extends Fragment {
 			if(Exchanger.moment.getUser().getPictureProfileUrl()!=null) Exchanger.moment.getUser().printProfilePicture(owner_picture, true);
 			
 			TextView firstname = (TextView)view.findViewById(R.id.firstname_owner);
-			firstname.setText(Exchanger.moment.getUser().getFirstname());
+			firstname.setText(Exchanger.moment.getUser().getFirstName());
 			
 			TextView lastname = (TextView)view.findViewById(R.id.lastname_owner);
-			lastname.setText(Exchanger.moment.getUser().getLastname());
+			lastname.setText(Exchanger.moment.getUser().getLastName());
 		}
 		
 		//TextView hashtag = (TextView)view.findViewById(R.id.hashtag);

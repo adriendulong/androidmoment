@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
 import com.moment.models.DaoMaster;
@@ -63,6 +64,19 @@ public class AppMoment extends Application {
         // do all you initialization here
     }
 
+    public boolean checkInternet()
+    {
+        ConnectivityManager connection = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        android.net.NetworkInfo wifi = connection.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        android.net.NetworkInfo mobile = connection.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+        if (wifi.isConnected()) {
+            return true;
+        } else if (mobile.isConnected()) {
+            return true;
+        }
+        return false;
+    }
 
     public void addBitmapToMemoryCache(String key, Bitmap bitmap) {
         if (getBitmapFromMemCache(key) == null) {

@@ -34,12 +34,10 @@ public class TimelineActivity extends SlidingActivity {
     private LayoutInflater inflater;
     private int actuelMomentSelect = -1;
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e("TimelineActivity","OnCreate");
+
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
         SlidingMenu sm = getSlidingMenu();
@@ -52,6 +50,7 @@ public class TimelineActivity extends SlidingActivity {
 
         if(savedInstanceState == null){
             MomentApi.get("moments", null, new JsonHttpResponseHandler() {
+
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
@@ -242,7 +241,6 @@ public class TimelineActivity extends SlidingActivity {
         anim.setFillAfter(true);
         anim.setInterpolator(new AccelerateInterpolator());
         view.startAnimation(anim);
-
     }
 
     /**
@@ -257,7 +255,6 @@ public class TimelineActivity extends SlidingActivity {
         intentMoment.putExtra("position", 0);
         intentMoment.putExtra("id", actuelMomentSelect);
         startActivity(intentMoment);
-
     }
 
 
@@ -274,7 +271,6 @@ public class TimelineActivity extends SlidingActivity {
         intentMoment.putExtra("position", 1);
         intentMoment.putExtra("id", actuelMomentSelect);
         startActivity(intentMoment);
-
     }
 
 
@@ -285,12 +281,10 @@ public class TimelineActivity extends SlidingActivity {
 
     public void tapDirectChat(View view){
 
-
         intentMoment = new Intent(this, MomentInfosActivity.class);
         intentMoment.putExtra("precedente", "timeline");
         intentMoment.putExtra("position", 2);
         intentMoment.putExtra("id", actuelMomentSelect);
         startActivity(intentMoment);
-
     }
 }

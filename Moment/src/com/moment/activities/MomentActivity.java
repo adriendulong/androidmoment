@@ -67,10 +67,10 @@ public class MomentActivity extends Activity {
 	            		AppMoment.getInstance().user.setEmail(email);
 	            		
 						String firstname = response.getString("firstname");
-						AppMoment.getInstance().user.setFirstname(firstname);
+						AppMoment.getInstance().user.setFirstName(firstname);
 						
 						String lastname = response.getString("lastname");
-						AppMoment.getInstance().user.setLastname(lastname);
+						AppMoment.getInstance().user.setLastName(lastname);
 						
 						if (response.has("profile_picture_url")){
 							String profile_picture_url = response.getString("profile_picture_url");
@@ -358,8 +358,9 @@ public class MomentActivity extends Activity {
     	
     	
     	//On crŽŽ notre futur User
-		AppMoment.getInstance().user = new User(email);
-    	
+		AppMoment.getInstance().user = new User();
+        AppMoment.getInstance().user.setEmail(email);
+
     	RequestParams params = new RequestParams();
     	params.put("email", email);
     	params.put("password", password);
@@ -430,10 +431,10 @@ public class MomentActivity extends Activity {
 			            public void onSuccess(JSONObject response) {
 			            	try {
 								String firstname = response.getString("firstname");
-								AppMoment.getInstance().user.setFirstname(firstname);
+								AppMoment.getInstance().user.setFirstName(firstname);
 								
 								String lastname = response.getString("lastname");
-								AppMoment.getInstance().user.setLastname(lastname);
+								AppMoment.getInstance().user.setLastName(lastname);
 								
 								if (response.has("profile_picture_url")){
 									String profile_picture_url = response.getString("profile_picture_url");

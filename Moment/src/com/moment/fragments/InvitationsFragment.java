@@ -1,20 +1,5 @@
 package com.moment.fragments;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.moment.AppMoment;
-import com.moment.classes.*;
-import com.moment.models.User;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -37,15 +22,29 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
-import com.moment.activities.InvitationActivity;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.activities.InvitationActivity;
+import com.moment.classes.InvitationsAdapter;
+import com.moment.classes.MomentApi;
+import com.moment.models.User;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 public class InvitationsFragment extends Fragment {
 	
@@ -164,7 +163,7 @@ public class InvitationsFragment extends Fragment {
                 	System.out.println("Id : "+id+"  fname:"+ name);
                     
                     User user = new User();
-                    user.setFirstname(name);
+                    user.setFirstName(name);
                     user.setIdCarnetAdresse(id);
                     
                     
@@ -322,7 +321,7 @@ public class InvitationsFragment extends Fragment {
 			
 			InputStream photoStream = openPhoto(Long.parseLong(user[0].getIdCarnetAdresse()));
             if(photoStream!=null){
-            	user[0].setPhoto_thumbnail(BitmapFactory.decodeStream(photoStream));
+            	user[0].setPhotoThumbnail(BitmapFactory.decodeStream(photoStream));
             }
             
             Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+ " = ?", new String[] { user[0].getIdCarnetAdresse() }, null);
@@ -465,7 +464,7 @@ public class InvitationsFragment extends Fragment {
     				JSONObject friend = d.getJSONObject(i);
     				
     				User user = new User();
-    				user.setFirstname(friend.getString("name"));
+    				user.setFirstName(friend.getString("name"));
     				user.setFacebookId(friend.getInt("id"));
     				user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
     				users.add(user);
@@ -527,20 +526,20 @@ public class InvitationsFragment extends Fragment {
         	if(users.get(position).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getEmail());
         	if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getNumTel());
         	
-        	if(!users.get(position).getSelected()){
+        	if(!users.get(position).getIsSelect()){
         		View v = view.findViewById(R.id.bg_cell_invitations);
 	            v.setBackgroundColor(getResources().getColor(R.color.orange));
 	            
 	           InvitationActivity.invitesUser.add(users.get(position));
 	           InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
-	           users.get(position).setSelected(true);
+	           users.get(position).setIsSelect(true);
         	}
         	else{
         		RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
 	            v.setBackgroundResource(R.drawable.background);
 	            InvitationActivity.invitesUser.remove(users.get(position));
 	            
-	            users.get(position).setSelected(false);
+	            users.get(position).setIsSelect(false);
         	}
         		
 
