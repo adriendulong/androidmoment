@@ -1,15 +1,5 @@
 package com.moment.activities;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import com.moment.R;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -27,7 +17,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -35,10 +24,19 @@ import com.google.android.gcm.GCMRegistrar;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.CommonUtilities;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class InscriptionActivity extends SherlockActivity {
 
@@ -146,11 +144,12 @@ public class InscriptionActivity extends SherlockActivity {
 	       }
 	       
 	       //On crŽŽ notre futur User
-	       AppMoment.getInstance().user = new User(email);
-	       
-	       //On initialise le User (qu'on effacera si le register ne marche pas
-	       AppMoment.getInstance().user.setFirstname(prenom);
-	       AppMoment.getInstance().user.setLastname(nom);
+	       AppMoment.getInstance().user = new User();
+            AppMoment.getInstance().user.setEmail(email);
+
+            //On initialise le User (qu'on effacera si le register ne marche pas
+	       AppMoment.getInstance().user.setFirstName(prenom);
+	       AppMoment.getInstance().user.setLastName(nom);
 	       
 	       
 	       MomentApi.initialize(getApplicationContext());
@@ -176,10 +175,10 @@ public class InscriptionActivity extends SherlockActivity {
 				            public void onSuccess(JSONObject response) {
 				            	try {
 									String firstname = response.getString("firstname");
-									AppMoment.getInstance().user.setFirstname(firstname);
+									AppMoment.getInstance().user.setFirstName(firstname);
 									
 									String lastname = response.getString("lastname");
-									AppMoment.getInstance().user.setLastname(lastname);
+									AppMoment.getInstance().user.setLastName(lastname);
 									
 									if(response.has("profile_picture_url")){
 										String profile_picture_url = response.getString("profile_picture_url");

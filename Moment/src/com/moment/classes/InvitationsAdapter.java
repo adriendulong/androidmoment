@@ -1,7 +1,5 @@
 package com.moment.classes;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,9 +7,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.moment.R;
 import com.moment.models.User;
+
+import java.util.ArrayList;
 
 public class InvitationsAdapter extends ArrayAdapter<User>{
 
@@ -56,14 +55,14 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         }
         
         User user = data.get(position);
-        holder.txtFirstname.setText(user.getFirstname());
-        holder.txtLastname.setText(user.getLastname());
+        holder.txtFirstname.setText(user.getFirstName());
+        holder.txtLastname.setText(user.getLastName());
         holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         holder.bg.setBackgroundResource(R.drawable.background);
         
-        if(user.getPhoto_thumbnail()!=null){
+        if(user.getPhotoThumbnail()!=null){
         	System.out.println("NOT NULL");
-            holder.photo_thumbnail.setImageBitmap(Images.getRoundedCornerBitmap(user.getPhoto_thumbnail()));
+            holder.photo_thumbnail.setImageBitmap(Images.getRoundedCornerBitmap(user.getPhotoThumbnail()));
         }
         else if(user.getFbPhotoUrl()!=null){
         	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFbPhotoUrl());
@@ -76,7 +75,7 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         }
         
-        if(user.getSelected()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
+        if(user.getIsSelect()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
 
         return row;
     }

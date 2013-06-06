@@ -28,8 +28,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.*;
 import com.moment.animations.VoletAcceptAnimation;
+import com.moment.classes.MomentApi;
 import com.moment.fragments.ChatFragment;
 import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
@@ -89,7 +89,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
         //We get the moment thans to its id
-        Exchanger.moment = AppMoment.getInstance().user.getMoment(momentID);
+        Exchanger.moment = AppMoment.getInstance().user.getMomentById(momentID);
         Exchanger.idMoment = momentID;
         
 
@@ -106,7 +106,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         fragments = new ArrayList<Fragment>();
 
      	Bundle args = new Bundle();
-        args.putParcelable("moment", moment);
+
      	// Ajout des Fragments dans la liste
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
      	fragments.add(Fragment.instantiate(this,InfosFragment.class.getName(), args));

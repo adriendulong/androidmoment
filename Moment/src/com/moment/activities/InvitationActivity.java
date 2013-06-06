@@ -1,14 +1,5 @@
 package com.moment.activities;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-
-import com.moment.R;
-import org.apache.http.entity.StringEntity;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -18,15 +9,22 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
-
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.moment.R;
 import com.moment.classes.MomentApi;
-import com.moment.models.User;
 import com.moment.fragments.InvitationsFragment;
+import com.moment.models.User;
+import org.apache.http.entity.StringEntity;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 
 public class InvitationActivity extends SherlockFragmentActivity {
 	
