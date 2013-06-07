@@ -3,7 +3,6 @@ package com.moment.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.TypedValue;
@@ -17,8 +16,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.TimelineAnimation;
-import com.moment.classes.MomentApi;
 import com.moment.classes.CommonUtilities;
+import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
 import com.moment.models.MomentDao;
 import com.slidingmenu.lib.SlidingMenu;
@@ -73,10 +72,9 @@ public class TimelineActivity extends SlidingActivity {
                                     .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
 
                             if(queryMomentById.size() == 0) {
-
                                 AppMoment.getInstance().daoSession.insert(momentTemp);
                                 AppMoment.getInstance().user.getMoments().add(momentTemp);
-                                Bitmap bitmap = AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
+
                             }
                         }
                     } catch (JSONException e) {
