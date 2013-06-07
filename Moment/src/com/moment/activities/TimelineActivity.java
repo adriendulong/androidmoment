@@ -17,9 +17,9 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.TimelineAnimation;
 import com.moment.classes.CommonUtilities;
+import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
-import com.moment.models.MomentDao;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
 import org.json.JSONArray;
@@ -49,39 +49,44 @@ public class TimelineActivity extends SlidingActivity {
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if(savedInstanceState == null){
-            MomentApi.get("moments", null, new JsonHttpResponseHandler() {
 
-                @Override
-                public void onSuccess(JSONObject response) {
-                    try {
-                        System.out.println(response.toString());
-                        JSONArray momentsArray = response.getJSONArray("moments");
-                        int nbMoments = momentsArray.length();
-                        Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
-
-                        for (int j = 0; j < nbMoments; j++) {
-                            JSONObject momentJson = (JSONObject) momentsArray.get(j);
-                            Moment momentTemp = new Moment();
-                            momentTemp.setMomentFromJson(momentJson);
-                            System.out.println(momentTemp.getName());
-                            AppMoment.getInstance().user.addMoment(momentTemp);
-                            ajoutMoment(momentTemp);
-
-
-                            List queryMomentById =  AppMoment.getInstance().momentDao.queryBuilder()
-                                    .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
-
-                            if(queryMomentById.size() == 0) {
-                                AppMoment.getInstance().daoSession.insert(momentTemp);
-                                AppMoment.getInstance().user.getMoments().add(momentTemp);
-
-                            }
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+            if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                for (Moment moment : momentList){
+                    AppMoment.getInstance().user.getMoments().add(moment);
+                    ajoutMoment(moment);
                 }
-            });
+            }
+
+            else {
+                MomentApi.get("moments", null, new JsonHttpResponseHandler() {
+
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            System.out.println(response.toString());
+                            JSONArray momentsArray = response.getJSONArray("moments");
+                            int nbMoments = momentsArray.length();
+                            Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
+
+                            for (int j = 0; j < nbMoments; j++) {
+                                JSONObject momentJson = (JSONObject) momentsArray.get(j);
+                                Moment momentTemp = new Moment();
+                                momentTemp.setMomentFromJson(momentJson);
+                                System.out.println(momentTemp.getName());
+                                AppMoment.getInstance().user.addMoment(momentTemp);
+                                ajoutMoment(momentTemp);
+
+                                if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                    DatabaseHelper.addMoment(momentTemp);
+                                }
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
     }
 
@@ -108,14 +113,11 @@ public class TimelineActivity extends SlidingActivity {
                 startActivity(intent);
                 return true;
         }
-
         return super.onOptionsItemSelected(item);
-
     }
 
 
     public void tap(View view){
-
         if(view.getId()==actuelMomentSelect){
             intentMoment = new Intent(this, MomentInfosActivity.class);
             intentMoment.putExtra("precedente", "timeline");
@@ -129,7 +131,6 @@ public class TimelineActivity extends SlidingActivity {
                 View v = momentsLayout.findViewById(CommonUtilities.longToInt(actuelMomentSelect));
                 reduireMoment(v);
             }
-
             actuelMomentSelect = Long.valueOf(view.getId());
             grandirMoment(view);
         }

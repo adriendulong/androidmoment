@@ -22,9 +22,10 @@ import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.CommonUtilities;
+import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
+import com.moment.models.Moment;
 import com.moment.models.User;
-import com.moment.models.UserDao;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -44,45 +45,60 @@ public class MomentActivity extends Activity {
 
         if (MomentApi.myCookieStore.getCookies().size()>0){
 
-            AppMoment.getInstance().user = new User();
-        	MomentApi.get("user", null, new JsonHttpResponseHandler() {
-	            @Override
-	            public void onSuccess(JSONObject response) {
-	            	try {
-	            		Long id = response.getLong("id");
-	            		AppMoment.getInstance().user.setId(id);
+            if(!DatabaseHelper.getUsersFromDataBase().isEmpty()){
+                Log.e("MomentActivity","On a le user en base");
+
+                // FIXME Ca va bien si on n'a qu'un seul user
+
+                List<User> users = AppMoment.getInstance().userDao.loadAll();
+                AppMoment.getInstance().user = users.get(0);
+                Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                startActivity(intent);
+            }
+
+            else {
+                Log.e("MomentActivity","On va chercher le user en ligne");
+                AppMoment.getInstance().user = new User();
+                MomentApi.get("user", null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            Long id = response.getLong("id");
+                            AppMoment.getInstance().user.setId(id);
 
 
-	            		String email = response.getString("email");
-	            		AppMoment.getInstance().user.setEmail(email);
+                            String email = response.getString("email");
+                            AppMoment.getInstance().user.setEmail(email);
 
-						String firstname = response.getString("firstname");
-						AppMoment.getInstance().user.setFirstName(firstname);
+                            String firstname = response.getString("firstname");
+                            AppMoment.getInstance().user.setFirstName(firstname);
 
-						String lastname = response.getString("lastname");
-						AppMoment.getInstance().user.setLastName(lastname);
+                            String lastname = response.getString("lastname");
+                            AppMoment.getInstance().user.setLastName(lastname);
 
-						if (response.has("profile_picture_url")){
-							String profile_picture_url = response.getString("profile_picture_url");
-							AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
-						}
+                            if (response.has("profile_picture_url")) {
+                                String profile_picture_url = response.getString("profile_picture_url");
+                                AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
+                            }
 
-                        List queryUserById =  AppMoment.getInstance().userDao.queryBuilder()
-                                .where(UserDao.Properties.Id.eq(id)).list();
+                            if (DatabaseHelper.getUserByIdFromDataBase(id) == null) {
+                                AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
+                                if (DatabaseHelper.getMomentsFromDataBase() != null) {
+                                    for (Moment moment : DatabaseHelper.getMomentsFromDataBase()) {
+                                        DatabaseHelper.getUserByIdFromDataBase(id).addMoment(moment);
+                                    }
+                                }
+                            }
 
-                        if(queryUserById.isEmpty())
-                            AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
+                            Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                            startActivity(intent);
 
-						Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
-
-					    startActivity(intent);
-
-					} catch (JSONException e) {
-						e.printStackTrace();
-					}
-	            }
-	        });
-
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
         }
 
         
