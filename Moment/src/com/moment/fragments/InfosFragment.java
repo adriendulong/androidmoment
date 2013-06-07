@@ -69,7 +69,7 @@ public class InfosFragment extends Fragment {
 		super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
             momentId = getActivity().getIntent().getLongExtra("id", 1);
-            moment = AppMoment.getInstance().user.getMomentById(momentId);
+            //moment = AppMoment.getInstance().user.getMomentById(momentId);
         }
 		
 	}
