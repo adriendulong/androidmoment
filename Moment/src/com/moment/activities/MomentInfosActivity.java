@@ -59,6 +59,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     private Long momentID;
 	private int position = 1;
 
+    //Fragments
+    private InfosFragment infosFr;
+
 	Menu myMenu;
 	private GoogleMap mMap;
 	
@@ -109,8 +112,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      	Bundle args = new Bundle();
 
      	// Ajout des Fragments dans la liste
+        infosFr = new InfosFragment();
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
-     	fragments.add(Fragment.instantiate(this,InfosFragment.class.getName(), args));
+     	fragments.add(infosFr);
    		fragments.add(Fragment.instantiate(this,ChatFragment.class.getName(), args));
 
    		// Cr�ation de l'adapter qui s'occupera de l'affichage de la liste de
@@ -553,8 +557,35 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             Log.d("FIN ACTIVITY", "LIST");
         }
     }
-   
-    
+
+
+
+    /**
+     * Function called when the Not Going button is touched in the RSVP bloc
+     * @param view
+     */
+
+    public void notRsvp(View view){
+        infosFr.notRsvp();
+    }
+
+    /**
+     * Function called when the Maybe button is touched in the RSVP bloc
+     * @param view
+     */
+
+    public void maybeRsvp(View view){
+        infosFr.maybeRsvp();
+    }
+
+    /**
+     * Function called when the Going button is touched in the RSVP bloc
+     * @param view
+     */
+
+    public void goingRsvp(View view){
+        infosFr.goingRsvp();
+    }
     
 
 }

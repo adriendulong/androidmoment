@@ -318,12 +318,13 @@ public class InfosFragment extends Fragment {
      * @param view
      */
 
-    public void maybeRsvp(View view){
+    public void maybeRsvp(){
         System.out.println("MAYBE");
         int oldState = stateAnwser;
 
         if(stateAnwser!=MAYBE){
             stateAnwser = MAYBE;
+            moment.setState(MAYBE);
             updateRSVPBloc();
             updateStateServer(oldState, MAYBE);
         }
@@ -334,12 +335,13 @@ public class InfosFragment extends Fragment {
      * @param view
      */
 
-    public void goingRsvp(View view){
+    public void goingRsvp(){
         System.out.println("Going");
         int oldState = stateAnwser;
 
         if(stateAnwser!=COMING){
             stateAnwser = COMING;
+            moment.setState(COMING);
             updateRSVPBloc();
             updateStateServer(oldState, COMING);
         }
@@ -347,15 +349,15 @@ public class InfosFragment extends Fragment {
 
     /**
      * Function called when the Not Going button is touched in the RSVP bloc
-     * @param view
      */
 
-    public void notRsvp(View view){
+    public void notRsvp(){
         System.out.println("Not going");
         int oldState = stateAnwser;
 
         if(stateAnwser!=NOT_COMING){
             stateAnwser = NOT_COMING;
+            moment.setState(NOT_COMING);
             updateRSVPBloc();
             updateStateServer(oldState, NOT_COMING);
         }
@@ -414,6 +416,7 @@ public class InfosFragment extends Fragment {
             public void onFailure(Throwable error, String content) {
                 Toast.makeText(getActivity(), "Problème de connexion lors de l'envoie de votre réponse au serveur. Veuillez ressayer plus tard.", Toast.LENGTH_SHORT).show();
                 stateAnwser = oldState;
+                moment.setState(oldState);
                 updateRSVPBloc();
 
             }

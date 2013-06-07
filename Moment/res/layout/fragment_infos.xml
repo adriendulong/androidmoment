@@ -172,8 +172,8 @@
                                  android:layout_width="wrap_content"
                                  android:layout_height="wrap_content"
                                  android:onClick="goingRsvp"
-                                 android:src="@drawable/picto_yes_down"
-                                 android:background="@drawable/rsvp_middle_down"/>
+                                 android:src="@drawable/picto_valid"
+                                 android:background="@drawable/rsvp_middle"/>
                     <ImageButton android:id="@+id/not_going_button"
                                  android:layout_width="wrap_content"
                                  android:layout_height="wrap_content"
