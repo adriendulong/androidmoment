@@ -18,6 +18,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.TimelineAnimation;
 import com.moment.classes.MomentApi;
+import com.moment.classes.CommonUtilities;
 import com.moment.models.Moment;
 import com.moment.models.MomentDao;
 import com.slidingmenu.lib.SlidingMenu;
@@ -32,7 +33,7 @@ public class TimelineActivity extends SlidingActivity {
 
     private Intent intentMoment;
     private LayoutInflater inflater;
-    private int actuelMomentSelect = -1;
+    private Long actuelMomentSelect = Long.parseLong("-1");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -72,7 +73,14 @@ public class TimelineActivity extends SlidingActivity {
                                     .where(MomentDao.Properties.Id.eq(momentTemp.getId())).list();
 
                             if(queryMomentById.size() == 0) {
-                                AppMoment.getInstance().user.addMoment(momentTemp);
+
+                                List moments = AppMoment.getInstance().user.getMoments();
+                                momentTemp.setUserId(AppMoment.getInstance().user.getId());
+                                AppMoment.getInstance().daoSession.insert(momentTemp);
+                                moments.add(momentTemp);
+
+                                //AppMoment.getInstance().user.addMoment(momentTemp);
+                                //AppMoment.getInstance().momentDao.insert(momentTemp);
                                 Bitmap bitmap = AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
                             }
                         }
@@ -125,11 +133,11 @@ public class TimelineActivity extends SlidingActivity {
         else{
             if(actuelMomentSelect!=-1) {
                 LinearLayout momentsLayout = (LinearLayout)findViewById(R.id.timeline_moments);
-                View v = momentsLayout.findViewById(actuelMomentSelect);
+                View v = momentsLayout.findViewById(CommonUtilities.longToInt(actuelMomentSelect));
                 reduireMoment(v);
             }
 
-            actuelMomentSelect = view.getId();
+            actuelMomentSelect = Long.valueOf(view.getId());
             grandirMoment(view);
         }
 
@@ -185,7 +193,7 @@ public class TimelineActivity extends SlidingActivity {
 
         // On recupère le template de moment
         RelativeLayout momentLayout = (RelativeLayout) inflater.inflate(R.layout.moment, null);
-        momentLayout.setId(moment.getId());
+        momentLayout.setId(CommonUtilities.longToInt(moment.getId()));
 
 
         //On modifie le titre du moment

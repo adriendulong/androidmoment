@@ -38,14 +38,10 @@ public class MomentActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moment);
-        fontNumans = Typeface.createFromAsset(getAssets(),
-                "fonts/Numans-Regular.otf");
+        fontNumans = Typeface.createFromAsset(getAssets(), "fonts/Numans-Regular.otf");
 
-        //Test de connexion auto au dŽbut si on a les cookies
         MomentApi.initialize(getApplicationContext());
-        Log.d("Cookie", MomentApi.myCookieStore.getCookies().toString());
-        
-        //Si on a dŽjˆ les cookie on a pas besoin de demander la connexion
+
         if (MomentApi.myCookieStore.getCookies().size()>0){
 
             AppMoment.getInstance().user = new User();
@@ -53,19 +49,19 @@ public class MomentActivity extends Activity {
 	            @Override
 	            public void onSuccess(JSONObject response) {
 	            	try {
-	            		int id = response.getInt("id");
+	            		Long id = response.getLong("id");
 	            		AppMoment.getInstance().user.setId(id);
-	            		
-	            		
+
+
 	            		String email = response.getString("email");
 	            		AppMoment.getInstance().user.setEmail(email);
-	            		
+
 						String firstname = response.getString("firstname");
 						AppMoment.getInstance().user.setFirstName(firstname);
-						
+
 						String lastname = response.getString("lastname");
 						AppMoment.getInstance().user.setLastName(lastname);
-						
+
 						if (response.has("profile_picture_url")){
 							String profile_picture_url = response.getString("profile_picture_url");
 							AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
@@ -76,20 +72,19 @@ public class MomentActivity extends Activity {
 
                         if(queryUserById.isEmpty())
                             AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
-						
+
 						Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
 
 					    startActivity(intent);
 
 					} catch (JSONException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 	            }
 	        });
-        	
+
         }
-        
+
         
         
         /**
@@ -111,15 +106,11 @@ public class MomentActivity extends Activity {
             if (GCMRegistrar.isRegisteredOnServer(this)) {
                 // Skips registration.
             	Log.v("GCM", "Already registered and on server");
-
             } else {
-                
             	Log.v("GCM", "Not registered and on server");
-
             }
         }
-        
-        //PAssword edit text when done
+
         EditText password= (EditText) findViewById(R.id.password_login);
         password.setOnEditorActionListener(new OnEditorActionListener()
         {
@@ -378,7 +369,7 @@ public class MomentActivity extends Activity {
                     id = response.getString("id");
 
                     // Dans les infos du user on rajoute son id
-                    AppMoment.getInstance().user.setId(Integer.parseInt(id));
+                    AppMoment.getInstance().user.setId(Long.parseLong(id));
 
                     System.out.println("Email et id :"+AppMoment.getInstance().user.getEmail()+" / "+AppMoment.getInstance().user.getId());
                     Log.d("Cookie", MomentApi.myCookieStore.getCookies().toString());

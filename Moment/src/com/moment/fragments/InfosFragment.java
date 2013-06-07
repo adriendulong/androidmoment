@@ -30,11 +30,9 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity.Exchanger;
-import com.moment.activities.TimelineActivity;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
 import com.moment.models.Moment;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -57,7 +55,7 @@ public class InfosFragment extends Fragment {
 	private String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
 	static final int PICK_CAMERA_COVER = 1;
 	private GoogleMap mMap;
-    private int momentId;
+    private Long momentId;
     private int stateAnwser;
     private Moment moment;
 
@@ -68,10 +66,9 @@ public class InfosFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
-            momentId = getActivity().getIntent().getIntExtra("id", 1);
-            moment = AppMoment.getInstance().user.getMoment(momentId);
+            momentId = getActivity().getIntent().getLongExtra("id", 1);
+            moment = AppMoment.getInstance().user.getMomentById(momentId);
         }
-		
 	}
 
     @Override

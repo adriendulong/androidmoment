@@ -597,7 +597,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             			dialog.dismiss();
 
                         //We set the moment id and it to the user moments
-                        moment.setId(response.getInt("id"));
+                        moment.setId(response.getLong("id"));
                         AppMoment.getInstance().user.addMoment(moment);
 
                         Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);

@@ -22,7 +22,7 @@ import static com.moment.R.drawable.picto_public_down;
  */
 public class CreationPopUp extends Activity {
 
-    private int momentId;
+    private Long momentId;
 
     private int PRIVATE_MOMENT=0;
     private int PUBLIC_MOMENT = 2;
@@ -45,7 +45,7 @@ public class CreationPopUp extends Activity {
         setContentView(R.layout.creation_pop_up);
 
         //We get the moment id from the previous intent
-        momentId = getIntent().getIntExtra("momentId", -1);
+        momentId = getIntent().getLongExtra("momentId", -1);
 
         //We initialize privacy to visible
         privacy = VISIBLE_MOMENT;

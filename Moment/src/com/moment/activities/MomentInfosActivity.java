@@ -29,6 +29,7 @@ import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.VoletAcceptAnimation;
+import com.moment.classes.CommonUtilities;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.ChatFragment;
 import com.moment.fragments.InfosFragment;
@@ -55,7 +56,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	private MyPagerAdapter mPagerAdapter;
 	private ViewPager pager;
 	private Moment moment;
-    private int momentID;
+    private Long momentID;
 	private int position = 1;
 
 	Menu myMenu;
@@ -67,7 +68,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        momentID = getIntent().getIntExtra("id", 1);
+        momentID = getIntent().getLongExtra("id", 1);
 
         super.setContentView(R.layout.activity_moment_infos);
         // setup action bar for tabs
@@ -90,7 +91,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         //We get the moment thans to its id
         Exchanger.moment = AppMoment.getInstance().user.getMomentById(momentID);
-        Exchanger.idMoment = momentID;
+        Exchanger.idMoment = CommonUtilities.longToInt(momentID);
         
 
         

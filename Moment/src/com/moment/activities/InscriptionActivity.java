@@ -156,10 +156,10 @@ public class InscriptionActivity extends SherlockActivity {
 	       MomentApi.post("register", params, new JsonHttpResponseHandler() {
 	            @Override
 	            public void onSuccess(JSONObject response) {
-	            		int id = -1;
+	            		Long id = Long.parseLong("-1");
 	            	
 		            	try {
-							id = response.getInt("id");
+							id = response.getLong("id");
 						} catch (JSONException e) {
 							e.printStackTrace();
 						}

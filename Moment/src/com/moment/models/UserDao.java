@@ -14,7 +14,7 @@ import com.moment.models.User;
 /** 
  * DAO for table users.
 */
-public class UserDao extends AbstractDao<User, Integer> {
+public class UserDao extends AbstractDao<User, Long> {
 
     public static final String TABLENAME = "users";
 
@@ -23,7 +23,7 @@ public class UserDao extends AbstractDao<User, Integer> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property Id = new Property(0, Integer.class, "id", true, "ID");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
         public final static Property FacebookId = new Property(1, Integer.class, "facebookId", false, "FACEBOOK_ID");
         public final static Property NbFollows = new Property(2, Integer.class, "nbFollows", false, "NB_FOLLOWS");
         public final static Property NbFollowers = new Property(3, Integer.class, "nbFollowers", false, "NB_FOLLOWERS");
@@ -57,7 +57,7 @@ public class UserDao extends AbstractDao<User, Integer> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'users' (" + //
-                "'ID' INTEGER PRIMARY KEY ," + // 0: id
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
                 "'FACEBOOK_ID' INTEGER," + // 1: facebookId
                 "'NB_FOLLOWS' INTEGER," + // 2: nbFollows
                 "'NB_FOLLOWERS' INTEGER," + // 3: nbFollowers
@@ -73,9 +73,6 @@ public class UserDao extends AbstractDao<User, Integer> {
                 "'ID_CARNET_ADRESSE' TEXT," + // 13: idCarnetAdresse
                 "'DESCRIPTION' TEXT," + // 14: description
                 "'IS_SELECT' INTEGER);"); // 15: isSelect
-        // Add Indexes
-        db.execSQL("CREATE INDEX " + constraint + "IDX_users_ID ON users" +
-                " (ID);");
     }
 
     /** Drops the underlying database table. */
@@ -89,7 +86,7 @@ public class UserDao extends AbstractDao<User, Integer> {
     protected void bindValues(SQLiteStatement stmt, User entity) {
         stmt.clearBindings();
  
-        Integer id = entity.getId();
+        Long id = entity.getId();
         if (id != null) {
             stmt.bindLong(1, id);
         }
@@ -178,15 +175,15 @@ public class UserDao extends AbstractDao<User, Integer> {
 
     /** @inheritdoc */
     @Override
-    public Integer readKey(Cursor cursor, int offset) {
-        return cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0);
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public User readEntity(Cursor cursor, int offset) {
         User entity = new User( //
-            cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0), // id
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
             cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // facebookId
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // nbFollows
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // nbFollowers
@@ -209,7 +206,7 @@ public class UserDao extends AbstractDao<User, Integer> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, User entity, int offset) {
-        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
         entity.setFacebookId(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
         entity.setNbFollows(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setNbFollowers(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
@@ -229,13 +226,14 @@ public class UserDao extends AbstractDao<User, Integer> {
     
     /** @inheritdoc */
     @Override
-    protected Integer updateKeyAfterInsert(User entity, long rowId) {
-        return entity.getId();
+    protected Long updateKeyAfterInsert(User entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Integer getKey(User entity) {
+    public Long getKey(User entity) {
         if(entity != null) {
             return entity.getId();
         } else {
