@@ -74,13 +74,8 @@ public class TimelineActivity extends SlidingActivity {
 
                             if(queryMomentById.size() == 0) {
 
-                                List moments = AppMoment.getInstance().user.getMoments();
-                                momentTemp.setUserId(AppMoment.getInstance().user.getId());
                                 AppMoment.getInstance().daoSession.insert(momentTemp);
-                                moments.add(momentTemp);
-
-                                //AppMoment.getInstance().user.addMoment(momentTemp);
-                                //AppMoment.getInstance().momentDao.insert(momentTemp);
+                                AppMoment.getInstance().user.getMoments().add(momentTemp);
                                 Bitmap bitmap = AppMoment.getInstance().getBitmapFromMemCache("cover_moment_"+momentTemp.getName().toLowerCase());
                             }
                         }
