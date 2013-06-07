@@ -347,6 +347,7 @@ public class Moment {
             if(owner.has("lastname")) this.user.setLastName(owner.getString("lastname"));
             if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
             if(owner.has("id")) this.user.setId(owner.getLong("id"));
+            this.userId = owner.getLong("id");
         }
 
 
