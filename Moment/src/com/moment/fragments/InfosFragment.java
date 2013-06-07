@@ -57,7 +57,7 @@ public class InfosFragment extends Fragment {
 	private String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
 	static final int PICK_CAMERA_COVER = 1;
 	private GoogleMap mMap;
-    private int momentId;
+    private long momentId;
     private int stateAnwser;
     private Moment moment;
 
@@ -68,8 +68,8 @@ public class InfosFragment extends Fragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
-            momentId = getActivity().getIntent().getIntExtra("id", 1);
-            moment = AppMoment.getInstance().user.getMoment(momentId);
+            momentId = getActivity().getIntent().getLongExtra("id", 1);
+            moment = AppMoment.getInstance().user.getMomentById(momentId);
         }
 		
 	}
