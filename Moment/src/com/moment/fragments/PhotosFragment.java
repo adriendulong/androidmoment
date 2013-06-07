@@ -30,6 +30,7 @@ import com.moment.R;
 import com.moment.activities.DetailPhoto;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
+import com.moment.models.Moment;
 import com.moment.models.Photo;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -47,7 +48,7 @@ import java.util.ArrayList;
 public class PhotosFragment extends Fragment {
 
     static final int PICK_CAMERA_PHOTOS = 1;
-    private int momentID;
+    private Long momentID;
 
     private LayoutInflater layoutInflater;
     private RelativeLayout detailPhoto;
@@ -65,7 +66,7 @@ public class PhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
-            momentID = getActivity().getIntent().getIntExtra("id", 1);
+            momentID = getActivity().getIntent().getLongExtra("id", 1);
         }
     }
 
@@ -77,7 +78,8 @@ public class PhotosFragment extends Fragment {
 
         if(savedInstanceState == null) {
             Log.e("onCreateView", "savedInstanceState null");
-            photos = AppMoment.getInstance().user.getMomentById(momentID).getPhotos();
+            Moment moment = AppMoment.getInstance().user.getMomentById(momentID);
+            photos = moment.getPhotos();
             imageAdapter = new ImageAdapter(view.getContext(), photos);
             gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);

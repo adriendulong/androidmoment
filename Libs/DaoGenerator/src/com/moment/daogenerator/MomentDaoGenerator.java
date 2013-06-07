@@ -16,7 +16,7 @@ public class MomentDaoGenerator {
         Entity moment = schema.addEntity("Moment");
         moment.setTableName("moments");
 
-        moment.addIntProperty("id").index().primaryKey();
+        moment.addIdProperty();
 
         moment.addIntProperty("state");
         moment.addIntProperty("guestNumber");
@@ -44,7 +44,8 @@ public class MomentDaoGenerator {
 
         Entity user = schema.addEntity("User");
         user.setTableName("users");
-        user.addIntProperty("id").index().primaryKey();
+
+        user.addIdProperty();
 
         user.addIntProperty("facebookId");
         user.addIntProperty("nbFollows");
@@ -134,12 +135,12 @@ public class MomentDaoGenerator {
         setRelationToOne(chat, user, "userId");
         setRelationToMany(user, chat, "chatId");
      */
-        Property userId = moment.addIntProperty("userId").notNull().getProperty();
+        Property userId = moment.addLongProperty("userId").notNull().getProperty();
         moment.addToOne(user,userId);
         ToMany userToMoments = user.addToMany(moment, userId);
         userToMoments.setName("moments");
 
-        //new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
         //new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
     }
 }

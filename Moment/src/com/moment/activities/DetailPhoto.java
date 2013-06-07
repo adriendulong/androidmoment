@@ -29,7 +29,7 @@ import java.net.URL;
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
     private int position;
-    private int momentID;
+    private Long momentID;
     private Photo photo;
 
     @Override
@@ -40,7 +40,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         final ImageView imageView = (ImageView) findViewById(R.id.photo_moment_detail);
 
         position = getIntent().getIntExtra("position", 0); Log.e("DetailPhoto","position " + position);
-        momentID = getIntent().getIntExtra("momentID", 0); Log.e("DetailPhoto","momentID " + momentID);
+        momentID = getIntent().getLongExtra("momentID", 0); Log.e("DetailPhoto","momentID " + momentID);
         Log.e("",""+AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size());
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
