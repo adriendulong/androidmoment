@@ -98,7 +98,6 @@ public class InfosFragment extends Fragment {
     @Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-
 	}
 
 	@Override
@@ -260,60 +259,33 @@ public class InfosFragment extends Fragment {
 
     }
 
-
-    /**
-    * Appel�e lorsque l'utilisateur a touch� la photo de cover afin de la changer
-    */
-
     public void touchedPhoto(){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePictureIntent, PICK_CAMERA_COVER);
     }
 
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode,
-            Intent data) {
-      Log.d("TEST", "TEST");
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_CAMERA_COVER) {
-            //if (resultCode == RESULT_OK) {
-                // A contact was picked.  Here we will just display it
-                // to the user.
-                Log.d("TEST", "TEST");
-                Bundle extras = data.getExtras();
-                Bitmap mImageBitmap = (Bitmap) extras.get("data");
-                //InfosFragment infosFragment = (InfosFragment)fragments.get(1);
-                modifyPhotoMoment(mImageBitmap);
-            //}
+            Bundle extras = data.getExtras();
+            Bitmap mImageBitmap = (Bitmap) extras.get("data");
+            modifyPhotoMoment(mImageBitmap);
         }
     }
 
-
-
     private void setUpMapIfNeeded() {
-        // Do a null check to confirm that we have not already instantiated the map.
         if (mMap == null) {
             mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-            // Check if we were successful in obtaining the map.
             if (mMap != null) {
-                // The Map is verified. It is now safe to manipulate the map.
-
                 double lat=0;
                 double lon=0;
-
                 Geocoder geocoder = new Geocoder(getActivity());
 
                 try {
                     List<Address> addresses =  geocoder.getFromLocationName(Exchanger.moment.getAdresse(), 1);
 
-                    if (addresses.size() == 0) { //if no address found, display an error
-                        /*Dialog locationError = new AlertDialog.Builder(getActivity())
-                          .setIcon(0)
-                          .setTitle("Error")
-                          .setPositiveButton("Ok", null)
-                          .setMessage("Sorry, your address doesn't exist.")
-                          .create();
-                        locationError.show(); */
+                    if (addresses.size() == 0) {
+
                       }
                       else {
                           Address x = addresses.get(0);
@@ -333,26 +305,10 @@ public class InfosFragment extends Fragment {
                           mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                       }
-
-                    //navigateToLocation((lat * 1000000), (lon * 1000000), Exchanger.mMapView, getActivity());
-
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
-                /*
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-
-
-                    }
-                }).start();
-
-                */
-
             }
         }
     }

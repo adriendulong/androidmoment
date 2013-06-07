@@ -284,7 +284,7 @@ public class User {
 
     public Moment getMomentById(Long id){
         for(Moment m : moments){
-            if(m.getId() == id){
+            if(m.getId().equals(id)){
                 return m;
             }
         }

@@ -32,6 +32,7 @@ import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
+import com.moment.models.User;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -78,7 +79,8 @@ public class PhotosFragment extends Fragment {
 
         if(savedInstanceState == null) {
             Log.e("onCreateView", "savedInstanceState null");
-            Moment moment = AppMoment.getInstance().user.getMomentById(momentID);
+            User user = AppMoment.getInstance().user;
+            Moment moment = user.getMomentById(momentID);
             photos = moment.getPhotos();
             imageAdapter = new ImageAdapter(view.getContext(), photos);
             gridView = (GridView) view.findViewById(R.id.gridview);
