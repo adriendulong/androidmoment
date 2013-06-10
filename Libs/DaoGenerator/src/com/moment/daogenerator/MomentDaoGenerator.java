@@ -65,6 +65,18 @@ public class MomentDaoGenerator {
 
         user.addBooleanProperty("isSelect");
 
+        /**
+         * Chats
+         */
+
+        Entity chat = schema.addEntity("Chat");
+        chat.setTableName("chats");
+        chat.addIdProperty();
+
+        chat.addStringProperty("message");
+
+        chat.addDateProperty("date");
+
 /*        *//**//**
          * Photos
          *//**//*
@@ -77,18 +89,6 @@ public class MomentDaoGenerator {
 
         photo.addStringProperty("urlOriginal");
         photo.addStringProperty("urlThumbnail");
-
-        *//**//**
-         * Chats
-         *//**//*
-
-        Entity chat = schema.addEntity("Chat");
-        chat.setTableName("chats");
-        chat.addIdProperty();
-
-        chat.addStringProperty("message");
-
-        chat.addDateProperty("date");
 
         *//**//**
          * Adresses
@@ -135,6 +135,7 @@ public class MomentDaoGenerator {
         setRelationToOne(chat, user, "userId");
         setRelationToMany(user, chat, "chatId");
      */
+
         Property userId = moment.addLongProperty("userId").notNull().getProperty();
         moment.addToOne(user,userId);
         ToMany userToMoments = user.addToMany(moment, userId);

@@ -72,6 +72,7 @@ public class TimelineActivity extends SlidingActivity {
                             Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
 
                             for (int j = 0; j < nbMoments; j++) {
+
                                 JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                 Moment momentTemp = new Moment();
                                 momentTemp.setMomentFromJson(momentJson);
@@ -183,41 +184,34 @@ public class TimelineActivity extends SlidingActivity {
      */
 
     public void ajoutMoment(Moment moment){
-        //On recupere le layout dans lequel on insre les moments
+
         LinearLayout momentsLayout = (LinearLayout)findViewById(R.id.timeline_moments);
-
-
-        // On recupre le template de moment
         RelativeLayout momentLayout = (RelativeLayout) inflater.inflate(R.layout.moment, null);
         momentLayout.setId(CommonUtilities.longToInt(moment.getId()));
-
-
-        //On modifie le titre du moment
         TextView nomMoment = (TextView)momentLayout.findViewById(R.id.nom_moment);
         nomMoment.setText(moment.getName());
 
-        //On recupere l'emplacement de l'image
-
-        if(moment.getUrlCover()!=null){
-            final ImageView imageMoment = (ImageView)momentLayout.findViewById(R.id.image_moment);
-            moment.printCover(imageMoment, true);
+        if(AppMoment.getInstance().checkInternet() == true){
+            if(moment.getUrlCover()!= null){
+                final ImageView imageMoment = (ImageView)momentLayout.findViewById(R.id.image_moment);
+                moment.printCover(imageMoment, true);
+            }
         }
 
-        //On ajoute le moment ˆ la vue
+        else {
+            // TODO Check cache
+            final ImageView imageMoment = (ImageView)momentLayout.findViewById(R.id.image_moment);
+        }
+
         momentsLayout.addView(momentLayout);
 
-        //On adapte les tailles
         Resources r = getResources();
         float pxRatio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
         momentLayout.getLayoutParams().height = (int)(110*pxRatio);
         momentLayout.getLayoutParams().width = (int)(110*pxRatio);
-        //moment.setGravity(Gravity.CENTER_HORIZONTAL);
 
-        //On lui modifie son espacement par raport aux autres moments
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)momentLayout.getLayoutParams();
         params.setMargins(0, 10, 0, 50);
-
-
     }
 
 
