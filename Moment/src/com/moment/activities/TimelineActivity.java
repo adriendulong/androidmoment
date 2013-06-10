@@ -50,11 +50,13 @@ public class TimelineActivity extends SlidingActivity {
 
         if(savedInstanceState == null){
 
-            if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
-                List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
-                for (Moment moment : momentList){
-                    AppMoment.getInstance().user.getMoments().add(moment);
-                    ajoutMoment(moment);
+            if(AppMoment.getInstance().checkInternet() == false){
+                if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                    List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                    for (Moment moment : momentList){
+                        AppMoment.getInstance().user.getMoments().add(moment);
+                        ajoutMoment(moment);
+                    }
                 }
             }
 
