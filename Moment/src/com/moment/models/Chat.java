@@ -13,6 +13,7 @@ import java.util.Date;
 /**
  * Entity mapped to table chats.
  */
+
 public class Chat {
 
     private Long id;

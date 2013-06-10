@@ -1,11 +1,5 @@
 package com.moment.fragments;
 
-import java.util.ArrayList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -17,23 +11,27 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.moment.activities.MomentInfosActivity.Exchanger;
-import com.moment.R;
 import com.moment.AppMoment;
-import com.moment.models.Chat;
+import com.moment.R;
 import com.moment.classes.MomentApi;
+import com.moment.models.Chat;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class ChatFragment extends Fragment {
 	
 	public View view;
 	public LayoutInflater inflater;
+    public Long momentId;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.e("Test", "hello");
+        momentId = getActivity().getIntent().getLongExtra("id", 1);
 	}
 
 	@Override
@@ -83,7 +81,7 @@ public class ChatFragment extends Fragment {
 		
 		Log.d("CHAT", "Chat création");
 		
-		MomentApi.get("lastchats/"+Exchanger.idMoment, null, new JsonHttpResponseHandler() {
+		MomentApi.get("lastchats/"+momentId, null, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
             	try {
@@ -115,7 +113,7 @@ public class ChatFragment extends Fragment {
 			    		
 			    	}
 			    	
-			    	Exchanger.moment.setChats(tempChats);
+			    	AppMoment.getInstance().user.getMomentById(momentId).setChats(tempChats);
 			    	
 					
 				} catch (JSONException e) {

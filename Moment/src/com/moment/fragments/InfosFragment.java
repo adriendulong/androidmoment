@@ -135,17 +135,17 @@ public class InfosFragment extends Fragment {
 		
 		//Le Titre
 		TextView titreText = (TextView)view.findViewById(R.id.titre_moment);
-		titreText.setText(Exchanger.moment.getName().substring(1));
+		titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
 		TextView flTitreText = (TextView)view.findViewById(R.id.fl_titre_moment);
-		flTitreText.setText(Exchanger.moment.getName().substring(0,1));
+		flTitreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(0,1));
 		
 		//La description
 		TextView descriptionText = (TextView)view.findViewById(R.id.infos_moment_description);
-		descriptionText.setText(Exchanger.moment.getDescription());
+		descriptionText.setText(AppMoment.getInstance().user.getMomentById(momentId).getDescription());
 		
 		//L'adresse
 		TextView adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
-		adresse.setText(Exchanger.moment.getAdresse());
+		adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
 
         //Le state
         maybeButton = (ImageButton)view.findViewById(R.id.maybe_button);
@@ -159,10 +159,10 @@ public class InfosFragment extends Fragment {
 		
 		//Date de debut
 		GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
-		dateDebutCalendar.setTime(Exchanger.moment.getDateDebut());
+		dateDebutCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateDebut());
 		
 		Calendar dateFinCalendar = Calendar.getInstance();
-		dateFinCalendar.setTime(Exchanger.moment.getDateFin());
+		dateFinCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateFin());
 		
 		
 		TextView dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
@@ -172,37 +172,37 @@ public class InfosFragment extends Fragment {
 		dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
 		
 		//Nombres d'invites
-		if(Exchanger.moment.getGuestNumber()>0){
+		if(AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber()>0){
 			TextView guests_number = (TextView)view.findViewById(R.id.guests_number);
-			guests_number.setText(""+Exchanger.moment.getGuestNumber());
+			guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
 			
 			TextView guests_coming = (TextView)view.findViewById(R.id.guests_coming);
-			guests_coming.setText(""+Exchanger.moment.getGuestComing());
+			guests_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
 			
 			TextView guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
-			guests__not_coming.setText(""+Exchanger.moment.getGuestNotComing());
+			guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
 		}
 
 		
 		
 		//Image
-		if(Exchanger.moment.getKeyBitmap()!=null){
-			Bitmap image_cover_bmp = AppMoment.getInstance().getBitmapFromMemCache(Exchanger.moment.getKeyBitmap());
+		if(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap()!=null){
+			Bitmap image_cover_bmp = AppMoment.getInstance().getBitmapFromMemCache(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap());
 			ImageView image_cover = (ImageView)view.findViewById(R.id.photo_moment);
 			image_cover.setImageBitmap(image_cover_bmp);
 		}
 		
-		if(Exchanger.moment.getUser()!=null){
+		if(AppMoment.getInstance().user.getMomentById(momentId).getUser()!=null){
 			final ImageView owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
 			
 			
-			if(Exchanger.moment.getUser().getPictureProfileUrl()!=null) Exchanger.moment.getUser().printProfilePicture(owner_picture, true);
+			if(AppMoment.getInstance().user.getMomentById(momentId).getUser().getPictureProfileUrl()!=null) AppMoment.getInstance().user.getMomentById(momentId).getUser().printProfilePicture(owner_picture, true);
 			
 			TextView firstname = (TextView)view.findViewById(R.id.firstname_owner);
-			firstname.setText(Exchanger.moment.getUser().getFirstName());
+			firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
 			
 			TextView lastname = (TextView)view.findViewById(R.id.lastname_owner);
-			lastname.setText(Exchanger.moment.getUser().getLastName());
+			lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
 		}
 		
 		//TextView hashtag = (TextView)view.findViewById(R.id.hashtag);
@@ -282,7 +282,7 @@ public class InfosFragment extends Fragment {
                 Geocoder geocoder = new Geocoder(getActivity());
 
                 try {
-                    List<Address> addresses =  geocoder.getFromLocationName(Exchanger.moment.getAdresse(), 1);
+                    List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
 
                     if (addresses.size() == 0) {
 

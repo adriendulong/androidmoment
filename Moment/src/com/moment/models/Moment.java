@@ -248,10 +248,10 @@ public class Moment {
     public User getUser() {
         long __key = this.userId;
         if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
-            if (daoSession == null) {
+            if (AppMoment.getInstance().daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
             }
-            UserDao targetDao = daoSession.getUserDao();
+            UserDao targetDao = AppMoment.getInstance().daoSession.getUserDao();
             User userNew = targetDao.load(__key);
             synchronized (this) {
                 user = userNew;

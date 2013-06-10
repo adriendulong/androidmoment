@@ -29,14 +29,12 @@ import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.VoletAcceptAnimation;
-import com.moment.classes.CommonUtilities;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.ChatFragment;
 import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
-import com.moment.models.Photo;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -93,20 +91,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
         //We get the moment thans to its id
-        Exchanger.moment = AppMoment.getInstance().user.getMomentById(momentID);
-        Exchanger.idMoment = CommonUtilities.longToInt(momentID);
-        
+        //Exchanger.moment = AppMoment.getInstance().user.getMomentById(momentID);
+        //Exchanger.idMoment = CommonUtilities.longToInt(momentID);
 
-        
-        
-        if (moment==null) Log.d("NULL", "NULL");
-        else{
-        	Log.d("Description", ""+Exchanger.moment.getDescription());
-        	Log.d("Titre", ""+Exchanger.moment.getName());
-        	Log.d("Date Debut", ""+Exchanger.moment.getDateDebut().toString());	
-        }
-
-        // Cr�ation de la liste de Fragments que fera d�filer le PagerAdapter
         fragments = new ArrayList<Fragment>();
 
      	Bundle args = new Bundle();
@@ -282,22 +269,20 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     	RequestParams params = new RequestParams();
     	params.put("message", message);
     	
-        MomentApi.post("newchat/"+Exchanger.moment.getId(), params, new JsonHttpResponseHandler() {
+        MomentApi.post("newchat/"+momentID, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-				//On construit un nouveau Chat
+
 			    Chat chat = new Chat(message, AppMoment.getInstance().user, new Date());
 			    	
-		    	Exchanger.moment.getChats().add(chat);
-			        
+		    	AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
+
 		    	messageRight(chat);
-			    	
-		    	//On efface le contenu de l'edit text
+
 		    	postMessage.setText("");
             }
             
             public void onFailure(Throwable error, String content) {
-                // By default, call the deprecated onFailure(Throwable) for compatibility
                 System.out.println("FAILURE : "+content);
             }
         });
@@ -456,12 +441,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     
     
     public static class Exchanger {
-    	// We will use this MapView always.
     	public static MapView mMapView;
-    	public static Moment moment;
-    	public static ArrayList<Photo> photos = new ArrayList<Photo>();
-    	public static int idMoment;
-    }  
+    	//public static Moment moment;
+        //public static int idMoment;
+        //public static ArrayList<Photo> photos = new ArrayList<Photo>();
+    }
     
     
     
@@ -519,7 +503,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         if(request_code==NEW_INVIT){
             intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
-            intent.putExtra("id", Exchanger.moment.getId());
+            intent.putExtra("id", momentID);
 
            // if (android.os.Build.VERSION.SDK_INT >= 16){
                 startActivityForResult(intent, request_code);
@@ -532,7 +516,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         }
         else if (request_code==LIST_INVIT){
             intent = new Intent(MomentInfosActivity.this, ListGuestsActivity.class);
-            intent.putExtra("id", Exchanger.moment.getId());
+            intent.putExtra("id", momentID);
 
             if (android.os.Build.VERSION.SDK_INT >= 16){
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
