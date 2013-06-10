@@ -141,7 +141,13 @@ public class MomentDaoGenerator {
         ToMany userToMoments = user.addToMany(moment, userId);
         userToMoments.setName("moments");
 
+        Property momentId = chat.addLongProperty("momentId").notNull().getProperty();
+        userId = chat.addLongProperty("userId").notNull().getProperty();
+        chat.addToOne(user,userId);
+        chat.addToOne(moment, momentId);
+        ToMany momentToChats = moment.addToMany(chat, userId);
+        momentToChats.setName("chats");
+
         new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
-        //new DaoGenerator().generateAll(schema, "../momentandroid/Libs/DaoGenerator/src-gen/");
     }
 }

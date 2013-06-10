@@ -113,7 +113,7 @@ public class ChatFragment extends Fragment {
 			    		
 			    	}
 			    	
-			    	AppMoment.getInstance().user.getMomentById(momentId).setChats(tempChats);
+			    	AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
 			    	
 					
 				} catch (JSONException e) {
@@ -218,12 +218,6 @@ public class ChatFragment extends Fragment {
         	}
 
         }), 200);
-        
-    	
     }
-    
 
-	
-
-	
 }

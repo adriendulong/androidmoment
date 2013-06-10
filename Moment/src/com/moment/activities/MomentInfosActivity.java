@@ -274,8 +274,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             public void onSuccess(JSONObject response) {
 
 			    Chat chat = new Chat(message, AppMoment.getInstance().user, new Date());
+                chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
 			    	
-		    	AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
+		    	AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
 
 		    	messageRight(chat);
 
@@ -286,13 +287,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 System.out.println("FAILURE : "+content);
             }
         });
-    	
-    	
-    	
-    	
     }
     
-    
+
     /**
      * Poste le message de droite (utilisateur de l'application)
      */
