@@ -26,6 +26,7 @@ public class AppMoment extends Application {
     public DaoSession daoSession;
     public MomentDao momentDao;
     public UserDao userDao;
+    public ChatDao chatDao;
 
     @Override
     public void onCreate() {
@@ -37,6 +38,7 @@ public class AppMoment extends Application {
         daoSession = daoMaster.newSession();
         userDao = daoSession.getUserDao();
         momentDao = daoSession.getMomentDao();
+        chatDao = daoSession.getChatDao();
 
         sInstance = this;
         this.initializeInstance();

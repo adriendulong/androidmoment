@@ -35,6 +35,9 @@ import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
+import com.moment.models.User;
+
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -72,82 +75,53 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         momentID = getIntent().getLongExtra("id", 1);
 
         super.setContentView(R.layout.activity_moment_infos);
-        // setup action bar for tabs
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
-        
-        //On regarde de ou l'on vient
+
         String precedente = getIntent().getStringExtra("precedente");        
-        //if(precedente.equals("creation")) 
-        
-        
-        //Si on vient de la timeline on recupere la position � laquelle on doit se mettre
+
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
-
-        //We get the moment id
-
-
-        //We get the moment thans to its id
-        //Exchanger.moment = AppMoment.getInstance().user.getMomentById(momentID);
-        //Exchanger.idMoment = CommonUtilities.longToInt(momentID);
 
         fragments = new ArrayList<Fragment>();
 
      	Bundle args = new Bundle();
-
-     	// Ajout des Fragments dans la liste
         infosFr = new InfosFragment();
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
      	fragments.add(infosFr);
    		fragments.add(Fragment.instantiate(this,ChatFragment.class.getName(), args));
 
-   		// Cr�ation de l'adapter qui s'occupera de l'affichage de la liste de
-   		// Fragments
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
    		pager.setAdapter(this.mPagerAdapter);
 
    		pager.setCurrentItem(position, false);
-        
-   		
-        //Inflater 
+
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        
-        //Exchanger.mMapView = new MapView(this, "0SvfMFBiO0svOHR50Ed3noqFcTqNJVgTlgYR1vQ");
-        
         
         this.pager.setOnPageChangeListener(new OnPageChangeListener() {
 			
 			@Override
 			public void onPageSelected(int arg0) {
-				// TODO Auto-generated method stub
 				System.out.println("Page SELECTIONNE :" + arg0);
-				//Contacts
                 updateMenuItem(arg0);
 				
 			}
 			
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
+
 			}
 		});
 
-
-        //If we come from the creation, we directly launch the invit screen
         if (precedente.equals("creation")) callInvit(NEW_INVIT);
-
-
     }
 
 
@@ -164,7 +138,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
 		myMenu = menu;
 		getSupportMenuInflater().inflate(R.menu.activity_moment_infos, menu);
         updateMenuItem(position);
@@ -174,16 +147,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.e("MomentInfo","Destroy");
     }
-    
-    
-/**
- * FragmentPagerAdapter
- * @author adriendulong
- *
- */
-    
+
  public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
 
@@ -207,11 +172,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         public CharSequence getPageTitle(int position) {
           return CONTENT[position % CONTENT.length];
         }
-    	
-    	
-    	
  }
- 
 
  @Override
  public boolean onOptionsItemSelected(MenuItem item) {
@@ -230,42 +191,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
          case R.id.tab_chat:
         	pager.setCurrentItem(2);
          	break;
-         	
-            
      }
      return super.onOptionsItemSelected(item);
  }
-
-
-    ////////////////////
-    ///// LISTENERS DU FRAGMENT INFOS
-    ///////////////////////////
-
 
     public void listInvit(View view){
         callInvit(LIST_INVIT);
     }
 
-
-    ////////////////////
-    ///// LISTENERS DU FRAGMENT CHAT
-    ///////////////////////////
-
-    /**
-     * Recupere l'evenement lorsque l'on clique sur "envoyer" dans le chat
-     * @param view
-     */
-    
-    
     public void postMessage(View view){
-    
-    	//On recupere le message
     	final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
     	Log.d("Message", postMessage.getText().toString());
     	final String message = postMessage.getText().toString();
-    	
-    	
-    	
     	RequestParams params = new RequestParams();
     	params.put("message", message);
     	
@@ -273,10 +210,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             @Override
             public void onSuccess(JSONObject response) {
 
-			    Chat chat = new Chat(message, AppMoment.getInstance().user, new Date());
+                Chat chat = new Chat();
+                try {
+                    chat.chatFromJSON(response.getJSONObject("chat"));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                chat.__setDaoSession(AppMoment.getInstance().daoSession);
                 chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
-			    	
-		    	AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
+                chat.setUser(AppMoment.getInstance().user);
+                AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
+			    AppMoment.getInstance().chatDao.insert(chat);
 
 		    	messageRight(chat);
 
@@ -288,36 +233,20 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             }
         });
     }
-    
 
-    /**
-     * Poste le message de droite (utilisateur de l'application)
-     */
-    
     public void messageRight(Chat chat){
-    	
-    	//On recupere le Linear Layout dans lequel on va ins�rer notre message
-    	LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
+        LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
     	ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-    	
-    	//On recupere le template
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite,
-                null);
-        
-        //On insere le texte dans le template
+        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
-        
-        //On insere la photo du user
+
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
-        chat.getUser().printProfilePicture(userImage, true);
-        
-        
-        //On vient ins�rer le message de droite au fil de conversation
+        User usertemp = chat.getUser();
+        usertemp.printProfilePicture(userImage, true);
+
         layoutChat.addView(chatDroit);
-        //scrollChat.scrollTo(0, (scrollChat.getMaxScrollAmount()+chatDroit.getHeight()));
-        
-        //On scroll vers la bas 
+
         new Handler().postDelayed((new Runnable(){
 
         	@Override
@@ -327,17 +256,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         	}
 
         }), 200);
-        
-        
-        
-    	
     }
-    
-    
-    /**
-     * Poste le message de gauche 
-     */
-    
+
     public void messageLeft(Chat chat){
     	
     	//On recupere le Linear Layout dans lequel on va ins�rer notre message

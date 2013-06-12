@@ -71,107 +71,45 @@ public class InfosFragment extends Fragment {
         }
 	}
 
-    @Override
-    public void onPause(){
-        super.onPause();
-        Log.e("PAUSE", "Chats");
-    }
-
-    @Override
-    public void onResume(){
-        super.onResume();
-        Log.e("RESUME", "Chats");
-    }
-
-    @Override
-    public void onStop(){
-        super.onStop();
-        Log.e("STOP", "Chats");
-    }
-
-    @Override
-    public void onStart(){
-        super.onStart();
-        Log.e("START", "Chats");
-    }
-
-    @Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-	}
-
 	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.fragment_infos, container, false);
-		Log.d("CREATE", "create");
-		
-		//Problem black derriere carte
+
 		ViewGroup mapHost = (ViewGroup)view.findViewById(R.id.mapHost);
 		mapHost.requestTransparentRegion(mapHost);
 		
-		setUpMapIfNeeded();
-		
+		//setUpMapIfNeeded();
 
-		
-		//Si elle existe dej� on supprime la map
-		/*final ViewGroup parent = (ViewGroup) Exchanger.mMapView.getParent();
-		if (parent != null) parent.removeView(Exchanger.mMapView);
-		
-		
-		On initialise et insere la map
-		Exchanger.mMapView.setLayoutParams(new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
-		Exchanger.mMapView.setId(1111111);
-		Exchanger.mMapView.setClickable(false);
-		LinearLayout containerMap = (LinearLayout)view.findViewById(R.id.mapContainer);
-		containerMap.addView(Exchanger.mMapView);*/
-		
-		
-		
-		
-		
-		
-		//On initialise les �l�ments graphiques
-		
-		//Le Titre
 		TextView titreText = (TextView)view.findViewById(R.id.titre_moment);
 		titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
 		TextView flTitreText = (TextView)view.findViewById(R.id.fl_titre_moment);
 		flTitreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(0,1));
-		
-		//La description
+
 		TextView descriptionText = (TextView)view.findViewById(R.id.infos_moment_description);
 		descriptionText.setText(AppMoment.getInstance().user.getMomentById(momentId).getDescription());
-		
-		//L'adresse
+
 		TextView adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
 		adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
 
-        //Le state
+
         maybeButton = (ImageButton)view.findViewById(R.id.maybe_button);
         goingButton = (ImageButton)view.findViewById(R.id.going_button);
         notGoigButton = (ImageButton)view.findViewById(R.id.not_going_button);
-        //Buttons update
+
         updateRSVPBloc();
 
-		
-		//Dates
-		
-		//Date de debut
 		GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
 		dateDebutCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateDebut());
 		
 		Calendar dateFinCalendar = Calendar.getInstance();
 		dateFinCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateFin());
-		
-		
+
 		TextView dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
 		dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
 		
 		TextView dateFinText = (TextView)view.findViewById(R.id.infos_moment_date_fin);
 		dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
-		
-		//Nombres d'invites
+
 		if(AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber()>0){
 			TextView guests_number = (TextView)view.findViewById(R.id.guests_number);
 			guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
@@ -183,9 +121,6 @@ public class InfosFragment extends Fragment {
 			guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
 		}
 
-		
-		
-		//Image
 		if(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap()!=null){
 			Bitmap image_cover_bmp = AppMoment.getInstance().getBitmapFromMemCache(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap());
 			ImageView image_cover = (ImageView)view.findViewById(R.id.photo_moment);
@@ -204,24 +139,20 @@ public class InfosFragment extends Fragment {
 			TextView lastname = (TextView)view.findViewById(R.id.lastname_owner);
 			lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
 		}
-		
-		//TextView hashtag = (TextView)view.findViewById(R.id.hashtag);
-		//hashtag.setText(Exchanger.moment.getHashtag());
-		
 		return view;
 	}
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        setUpMapIfNeeded();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
     }
 
-	
-
-	
-	/**
-	  * Navigates a given MapView to the specified Longitude and Latitude
-	  */
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
     GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
 
@@ -235,28 +166,11 @@ public class InfosFragment extends Fragment {
     itemizedoverlay.addOverlay(overlayitem);
     mapOverlays.add(itemizedoverlay);
 
-    /*mv.getMap()
-    mv.displayZoomControls(true); //display Zoom (seems that it doesn't work yet)
-    MapController mc = mv.getController();
-    mc.animateTo(p); //move map to the given point
-    int zoomlevel = mv.getMaxZoomLevel(); //detect maximum zoom level
-    mc.setZoom(zoomlevel - 6); //zoom
-    mv.setSatellite(false); //display only "normal" mapview	*/
     }
 
-
-    /**
-    * On remplace la photo de couverture du moment
-    * @param photo
-    */
-
     public void modifyPhotoMoment(Bitmap photo) {
-
       ImageView photoMoment = (ImageView)getActivity().findViewById(R.id.photo_moment);
       photoMoment.setImageBitmap(photo);
-
-
-
     }
 
     public void touchedPhoto(){
@@ -306,17 +220,11 @@ public class InfosFragment extends Fragment {
 
                       }
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
             }
         }
     }
-
-    /**
-     * Function called when the Maybe button is touched in the RSVP bloc
-     * @param view
-     */
 
     public void maybeRsvp(){
         System.out.println("MAYBE");
@@ -330,11 +238,6 @@ public class InfosFragment extends Fragment {
         }
     }
 
-    /**
-     * Function called when the Going button is touched in the RSVP bloc
-     * @param view
-     */
-
     public void goingRsvp(){
         System.out.println("Going");
         int oldState = stateAnwser;
@@ -347,10 +250,6 @@ public class InfosFragment extends Fragment {
         }
     }
 
-    /**
-     * Function called when the Not Going button is touched in the RSVP bloc
-     */
-
     public void notRsvp(){
         System.out.println("Not going");
         int oldState = stateAnwser;
@@ -362,10 +261,6 @@ public class InfosFragment extends Fragment {
             updateStateServer(oldState, NOT_COMING);
         }
     }
-
-    /**
-     * Function which update the buttons states in the RSVP bloc
-     */
 
     private void updateRSVPBloc(){
 
@@ -395,13 +290,6 @@ public class InfosFragment extends Fragment {
         }
 
     }
-
-    /**
-     * Update the state of the user on the server
-     * If Fail update the button
-     * @param oldState
-     * @param newState
-     */
 
     private void updateStateServer(final int oldState, int newState){
 

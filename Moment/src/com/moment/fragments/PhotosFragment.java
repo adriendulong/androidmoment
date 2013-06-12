@@ -86,14 +86,12 @@ public class PhotosFragment extends Fragment {
             gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);
         }
-
         return view;
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        Log.e("onStart", "PhotosFragment");
 
         MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
 
@@ -142,7 +140,6 @@ public class PhotosFragment extends Fragment {
                             + String.valueOf(System.currentTimeMillis())
                             + ".jpg");
 
-
                     outputFileUri = Uri.fromFile(file);
 
                     try {
@@ -159,8 +156,6 @@ public class PhotosFragment extends Fragment {
                     startActivity(intent);
                 }
             }
-
-            ;
         });
     }
 

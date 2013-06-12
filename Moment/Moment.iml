@@ -64,6 +64,9 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module" module-name="actionbarsherlock" />
+    <orderEntry type="module" module-name="slidingMenu" />
+    <orderEntry type="module" module-name="facebook" />
   </component>
 </module>
 

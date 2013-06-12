@@ -34,6 +34,54 @@ public class ChatFragment extends Fragment {
         momentId = getActivity().getIntent().getLongExtra("id", 1);
 	}
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
+        super.onCreateView(inflater, container, savedInstanceState);
+        view = inflater.inflate(R.layout.fragment_chat, container, false);
+        this.inflater = inflater;
+
+        return view;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        if(AppMoment.getInstance().checkInternet())
+        {
+            MomentApi.get("lastchats/"+momentId, null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        JSONArray chats;
+                        chats = response.getJSONArray("chats");
+
+                        ArrayList<Chat> tempChats = new ArrayList<Chat>();
+
+                        for(int i=0;i<chats.length();i++){
+                            Chat tempChat = new Chat();
+                            tempChat.chatFromJSON(chats.getJSONObject(i));
+                            if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null)
+                                AppMoment.getInstance().chatDao.insert(tempChat);
+                            if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId())
+                            {
+                                messageRight(tempChat);
+                            }
+                            else
+                            {
+                                messageLeft(tempChat);
+                            }
+                            tempChats.add(tempChat);
+                        }
+                        AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+    }
+
 	@Override
 	public void onSaveInstanceState(Bundle savedInstanceState){
 		Log.e("SAVEINSTANCE", "Chats");
@@ -58,13 +106,6 @@ public class ChatFragment extends Fragment {
 		super.onStop();
 		Log.e("STOP", "Chats");
 	}
-	
-	@Override
-	public void onStart(){
-		super.onStart();
-		Log.e("START", "Chats");
-		
-	}
 
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
@@ -72,62 +113,6 @@ public class ChatFragment extends Fragment {
 
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		super.onCreateView(inflater, container, savedInstanceState);
-		view = inflater.inflate(R.layout.fragment_chat, container, false);
-		this.inflater = inflater;
-		
-		Log.d("CHAT", "Chat création");
-		
-		MomentApi.get("lastchats/"+momentId, null, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-            	try {
-            		
-			    	
-					JSONArray chats;
-			    	chats = response.getJSONArray("chats");
-			    	Log.d("Chats", chats.toString());
-			    	
-			    	//On itnialise la liste qui recevra tous les chats
-			    	ArrayList<Chat> tempChats = new ArrayList<Chat>();
-			    	
-			    	
-			    	//On parcourt les chats
-			    	for(int i=0;i<chats.length();i++){
-			    		
-			    		Chat tempChat = new Chat();
-			    		tempChat.chatFromJSON(chats.getJSONObject(i));
-			    		
-			    		if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()) messageRight(tempChat);
-			    		else messageLeft(tempChat);
-			    		System.out.println("ID temp :"+ tempChat.getUser().getId());
-			    		System.out.println("ID user :"+ AppMoment.getInstance().user.getId());
-			    		
-			    		//On l'ajoute dans la liste globale de chat
-			    		tempChats.add(tempChat);
-			    		
-			    		
-			    		
-			    	}
-			    	
-			    	AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
-			    	
-					
-				} catch (JSONException e) {
-					// Auto-generated catch block
-					e.printStackTrace();
-				}
-
-
-            }
-        });
-
-		return view;
-	}
-		
 	@Override
 	public void onDestroyView(){
 		super.onDestroyView();
