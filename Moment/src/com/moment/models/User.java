@@ -331,12 +331,11 @@ public class User {
     }
 
     public void printProfilePicture(final ImageView targetView, final Boolean isRounded){
-        System.out.println("Print cover at address : "+ pictureProfileUrl);
-
         if(AppMoment.getInstance().getBitmapFromMemCache("profile_picture_"+id)==null){
 
             AsyncHttpClient client = new AsyncHttpClient();
             String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
+
             client.get(pictureProfileUrl, new BinaryHttpResponseHandler(allowedContentTypes) {
 
                 @Override
