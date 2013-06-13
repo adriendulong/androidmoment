@@ -1,7 +1,7 @@
 package com.moment.fragments;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +11,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -26,10 +29,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChatFragment extends Fragment {
-	
+
 	public View view;
 	public LayoutInflater inflater;
     public Long momentId;
+
+    PullToRefreshScrollView scrollChat;
+    ScrollView mScrollView;
+    LinearLayout layoutChat;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +50,18 @@ public class ChatFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         this.inflater = inflater;
+
+        layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
+        scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
+        scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
+
+            @Override
+            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                new GetDataTask().execute();
+            }
+        });
+
+        mScrollView = scrollChat.getRefreshableView();
 
         return view;
     }
@@ -128,7 +147,7 @@ public class ChatFragment extends Fragment {
     public void messageRight(Chat chat){
 
     	LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-    	ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
+    	PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
 
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
@@ -139,7 +158,7 @@ public class ChatFragment extends Fragment {
 
         layoutChat.addView(chatDroit);
 
-        new Handler().postDelayed((new Runnable(){
+        /*new Handler().postDelayed((new Runnable(){
 
         	@Override
 			public void run(){
@@ -147,19 +166,20 @@ public class ChatFragment extends Fragment {
         		scrollChat.fullScroll(View.FOCUS_DOWN);
         	}
 
-        }), 200);
+        }), 200);*/
     }
 
     public void messageLeft(Chat chat){
-    	LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-    	ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
+    	layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
+    	scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
         chat.getUser().printProfilePicture(userImage, true);
         layoutChat.addView(chatDroit);
-        new Handler().postDelayed((new Runnable(){
+
+       /* new Handler().postDelayed((new Runnable(){
 
         	@Override
 			public void run(){
@@ -168,6 +188,30 @@ public class ChatFragment extends Fragment {
         	}
 
         }), 200);
+        */
+    }
+
+    private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+
+        @Override
+        protected String[] doInBackground(Void... params) {
+            // Simulates a background job.
+            try {
+                Thread.sleep(4000);
+            } catch (InterruptedException e) {
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] result) {
+            // Do some stuff here
+
+            // Call onRefreshComplete when the list has been refreshed.
+            scrollChat.onRefreshComplete();
+
+            super.onPostExecute(result);
+        }
     }
 
 }
