@@ -61,6 +61,15 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 	public final Orientation getPullToRefreshScrollDirection() {
 		return Orientation.VERTICAL;
 	}
+	
+    @Override
+    protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+        super.onScrollChanged(l, t, oldl, oldt);
+        // This method only gets called when list is pulled downwards
+        if (mOnScrollChangedListener != null) {
+            mOnScrollChangedListener.onScrollChanged(this, l, t, oldl, oldt);
+        }
+    }
 
 	@Override
 	protected void onRefreshing(final boolean doScroll) {
@@ -331,7 +340,23 @@ public class PullToRefreshListView extends PullToRefreshAdapterViewBase<ListView
 		public void setEmptyViewInternal(View emptyView) {
 			super.setEmptyView(emptyView);
 		}
-
+		
+		@Override
+		protected void onScrollChanged(int l, int t, int oldl, int oldt) {
+		    super.onScrollChanged(l, t, oldl, oldt);
+		    if (mOnScrollChangedListener != null) {
+		        mOnScrollChangedListener.onScrollChanged(PullToRefreshListView.this, l, t, oldl, oldt);
+		    }
+		}
+	}
+	
+	private OnScrollChangedListener mOnScrollChangedListener;
+	
+	public void setOnScrollChangedListener(OnScrollChangedListener l) {
+	    mOnScrollChangedListener = l;
 	}
 
+    public interface OnScrollChangedListener {
+        public void onScrollChanged(PullToRefreshListView list, int l, int t, int oldl, int oldt);
+    }
 }

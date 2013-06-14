@@ -15,6 +15,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+        
+        <ImageView
+                android:id="@+id/pull_to_refresh_progress_custom"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:layout_gravity="center" />
 
         <ProgressBar
             android:id="@+id/pull_to_refresh_progress"

@@ -34,6 +34,7 @@ import android.view.animation.Interpolator;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.handmark.pulltorefresh.library.internal.CustomProgressFlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.FlipLoadingLayout;
 import com.handmark.pulltorefresh.library.internal.LoadingLayout;
 import com.handmark.pulltorefresh.library.internal.RotateLoadingLayout;
@@ -46,13 +47,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 	// Constants
 	// ===========================================================
 
-	static final boolean DEBUG = true;
+	static final boolean DEBUG = false;
 
 	static final boolean USE_HW_LAYERS = false;
 
 	static final String LOG_TAG = "PullToRefresh";
 
-	static final float FRICTION = 2.0f;
+	static final float FRICTION = 2.7f;
 
 	public static final int SMOOTH_SCROLL_DURATION_MS = 200;
 	public static final int SMOOTH_SCROLL_LONG_DURATION_MS = 325;
@@ -1297,7 +1298,13 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 		 * This is the old default, and what is commonly used on iOS. Uses an
 		 * arrow image which flips depending on where the user has scrolled.
 		 */
-		FLIP;
+		FLIP,
+		
+		/**
+         * Uses {@link #FLIP} as the pull action but provides usage of a custom
+         * asset instead of the Progress Bar.
+         */
+        CUSTOM_PROGRESS_FLIP;
 
 		static AnimationStyle getDefault() {
 			return ROTATE;
@@ -1318,6 +1325,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					return ROTATE;
 				case 0x1:
 					return FLIP;
+				case 0x2:
+                    return CUSTOM_PROGRESS_FLIP;
 			}
 		}
 
@@ -1328,6 +1337,8 @@ public abstract class PullToRefreshBase<T extends View> extends LinearLayout imp
 					return new RotateLoadingLayout(context, mode, scrollDirection, attrs);
 				case FLIP:
 					return new FlipLoadingLayout(context, mode, scrollDirection, attrs);
+				case CUSTOM_PROGRESS_FLIP:
+                    return new CustomProgressFlipLoadingLayout(context, mode, scrollDirection, attrs);
 			}
 		}
 	}

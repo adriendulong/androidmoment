@@ -11,9 +11,10 @@
         android:paddingTop="@dimen/header_footer_top_bottom_padding" >
 
         <FrameLayout
+            android:id="@+id/refresh_bg"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="left|center_vertical" >
+            android:layout_gravity="center" >
 
             <ImageView
                 android:id="@+id/pull_to_refresh_image"
@@ -21,6 +22,13 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center" />
 
+            <ImageView
+                android:id="@+id/pull_to_refresh_progress_custom"
+                android:layout_width="24dip"
+                android:layout_height="24dip"
+                android:visibility="gone"
+                android:layout_gravity="center" />
+            
             <ProgressBar
                 android:id="@+id/pull_to_refresh_progress"
                 style="?android:attr/progressBarStyleSmall"
@@ -36,6 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
+            android:visibility="gone"
             android:orientation="vertical" >
 
             <TextView

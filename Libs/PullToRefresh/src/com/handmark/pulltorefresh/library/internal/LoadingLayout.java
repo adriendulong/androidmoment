@@ -107,7 +107,12 @@ public abstract class LoadingLayout extends FrameLayout implements ILoadingLayou
 				mReleaseLabel = context.getString(R.string.pull_to_refresh_release_label);
 				break;
 		}
-
+		
+		if (attrs.hasValue(R.styleable.PullToRefresh_ptrDrawableRefreshBg)) {
+		    Drawable refreshBg = attrs.getDrawable(R.styleable.PullToRefresh_ptrDrawableRefreshBg);
+		    mInnerLayout.findViewById(R.id.refresh_bg).setBackgroundDrawable(refreshBg);
+		}
+		
 		if (attrs.hasValue(R.styleable.PullToRefresh_ptrHeaderBackground)) {
 			Drawable background = attrs.getDrawable(R.styleable.PullToRefresh_ptrHeaderBackground);
 			if (null != background) {
