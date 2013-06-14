@@ -104,7 +104,8 @@ public class ChatFragment extends Fragment {
                         JSONArray chats;
 
                         if(!response.isNull("next_page"))
-                            nextPage = response.getInt("next_page");
+                            if(response.getInt("next_page") >= nextPage)
+                                nextPage = response.getInt("next_page");
 
                         chats = response.getJSONArray("chats");
 
@@ -162,7 +163,9 @@ public class ChatFragment extends Fragment {
         message.setText(chat.getMessage());
 
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
-        chat.getUser().printProfilePicture(userImage, true);
+
+        if(AppMoment.getInstance().checkInternet())
+            chat.getUser().printProfilePicture(userImage, true);
 
         layoutChat.addView(chatDroit);
 
@@ -184,7 +187,10 @@ public class ChatFragment extends Fragment {
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
-        chat.getUser().printProfilePicture(userImage, true);
+
+        if(AppMoment.getInstance().checkInternet())
+            chat.getUser().printProfilePicture(userImage, true);
+
         layoutChat.addView(chatDroit);
 
        /* new Handler().postDelayed((new Runnable(){
@@ -212,7 +218,9 @@ public class ChatFragment extends Fragment {
 
                             JSONArray chats;
                             chats = response.getJSONArray("chats");
-                            nextPage = response.getInt("next_page");
+
+                            if(!response.isNull("next_page"))
+                                nextPage = response.getInt("next_page");
 
                             ArrayList<Chat> tempChats = new ArrayList<Chat>();
 
@@ -221,6 +229,9 @@ public class ChatFragment extends Fragment {
                                 Chat tempChat = new Chat();
 
                                 tempChat.chatFromJSON(chats.getJSONObject(i));
+                                tempChat.setUser(AppMoment.getInstance().user);
+                                tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentId));
+
                                 User user = tempChat.getUser();
 
                                 if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null){
@@ -250,7 +261,7 @@ public class ChatFragment extends Fragment {
                     }
                 });
 
-            return "Piouuuuuuuu";
+            return null;
         }
 
         @Override
