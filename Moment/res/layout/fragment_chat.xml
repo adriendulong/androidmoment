@@ -11,8 +11,7 @@
             android:layout_height="fill_parent"
             android:layout_marginBottom="65dp"
             android:layout_alignParentTop="true"
-            android:paddingTop="10dp"
-            ptr:ptrMode="both">
+            android:paddingTop="10dp">
 
         <LinearLayout
                 android:id="@+id/chat_message_layout"

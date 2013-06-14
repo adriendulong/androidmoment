@@ -38,6 +38,8 @@ public class ChatFragment extends Fragment {
     ScrollView mScrollView;
     LinearLayout layoutChat;
 
+    int previousPage;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +55,7 @@ public class ChatFragment extends Fragment {
 
         layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
         scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
+
         scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
 
             @Override
@@ -97,7 +100,12 @@ public class ChatFragment extends Fragment {
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
+
                         JSONArray chats;
+
+                        if(!response.isNull("previous_page"))
+                            previousPage = response.getInt("previous_page");
+
                         chats = response.getJSONArray("chats");
 
                         ArrayList<Chat> tempChats = new ArrayList<Chat>();
@@ -195,19 +203,58 @@ public class ChatFragment extends Fragment {
 
         @Override
         protected String[] doInBackground(Void... params) {
-            // Simulates a background job.
-            try {
-                Thread.sleep(4000);
-            } catch (InterruptedException e) {
+            if(AppMoment.getInstance().checkInternet()){
+                MomentApi.get("lastchats/"+momentId+"/"+previousPage, null, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+
+                            JSONArray chats;
+                            chats = response.getJSONArray("chats");
+                            previousPage = response.getInt("previous_page");
+
+                            ArrayList<Chat> tempChats = new ArrayList<Chat>();
+
+                            for(int i=0;i<chats.length();i++){
+
+                                Chat tempChat = new Chat();
+
+                                tempChat.chatFromJSON(chats.getJSONObject(i));
+                                User user = tempChat.getUser();
+
+                                if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null){
+                                    tempChat.setMomentId(momentId);
+                                    AppMoment.getInstance().chatDao.insert(tempChat);
+                                    if(AppMoment.getInstance().userDao.load(user.getId()) == null)
+                                        AppMoment.getInstance().userDao.insert(user);
+                                }
+
+                                if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()){
+                                    messageRight(tempChat);
+                                }
+
+                                else{
+                                    messageLeft(tempChat);
+                                }
+
+                                tempChats.add(tempChat);
+                            }
+
+                            AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
+
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(String[] result) {
-            // Do some stuff here
 
-            // Call onRefreshComplete when the list has been refreshed.
             scrollChat.onRefreshComplete();
 
             super.onPostExecute(result);

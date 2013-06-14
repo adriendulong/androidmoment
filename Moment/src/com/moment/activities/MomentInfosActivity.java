@@ -24,6 +24,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.maps.MapView;
+import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
@@ -41,11 +42,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class MomentInfosActivity extends SherlockFragmentActivity {
 
-    //Request codes
 	static final int PICK_CAMERA_COVER = 1;
 	static final int PICK_CAMERA_PHOTOS = 2;
     static final int NEW_INVIT = 3;
@@ -56,11 +55,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	
 	private MyPagerAdapter mPagerAdapter;
 	private ViewPager pager;
-	private Moment moment;
     private Long momentID;
 	private int position = 1;
 
-    //Fragments
     private InfosFragment infosFr;
 
 	Menu myMenu;
@@ -151,7 +148,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
  public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-
     	protected final String[] CONTENT = new String[] {"PHOTOS","INFOS","CHAT"};
 
     	public MyPagerAdapter(FragmentManager fm) {
@@ -201,7 +197,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void postMessage(View view){
     	final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
-    	Log.d("Message", postMessage.getText().toString());
     	final String message = postMessage.getText().toString();
     	RequestParams params = new RequestParams();
     	params.put("message", message);
@@ -236,7 +231,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void messageRight(Chat chat){
         LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
-    	ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
+        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
@@ -247,7 +242,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         layoutChat.addView(chatDroit);
 
-        new Handler().postDelayed((new Runnable(){
+        /*new Handler().postDelayed((new Runnable(){
 
         	@Override
 			public void run(){
@@ -255,33 +250,23 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         		scrollChat.fullScroll(View.FOCUS_DOWN);
         	}
 
-        }), 200);
+        }), 200);*/
     }
 
     public void messageLeft(Chat chat){
-    	
-    	//On recupere le Linear Layout dans lequel on va ins�rer notre message
+
     	LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
-    	ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-    	
-    	//On recupere le template
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche,
-                null);
-        
-        //On insere le texte dans le template
+        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)findViewById(R.id.scroll_chat);
+
+        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche,null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
-        
-        //On insere la photo du user
+
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
         chat.getUser().printProfilePicture(userImage, true);
-        
-        //On vient ins�rer le message de droite au fil de conversation
         layoutChat.addView(chatDroit);
-        //scrollChat.scrollTo(0, (scrollChat.getMaxScrollAmount()+chatDroit.getHeight()));
-        
-        //On scroll vers la bas 
-        new Handler().postDelayed((new Runnable(){
+
+/*        new Handler().postDelayed((new Runnable(){
 
         	@Override
 			public void run(){
@@ -289,48 +274,34 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         		scrollChat.fullScroll(View.FOCUS_DOWN);
         	}
 
-        }), 200);
+        }), 200);*/
         
     	
     }
-    
-    /**
-     * Lorsque le focus arrive sur l'edit text pour poster un message on scroll down 
-     * la liste pour pas qu'elle soit cach�e par le clavier.
-     * @param view
-     */
-    
+
     public void editMessage(View view){
-    	
-    	//On scroll vers la bas 
-        new Handler().postDelayed((new Runnable(){
 
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
+        //On scroll vers la bas
+        /*new Handler().postDelayed((new Runnable(){
 
-        }), 200);
-    	
+            @Override
+            public void run(){
+                ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
+                scrollChat.fullScroll(View.FOCUS_DOWN);
+            }
+
+        }), 200);*/
+
     }
     
     
     
     public void acceptBandeauAnim(View view){
-    	
-    	//Log.d("test", ""+voletAccept.getScaleX());
-    	
-    	
-    	
+
     	RelativeLayout voletLayout = (RelativeLayout)findViewById(R.id.volet_layout);
     	Resources r = getResources();
     	float ratio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
-    	
-    	
-    	
-    	
-    	
+
     	if(!stateAcceptVolet){
     		
     		VoletAcceptAnimation anim = new VoletAcceptAnimation(voletLayout, 125, true, ratio);
@@ -346,7 +317,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     		VoletAcceptAnimation anim = new VoletAcceptAnimation(voletLayout, 125, false, ratio);
     		anim.setDuration(400);
-    		//anim.setFillAfter(true);
     		anim.setInterpolator(new DecelerateInterpolator());
     		voletLayout.startAnimation(anim);
     		
@@ -359,9 +329,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     
     public static class Exchanger {
     	public static MapView mMapView;
-    	//public static Moment moment;
-        //public static int idMoment;
-        //public static ArrayList<Photo> photos = new ArrayList<Photo>();
     }
     
     
