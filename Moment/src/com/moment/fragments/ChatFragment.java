@@ -38,7 +38,7 @@ public class ChatFragment extends Fragment {
     ScrollView mScrollView;
     LinearLayout layoutChat;
 
-    int previousPage;
+    int nextPage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,8 +103,8 @@ public class ChatFragment extends Fragment {
 
                         JSONArray chats;
 
-                        if(!response.isNull("previous_page"))
-                            previousPage = response.getInt("previous_page");
+                        if(!response.isNull("next_page"))
+                            nextPage = response.getInt("next_page");
 
                         chats = response.getJSONArray("chats");
 
@@ -199,19 +199,20 @@ public class ChatFragment extends Fragment {
         */
     }
 
-    private class GetDataTask extends AsyncTask<Void, Void, String[]> {
+    private class GetDataTask extends AsyncTask<Void, Void, String> {
 
         @Override
-        protected String[] doInBackground(Void... params) {
-            if(AppMoment.getInstance().checkInternet()){
-                MomentApi.get("lastchats/"+momentId+"/"+previousPage, null, new JsonHttpResponseHandler() {
+        protected String doInBackground(Void... params) {
+                MomentApi.get("lastchats/"+momentId+"/"+ nextPage, null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         try {
 
+                            Log.e("GOOOO","GOOO");
+
                             JSONArray chats;
                             chats = response.getJSONArray("chats");
-                            previousPage = response.getInt("previous_page");
+                            nextPage = response.getInt("next_page");
 
                             ArrayList<Chat> tempChats = new ArrayList<Chat>();
 
@@ -248,12 +249,12 @@ public class ChatFragment extends Fragment {
                         }
                     }
                 });
-            }
-            return null;
+
+            return "Piouuuuuuuu";
         }
 
         @Override
-        protected void onPostExecute(String[] result) {
+        protected void onPostExecute(String result) {
 
             scrollChat.onRefreshComplete();
 
