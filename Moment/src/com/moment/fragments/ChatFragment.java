@@ -122,8 +122,12 @@ public class ChatFragment extends Fragment {
                         JSONArray chats;
 
                         if(!response.isNull("next_page"))
+                        {
                             if(response.getInt("next_page") >= nextPage)
                                 nextPage = response.getInt("next_page");
+                            else
+                                nextPage = 0;
+                        }
 
                         chats = response.getJSONArray("chats");
 
@@ -278,6 +282,14 @@ public class ChatFragment extends Fragment {
     private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
 
         @Override
+        protected void onPreExecute(){
+            if (nextPage < 2){
+                scrollChat.onRefreshComplete();
+                cancel(true);
+            }
+        }
+
+        @Override
         protected ArrayList<Chat> doInBackground(Void... params) {
 
             JSONObject jsonChats = null;
@@ -287,6 +299,16 @@ public class ChatFragment extends Fragment {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
+
+            if(!jsonChats.isNull("next_page"))
+                try {
+                    if(jsonChats.getInt("next_page") >= nextPage)
+                        nextPage = jsonChats.getInt("next_page");
+                    else
+                        nextPage = 0;
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             JSONArray chats = null;
             try {

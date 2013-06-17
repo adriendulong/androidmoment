@@ -9,6 +9,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +59,7 @@ public class InfosFragment extends Fragment {
     private Long momentId;
     private int stateAnwser;
     private Moment moment;
+    private View view;
 
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton;
@@ -73,12 +75,7 @@ public class InfosFragment extends Fragment {
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		View view = inflater.inflate(R.layout.fragment_infos, container, false);
-
-		ViewGroup mapHost = (ViewGroup)view.findViewById(R.id.mapHost);
-		mapHost.requestTransparentRegion(mapHost);
-		
-		//setUpMapIfNeeded();
+		view = inflater.inflate(R.layout.fragment_infos, container, false);
 
 		TextView titreText = (TextView)view.findViewById(R.id.titre_moment);
 		titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
@@ -92,9 +89,9 @@ public class InfosFragment extends Fragment {
 		adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
 
 
-        maybeButton = (ImageButton)view.findViewById(R.id.maybe_button);
-        goingButton = (ImageButton)view.findViewById(R.id.going_button);
-        notGoigButton = (ImageButton)view.findViewById(R.id.not_going_button);
+        maybeButton     = (ImageButton)view.findViewById(R.id.maybe_button);
+        goingButton     = (ImageButton)view.findViewById(R.id.going_button);
+        notGoigButton   = (ImageButton)view.findViewById(R.id.not_going_button);
 
         updateRSVPBloc();
 
@@ -145,6 +142,9 @@ public class InfosFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        ViewGroup mapHost = (ViewGroup)view.findViewById(R.id.mapHost);
+        mapHost.requestTransparentRegion(mapHost);
+
         setUpMapIfNeeded();
     }
 

@@ -12,11 +12,14 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+
 import com.loopj.android.http.JsonHttpResponseHandler;
+
 import com.moment.R;
 import com.moment.AppMoment;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -41,10 +44,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         position = getIntent().getIntExtra("position", 0); Log.e("DetailPhoto","position " + position);
         momentID = getIntent().getLongExtra("momentID", 0); Log.e("DetailPhoto","momentID " + momentID);
-        Log.e("",""+AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size());
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-        Log.e("DetailPhoto",""+photo.toString());
         ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, photo);
         imageLoadTask.execute(photo.getUrlOriginal());
 
@@ -61,6 +62,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         final ImageButton nextButton     = (ImageButton) findViewById(R.id.next);
         final ImageButton likeButton     = (ImageButton) findViewById(R.id.coeur);
         final ImageButton petitCoeur     = (ImageButton) findViewById(R.id.petit_coeur);
+        final ImageButton trashButton    = (ImageButton) findViewById(R.id.trash);
         final EditText editText          = (EditText)    findViewById(R.id.editText);
 
         editText.setClickable(false);
@@ -84,6 +86,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             previousButton.setVisibility(View.INVISIBLE);
         }
 
+        if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId())
+        {
+            trashButton.setVisibility(View.VISIBLE);
+        } else {
+            trashButton.setVisibility(View.INVISIBLE);
+        }
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,6 +104,13 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 if(position > 0){previousButton.setVisibility(View.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); editText.setTextColor(Color.parseColor("#FFFFFF"));; editText.setText(""+AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); editText.setVisibility(EditText.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); editText.setVisibility(EditText.GONE);}
+                if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId())
+                {
+                    trashButton.setVisibility(View.VISIBLE);
+                } else {
+                    trashButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
@@ -107,6 +124,13 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 if(position < AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){nextButton.setVisibility(View.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); editText.setTextColor(Color.parseColor("#FFFFFF"));; editText.setText(""+AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); editText.setVisibility(EditText.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); editText.setVisibility(EditText.GONE);}
+                if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId())
+                {
+                    trashButton.setVisibility(View.VISIBLE);
+                } else {
+                    trashButton.setVisibility(View.INVISIBLE);
+                }
             }
         });
 
