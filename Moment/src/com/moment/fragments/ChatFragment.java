@@ -1,7 +1,10 @@
 package com.moment.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,10 +24,25 @@ import com.moment.classes.MomentApi;
 import com.moment.models.Chat;
 import com.moment.models.User;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.cookie.Cookie;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.CookieManager;
+import java.net.CookieStore;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -180,6 +198,33 @@ public class ChatFragment extends Fragment {
         }), 200);*/
     }
 
+    public void messageRight(Chat chat, int index){
+
+        LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
+        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
+        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
+
+        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        message.setText(chat.getMessage());
+
+        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+
+        if(AppMoment.getInstance().checkInternet())
+            chat.getUser().printProfilePicture(userImage, true);
+
+        layoutChat.addView(chatDroit, index);
+
+        /*new Handler().postDelayed((new Runnable(){
+
+        	@Override
+			public void run(){
+        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
+        		scrollChat.fullScroll(View.FOCUS_DOWN);
+        	}
+
+        }), 200);*/
+    }
+
     public void messageLeft(Chat chat){
         layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
@@ -205,72 +250,126 @@ public class ChatFragment extends Fragment {
         */
     }
 
-    private class GetDataTask extends AsyncTask<Void, Void, String> {
+    public void messageLeft(Chat chat, int index){
+        layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
+        scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
+        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
+        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        message.setText(chat.getMessage());
+        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+
+        if(AppMoment.getInstance().checkInternet())
+            chat.getUser().printProfilePicture(userImage, true);
+
+        layoutChat.addView(chatDroit, index);
+
+       /* new Handler().postDelayed((new Runnable(){
+
+        	@Override
+			public void run(){
+        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
+        		scrollChat.fullScroll(View.FOCUS_DOWN);
+        	}
+
+        }), 200);
+        */
+    }
+
+    private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
 
         @Override
-        protected String doInBackground(Void... params) {
-                MomentApi.get("lastchats/"+momentId+"/"+ nextPage, null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        try {
+        protected ArrayList<Chat> doInBackground(Void... params) {
 
-                            Log.e("GOOOO","GOOO");
+            JSONObject jsonChats = null;
 
-                            JSONArray chats;
-                            chats = response.getJSONArray("chats");
+            try {
+                jsonChats = getChatsFromURL("http://api.appmoment.fr/lastchats/" + momentId + "/" + nextPage);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                            if(!response.isNull("next_page"))
-                                nextPage = response.getInt("next_page");
+            JSONArray chats = null;
+            try {
+                chats = jsonChats.getJSONArray("chats");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                            ArrayList<Chat> tempChats = new ArrayList<Chat>();
+            ArrayList<Chat> tempChats = new ArrayList<Chat>();
 
-                            for(int i=0;i<chats.length();i++){
+            for (int i = 0; i < chats.length(); i++) {
 
-                                Chat tempChat = new Chat();
+                Chat tempChat = new Chat();
 
-                                tempChat.chatFromJSON(chats.getJSONObject(i));
-                                tempChat.setUser(AppMoment.getInstance().user);
-                                tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentId));
+                try {
+                    tempChat.chatFromJSON(chats.getJSONObject(i));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
-                                User user = tempChat.getUser();
+                User user = tempChat.getUser();
 
-                                if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null){
-                                    tempChat.setMomentId(momentId);
-                                    AppMoment.getInstance().chatDao.insert(tempChat);
-                                    if(AppMoment.getInstance().userDao.load(user.getId()) == null)
-                                        AppMoment.getInstance().userDao.insert(user);
-                                }
+                if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {
+                    tempChat.setMomentId(momentId);
+                    AppMoment.getInstance().chatDao.insert(tempChat);
+                    if (AppMoment.getInstance().userDao.load(user.getId()) == null)
+                        AppMoment.getInstance().userDao.insert(user);
+                }
 
-                                if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()){
-                                    messageRight(tempChat);
-                                }
+                tempChats.add(tempChat);
 
-                                else{
-                                    messageLeft(tempChat);
-                                }
-
-                                tempChats.add(tempChat);
-                            }
-
-                            AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
-
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-            return null;
+            }
+            return tempChats;
         }
 
-        @Override
-        protected void onPostExecute(String result) {
 
+        @Override
+        protected void onPostExecute(ArrayList<Chat> chats) {
             scrollChat.onRefreshComplete();
+            int index = 0;
+            for(Chat chat : chats){
+                if (chat.getUser().getId() == AppMoment.getInstance().user.getId()) {
+                    messageRight(chat, index);
 
-            super.onPostExecute(result);
+                } else {
+                    messageLeft(chat, index);
+                }
+                index ++;
+            }
+
+            super.onPostExecute(chats);
         }
+
+        private JSONObject getChatsFromURL(String url) throws JSONException {
+            try {
+                DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
+                httpclient.setCookieStore(MomentApi.myCookieStore);
+                HttpGet httpGet = new HttpGet(url);
+                httpGet.setHeader("Content-type", "application/json");
+                InputStream inputStream = null;
+                String result = null;
+                HttpResponse response = httpclient.execute(httpGet);
+                HttpEntity entity = response.getEntity();
+                inputStream = entity.getContent();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
+                StringBuilder sb = new StringBuilder();
+
+                String line = null;
+                while ((line = reader.readLine()) != null)
+                {
+                    sb.append(line + "\n");
+                }
+                result = sb.toString();
+                JSONObject jObject = new JSONObject(result);
+
+                return jObject;
+
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
     }
 
 }
