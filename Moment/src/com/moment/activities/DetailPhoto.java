@@ -36,6 +36,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private int position;
     private Long momentID;
     private Photo photo;
+    private int maxIndex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,12 +47,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         position = getIntent().getIntExtra("position", 0);
         momentID = getIntent().getLongExtra("momentID", 0);
+        maxIndex = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1;
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
         ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, photo);
         imageLoadTask.execute(photo.getUrlOriginal());
 
-        ImageButton closeButton = (ImageButton) findViewById(R.id.close);
+        final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
+
         closeButton.setClickable(true);
         closeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,7 +84,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             editText.setVisibility(EditText.VISIBLE);
         }
 
-        if(position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1)
+        if(position == maxIndex)
         {
             nextButton.setVisibility(View.INVISIBLE);
         }
@@ -112,14 +115,37 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
-                    Toast.makeText(getApplication(), "On va delete" , Toast.LENGTH_LONG).show();
+                    MomentApi.get("delphoto/" +AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getId(), null, new AsyncHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(String response) {
+                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().remove(position);
+                            if(position == 0 && maxIndex == 0) {
+                                closeButton.performClick();
+                            } else if (position == 0 && maxIndex > 0) {
+                                maxIndex --;
+                                nextButton.performClick();
+                            } else if (position == maxIndex && maxIndex > 0) {
+                                maxIndex --;
+                                previousButton.performClick();
+                            } else {
+                                maxIndex --;
+                                position --;
+                                nextButton.performClick();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable e, String response) {
+                            Log.e(response, "Alors what ?");
+                        }
+                    });
                 } else {
                     Toast.makeText(getApplication(), "On va balancer" , Toast.LENGTH_LONG).show();
                 }
             }
         });
 
-        facebookButton.setOnClickListener(new View.OnClickListener() {
+/*        facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getApplication(), "On va facebooker" , Toast.LENGTH_LONG).show();
@@ -131,7 +157,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 Toast.makeText(getApplication(), "On va twitter" , Toast.LENGTH_LONG).show();
             }
-        });
+        });*/
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

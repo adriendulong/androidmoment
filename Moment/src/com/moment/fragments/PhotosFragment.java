@@ -65,6 +65,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.e("OnCreate","OnCreate");
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
             momentID = getActivity().getIntent().getLongExtra("id", 1);
@@ -73,7 +74,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
+        Log.e("OnCreateView","OnCreateView");
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
 
@@ -91,6 +92,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onStart(){
+        Log.e("OnStart","OnStart");
         super.onStart();
 
         MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
@@ -161,12 +163,15 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Log.e("OnActivityResult","OnActivityResult");
         UploadTask uploadTask = new UploadTask();
         uploadTask.execute();
+        imageAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onPause(){
+        Log.e("OnPause","OnPause");
         super.onPause();
     }
 
@@ -187,7 +192,7 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("onResume", "PhotosFragment");
+        imageAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -341,6 +346,7 @@ public class PhotosFragment extends Fragment {
                 stream.close();
                 bitmap = bitmap2;
                 Photo tempPhoto = new Photo();
+                tempPhoto.setUser(AppMoment.getInstance().user);
                 tempPhoto.setBitmapThumbnail(bitmap2);
                 tempPhoto.setBitmapOriginal(bitmap2);
                 photos.add(tempPhoto);
