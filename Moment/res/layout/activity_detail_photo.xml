@@ -110,7 +110,8 @@
                          android:layout_height="wrap_content"
                          android:src="@drawable/download"
                          android:background="@drawable/download"
-                         android:layout_centerHorizontal="true"/>
+                         android:layout_centerHorizontal="true"
+                         android:id="@+id/download"/>
 
         </RelativeLayout>
 
@@ -131,7 +132,8 @@
                          android:layout_height="wrap_content"
                          android:src="@drawable/twitter_badge"
                          android:background="@drawable/twitter_badge"
-                         android:layout_centerHorizontal="true"/>
+                         android:layout_centerHorizontal="true"
+                         android:id="@+id/twitter"/>
         </RelativeLayout>
 
         <RelativeLayout android:layout_width="wrap_content"

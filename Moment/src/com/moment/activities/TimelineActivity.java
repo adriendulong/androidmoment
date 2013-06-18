@@ -76,7 +76,6 @@ public class TimelineActivity extends SlidingActivity {
                                 JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                 Moment momentTemp = new Moment();
                                 momentTemp.setMomentFromJson(momentJson);
-                                System.out.println(momentTemp.getName());
                                 AppMoment.getInstance().user.addMoment(momentTemp);
                                 ajoutMoment(momentTemp);
 
