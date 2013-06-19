@@ -62,7 +62,6 @@ public class AppMoment extends Application {
     }
 
     protected void initializeInstance() {
-        // do all you initialization here
     }
 
     public boolean checkInternet()

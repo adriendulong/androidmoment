@@ -3,6 +3,7 @@ package com.moment.activities;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.util.Log;
@@ -45,19 +46,16 @@ public class MomentActivity extends Activity {
 
         if (MomentApi.myCookieStore.getCookies().size()>0){
 
+            SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+
             if(!DatabaseHelper.getUsersFromDataBase().isEmpty()){
-                Log.e("MomentActivity","On a le user en base");
-
-                // FIXME Ca va bien si on n'a qu'un seul user
-
-                List<User> users = AppMoment.getInstance().userDao.loadAll();
-                AppMoment.getInstance().user = users.get(0);
+                Long savedUserID = sharedPreferences.getLong("userID", -1);
+                AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedUserID);
                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                 startActivity(intent);
             }
 
             else {
-                Log.e("MomentActivity","On va chercher le user en ligne");
                 AppMoment.getInstance().user = new User();
                 MomentApi.get("user", null, new JsonHttpResponseHandler() {
                     @Override
@@ -65,7 +63,6 @@ public class MomentActivity extends Activity {
                         try {
                             Long id = response.getLong("id");
                             AppMoment.getInstance().user.setId(id);
-
 
                             String email = response.getString("email");
                             AppMoment.getInstance().user.setEmail(email);
@@ -101,26 +98,14 @@ public class MomentActivity extends Activity {
             }
         }
 
-        
-        
-        /**
-         * On enregistre le device pour les notifs push
-         */
-        
         GCMRegistrar.checkDevice(this);
-        
-        // Make sure the manifest was properly set - comment out this line
-        // while developing the app, then uncomment it when it's ready.
         GCMRegistrar.checkManifest(this);
 
         final String regId = GCMRegistrar.getRegistrationId(this);
         if (regId.equals("")) {
-            // Automatically registers application on startup.
             GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
         } else {
-            // Device is already registered on GCM, check server.
             if (GCMRegistrar.isRegisteredOnServer(this)) {
-                // Skips registration.
             	Log.v("GCM", "Already registered and on server");
             } else {
             	Log.v("GCM", "Not registered and on server");
@@ -151,24 +136,17 @@ public class MomentActivity extends Activity {
         getMenuInflater().inflate(R.menu.activity_moment, menu);
         return true;
     }
-    
-    
-    /** Appeler lorsque l'utilisateur clique sur le bouton de connection */
+
     public void connect(View view) throws JSONException {
-       Log.d("Connection", "conncetion reussi");
-       
-       
-       //On fait disparaitre ce qu'il faut ou apparaitre ce qu'il faut
+
        RelativeLayout button_inscription = (RelativeLayout)findViewById(R.id.inscrire_button_login);
        button_inscription.setVisibility(View.INVISIBLE);
        EditText edit_email = (EditText)findViewById(R.id.email_login);
        edit_email.setVisibility(View.VISIBLE);
        EditText edit_password = (EditText)findViewById(R.id.password_login);
        edit_password.setVisibility(View.VISIBLE);
-       
-       
-       LinearLayout layout_buttons = (LinearLayout)findViewById(R.id.layout_button_login);
 
+       LinearLayout layout_buttons = (LinearLayout)findViewById(R.id.layout_button_login);
 
        Animation animation = new TranslateAnimation(
            Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
@@ -205,57 +183,8 @@ public class MomentActivity extends Activity {
        
        ImageButton fleche_back = (ImageButton)findViewById(R.id.fleche_back_connection);
        fleche_back.setVisibility(View.VISIBLE);
-       
-       
-       
-       /*JSONObject user;
-       JSONArray users = new JSONArray();
-       for(int i=0;i<10;i++){
-    	   user = new JSONObject();
-    	   user.put("email", "adrien.dulong"+i+"@gmail.com");
-    	   users.put(user);
-       }
-       
-       JSONObject object = new JSONObject();
-       object.put("idMoment", 4);
-       object.put("users", users);
-       
-       System.out.println(object.toString());
-       
-       StringEntity se = null;
-		try {
-			se = new StringEntity(object.toString());
-			//se.setContentEncoding(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-       
-       
-       //MomentApi.initialize(getApplicationContext());
-       MomentApi.postJSON(this, "newguests", se, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(String response) {
-	               System.out.println(response);
-	               System.out.println(MomentApi.myCookieStore.getCookies().get(0).toString());
-            }
-        });
-       */
-       //Creer et demarrer la timeline
-      // Intent intent = new Intent(this, TimelineActivity.class);
-      // startActivity(intent);*/
     }
-    
-    
-    public void connectionFinale(View view) throws JSONException {
-    	System.out.println("Conneciton finale !");
-    	Log.d("Connection", "conncetion FINALE");
-    	
-    	connectionserveur();
-    	
-    }
-    
-    //Pour revenir ˆ l'ecran initiale avec le bouton s'inscrire
+
     public void closeConnection(View view){
     	
     	ImageButton fleche_back = (ImageButton)findViewById(R.id.fleche_back_connection);
@@ -314,51 +243,24 @@ public class MomentActivity extends Activity {
        Intent intent = new Intent(this, InscriptionActivity.class);
        startActivity(intent);
     }
-    
-    
-    /**
-     * Fonction pour cacher le clavier
-     */
-    
+
     private void hideKeyboard()
     {
     	InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-
-    /**
-     * Fonction qui gre la recuperation de la conncetion avec le serveur
-     */
     private void connectionserveur(){
 
         String email = ((EditText)findViewById(R.id.email_login)).getText().toString();
         String password = ((EditText)findViewById(R.id.password_login)).getText().toString();
-
-
-        // Make sure the device has the proper dependencies.
         GCMRegistrar.checkDevice(this);
-
-        // Make sure the manifest was properly set - comment out this line
-        // while developing the app, then uncomment it when it's ready.
         GCMRegistrar.checkManifest(this);
 
         final String regId = GCMRegistrar.getRegistrationId(this);
-        if (regId.equals("")) {
-            // Automatically registers application on startup.
+        if (regId.equals(""))
             GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
-        } else {
-            // Device is already registered on GCM, check server.
-            if (GCMRegistrar.isRegisteredOnServer(this)) {
-                // Skips registration.
-                Log.v("GCM", "Already registered and on server");
 
-            } else {
-
-                Log.v("GCM", "Not registered and on server");
-
-            }
-        }
 
 
 
@@ -380,57 +282,16 @@ public class MomentActivity extends Activity {
         MomentApi.post("login", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-                String id = null;
+                Long id = null;
                 try {
-                    id = response.getString("id");
+                    id = Long.parseLong(response.getString("id"));
+                    AppMoment.getInstance().user.setId(id);
 
-                    // Dans les infos du user on rajoute son id
-                    AppMoment.getInstance().user.setId(Long.parseLong(id));
+                    SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putLong("userID", id);
+                    editor.commit();
 
-                    System.out.println("Email et id :"+AppMoment.getInstance().user.getEmail()+" / "+AppMoment.getInstance().user.getId());
-                    Log.d("Cookie", MomentApi.myCookieStore.getCookies().toString());
-
-                    /**
-                     * Test InvitŽs
-                     */
-					/*
-
-					JSONArray users = new JSONArray();
-					
-				   	   
-				   	JSONObject user2 = new JSONObject();
-				   	user2.put("email", "j@j.com");
-			   	   users.put(user2);
-			   	   
-			   	JSONObject user3 = new JSONObject();
-			   	user3.put("email", "f@f.com");
-		   	   users.put(user3);
-			   	   
-				       
-				       JSONObject object = new JSONObject();
-				       object.put("users", users);
-				       
-				       StringEntity se = null;
-						try {
-							se = new StringEntity(object.toString());
-						} catch (UnsupportedEncodingException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						} 
-				       
-				     MomentApi.postJSON(getApplicationContext(), "newguests/1", se, new JsonHttpResponseHandler() {
-				            @Override
-				            public void onSuccess(JSONObject response) {
-				            		System.out.println(response.toString());
-				            	}
-				            });
-				     */
-                    /**
-                     * FIN TEST
-                     */
-
-
-                    // On recupere les infos du user et go la timeline
                     MomentApi.get("user", null, new JsonHttpResponseHandler() {
                         @Override
                         public void onSuccess(JSONObject response) {
@@ -446,11 +307,8 @@ public class MomentActivity extends Activity {
                                     AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
                                 }
 
-
                                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                                 startActivity(intent);
-
-
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -462,7 +320,6 @@ public class MomentActivity extends Activity {
                     e.printStackTrace();
                 }
 
-                // Do something with the response
                 System.out.println(id);
             }
         });

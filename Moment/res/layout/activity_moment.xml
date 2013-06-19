@@ -128,7 +128,7 @@
 		            android:layout_width="wrap_content"
 		            android:layout_height="wrap_content"
 		            android:background="@drawable/btn_connect"
-		            android:onClick="connectionFinale"/>
+		            android:onClick="connectionserver"/>
                 <LinearLayout android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
