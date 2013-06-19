@@ -139,50 +139,45 @@ public class MomentActivity extends Activity {
 
     public void connect(View view) throws JSONException {
 
-       RelativeLayout button_inscription = (RelativeLayout)findViewById(R.id.inscrire_button_login);
-       button_inscription.setVisibility(View.INVISIBLE);
-       EditText edit_email = (EditText)findViewById(R.id.email_login);
-       edit_email.setVisibility(View.VISIBLE);
-       EditText edit_password = (EditText)findViewById(R.id.password_login);
-       edit_password.setVisibility(View.VISIBLE);
+        RelativeLayout button_inscription = (RelativeLayout)findViewById(R.id.inscrire_button_login);
+        button_inscription.setVisibility(View.INVISIBLE);
+        EditText edit_email = (EditText)findViewById(R.id.email_login);
+        edit_email.setVisibility(View.VISIBLE);
+        EditText edit_password = (EditText)findViewById(R.id.password_login);
+        edit_password.setVisibility(View.VISIBLE);
 
-       LinearLayout layout_buttons = (LinearLayout)findViewById(R.id.layout_button_login);
+        LinearLayout layout_buttons = (LinearLayout)findViewById(R.id.layout_button_login);
 
-       Animation animation = new TranslateAnimation(
-           Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
-           Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f
-       );
-       animation.setFillAfter(true);
-       animation.setDuration(300);
-       animation.setAnimationListener(new AnimationListener() {
-			
-			@Override
-			public void onAnimationStart(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				// TODO Auto-generated method stub
-				//On link le bouton avec la bonne action
-					RelativeLayout connection_finale = (RelativeLayout)findViewById(R.id.connection_finale);
-			       connection_finale.setVisibility(View.VISIBLE);
-			       RelativeLayout connection_layout = (RelativeLayout)findViewById(R.id.connection_relative);
-			       connection_layout.setVisibility(View.INVISIBLE);
-			}
-		});
-       layout_buttons.startAnimation(animation);
-       
-       
-       ImageButton fleche_back = (ImageButton)findViewById(R.id.fleche_back_connection);
-       fleche_back.setVisibility(View.VISIBLE);
+        Animation animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.0f,
+                Animation.RELATIVE_TO_SELF, 0.0f, Animation.RELATIVE_TO_SELF, 0.5f
+        );
+        animation.setFillAfter(true);
+        animation.setDuration(300);
+        animation.setAnimationListener(new AnimationListener() {
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                RelativeLayout connection_finale = (RelativeLayout)findViewById(R.id.connection_finale);
+                connection_finale.setVisibility(View.VISIBLE);
+                RelativeLayout connection_layout = (RelativeLayout)findViewById(R.id.connection_relative);
+                connection_layout.setVisibility(View.INVISIBLE);
+            }
+        });
+        layout_buttons.startAnimation(animation);
+
+        ImageButton fleche_back = (ImageButton)findViewById(R.id.fleche_back_connection);
+        fleche_back.setVisibility(View.VISIBLE);
     }
 
     public void closeConnection(View view){
@@ -282,7 +277,7 @@ public class MomentActivity extends Activity {
         MomentApi.post("login", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-                Long id = null;
+            Long id = null;
                 try {
                     id = Long.parseLong(response.getString("id"));
                     AppMoment.getInstance().user.setId(id);
@@ -319,10 +314,8 @@ public class MomentActivity extends Activity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 System.out.println(id);
             }
         });
-
     }
 }

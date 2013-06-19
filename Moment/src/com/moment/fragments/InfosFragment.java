@@ -88,7 +88,6 @@ public class InfosFragment extends Fragment {
 		TextView adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
 		adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
 
-
         maybeButton     = (ImageButton)view.findViewById(R.id.maybe_button);
         goingButton     = (ImageButton)view.findViewById(R.id.going_button);
         notGoigButton   = (ImageButton)view.findViewById(R.id.not_going_button);
@@ -126,8 +125,7 @@ public class InfosFragment extends Fragment {
 		
 		if(AppMoment.getInstance().user.getMomentById(momentId).getUser()!=null){
 			final ImageView owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
-			
-			
+
 			if(AppMoment.getInstance().user.getMomentById(momentId).getUser().getPictureProfileUrl()!=null) AppMoment.getInstance().user.getMomentById(momentId).getUser().printProfilePicture(owner_picture, true);
 			
 			TextView firstname = (TextView)view.findViewById(R.id.firstname_owner);

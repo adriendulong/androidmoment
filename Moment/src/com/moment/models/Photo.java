@@ -5,6 +5,11 @@ import com.moment.classes.PhotoListAdapter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.sql.Timestamp;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
 public class Photo {
 	
 	private int id;
@@ -14,6 +19,7 @@ public class Photo {
 	private Bitmap bitmapThumbnail;
 	private String urlOriginal;
 	private String urlThumbnail;
+    private Date time;
 	
 	public int getId() {
 		return id;
@@ -71,7 +77,16 @@ public class Photo {
 		this.urlThumbnail = urlThumbnail;
 	}
 
-	public PhotoListAdapter getAdapter(PhotoListAdapter pa){
+    public Date getTime() {
+        return time;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
+    }
+
+
+    public PhotoListAdapter getAdapter(PhotoListAdapter pa){
 		return pa;
 	}
 	
@@ -81,6 +96,9 @@ public class Photo {
 			this.setNbLike(photoObject.getInt("nb_like"));
 			this.setUrlOriginal(photoObject.getString("url_original"));
 			this.setUrlThumbnail(photoObject.getString("url_thumbnail"));
+            Date timestamp = new Date(Long.valueOf(photoObject.getString("time"))*1000);
+
+            this.setTime(timestamp);
 			User user = new User();
 			user.setUserFromJson(photoObject.getJSONObject("taken_by"));
 			this.setUser(user);			
