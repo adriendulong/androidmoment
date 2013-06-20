@@ -12,12 +12,11 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
-        <RelativeLayout android:clickable="true"
+        <RelativeLayout android:id="@+id/my_moments_button"
                       android:layout_width="fill_parent"
-                      android:layout_height="44dp"
-                      android:background="@drawable/bg_button_volet">
-            <ImageView android:layout_width="32dp"
-                       android:layout_height="32dp"
+                      android:layout_height="44dp">
+            <ImageView android:layout_width="25dp"
+                       android:layout_height="25dp"
                        android:src="@drawable/picto_feed"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
@@ -28,7 +27,7 @@
                       android:layout_marginLeft="60dp"
                       android:text="@string/my_moments_volet"
                       android:textColor="@color/white"
-                      android:textSize="20dp"/>
+                      android:textSize="14dp"/>
             <ImageView android:layout_width="15dp"
                        android:layout_height="30dp"
                        android:layout_alignParentRight="true"
@@ -39,10 +38,11 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
-        <RelativeLayout android:layout_width="fill_parent"
+        <RelativeLayout android:id="@+id/news_button_volet"
+                        android:layout_width="fill_parent"
                         android:layout_height="44dp">
-            <ImageView android:layout_width="32dp"
-                       android:layout_height="32dp"
+            <ImageView android:layout_width="25dp"
+                       android:layout_height="25dp"
                        android:src="@drawable/picto_feed"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
@@ -53,7 +53,7 @@
                       android:layout_marginLeft="60dp"
                       android:text="@string/news_volet"
                       android:textColor="@color/white"
-                      android:textSize="20dp"/>
+                      android:textSize="14dp"/>
             <ImageView android:layout_width="15dp"
                        android:layout_height="30dp"
                        android:layout_alignParentRight="true"
@@ -64,10 +64,11 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
-        <RelativeLayout android:layout_width="fill_parent"
+        <RelativeLayout android:id="@+id/profile_button_volet"
+                        android:layout_width="fill_parent"
                         android:layout_height="44dp">
-            <ImageView android:layout_width="32dp"
-                       android:layout_height="32dp"
+            <ImageView android:layout_width="25dp"
+                       android:layout_height="25dp"
                        android:src="@drawable/picto_feed"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
@@ -78,7 +79,7 @@
                       android:layout_marginLeft="60dp"
                       android:text="@string/profil_volet"
                       android:textColor="@color/white"
-                      android:textSize="20dp"/>
+                      android:textSize="14dp"/>
             <ImageView android:layout_width="15dp"
                        android:layout_height="30dp"
                        android:layout_alignParentRight="true"
@@ -89,10 +90,11 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
-        <RelativeLayout android:layout_width="fill_parent"
+        <RelativeLayout android:id="@+id/settings_button_volet"
+                        android:layout_width="fill_parent"
                         android:layout_height="44dp">
-            <ImageView android:layout_width="32dp"
-                       android:layout_height="32dp"
+            <ImageView android:layout_width="25dp"
+                       android:layout_height="25dp"
                        android:src="@drawable/picto_feed"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
@@ -103,7 +105,7 @@
                       android:layout_marginLeft="60dp"
                       android:text="@string/settings_volet"
                       android:textColor="@color/white"
-                      android:textSize="20dp"/>
+                      android:textSize="14dp"/>
             <ImageView android:layout_width="15dp"
                        android:layout_height="30dp"
                        android:layout_alignParentRight="true"
@@ -114,10 +116,13 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
-        <RelativeLayout android:layout_width="fill_parent"
-                        android:layout_height="44dp">
-            <ImageView android:layout_width="32dp"
-                       android:layout_height="32dp"
+        <RelativeLayout android:id="@+id/missing_button_volet"
+                        android:layout_width="fill_parent"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_button_volet"
+                        android:clickable="true">
+            <ImageView android:layout_width="25dp"
+                       android:layout_height="25dp"
                        android:src="@drawable/picto_feed"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
@@ -128,7 +133,7 @@
                       android:layout_marginLeft="60dp"
                       android:text="@string/missing_moments_volet"
                       android:textColor="@color/white"
-                      android:textSize="20dp"/>
+                      android:textSize="14dp"/>
             <ImageView android:layout_width="15dp"
                        android:layout_height="30dp"
                        android:layout_alignParentRight="true"
@@ -153,7 +158,8 @@
         </LinearLayout>
         <ListView android:layout_width="fill_parent"
                   android:layout_height="fill_parent"
-                  android:id="@+id/list_notifs"/>
+                  android:id="@+id/list_notifs"
+                  android:divider="@drawable/sep_top"/>
 
     </LinearLayout>
     <ImageView android:layout_width="fill_parent"

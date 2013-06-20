@@ -4,9 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.*;
@@ -19,13 +21,16 @@ import com.moment.animations.TimelineAnimation;
 import com.moment.classes.CommonUtilities;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
+import com.moment.classes.NotificationsAdapter;
 import com.moment.models.Moment;
+import com.moment.models.Notification;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TimelineActivity extends SlidingActivity {
@@ -33,21 +38,110 @@ public class TimelineActivity extends SlidingActivity {
     private Intent intentMoment;
     private LayoutInflater inflater;
     private Long actuelMomentSelect = Long.parseLong("-1");
+    private RelativeLayout myMoments, news, profile, settings, missingMoments;
+    private ListView notifsListView;
+    private NotificationsAdapter adapter;
+    private ArrayList<Notification> notifications;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
         SlidingMenu sm = getSlidingMenu();
-        sm.setBehindOffset(100);
+        sm.setBehindOffset(250);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
-
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+
+
+        //We get all the relativeLayout that are buttons
+        myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
+        myMoments.setBackgroundResource(R.drawable.bg_section);
+        news = (RelativeLayout)sm.getRootView().findViewById(R.id.news_button_volet);
+        profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
+        settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
+        missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
+
+
+        //OnClickListener
+        View.OnClickListener listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(v.getId()==myMoments.getId()){
+                    myMoments.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==news.getId()){
+                    news.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==profile.getId()){
+                    profile.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==settings.getId()){
+                    settings.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==missingMoments.getId()){
+                    missingMoments.setBackgroundResource(R.drawable.bg_section);
+                }
+            }
+        };
+
+        View.OnTouchListener touchListener = new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(v.getId()==myMoments.getId()){
+                    myMoments.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==news.getId()){
+                    news.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==profile.getId()){
+                    profile.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==settings.getId()){
+                    settings.setBackgroundResource(R.drawable.bg_section);
+                }
+                else if(v.getId()==missingMoments.getId()){
+                    missingMoments.setBackgroundResource(R.drawable.bg_section);
+                }
+                return false;
+            }
+        };
+
+
+
+        //Associate buttons with listeners
+        myMoments.setOnClickListener(listener);
+        myMoments.setOnTouchListener(touchListener);
+        news.setOnClickListener(listener);
+        news.setOnTouchListener(touchListener);
+        profile.setOnClickListener(listener);
+        profile.setOnTouchListener(touchListener);
+        settings.setOnClickListener(listener);
+        settings.setOnTouchListener(touchListener);
+        missingMoments.setOnClickListener(listener);
+        missingMoments.setOnTouchListener(touchListener);
+
+        //Initialize the notifications list
+        notifications = new ArrayList<Notification>();
+        for(int i=0;i<10;i++){
+            Notification notif = new Notification();
+            notifications.add(notif);
+        }
+
+        notifsListView = (ListView)sm.getRootView().findViewById(R.id.list_notifs);
+        adapter = new NotificationsAdapter(this, R.layout.notifs_cell, notifications);
+        notifsListView.setAdapter(adapter);
+
+
+
 
         if(savedInstanceState == null){
 
