@@ -32,7 +32,6 @@ import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Calendar;
-import java.util.Date;
 
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
@@ -57,15 +56,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         imageLoadTask.execute(photo.getUrlOriginal());
 
         final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
-
-        closeButton.setClickable(true);
-        closeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
-
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
         final ImageButton nextButton     = (ImageButton) findViewById(R.id.next);
         final ImageButton likeButton     = (ImageButton) findViewById(R.id.coeur);
@@ -80,6 +70,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         final TextView    jour           = (TextView)    findViewById(R.id.jour);
         final TextView    mois           = (TextView)    findViewById(R.id.mois);
 
+        closeButton.setClickable(true);
+        closeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         prenom.setText(photo.getUser().getFirstName());
         nom.setText(" " + photo.getUser().getLastName());
 
@@ -89,7 +87,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         int dateMois = cal.get(Calendar.MONTH) + 1;
         jour.setText(""+dateJour);
         mois.setText("/"+dateMois);
-
 
         nbPetitCoeur.setClickable(false);
         nbPetitCoeur.setEnabled(false);
@@ -181,6 +178,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 position++;
+                photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
                 ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position));
                 imageLoadTask.execute(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUrlOriginal());
                 if(position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){v.setVisibility(View.INVISIBLE);}
@@ -194,6 +192,15 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
                 }
+                prenom.setText(photo.getUser().getFirstName());
+                nom.setText(" " + photo.getUser().getLastName());
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(photo.getTime());
+                int dateJour = cal.get(Calendar.DAY_OF_MONTH);
+                int dateMois = cal.get(Calendar.MONTH) + 1;
+                jour.setText(""+dateJour);
+                mois.setText("/"+dateMois);
             }
         });
 
@@ -201,6 +208,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 position--;
+                photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
                 ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position));
                 imageLoadTask.execute(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUrlOriginal());
                 if(position == 0){v.setVisibility(View.INVISIBLE);}
@@ -214,6 +222,15 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
                 }
+                prenom.setText(photo.getUser().getFirstName());
+                nom.setText(" " + photo.getUser().getLastName());
+
+                Calendar cal = Calendar.getInstance();
+                cal.setTime(photo.getTime());
+                int dateJour = cal.get(Calendar.DAY_OF_MONTH);
+                int dateMois = cal.get(Calendar.MONTH) + 1;
+                jour.setText(""+dateJour);
+                mois.setText("/"+dateMois);
             }
         });
 
