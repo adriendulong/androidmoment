@@ -65,34 +65,30 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.e("OnCreate","OnCreate");
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
             momentID = getActivity().getIntent().getLongExtra("id", 1);
         }
+        Log.e("PhotosFragment","OnCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.e("OnCreateView","OnCreateView");
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
-
-        if(savedInstanceState == null) {
-            Log.e("onCreateView", "savedInstanceState null");
-            User user = AppMoment.getInstance().user;
-            Moment moment = user.getMomentById(momentID);
-            photos = moment.getPhotos();
-            imageAdapter = new ImageAdapter(view.getContext(), photos);
-            gridView = (GridView) view.findViewById(R.id.gridview);
-            gridView.setAdapter(imageAdapter);
-        }
+        Log.e("PhotosFragment","onCreateView");
+        User user = AppMoment.getInstance().user;
+        Moment moment = user.getMomentById(momentID);
+        photos = moment.getPhotos();
+        imageAdapter = new ImageAdapter(view.getContext(), photos);
+        gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView.setAdapter(imageAdapter);
         return view;
     }
 
     @Override
     public void onStart(){
-        Log.e("OnStart","OnStart");
+        Log.e("PhotosFragment","OnStart");
         super.onStart();
 
         MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
@@ -171,7 +167,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onPause(){
-        Log.e("OnPause","OnPause");
+        Log.e("PhotosFragment","OnPause");
         super.onPause();
     }
 
@@ -180,8 +176,13 @@ public class PhotosFragment extends Fragment {
         photos.clear();
         imageAdapter.notifyDataSetChanged();
         super.onStop();
-
         Log.e("onStop", "PhotosFragment");
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.e("onDestroy", "PhotosFragment");
     }
 
     @Override
@@ -194,10 +195,6 @@ public class PhotosFragment extends Fragment {
         super.onResume();
         imageAdapter.notifyDataSetChanged();
     }
-
-    /**
-     * ImageAdapter
-     */
 
     public class ImageAdapter extends BaseAdapter {
 
