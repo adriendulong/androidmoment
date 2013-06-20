@@ -44,6 +44,7 @@ import java.net.CookieStore;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ChatFragment extends Fragment {
@@ -182,7 +183,17 @@ public class ChatFragment extends Fragment {
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
 
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+
         message.setText(chat.getMessage());
+        autheur.setText(chat.getUser().getFirstName());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(chat.getDate());
+        int hh = cal.get(Calendar.HOUR_OF_DAY);
+        int mm = cal.get(Calendar.MINUTE);
+        heure.setText(""+hh+":"+mm);
 
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
@@ -209,7 +220,17 @@ public class ChatFragment extends Fragment {
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
 
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+
         message.setText(chat.getMessage());
+        autheur.setText(chat.getUser().getFirstName());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(chat.getDate());
+        int hh = cal.get(Calendar.HOUR_OF_DAY);
+        int mm = cal.get(Calendar.MINUTE);
+        heure.setText(""+hh+":"+mm);
 
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
@@ -234,7 +255,19 @@ public class ChatFragment extends Fragment {
         scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+
         message.setText(chat.getMessage());
+        autheur.setText(chat.getUser().getFirstName());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(chat.getDate());
+        int hh = cal.get(Calendar.HOUR_OF_DAY);
+        int mm = cal.get(Calendar.MINUTE);
+        heure.setText(""+hh+":"+mm);
+
+
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
@@ -259,7 +292,18 @@ public class ChatFragment extends Fragment {
         scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
         TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+
         message.setText(chat.getMessage());
+        autheur.setText(chat.getUser().getFirstName());
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(chat.getDate());
+        int hh = cal.get(Calendar.HOUR_OF_DAY);
+        int mm = cal.get(Calendar.MINUTE);
+        heure.setText(""+hh+":"+mm);
+
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())

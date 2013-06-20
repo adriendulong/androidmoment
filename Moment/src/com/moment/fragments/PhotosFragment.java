@@ -48,6 +48,7 @@ import java.util.ArrayList;
 
 public class PhotosFragment extends Fragment {
 
+    private static final String IMAGE_CACHE_DIR = "thumbs";
     static final int PICK_CAMERA_PHOTOS = 1;
     private Long momentID;
 
@@ -99,7 +100,6 @@ public class PhotosFragment extends Fragment {
 
                     for(int i=0;i<jsonPhotos.length();i++)
                     {
-
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                         AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);

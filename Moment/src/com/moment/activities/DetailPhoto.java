@@ -78,15 +78,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             }
         });
 
-        prenom.setText(photo.getUser().getFirstName());
-        nom.setText(" " + photo.getUser().getLastName());
+        prenom.setText(photo.getUser().getFirstName().toUpperCase());
+        nom.setText(" " + photo.getUser().getLastName().toUpperCase());
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(photo.getTime());
         int dateJour = cal.get(Calendar.DAY_OF_MONTH);
         int dateMois = cal.get(Calendar.MONTH) + 1;
-        jour.setText(""+dateJour);
-        mois.setText("/"+dateMois);
+        int hh       = cal.get(Calendar.HOUR_OF_DAY);
+        int mm       = cal.get(Calendar.MINUTE);
+        jour.setText(dateJour+"/"+dateMois+" ");
+        mois.setText(hh+":"+mm);
 
         nbPetitCoeur.setClickable(false);
         nbPetitCoeur.setEnabled(false);
@@ -192,15 +194,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
                 }
-                prenom.setText(photo.getUser().getFirstName());
-                nom.setText(" " + photo.getUser().getLastName());
+                prenom.setText(photo.getUser().getFirstName().toUpperCase());
+                nom.setText(" " + photo.getUser().getLastName().toUpperCase());
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(photo.getTime());
                 int dateJour = cal.get(Calendar.DAY_OF_MONTH);
                 int dateMois = cal.get(Calendar.MONTH) + 1;
-                jour.setText(""+dateJour);
-                mois.setText("/"+dateMois);
+                int hh       = cal.get(Calendar.HOUR_OF_DAY);
+                int mm       = cal.get(Calendar.MINUTE);
+                jour.setText(dateJour+"/"+dateMois+" ");
+                mois.setText(hh+":"+mm);
             }
         });
 
@@ -222,15 +226,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
                 }
-                prenom.setText(photo.getUser().getFirstName());
-                nom.setText(" " + photo.getUser().getLastName());
+                prenom.setText(photo.getUser().getFirstName().toUpperCase());
+                nom.setText(" " + photo.getUser().getLastName().toUpperCase());
 
                 Calendar cal = Calendar.getInstance();
                 cal.setTime(photo.getTime());
                 int dateJour = cal.get(Calendar.DAY_OF_MONTH);
                 int dateMois = cal.get(Calendar.MONTH) + 1;
-                jour.setText(""+dateJour);
-                mois.setText("/"+dateMois);
+                int hh       = cal.get(Calendar.HOUR_OF_DAY);
+                int mm       = cal.get(Calendar.MINUTE);
+                jour.setText(dateJour+"/"+dateMois+" ");
+                mois.setText(hh+":"+mm);
             }
         });
 

@@ -79,14 +79,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1">
-
-            <ImageButton
-                    android:id="@+id/trash"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/trash"
-                    android:background="@drawable/trash"
-                    android:layout_centerHorizontal="true"/>
+            <ImageButton android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:src="@drawable/coeur"
+                         android:background="@drawable/coeur"
+                         android:layout_centerHorizontal="true"
+                         android:id="@+id/coeur"/>
 
         </RelativeLayout>
 
@@ -127,12 +125,13 @@
         <RelativeLayout android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
-            <ImageButton android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:src="@drawable/coeur"
-                         android:background="@drawable/coeur"
-                         android:layout_centerHorizontal="true"
-                         android:id="@+id/coeur"/>
+            <ImageButton
+                    android:id="@+id/trash"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/trash"
+                    android:background="@drawable/trash"
+                    android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
     </LinearLayout>
