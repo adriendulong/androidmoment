@@ -75,7 +75,9 @@ public class InvitationsAdapter extends ArrayAdapter<User>{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         }
         
-        if(user.getIsSelect()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
+        if(user.getIsSelect()!=null){
+            if (user.getIsSelect()) holder.bg.setBackgroundColor(context.getResources().getColor(R.color.orange));
+        }
 
         return row;
     }

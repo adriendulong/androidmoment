@@ -147,5 +147,12 @@
     <string name="rsvp_not_coming">Je ne serai pas présent au Moment</string>
     <string name="rsvp_maybe">Je ne sais pas si je serai présent au Moment</string>
 
+    <!-- Volet -->
+    <string name="my_moments_volet">Mes Moments</string>
+    <string name="news_volet">Actualités</string>
+    <string name="profil_volet">Mon Profil</string>
+    <string name="settings_volet">Paramètres</string>
+    <string name="missing_moments_volet">Moments Manquants ?</string>
+
 
 </resources>

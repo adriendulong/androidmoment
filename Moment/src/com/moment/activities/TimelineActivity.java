@@ -44,6 +44,7 @@ public class TimelineActivity extends SlidingActivity {
         sm.setBehindOffset(100);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -143,7 +144,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * Fonction appelée quand le bouton "Moments" est selectionné
+     * Fonction appelÔøΩe quand le bouton "Moments" est selectionnÔøΩ
      * @param view
      */
 
@@ -153,7 +154,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * Fonction appelée quand le bouton profil est selectionné
+     * Fonction appelÔøΩe quand le bouton profil est selectionnÔøΩ
      * Lance la vue profil
      * @param view
      */
@@ -165,8 +166,8 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * Fonction appelée quand le bouton paramètres est selectionnée
-     * Lance la vue paramètre
+     * Fonction appelÔøΩe quand le bouton paramÔøΩtres est selectionnÔøΩe
+     * Lance la vue paramÔøΩtre
      * @param view
      */
 
@@ -177,7 +178,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * Fonction qui gère l'ajout d'un moment à la timeline
+     * Fonction qui gÔøΩre l'ajout d'un moment ÔøΩ la timeline
      * @param id
      * @param nom
      */
@@ -243,7 +244,7 @@ public class TimelineActivity extends SlidingActivity {
     }
 
     /**
-     * L'utilisateur a touché le bouton qui permet d'accèder directement aux Photos
+     * L'utilisateur a touchÔøΩ le bouton qui permet d'accÔøΩder directement aux Photos
      * @param view
      */
 
@@ -259,7 +260,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * L'utilisateur a touché le bouton qui permet d'accèder directement aux Infos
+     * L'utilisateur a touchÔøΩ le bouton qui permet d'accÔøΩder directement aux Infos
      * @param view
      */
 
@@ -274,7 +275,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     /**
-     * L'utilisateur a touché le bouton qui permet d'accèder directement aux Chat
+     * L'utilisateur a touchÔøΩ le bouton qui permet d'accÔøΩder directement aux Chat
      * @param view
      */
 

@@ -152,17 +152,17 @@ public class InfosFragment extends Fragment {
     }
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
-    GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
+        GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
 
-    //Les Overlays
-    List<Overlay> mapOverlays = Exchanger.mMapView.getOverlays();
-    Drawable drawable = context.getResources().getDrawable(R.drawable.picto_o);
-    PositionOverlay itemizedoverlay = new PositionOverlay(drawable, context);
+        //Les Overlays
+        List<Overlay> mapOverlays = Exchanger.mMapView.getOverlays();
+        Drawable drawable = context.getResources().getDrawable(R.drawable.picto_o);
+        PositionOverlay itemizedoverlay = new PositionOverlay(drawable, context);
 
-    OverlayItem overlayitem = new OverlayItem(p, "Hola, Mundo!", "I'm in Mexico City!");
+        OverlayItem overlayitem = new OverlayItem(p, "Hola, Mundo!", "I'm in Mexico City!");
 
-    itemizedoverlay.addOverlay(overlayitem);
-    mapOverlays.add(itemizedoverlay);
+        itemizedoverlay.addOverlay(overlayitem);
+        mapOverlays.add(itemizedoverlay);
 
     }
 
@@ -228,41 +228,50 @@ public class InfosFragment extends Fragment {
         System.out.println("MAYBE");
         int oldState = stateAnwser;
 
-        if(stateAnwser!=MAYBE){
-            stateAnwser = MAYBE;
-            moment.setState(MAYBE);
-            updateRSVPBloc();
-            updateStateServer(oldState, MAYBE);
+        if(moment.getState()!=OWNER){
+            if(stateAnwser!=MAYBE){
+                stateAnwser = MAYBE;
+                moment.setState(MAYBE);
+                updateRSVPBloc();
+                updateStateServer(oldState, MAYBE);
+            }
         }
+
     }
 
     public void goingRsvp(){
         System.out.println("Going");
         int oldState = stateAnwser;
 
-        if(stateAnwser!=COMING){
-            stateAnwser = COMING;
-            moment.setState(COMING);
-            updateRSVPBloc();
-            updateStateServer(oldState, COMING);
+        if(moment.getState()!=OWNER){
+            if(stateAnwser!=COMING){
+                stateAnwser = COMING;
+                moment.setState(COMING);
+                updateRSVPBloc();
+                updateStateServer(oldState, COMING);
+            }
         }
+
     }
 
     public void notRsvp(){
         System.out.println("Not going");
         int oldState = stateAnwser;
 
-        if(stateAnwser!=NOT_COMING){
-            stateAnwser = NOT_COMING;
-            moment.setState(NOT_COMING);
-            updateRSVPBloc();
-            updateStateServer(oldState, NOT_COMING);
+        if(moment.getState()!=OWNER){
+            if(stateAnwser!=NOT_COMING){
+                stateAnwser = NOT_COMING;
+                moment.setState(NOT_COMING);
+                updateRSVPBloc();
+                updateStateServer(oldState, NOT_COMING);
+            }
         }
+
     }
 
     private void updateRSVPBloc(){
 
-        if(moment.getState()==COMING){
+        if((moment.getState()==COMING)||(moment.getState()==OWNER)){
             goingButton.setSelected(true);
             goingButton.setImageResource(R.drawable.picto_yes_down);
             maybeButton.setSelected(false);

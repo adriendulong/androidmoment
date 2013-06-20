@@ -231,7 +231,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:background="@drawable/bloc_lieu" />
-                
+
 				 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
 				     xmlns:map="http://schemas.android.com/apk/res-auto"
 				     android:id="@+id/map"
@@ -412,6 +412,70 @@
                     android:background="@drawable/ribbon"/>
                
             </RelativeLayout>
+            <ImageView android:layout_width="fill_parent"
+                       android:layout_height="fill_parent"
+                       android:background="@drawable/separation_point"
+                       android:layout_marginTop="5dp"
+                       android:layout_marginBottom="5dp"/>
+            <LinearLayout android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:orientation="horizontal"
+                          android:gravity="center">
+                <LinearLayout  android:layout_height="wrap_content"
+                               android:layout_width="100dp"
+                               android:orientation="vertical"
+                               android:background="@drawable/bg_btn"
+                                android:layout_gravity="center"
+                                android:layout_margin="10dp">
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:background="@drawable/btn_kdo_up"
+                                 android:layout_gravity="center_horizontal"
+                                 android:layout_marginTop="10dp"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Cadeau"
+                              android:textSize="10dp"
+                              android:textColor="@color/gris_chat"
+                              android:layout_gravity="center"/>
+               </LinearLayout>
+                <LinearLayout  android:layout_height="wrap_content"
+                               android:layout_width="100dp"
+                               android:orientation="vertical"
+                               android:background="@drawable/bg_btn"
+                               android:layout_gravity="center"
+                               android:layout_margin="10dp">
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:background="@drawable/btn_kdo_up"
+                                 android:layout_gravity="center_horizontal"
+                                 android:layout_marginTop="10dp"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Cadeau"
+                              android:textSize="12dp"
+                              android:textColor="@color/gris_chat"
+                              android:layout_gravity="center"/>
+                </LinearLayout>
+                <LinearLayout  android:layout_height="wrap_content"
+                               android:layout_width="100dp"
+                               android:orientation="vertical"
+                               android:background="@drawable/bg_btn"
+                               android:layout_gravity="center"
+                               android:layout_margin="10dp">
+                    <ImageButton android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:background="@drawable/btn_kdo_up"
+                                 android:layout_gravity="center_horizontal"
+                                 android:layout_marginTop="10dp"/>
+                    <TextView android:layout_width="wrap_content"
+                              android:layout_height="wrap_content"
+                              android:text="Cadeau"
+                              android:textSize="10dp"
+                              android:textColor="@color/gris_chat"
+                              android:layout_gravity="center"/>
+                </LinearLayout>
+          </LinearLayout>
         </LinearLayout>
         
     </LinearLayout>

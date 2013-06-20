@@ -26,7 +26,7 @@ import java.util.ArrayList;
 public class ListGuestsActivity extends SherlockFragmentActivity {
 
     private ArrayList<GuestsFragment> frs;
-    private int idMoment;
+    private Long idMoment;
     private ArrayList<User> owners, admins, comings, notComings, maybe, uk, allComings;
     private InvitationCollectionPagerAdapter mInvitationCollectionPagerAdapter;
     private ViewPager mViewPager;
@@ -50,7 +50,7 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         //We get the id of the moment
-        idMoment = getIntent().getIntExtra("id", -1);
+        idMoment = getIntent().getLongExtra("id", -1);
 
         //Create the three fragments
         //Init les fragments
