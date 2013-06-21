@@ -2,9 +2,11 @@ package com.moment.fragments;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -64,6 +66,11 @@ public class PhotosFragment extends Fragment {
 
     private ArrayList<Photo> photos;
 
+    Intent intent;
+
+    int CAMERA_PICTURE = 1;
+    int GALLERY_PICTURE = 2;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,27 +99,25 @@ public class PhotosFragment extends Fragment {
         Log.e("PhotosFragment","OnStart");
         super.onStart();
 
-        MomentApi.get("photosmoment/"+ momentID, null, new JsonHttpResponseHandler() {
+        MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
             public void onSuccess(JSONObject response) {
                 try {
                     JSONArray jsonPhotos = response.getJSONArray("photos");
 
-                    for(int i=0;i<jsonPhotos.length();i++)
-                    {
+                    for (int i = 0; i < jsonPhotos.length(); i++) {
                         Photo photo = new Photo();
                         photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                         AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
                         imageAdapter.notifyDataSetChanged();
 
-                        if(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()) == null) {
-                            Log.e("Rien en cache","Suxxx");
+                        if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
+                            Log.e("Rien en cache", "Suxxx");
                             ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                             imageLoadTask.execute(photo.getUrlThumbnail());
-                        }
-                        else {
-                            Log.e("Je suis dispo en cache","Ouhouuuu");
-                            photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_"+photo.getId()));
+                        } else {
+                            Log.e("Je suis dispo en cache", "Ouhouuuu");
+                            photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));
                             //imageAdapter.notify();
                         }
                     }
@@ -140,13 +145,8 @@ public class PhotosFragment extends Fragment {
 
                     outputFileUri = Uri.fromFile(file);
 
-                    try {
-                        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-                        intent.putExtra("return-data", true);
-                        startActivityForResult(intent, PICK_CAMERA_PHOTOS);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    startDialog();
+
                 } else {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
                     intent.putExtra("position", (position - 1));
@@ -155,6 +155,29 @@ public class PhotosFragment extends Fragment {
                 }
             }
         });
+    }
+
+    private void startDialog() {
+        AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getActivity());
+        myAlertDialog.setTitle("Upload Pictures Option");
+        myAlertDialog.setMessage("How do you want to set your picture?");
+
+        myAlertDialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+                intent.setType("image/*");
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, GALLERY_PICTURE);
+            }
+        });
+
+        myAlertDialog.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface arg0, int arg1) {
+                intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(intent, CAMERA_PICTURE);
+            }
+        });
+        myAlertDialog.show();
     }
 
     @Override
