@@ -175,6 +175,11 @@
                 android:screenOrientation="portrait"
                 android:name=".activities.ListGuestsActivity"
                 android:label="ListGuestsActivity"/>
+        <activity android:name=".activities.NotificationsActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.moment.activities.TimelineActivity" />
+        </activity>
 
         <meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
         <meta-data

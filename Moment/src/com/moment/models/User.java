@@ -47,6 +47,7 @@ public class User {
     private transient UserDao myDao;
 
     private List<Moment> moments;
+    private List<Notification> notifications;
 
     // KEEP FIELDS - put your custom fields here
     Bitmap photoThumbnail;
@@ -211,6 +212,14 @@ public class User {
 
     public void setIsSelect(Boolean isSelect) {
         this.isSelect = isSelect;
+    }
+
+    public List<Notification> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */

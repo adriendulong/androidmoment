@@ -42,6 +42,9 @@ public class TimelineActivity extends SlidingActivity {
     private ListView notifsListView;
     private NotificationsAdapter adapter;
     private ArrayList<Notification> notifications;
+    private TextView totalNotifText;
+    private ProgressBar notifProgress;
+    private int totalNotifs, nbNotifs, nbInvit;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -190,11 +193,16 @@ public class TimelineActivity extends SlidingActivity {
     @Override
     public void onStart(){
         super.onStart();
+        getNotifications();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.activity_timeline, menu);
+
+        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.badge).getActionView();
+        totalNotifText = (TextView) badgeLayout.findViewById(R.id.actionbar_notifcation_textview);
+        notifProgress = (ProgressBar)badgeLayout.findViewById(R.id.progress_notifs);
         return true;
     }
 
@@ -381,4 +389,51 @@ public class TimelineActivity extends SlidingActivity {
         intentMoment.putExtra("id", actuelMomentSelect);
         startActivity(intentMoment);
     }
+
+
+    public void notifications(View view){
+        Log.e("NOTIFS", "HERE NOTIFS");
+        Intent notifs = new Intent(this, NotificationsActivity.class);
+        startActivity(notifs);
+    }
+
+
+    public void getNotifications(){
+
+
+        MomentApi.get("notifications", null, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    totalNotifs = response.getInt("total_notifs");
+                    totalNotifText.setText(""+totalNotifs);
+                    totalNotifText.setVisibility(View.VISIBLE);
+                    notifProgress.setVisibility(View.INVISIBLE);
+
+                    JSONArray notifsObject = response.getJSONArray("notifications");
+
+                    for(int i=0;i<notifsObject.length();i++){
+                        Notification notif = new Notification();
+                        notif.setFromJson(notifsObject.getJSONObject(i));
+                        notifications.add(notif);
+                    }
+
+                    AppMoment.getInstance().user.setNotifications(notifications);
+
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                System.out.println(content);
+            }
+        });
+    }
+
+
+
 }

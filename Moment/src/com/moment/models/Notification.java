@@ -1,5 +1,9 @@
 package com.moment.models;
 
+import android.util.Log;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 
 /**
@@ -9,22 +13,13 @@ public class Notification {
 
     private int typeNotif;
     private Date time;
-    private int momentId;
-    private int followerId;
+    private Moment moment;
+    private User user;
 
-    public Notification(int typeNotif, Long timestamp, int momentId, int followerId){
-        this.typeNotif = typeNotif;
-        this.time = new Date((Long)timestamp*1000);
-        this.momentId = momentId;
-        this.followerId = followerId;
-
-    }
 
     public Notification(){
         this.typeNotif = 1;
         this.time = new Date();
-        this.momentId = 1;
-        this.followerId = 1;
     }
 
     public int getTypeNotif() {
@@ -43,19 +38,42 @@ public class Notification {
         this.time = time;
     }
 
-    public int getMomentId() {
-        return momentId;
+    public Moment getMoment() {
+        return moment;
     }
 
-    public void setMomentId(int momentId) {
-        this.momentId = momentId;
+    public void setMoment(Moment moment) {
+        this.moment = moment;
     }
 
-    public int getFollowerId() {
-        return followerId;
+    public User getFollower() {
+        return user;
     }
 
-    public void setFollowerId(int followerId) {
-        this.followerId = followerId;
+    public void setFollower(User follower) {
+        this.user = follower;
+    }
+
+    public void setFromJson(JSONObject notifJson){
+        try{
+            this.typeNotif = notifJson.getInt("type_id");
+            Log.e("TYPE", "TYPE "+typeNotif);
+
+            //Time
+            String timeString = notifJson.getString("time");
+            Log.e("TIME", "TIME "+timeString);
+            Long time = Long.parseLong(timeString);
+            this.time = new Date(time*1000);
+
+            if(notifJson.has("moment")){
+                Moment moment = new Moment();
+                moment.setMomentFromJson(notifJson.getJSONObject("moment"));
+                this.moment = moment;
+            }
+
+        }catch (JSONException e) {
+            e.printStackTrace();
+        }
+
     }
 }
