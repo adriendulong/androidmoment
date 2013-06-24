@@ -55,9 +55,7 @@ public class InscriptionActivity extends SherlockActivity {
          */
         
         GCMRegistrar.checkDevice(this);
-        
-        // Make sure the manifest was properly set - comment out this line
-        // while developing the app, then uncomment it when it's ready.
+
         GCMRegistrar.checkManifest(this);
 
         final String regId = GCMRegistrar.getRegistrationId(this);
@@ -361,24 +359,16 @@ public class InscriptionActivity extends SherlockActivity {
 	                }
 	                
 	                try {
-	                	//On recupere l'image, on la sauvegarde dans l'internal storage et on l'efface de l'external
 						Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-						//Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "profile_picture", 100);
-						//getContentResolver().delete(selectedImageUri, null, null);
-						
-						//this.profile_picture = Images.getBitmapFromInternalStorage("profile_picture", getApplicationContext());
-						//System.out.println(""+profile_picture.getHeight());
-						
+
 						ImageButton profile_picture_button = (ImageButton)findViewById(R.id.profile_picture);
 						profile_picture_button.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
 						profile_picture = Images.resizeBitmap(bitmap, 300);
 						Images.saveImageToInternalStorage(profile_picture, getApplicationContext(), "profile_picture", 100);
 						
 					} catch (FileNotFoundException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 	            }

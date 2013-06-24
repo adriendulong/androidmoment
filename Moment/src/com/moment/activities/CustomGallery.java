@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -28,7 +29,6 @@ public class CustomGallery extends Activity {
     private String[] arrPath;
     private ImageAdapter imageAdapter;
 
-    /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,7 +62,6 @@ public class CustomGallery extends Activity {
         selectBtn.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                // TODO Auto-generated method stub
                 final int len = thumbnailsselection.length;
                 int cnt = 0;
                 String selectImages = "";
@@ -81,11 +80,13 @@ public class CustomGallery extends Activity {
                     Toast.makeText(getApplicationContext(),
                             "You've selected Total " + cnt + " image(s).",
                             Toast.LENGTH_LONG).show();
+
                     Log.d("SelectedImages", selectImages);
                 }
             }
         });
     }
+
 
     public class ImageAdapter extends BaseAdapter {
         private LayoutInflater mInflater;
@@ -108,6 +109,15 @@ public class CustomGallery extends Activity {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             ViewHolder holder;
+
+            final AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
+            fadeIn.setDuration(1200);
+            fadeIn.setFillAfter(true);
+
+            final AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
+            fadeOut.setDuration(1200);
+            fadeOut.setFillAfter(true);
+
             if (convertView == null) {
                 holder = new ViewHolder();
                 convertView = mInflater.inflate(
@@ -125,7 +135,6 @@ public class CustomGallery extends Activity {
             holder.checkbox.setOnClickListener(new View.OnClickListener() {
 
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
                     CheckBox cb = (CheckBox) v;
                     int id = cb.getId();
                     if (thumbnailsselection[id]){
@@ -138,14 +147,14 @@ public class CustomGallery extends Activity {
                 }
             });
             holder.imageview.setOnClickListener(new View.OnClickListener() {
-
                 public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    int id = v.getId();
-                    Intent intent = new Intent();
-                    intent.setAction(Intent.ACTION_VIEW);
-                    intent.setDataAndType(Uri.parse("file://" + arrPath[id]), "image/*");
-                    startActivity(intent);
+                    if(v.getVisibility() == View.GONE){
+                        v.startAnimation(fadeIn);
+                        v.setVisibility(View.VISIBLE);
+                    } else {
+                        v.startAnimation(fadeOut);
+                        v.setVisibility(View.INVISIBLE);
+                    }
                 }
             });
             holder.imageview.setImageBitmap(thumbnails[position]);

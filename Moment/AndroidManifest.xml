@@ -180,6 +180,13 @@
         <meta-data
                 android:name="com.google.android.maps.v2.API_KEY"
                 android:value="AIzaSyDMB8Fck4_vlpCqIj7aaorcn35YioK4aI4"/>
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".activities.CustomGallery"
+            android:label="CustomGallery">
+        </activity>
+
     </application>
 
 </manifest>

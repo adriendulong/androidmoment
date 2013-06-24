@@ -29,6 +29,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
@@ -50,8 +51,6 @@ import java.util.ArrayList;
 
 public class PhotosFragment extends Fragment {
 
-    private static final String IMAGE_CACHE_DIR = "thumbs";
-    static final int PICK_CAMERA_PHOTOS = 1;
     private Long momentID;
 
     private LayoutInflater layoutInflater;
@@ -59,7 +58,6 @@ public class PhotosFragment extends Fragment {
     private GridView gridView;
     private ImageAdapter imageAdapter;
 
-    private String albumName = "Moment";
     private Uri outputFileUri;
 
     private Bitmap bitmap = null;
@@ -112,16 +110,12 @@ public class PhotosFragment extends Fragment {
                         imageAdapter.notifyDataSetChanged();
 
                         if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
-                            Log.e("Rien en cache", "Suxxx");
                             ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                             imageLoadTask.execute(photo.getUrlThumbnail());
                         } else {
-                            Log.e("Je suis dispo en cache", "Ouhouuuu");
                             photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));
-                            //imageAdapter.notify();
                         }
                     }
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -164,7 +158,7 @@ public class PhotosFragment extends Fragment {
 
         myAlertDialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
-                intent = new Intent(Intent.ACTION_GET_CONTENT, null);
+                intent = new Intent(getActivity(), CustomGallery.class);
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
                 startActivityForResult(intent, GALLERY_PICTURE);
