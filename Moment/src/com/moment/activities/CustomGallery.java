@@ -1,42 +1,56 @@
 package com.moment.activities;
 
-import android.app.Activity;
+
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.widget.BaseAdapter;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.Toast;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.moment.R;
+import com.moment.fragments.PhotosFragment;
 
 import java.util.ArrayList;
 
-public class CustomGallery extends Activity {
+public class CustomGallery extends SherlockActivity {
     private int count;
     private Bitmap[] thumbnails;
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private ImageAdapter imageAdapter;
     private ArrayList<String> selectedPictures;
+    private Long momentID;
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_gallery);
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(R.drawable.logo);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
+
+        savedInstanceState = getIntent().getExtras();
+        momentID = savedInstanceState.getLong("momentID");
+
         final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
         selectedPictures = new ArrayList<String>();
         final String orderBy = MediaStore.Images.Media._ID;
@@ -94,6 +108,35 @@ public class CustomGallery extends Activity {
         });*/
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.activity_custom_gallery, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.validate:
+                Intent intent = new Intent();
+                intent = new Intent(this, MomentInfosActivity.class);
+                intent.putExtra("precedente", "timeline");
+                intent.putExtra("position", 0);
+                intent.putExtra("id", momentID);
+                intent.putExtra("photos", selectedPictures);
+                startActivity(intent);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data){
+        Log.e("OnActivityResult", "OnActivityResult");
+        //UploadTask uploadTask = new UploadTask();
+        //uploadTask.execute();
+        //imageAdapter.notifyDataSetChanged();
+    }
 
     public class ImageAdapter extends BaseAdapter {
 

@@ -41,6 +41,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -63,6 +65,10 @@ public class PhotosFragment extends Fragment {
     private Bitmap bitmap = null;
 
     private ArrayList<Photo> photos;
+    private ArrayList<String> photos_uri;
+    private ArrayList<Bitmap> photos_files;
+
+    File tempFile;
 
     Intent intent;
 
@@ -74,15 +80,30 @@ public class PhotosFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
             momentID = getActivity().getIntent().getLongExtra("id", 1);
+            savedInstanceState = getActivity().getIntent().getExtras();
+            photos_files = new ArrayList<Bitmap>();
+            if(savedInstanceState.getStringArrayList("photos") != null)
+            {
+                photos_uri = savedInstanceState.getStringArrayList("photos");
+
+                for(String s : photos_uri) {
+                    tempFile = new File(s);
+                    try {
+                        FileInputStream fi = new FileInputStream(tempFile);
+                        photos_files.add(BitmapFactory.decodeStream(fi)) ;
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         }
-        Log.e("PhotosFragment","OnCreate");
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
-        Log.e("PhotosFragment","onCreateView");
+        Log.e("PhotosFragment", "onCreateView");
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
         photos = moment.getPhotos();
@@ -96,6 +117,47 @@ public class PhotosFragment extends Fragment {
     public void onStart(){
         Log.e("PhotosFragment","OnStart");
         super.onStart();
+
+        if(!photos_files.isEmpty())
+        {
+
+            RequestParams requestParams = new RequestParams();
+
+            for(String s : photos_uri){
+            File file = new File(s);
+            bitmap = BitmapFactory.decodeFile(file.getPath());
+
+            try {
+                FileOutputStream stream = new FileOutputStream(file);
+                Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
+                bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                stream.close();
+                bitmap = bitmap2;
+                Photo tempPhoto = new Photo();
+                tempPhoto.setUser(AppMoment.getInstance().user);
+                tempPhoto.setBitmapThumbnail(bitmap2);
+                tempPhoto.setBitmapOriginal(bitmap2);
+                photos.add(tempPhoto);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    requestParams.put("photo", file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+
+
+
+
+            MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    imageAdapter.notifyDataSetChanged();
+                }
+            });
+        }
 
         MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
@@ -129,7 +191,7 @@ public class PhotosFragment extends Fragment {
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                     File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/");
-                    if(!dir.exists()){
+                    if (!dir.exists()) {
                         dir.mkdirs();
                     }
 
@@ -161,6 +223,7 @@ public class PhotosFragment extends Fragment {
                 intent = new Intent(getActivity(), CustomGallery.class);
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
+                intent.putExtra("momentID", momentID);
                 startActivityForResult(intent, GALLERY_PICTURE);
             }
         });
@@ -184,7 +247,7 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public void onPause(){
-        Log.e("PhotosFragment","OnPause");
+        Log.e("PhotosFragment", "OnPause");
         super.onPause();
     }
 
@@ -240,7 +303,7 @@ public class PhotosFragment extends Fragment {
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View  getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
 

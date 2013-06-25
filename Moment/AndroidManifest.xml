@@ -189,6 +189,7 @@
         <activity
             android:screenOrientation="portrait"
             android:name=".activities.CustomGallery"
+            android:parentActivityName="com.moment.MomentInfosActivity"
             android:label="CustomGallery">
         </activity>
 
