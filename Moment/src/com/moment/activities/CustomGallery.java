@@ -22,19 +22,23 @@ import android.widget.Toast;
 
 import com.moment.R;
 
+import java.util.ArrayList;
+
 public class CustomGallery extends Activity {
     private int count;
     private Bitmap[] thumbnails;
     private boolean[] thumbnailsselection;
     private String[] arrPath;
     private ImageAdapter imageAdapter;
+    private ArrayList<String> selectedPictures;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_gallery);
-
         final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
+        selectedPictures = new ArrayList<String>();
         final String orderBy = MediaStore.Images.Media._ID;
         Cursor imagecursor = managedQuery(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, null,
@@ -44,7 +48,9 @@ public class CustomGallery extends Activity {
         this.thumbnails = new Bitmap[this.count];
         this.arrPath = new String[this.count];
         this.thumbnailsselection = new boolean[this.count];
-        for (int i = 0; i < this.count; i++) {
+
+        for (int i = 0; i < this.count; i++)
+        {
             imagecursor.moveToPosition(i);
             int id = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
@@ -53,12 +59,13 @@ public class CustomGallery extends Activity {
                     MediaStore.Images.Thumbnails.MICRO_KIND, null);
             arrPath[i]= imagecursor.getString(dataColumnIndex);
         }
+
         GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
         imageAdapter = new ImageAdapter();
         imagegrid.setAdapter(imageAdapter);
         imagecursor.close();
 
-        final Button selectBtn = (Button) findViewById(R.id.selectBtn);
+        /*final Button selectBtn = (Button) findViewById(R.id.selectBtn);
         selectBtn.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
@@ -84,11 +91,12 @@ public class CustomGallery extends Activity {
                     Log.d("SelectedImages", selectImages);
                 }
             }
-        });
+        });*/
     }
 
 
     public class ImageAdapter extends BaseAdapter {
+
         private LayoutInflater mInflater;
 
         public ImageAdapter() {
@@ -110,6 +118,7 @@ public class CustomGallery extends Activity {
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
 
+
             final AlphaAnimation fadeIn = new AlphaAnimation(0.5f , 1.0f ) ;
             fadeIn.setDuration(325);
             fadeIn.setFillAfter(true);
@@ -124,7 +133,7 @@ public class CustomGallery extends Activity {
                         R.layout.custom_gallery_item, null);
                 holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
                 holder.checkbox = (CheckBox) convertView.findViewById(R.id.itemCheckBox);
-
+                holder.checkbox.setEnabled(false);
                 convertView.setTag(holder);
             }
             else {
@@ -132,32 +141,23 @@ public class CustomGallery extends Activity {
             }
             holder.checkbox.setId(position);
             holder.imageview.setId(position);
-            holder.checkbox.setOnClickListener(new View.OnClickListener() {
 
-                public void onClick(View v) {
-                    CheckBox cb = (CheckBox) v;
-                    int id = cb.getId();
-                    if (holder.checkbox.isChecked() == true){
-                        cb.setChecked(false);
-                        holder.imageview.startAnimation(fadeIn);
-                        thumbnailsselection[id] = false;
-                    } else {
-                        cb.setChecked(true);
-                        holder.imageview.startAnimation(fadeOut);
-                        thumbnailsselection[id] = true;
-                    }
-                }
-            });
             holder.imageview.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if(holder.checkbox.isChecked() == true){
+                        for(String s : selectedPictures)
+                        {
+                            if (s.equals(arrPath[holder.imageview.getId()]))
+                            {
+                                selectedPictures.remove(s);
+                            }
+                        }
                         holder.checkbox.setChecked(false);
                         v.startAnimation(fadeIn);
-                        //v.setVisibility(View.VISIBLE);
                     } else {
                         holder.checkbox.setChecked(true);
                         v.startAnimation(fadeOut);
-                        //v.setVisibility(View.INVISIBLE);
+                        selectedPictures.add(arrPath[holder.imageview.getId()]);
                     }
                 }
             });
