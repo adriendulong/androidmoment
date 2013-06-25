@@ -57,13 +57,12 @@ public class Notification {
     public void setFromJson(JSONObject notifJson){
         try{
             this.typeNotif = notifJson.getInt("type_id");
-            Log.e("TYPE", "TYPE "+typeNotif);
 
             //Time
             String timeString = notifJson.getString("time");
-            Log.e("TIME", "TIME "+timeString);
             Long time = Long.parseLong(timeString);
             this.time = new Date(time*1000);
+
 
             if(notifJson.has("moment")){
                 Moment moment = new Moment();

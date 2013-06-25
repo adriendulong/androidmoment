@@ -154,5 +154,9 @@
     <string name="settings_volet">Paramètres</string>
     <string name="missing_moments_volet">Moments Manquants ?</string>
 
+    <!-- Notifications -->
+    <string name="notif_photo">Nouvelle(s) photo(s) sur le moment : </string>
+    <string name="notif_message">Nouveau(x) chat sur le moment : </string>
+
 
 </resources>

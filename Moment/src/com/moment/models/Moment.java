@@ -340,37 +340,42 @@ public class Moment {
     }
 
     public void setMomentFromJson(JSONObject moment) throws JSONException {
-        this.id = moment.getLong("id");
-        this.name = moment.getString("name");
-        this.adresse = moment.getString("address");
-        this.state = moment.getInt("user_state");
-        this.keyBitmap = "cover_moment_"+name.toLowerCase();
-        String[] dateDedutTemp = moment.getString("startDate").split("-");
-        GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1]), Integer.parseInt(dateDedutTemp[2]));
-        this.dateDebut = dateDebutGreg.getTime();
-        String[] dateFinTemps = moment.getString("endDate").split("-");
-        GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1]), Integer.parseInt(dateFinTemps[2]));
-        this.dateFin = dateFinGreg.getTime();
-        if (moment.has("cover_photo_url")){
-            this.urlCover = moment.getString("cover_photo_url");
+        try{
+            this.id = moment.getLong("id");
+            this.name = moment.getString("name");
+            this.adresse = moment.getString("address");
+            this.state = moment.getInt("user_state");
+            this.keyBitmap = "cover_moment_"+name.toLowerCase();
+            String[] dateDedutTemp = moment.getString("startDate").split("-");
+            GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1]), Integer.parseInt(dateDedutTemp[2]));
+            this.dateDebut = dateDebutGreg.getTime();
+            String[] dateFinTemps = moment.getString("endDate").split("-");
+            GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1]), Integer.parseInt(dateFinTemps[2]));
+            this.dateFin = dateFinGreg.getTime();
+            if (moment.has("cover_photo_url")){
+                this.urlCover = moment.getString("cover_photo_url");
+            }
+
+            this.guestNumber = moment.getInt("guests_number");
+            this.guestComing = moment.getInt("guests_coming");
+            this.guestNotComing = moment.getInt("guests_not_coming");
+            if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
+            if(moment.has("description")) this.description = moment.getString("description");
+
+            if (moment.has("owner")){
+                JSONObject owner = moment.getJSONObject("owner");
+                this.user = new User();
+                if(owner.has("email")) this.user.setEmail(owner.getString("email"));
+                if(owner.has("firstname")) this.user.setFirstName(owner.getString("firstname"));
+                if(owner.has("lastname")) this.user.setLastName(owner.getString("lastname"));
+                if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
+                if(owner.has("id")) this.user.setId(owner.getLong("id"));
+                this.userId = owner.getLong("id");
+            }
+        }catch (JSONException e){
+            Log.e("JSON EXCPETION", e.toString());
         }
 
-        this.guestNumber = moment.getInt("guests_number");
-        this.guestComing = moment.getInt("guests_coming");
-        this.guestNotComing = moment.getInt("guests_not_coming");
-        if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
-        if(moment.has("description")) this.description = moment.getString("description");
-
-        if (moment.has("owner")){
-            JSONObject owner = moment.getJSONObject("owner");
-            this.user = new User();
-            if(owner.has("email")) this.user.setEmail(owner.getString("email"));
-            if(owner.has("firstname")) this.user.setFirstName(owner.getString("firstname"));
-            if(owner.has("lastname")) this.user.setLastName(owner.getString("lastname"));
-            if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
-            if(owner.has("id")) this.user.setId(owner.getLong("id"));
-            this.userId = owner.getLong("id");
-        }
 
 
     }
@@ -477,7 +482,7 @@ public class Moment {
         AsyncHttpClient client = new AsyncHttpClient();
         if(AppMoment.getInstance().getBitmapFromMemCache(keyBitmap) == null) {
             Log.e("Moment Cover", "DISTANT");
-            AppMoment.getInstance().user.getMomentById(id).setKeyBitmap("cover_moment_" + name.toLowerCase());
+            this.setKeyBitmap("cover_moment_" + name.toLowerCase());
             String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
             client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
 

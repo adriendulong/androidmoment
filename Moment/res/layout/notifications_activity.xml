@@ -8,12 +8,26 @@
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="48dp"
                   android:background="@drawable/background"
-                  android:orientation="horizontal">
-
+                  android:orientation="horizontal"
+                  android:weightSum="2">
+        <Button android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/background"
+                android:text="Notifications"
+                android:layout_weight="1"
+                android:onClick="notifications"/>
+        <Button android:layout_width="0dp"
+                android:layout_height="fill_parent"
+                android:background="@drawable/background"
+                android:text="Invitations"
+                android:layout_weight="1"
+                android:onClick="invitations"/>
     </LinearLayout>
-    <ImageView android:layout_width="fill_parent"
+    <ImageView android:id="@+id/orange_indicator"
+               android:layout_width="200dp"
                android:layout_height="2dp"
-               android:background="@drawable/sep_top"/>
+               android:background="@color/orange"
+               android:layout_marginLeft="0dp"/>
     <ListView android:layout_width="fill_parent"
               android:layout_height="fill_parent"
               android:id="@+id/list_notifs"

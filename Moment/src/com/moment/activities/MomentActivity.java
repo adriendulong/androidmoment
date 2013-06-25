@@ -256,6 +256,10 @@ public class MomentActivity extends Activity {
         if (regId.equals(""))
             GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
 
+
+
+
+        //On cr�� notre futur User
         AppMoment.getInstance().user = new User();
         AppMoment.getInstance().user.setEmail(email);
 

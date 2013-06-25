@@ -134,14 +134,10 @@ public class TimelineActivity extends SlidingActivity {
 
         //Initialize the notifications list
         notifications = new ArrayList<Notification>();
-        for(int i=0;i<10;i++){
-            Notification notif = new Notification();
-            notifications.add(notif);
-        }
 
         notifsListView = (ListView)sm.getRootView().findViewById(R.id.list_notifs);
-        adapter = new NotificationsAdapter(this, R.layout.notifs_cell, notifications);
-        notifsListView.setAdapter(adapter);
+        //adapter = new NotificationsAdapter(this, R.layout.notifs_cell, notifications);
+        //notifsListView.setAdapter(adapter);
 
 
 
@@ -415,6 +411,7 @@ public class TimelineActivity extends SlidingActivity {
 
                     for(int i=0;i<notifsObject.length();i++){
                         Notification notif = new Notification();
+                        Log.e("EX", notifsObject.getJSONObject(i).toString());
                         notif.setFromJson(notifsObject.getJSONObject(i));
                         notifications.add(notif);
                     }

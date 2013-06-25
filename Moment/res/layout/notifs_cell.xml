@@ -4,7 +4,8 @@
               android:layout_width="fill_parent"
               android:layout_height="50dp"
               android:background="@drawable/background">
-    <ImageView android:layout_width="20dp"
+    <ImageView android:id="@+id/image_notif"
+               android:layout_width="20dp"
                android:layout_height="20dp"
                android:src="@drawable/picto_message_volet"
                android:layout_centerVertical="true"
@@ -16,7 +17,6 @@
               android:layout_centerVertical="true"
               android:layout_marginLeft="60dp"
               android:text="@string/profil_volet"
-              android:textColor="@color/white"
               android:textSize="12dp"/>
     <ImageView android:layout_width="15dp"
                android:layout_height="30dp"
