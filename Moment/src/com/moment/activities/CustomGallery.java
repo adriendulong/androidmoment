@@ -108,14 +108,14 @@ public class CustomGallery extends Activity {
         }
 
         public View getView(int position, View convertView, ViewGroup parent) {
-            ViewHolder holder;
+            final ViewHolder holder;
 
-            final AlphaAnimation fadeIn = new AlphaAnimation(0.0f , 1.0f ) ;
-            fadeIn.setDuration(1200);
+            final AlphaAnimation fadeIn = new AlphaAnimation(0.5f , 1.0f ) ;
+            fadeIn.setDuration(325);
             fadeIn.setFillAfter(true);
 
-            final AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.0f ) ;
-            fadeOut.setDuration(1200);
+            final AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.5f ) ;
+            fadeOut.setDuration(325);
             fadeOut.setFillAfter(true);
 
             if (convertView == null) {
@@ -137,23 +137,27 @@ public class CustomGallery extends Activity {
                 public void onClick(View v) {
                     CheckBox cb = (CheckBox) v;
                     int id = cb.getId();
-                    if (thumbnailsselection[id]){
+                    if (holder.checkbox.isChecked() == true){
                         cb.setChecked(false);
+                        holder.imageview.startAnimation(fadeIn);
                         thumbnailsselection[id] = false;
                     } else {
                         cb.setChecked(true);
+                        holder.imageview.startAnimation(fadeOut);
                         thumbnailsselection[id] = true;
                     }
                 }
             });
             holder.imageview.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    if(v.getVisibility() == View.GONE){
+                    if(holder.checkbox.isChecked() == true){
+                        holder.checkbox.setChecked(false);
                         v.startAnimation(fadeIn);
-                        v.setVisibility(View.VISIBLE);
+                        //v.setVisibility(View.VISIBLE);
                     } else {
+                        holder.checkbox.setChecked(true);
                         v.startAnimation(fadeOut);
-                        v.setVisibility(View.INVISIBLE);
+                        //v.setVisibility(View.INVISIBLE);
                     }
                 }
             });

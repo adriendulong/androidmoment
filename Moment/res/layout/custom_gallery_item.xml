@@ -18,7 +18,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:button="@drawable/checkbox"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"/>
+            android:layout_alignTop="@+id/thumbImage"
+            android:layout_alignRight="@+id/thumbImage"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="20dp"/>
 
 </RelativeLayout>
