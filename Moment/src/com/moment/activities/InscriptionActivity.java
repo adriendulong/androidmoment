@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -29,6 +30,7 @@ import com.moment.classes.CommonUtilities;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

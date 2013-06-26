@@ -1,8 +1,5 @@
 package com.moment.classes;
 
-import java.util.Collections;
-import java.util.List;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +9,9 @@ import android.widget.ImageView;
 
 import com.moment.R;
 import com.moment.models.Photo;
+
+import java.util.Collections;
+import java.util.List;
 
 public class PhotoListAdapter extends BaseAdapter{
 	

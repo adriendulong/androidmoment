@@ -1,13 +1,13 @@
 package com.moment.classes;
 
-import org.apache.http.entity.StringEntity;
-
 import android.content.Context;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.PersistentCookieStore;
 import com.loopj.android.http.RequestParams;
+
+import org.apache.http.entity.StringEntity;
 
 public class MomentApi {
 	//private static final String BASE_URL = "http://192.168.0.13:5000/";

@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +22,6 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.moment.R;
-import com.moment.fragments.PhotosFragment;
 
 import java.util.ArrayList;
 

@@ -8,6 +8,7 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.util.TypedValue;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -17,6 +18,7 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.GuestsFragment;
 import com.moment.models.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

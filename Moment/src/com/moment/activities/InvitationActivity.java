@@ -9,6 +9,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -18,6 +19,7 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;
 import com.moment.models.User;
+
 import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONException;

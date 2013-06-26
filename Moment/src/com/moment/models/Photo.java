@@ -1,14 +1,13 @@
 package com.moment.models;
 
 import android.graphics.Bitmap;
+
 import com.moment.classes.PhotoListAdapter;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.sql.Timestamp;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 public class Photo {
 	

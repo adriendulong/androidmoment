@@ -17,9 +17,8 @@ import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
-
-import com.moment.R;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
 

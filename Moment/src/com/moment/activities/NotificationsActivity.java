@@ -1,7 +1,5 @@
 package com.moment.activities;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.DisplayMetrics;
@@ -10,6 +8,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -19,6 +18,7 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.NotificationsAdapter;
 import com.moment.models.Notification;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

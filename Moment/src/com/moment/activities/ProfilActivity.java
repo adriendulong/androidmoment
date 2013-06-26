@@ -1,8 +1,5 @@
 package com.moment.activities;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -15,9 +12,12 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
-import com.moment.R;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.Images;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 
 public class ProfilActivity extends SherlockActivity {
 

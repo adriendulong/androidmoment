@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
+
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
@@ -35,6 +36,7 @@ import com.moment.activities.InvitationActivity;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

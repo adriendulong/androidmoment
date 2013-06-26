@@ -7,7 +7,13 @@ import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
-import com.moment.models.*;
+
+import com.moment.models.ChatDao;
+import com.moment.models.DaoMaster;
+import com.moment.models.DaoSession;
+import com.moment.models.MomentDao;
+import com.moment.models.User;
+import com.moment.models.UserDao;
 
 public class AppMoment extends Application {
 	

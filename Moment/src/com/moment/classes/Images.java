@@ -1,7 +1,5 @@
 package com.moment.classes;
 
-import java.io.*;
-
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -17,12 +15,17 @@ import android.graphics.RectF;
 import android.net.Uri;
 import android.provider.MediaStore.MediaColumns;
 import android.support.v4.content.CursorLoader;
-import android.util.Log;
 import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
-import com.moment.fragments.PhotosFragment;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class Images {
 

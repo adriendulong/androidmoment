@@ -1,7 +1,5 @@
 package com.moment.activities;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -16,6 +14,8 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.moment.R;
 import com.moment.models.FbEvent;
+
+import java.util.ArrayList;
 
 public class FacebookEventsActivity extends SherlockActivity {
 	

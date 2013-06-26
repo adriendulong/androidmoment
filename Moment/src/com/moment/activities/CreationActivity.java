@@ -1,16 +1,5 @@
 package com.moment.activities;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
-
-import com.moment.R;
-import com.moment.classes.CommonUtilities;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +20,18 @@ import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
+import com.moment.R;
+import com.moment.classes.CommonUtilities;
 import com.moment.models.FbEvent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.ArrayList;
 
 public class CreationActivity extends SherlockActivity {
 

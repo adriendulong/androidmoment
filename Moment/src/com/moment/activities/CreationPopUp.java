@@ -7,11 +7,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
+
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.moment.R;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.classes.MomentApi;
+
 import org.json.JSONObject;
 
 import static com.moment.R.drawable.picto_friend_down;

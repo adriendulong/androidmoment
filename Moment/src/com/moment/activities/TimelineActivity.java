@@ -11,7 +11,14 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -26,6 +33,7 @@ import com.moment.models.Moment;
 import com.moment.models.Notification;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

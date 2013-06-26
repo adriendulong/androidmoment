@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.moment.R;
 import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;

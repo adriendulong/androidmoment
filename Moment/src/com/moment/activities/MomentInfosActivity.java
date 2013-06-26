@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -17,7 +16,12 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -35,7 +39,6 @@ import com.moment.fragments.ChatFragment;
 import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
-import com.moment.models.Moment;
 import com.moment.models.User;
 
 import org.json.JSONException;
@@ -89,7 +92,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         infosFr = new InfosFragment();
      	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
      	fragments.add(infosFr);
-   		fragments.add(Fragment.instantiate(this,ChatFragment.class.getName(), args));
+   		fragments.add(Fragment.instantiate(this, ChatFragment.class.getName(), args));
 
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);

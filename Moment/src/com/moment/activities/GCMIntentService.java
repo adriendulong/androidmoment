@@ -1,6 +1,5 @@
 package com.moment.activities;
 
-import static com.moment.classes.CommonUtilities.SENDER_ID;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -11,6 +10,8 @@ import android.util.Log;
 
 import com.google.android.gcm.GCMBaseIntentService;
 import com.moment.R;
+
+import static com.moment.classes.CommonUtilities.SENDER_ID;
 
 /**
  * IntentService responsible for handling GCM messages.

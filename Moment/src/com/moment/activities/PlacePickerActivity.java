@@ -7,15 +7,21 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.R;
-import com.moment.models.Place;
 import com.moment.classes.PlacesAdapter;
+import com.moment.models.Place;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

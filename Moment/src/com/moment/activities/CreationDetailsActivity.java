@@ -26,7 +26,14 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.TimePicker;
+
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -38,6 +45,7 @@ import com.moment.classes.MomentApi;
 import com.moment.fragments.CreationStep1Fragment;
 import com.moment.fragments.CreationStep2Fragment;
 import com.moment.models.Moment;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 

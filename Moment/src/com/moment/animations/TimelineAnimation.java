@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+
 import com.moment.R;
 
 public class TimelineAnimation extends Animation {
