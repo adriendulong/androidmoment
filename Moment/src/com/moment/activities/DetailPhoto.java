@@ -1,12 +1,16 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -19,12 +23,16 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
@@ -121,7 +129,24 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplication(), "On va download" , Toast.LENGTH_LONG).show();
+                File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/");
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+
+                File file = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/", "moment_"
+                        + String.valueOf(System.currentTimeMillis())
+                        + ".jpg");
+
+                Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+
+                FileOutputStream out = null;
+                try {
+                    out = new FileOutputStream(file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
             }
         });
 
@@ -267,7 +292,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 });
             }
         });
-
     }
 
     @Override

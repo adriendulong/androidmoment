@@ -90,8 +90,8 @@ public class PhotosFragment extends Fragment {
             photos_files = new ArrayList<Bitmap>();
             if(savedInstanceState.getStringArrayList("photos") != null)
             {
-                photos_uri = savedInstanceState.getStringArrayList("photos");
 
+                photos_uri = savedInstanceState.getStringArrayList("photos");
                 for(String s : photos_uri) {
                     tempFile = new File(s);
                     try {

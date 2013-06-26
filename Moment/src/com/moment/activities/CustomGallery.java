@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,34 +75,6 @@ public class CustomGallery extends SherlockActivity {
         imageAdapter = new ImageAdapter();
         imagegrid.setAdapter(imageAdapter);
         imagecursor.close();
-
-        /*final Button selectBtn = (Button) findViewById(R.id.selectBtn);
-        selectBtn.setOnClickListener(new View.OnClickListener() {
-
-            public void onClick(View v) {
-                final int len = thumbnailsselection.length;
-                int cnt = 0;
-                String selectImages = "";
-                for (int i =0; i<len; i++)
-                {
-                    if (thumbnailsselection[i]){
-                        cnt++;
-                        selectImages = selectImages + arrPath[i] + "|";
-                    }
-                }
-                if (cnt == 0){
-                    Toast.makeText(getApplicationContext(),
-                            "Please select at least one image",
-                            Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "You've selected Total " + cnt + " image(s).",
-                            Toast.LENGTH_LONG).show();
-
-                    Log.d("SelectedImages", selectImages);
-                }
-            }
-        });*/
     }
 
     @Override
@@ -122,18 +93,11 @@ public class CustomGallery extends SherlockActivity {
                 intent.putExtra("position", 0);
                 intent.putExtra("id", momentID);
                 intent.putExtra("photos", selectedPictures);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        Log.e("OnActivityResult", "OnActivityResult");
-        //UploadTask uploadTask = new UploadTask();
-        //uploadTask.execute();
-        //imageAdapter.notifyDataSetChanged();
     }
 
     public class ImageAdapter extends BaseAdapter {
