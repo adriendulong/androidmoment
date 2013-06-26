@@ -165,7 +165,11 @@ public class PhotosFragment extends Fragment {
 
                 } else {
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    intent.putExtra("position", (position - 1));
+                    if(photos.get(position - 1).getUrlOriginal() == null){
+                        intent.putExtra("position", (0));
+                    } else {
+                        intent.putExtra("position", (position - 1));
+                    }
                     intent.putExtra("momentID", momentID);
                     startActivity(intent);
                 }
