@@ -126,39 +126,8 @@ public class PhotosFragment extends Fragment {
 
         if(!photos_files.isEmpty())
         {
-
-            RequestParams requestParams = new RequestParams();
-
-            for(String s : photos_uri){
-                File file = new File(s);
-                bitmap = BitmapFactory.decodeFile(file.getPath());
-
-                try {
-                    FileOutputStream stream = new FileOutputStream(file);
-                    Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
-                    bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                    stream.close();
-                    bitmap = bitmap2;
-                    Photo tempPhoto = new Photo();
-                    tempPhoto.setUser(AppMoment.getInstance().user);
-                    tempPhoto.setBitmapThumbnail(bitmap2);
-                    tempPhoto.setBitmapOriginal(bitmap2);
-                    photos.add(tempPhoto);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    requestParams.put("photo", file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        imageAdapter.notifyDataSetChanged();
-                    }
-                });
-            }
+            MultiUploadTask multiUploadTask = new MultiUploadTask();
+           multiUploadTask.execute();
         }
 
         MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
@@ -466,4 +435,85 @@ public class PhotosFragment extends Fragment {
         }
     }
 
+    private class MultiUploadTask extends AsyncTask<Void, Void, Bitmap>
+    {
+        private Context mContext;
+        private int NOTIFICATION_ID = 1;
+        private Notification mNotification;
+        private NotificationManager mNotificationManager;
+        private Photo tempPhoto;
+
+
+        public MultiUploadTask(){
+            this.mContext = getActivity();
+            this.mNotificationManager = (NotificationManager) mContext.getSystemService(Context.NOTIFICATION_SERVICE);
+            this.tempPhoto = new Photo();
+            imageAdapter.notifyDataSetChanged();
+        }
+
+        @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+        private void createNotification(String contentTitle, String contentText, boolean stop) {
+
+            Notification.Builder builder = new Notification.Builder(mContext)
+                    .setSmallIcon(android.R.drawable.stat_sys_upload)
+                    .setAutoCancel(true)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText);
+
+            if(stop == false)
+                builder.setProgress(0,0,true);
+            else
+                builder.setProgress(0,0,false);
+
+            mNotification = builder.getNotification();
+
+            mNotificationManager.notify(NOTIFICATION_ID, mNotification);
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+            createNotification("FUCK","YEAH",false);
+
+            RequestParams requestParams = new RequestParams();
+
+            for(String s : photos_uri){
+                File file = new File(s);
+                bitmap = BitmapFactory.decodeFile(file.getPath());
+
+                try {
+                    FileOutputStream stream = new FileOutputStream(file);
+                    Bitmap bitmap2 = Images.resizeBitmap(bitmap, 1500);
+                    bitmap2.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                    stream.close();
+                    bitmap = bitmap2;
+                    Photo tempPhoto = new Photo();
+                    tempPhoto.setUser(AppMoment.getInstance().user);
+                    tempPhoto.setBitmapThumbnail(bitmap2);
+                    tempPhoto.setBitmapOriginal(bitmap2);
+                    photos.add(tempPhoto);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    requestParams.put("photo", file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
+                MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        createNotification("YEAH", "FUCK", true);
+                        imageAdapter.notifyDataSetChanged();
+                    }
+                    @Override
+                    public void onFailure(Throwable e,JSONObject response){
+
+                    }
+                });
+
+            }
+            return bitmap;
+        }
+
+    }
 }
