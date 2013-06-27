@@ -97,7 +97,10 @@ public class TimelineActivity extends SlidingActivity {
                 }
                 else if(v.getId()==settings.getId()){
                     settings.setBackgroundResource(R.drawable.bg_section);
+                    Intent intent = new Intent(getApplication(), SettingsActivity.class);
+                    startActivity(intent);
                 }
+
                 else if(v.getId()==missingMoments.getId()){
                     missingMoments.setBackgroundResource(R.drawable.bg_section);
                 }
