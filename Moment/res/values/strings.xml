@@ -158,5 +158,17 @@
     <string name="notif_photo">Nouvelle(s) photo(s) sur le moment : </string>
     <string name="notif_message">Nouveau(x) chat sur le moment : </string>
 
+    <!-- Paramètres -->
+    <string name="param_invitation">Invitation à un moment </string>
+    <string name="param_publication">Publication d'une photo </string>
+    <string name="param_message">Nouveau message </string>
+    <string name="param_modif">Modification moment </string>
+    <string name="param_tuto">Voir le tutoriel </string>
+    <string name="param_profil">Modifier mon profil </string>
+    <string name="param_logout">Déconnexion </string>
+    <string name="param_version">Version de l'application : 1.0 </string>
+    <string name="param_cgu">Consulter les CGU </string>
+    <string name="param_contact">Nous contacter </string>
+    <string name="param_feedback">Feedback </string>
 
 </resources>

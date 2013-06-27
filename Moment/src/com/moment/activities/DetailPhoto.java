@@ -62,7 +62,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, photo);
         imageLoadTask.execute(photo.getUrlOriginal());
 
-        final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
+        final ImageButton closeButton    = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
         final ImageButton nextButton     = (ImageButton) findViewById(R.id.next);
         final ImageButton likeButton     = (ImageButton) findViewById(R.id.coeur);
