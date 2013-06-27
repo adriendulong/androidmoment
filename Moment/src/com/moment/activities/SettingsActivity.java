@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -68,6 +69,46 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.appmoment.fr"));
                     startActivity(intent);
                 }
+            }
+        });
+
+        Button contact = (Button) findViewById(R.id.btn_contact);
+
+        contact.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_EMAIL, "hello@appmoment.fr");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Hello");
+                intent.putExtra(Intent.EXTRA_TEXT, "Dear Moment,");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+            }
+        });
+
+        Button feedback = (Button) findViewById(R.id.feedback);
+
+        feedback.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("message/rfc822");
+                intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Hello");
+                intent.putExtra(Intent.EXTRA_TEXT, "I would say that Moment is ...");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+            }
+        });
+
+        Button cgu = (Button) findViewById(R.id.cgu);
+
+        cgu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.appmoment.fr/cgu"));
+                startActivity(intent);
             }
         });
     }
