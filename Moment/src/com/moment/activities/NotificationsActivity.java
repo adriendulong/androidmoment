@@ -79,11 +79,48 @@ public class NotificationsActivity extends SherlockActivity {
 
         //Init list
         for(int i=0;i<AppMoment.getInstance().user.getNotifications().size();i++){
-            Log.e("TYPE", ""+AppMoment.getInstance().user.getNotifications().get(i).getTypeNotif());
-            Notification notif = new Notification();
             notifications.add(AppMoment.getInstance().user.getNotifications().get(i));
         }
         adapterNotifs.notifyDataSetChanged();
+
+        //We init with the invitations otherwise we go to get it
+        if(AppMoment.getInstance().user.getInvitations()!=null){
+            for(int i=0;i<AppMoment.getInstance().user.getInvitations().size();i++){
+                invitations.add(AppMoment.getInstance().user.getInvitations().get(i));
+            }
+        }
+        else{
+            MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        JSONArray notifsObject = response.getJSONArray("invitations");
+
+                        for (int i = 0; i < notifsObject.length(); i++) {
+
+                            Notification notif = new Notification();
+                            notif.setFromJson(notifsObject.getJSONObject(i));
+                            invitations.add(notif);
+                        }
+
+                        AppMoment.getInstance().user.setInvitations(invitations);
+
+                        Log.e("NB INVITATIONS", ""+AppMoment.getInstance().user.getInvitations().size());
+
+
+                        adapterInvits.notifyDataSetChanged();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    System.out.println(content);
+                }
+            });
+        }
 
 
     }
@@ -127,6 +164,7 @@ public class NotificationsActivity extends SherlockActivity {
             orangeIndicator.setLayoutParams(params);
 
             notifsListView.setAdapter(adapterInvits);
+            /*
             //We get the invitations
             if(AppMoment.getInstance().user.getInvitations()==null){
                 MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
@@ -162,7 +200,7 @@ public class NotificationsActivity extends SherlockActivity {
                     }
                 });
             }
-
+            */
 
         }
 

@@ -421,7 +421,12 @@ public class TimelineActivity extends SlidingActivity {
                         Notification notif = new Notification();
                         Log.e("EX", notifsObject.getJSONObject(i).toString());
                         notif.setFromJson(notifsObject.getJSONObject(i));
-                        notifications.add(notif);
+
+                        //On prend que les notifs de photos ou chats (pas celle de followers)
+                        if(notif.getTypeNotif()==2||notif.getTypeNotif()==3){
+                            notifications.add(notif);
+                        }
+
                     }
 
                     AppMoment.getInstance().user.setNotifications(notifications);
