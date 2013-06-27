@@ -3,8 +3,9 @@
 <ScrollView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/scroll"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fillViewport="false">
 
     <LinearLayout
             android:orientation="vertical"
@@ -39,7 +40,7 @@
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imageButton"
+                    android:id="@+id/btn_fb"
                     android:clickable="true"
                     android:background="@drawable/facebook_badge"
                     android:layout_marginRight="8dp"/>
@@ -47,7 +48,7 @@
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imageButton2"
+                    android:id="@+id/btn_twit"
                     android:background="@drawable/twitter_badge"
                     android:layout_marginLeft="8dp"/>
         </LinearLayout>
@@ -78,7 +79,7 @@
             <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/imageButton3"
+                    android:id="@+id/coeur"
                     android:clickable="true"
                     android:background="@drawable/coeur"
                     />

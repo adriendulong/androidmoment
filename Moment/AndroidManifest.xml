@@ -193,6 +193,13 @@
             android:label="CustomGallery">
         </activity>
 
+        <activity
+                android:screenOrientation="portrait"
+                android:name=".activities.SettingsActivity"
+                android:parentActivityName="com.moment.TimelineActivity"
+                android:label="SettingsActivity">
+        </activity>
+
     </application>
 
 </manifest>
