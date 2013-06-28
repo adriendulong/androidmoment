@@ -200,6 +200,13 @@
                 android:label="SettingsActivity">
         </activity>
 
+        <activity
+                android:screenOrientation="portrait"
+                android:name=".activities.EditProfilActivity"
+                android:parentActivityName="com.moment.TimelineActivity"
+                android:label="SettingsActivity">
+        </activity>
+
     </application>
 
 </manifest>

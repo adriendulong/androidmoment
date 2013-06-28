@@ -71,9 +71,6 @@ public class TimelineActivity extends SlidingActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-
-
-        //We get all the relativeLayout that are buttons
         myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
         myMoments.setBackgroundResource(R.drawable.bg_section);
         news = (RelativeLayout)sm.getRootView().findViewById(R.id.news_button_volet);
@@ -81,8 +78,6 @@ public class TimelineActivity extends SlidingActivity {
         settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
         missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
 
-
-        //OnClickListener
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,13 +89,14 @@ public class TimelineActivity extends SlidingActivity {
                 }
                 else if(v.getId()==profile.getId()){
                     profile.setBackgroundResource(R.drawable.bg_section);
+                    Intent intent = new Intent(getApplication(), EditProfilActivity.class);
+                    startActivity(intent);
                 }
                 else if(v.getId()==settings.getId()){
                     settings.setBackgroundResource(R.drawable.bg_section);
                     Intent intent = new Intent(getApplication(), SettingsActivity.class);
                     startActivity(intent);
                 }
-
                 else if(v.getId()==missingMoments.getId()){
                     missingMoments.setBackgroundResource(R.drawable.bg_section);
                 }
@@ -129,9 +125,6 @@ public class TimelineActivity extends SlidingActivity {
             }
         };
 
-
-
-        //Associate buttons with listeners
         myMoments.setOnClickListener(listener);
         myMoments.setOnTouchListener(touchListener);
         news.setOnClickListener(listener);
@@ -143,15 +136,9 @@ public class TimelineActivity extends SlidingActivity {
         missingMoments.setOnClickListener(listener);
         missingMoments.setOnTouchListener(touchListener);
 
-        //Initialize the notifications list
         notifications = new ArrayList<Notification>();
 
         notifsListView = (ListView)sm.getRootView().findViewById(R.id.list_notifs);
-        //adapter = new NotificationsAdapter(this, R.layout.notifs_cell, notifications);
-        //notifsListView.setAdapter(adapter);
-
-
-
 
         if(savedInstanceState == null){
 

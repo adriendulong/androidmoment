@@ -32,16 +32,22 @@
             <EditText android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
                       android:textSize="10dp"
-                      android:hint="Adrien"/>
+                      android:hint="Adrien"
+                      android:id="@+id/modif_prenom"
+                      android:editable="false"
+                      android:enabled="false"/>
             <EditText android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
                       android:textSize="10dp"
-                      android:hint="Dulong"/>
+                      android:hint="Dulong"
+                      android:id="@+id/modif_nom"
+                      android:editable="false"/>
             <Button android:layout_marginTop="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/modif_cover"
-                    android:background="@drawable/btn_params"/>
+                    android:background="@drawable/btn_params"
+                    android:id="@+id/modif"/>
       </LinearLayout>
   </LinearLayout>
 
