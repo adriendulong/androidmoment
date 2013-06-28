@@ -1,54 +1,293 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:background="@drawable/bg">
-    <LinearLayout android:layout_width="fill_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="horizontal"
-                  android:weightSum="1"
-                  android:padding="5dp"
-                  android:gravity="center">
-        <RelativeLayout android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.4">
-            <ImageView android:layout_height="wrap_content"
-                       android:layout_width="wrap_content"
-                       android:src="@drawable/bg_profil"
-                       android:layout_centerInParent="true"/>
-            <ImageButton android:layout_width="80dp"
-                         android:layout_height="80dp"
-                         android:background="@drawable/profile_image"
-                         android:layout_centerInParent="true"/>
-        </RelativeLayout>
-        <LinearLayout android:layout_width="0dp"
+<ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/scroll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:background="@drawable/bg">
+        <LinearLayout android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
-                      android:orientation="vertical"
-                      android:layout_weight="0.6"
-                      android:padding="10dp"
+                      android:orientation="horizontal"
+                      android:weightSum="1"
+                      android:padding="5dp"
                       android:gravity="center">
-            <EditText android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:textSize="10dp"
-                      android:hint="Adrien"
-                      android:id="@+id/modif_prenom"
-                      android:editable="false"
-                      android:enabled="false"/>
-            <EditText android:layout_width="fill_parent"
-                      android:layout_height="wrap_content"
-                      android:textSize="10dp"
-                      android:hint="Dulong"
-                      android:id="@+id/modif_nom"
-                      android:editable="false"/>
-            <Button android:layout_marginTop="10dp"
+            <RelativeLayout android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4">
+                <ImageView android:layout_height="wrap_content"
+                           android:layout_width="wrap_content"
+                           android:src="@drawable/bg_profil"
+                           android:layout_centerInParent="true"/>
+                <ImageButton android:layout_width="80dp"
+                             android:layout_height="80dp"
+                             android:background="@drawable/profile_image"
+                             android:layout_centerInParent="true"/>
+            </RelativeLayout>
+            <LinearLayout android:layout_width="0dp"
+                          android:layout_height="wrap_content"
+                          android:orientation="vertical"
+                          android:layout_weight="0.6"
+                          android:padding="10dp"
+                          android:gravity="center">
+                <EditText android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:textSize="10dp"
+                          android:hint="Adrien"
+                          android:id="@+id/modif_prenom"
+                          android:editable="true"
+                          android:enabled="true"/>
+                <EditText android:layout_width="fill_parent"
+                          android:layout_height="wrap_content"
+                          android:textSize="10dp"
+                          android:hint="Dulong"
+                          android:id="@+id/modif_nom"
+                          android:editable="true"
+                          android:enabled="true"/>
+                <Button android:layout_marginTop="10dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="30dp"
+                        android:text="@string/modif_cover"
+                        android:background="@drawable/btn_params"
+                        android:id="@+id/modif"/>
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="adrien.dulong@gmail.com"
+                    android:id="@+id/editText"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="+33678901234"
+                    android:id="@+id/phone"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout2">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="Adresse"
+                    android:id="@+id/editText3"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout3">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="100dp"
+                    android:textSize="10dp"
+                    android:hint="Description"
+                    android:id="@+id/description"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout4"
+                android:layout_margin="10dp">
+
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:id="@+id/editText5"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Pour ne louper aucune invitation"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout5">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="Email Secondaire"
+                    android:id="@+id/secondEmail"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout6">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="Téléphone Secondaire"
+                    android:id="@+id/secondPhone"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="1"
+                android:padding="5dp"
+                android:gravity="center"
+                android:id="@+id/linearLayout7"
+                android:layout_margin="25dp">
+
+            <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_weight="0.6"
+                    android:padding="10dp"
+                    android:gravity="center">
+
+                <TextView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="10dp"
+                        android:id="@+id/textView"
+                        android:editable="true"
+                        android:enabled="true"
+                        android:text="Retrouver mes invitations via Facebook"/>
+            </LinearLayout>
+
+            <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:id="@+id/relativeLayout">
+
+                <ImageButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/btn_rgl_fb"
+                        android:layout_centerInParent="true"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout10"
+                android:layout_margin="10dp">
+
+            <TextView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:id="@+id/textView2"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:text="Réinitialiser le mot de passe"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout8">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="Ancien mot de passe"
+                    android:id="@+id/editText8"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linearLayout9">
+
+            <EditText
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="10dp"
+                    android:hint="Nouveau mot de passe"
+                    android:id="@+id/editText9"
+                    android:editable="true"
+                    android:enabled="true"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:gravity="center"
+                android:id="@+id/linearLayout11">
+
+            <Button
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
-                    android:text="@string/modif_cover"
+                    android:text="Valider"
                     android:background="@drawable/btn_params"
-                    android:id="@+id/modif"/>
-      </LinearLayout>
-  </LinearLayout>
+                    android:id="@+id/btn_valider"
+                    android:layout_margin="10dp"/>
+        </LinearLayout>
 
-</LinearLayout>
+    </LinearLayout>
+</ScrollView>
