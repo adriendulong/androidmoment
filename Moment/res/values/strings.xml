@@ -171,4 +171,7 @@
     <string name="param_contact">Nous contacter </string>
     <string name="param_feedback">Feedback </string>
 
+    <!-- Modif Profil -->
+    <string name="modif_cover">Modifier la cover</string>
+
 </resources>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:background="@drawable/bg">
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="horizontal"
+                  android:weightSum="1"
+                  android:padding="5dp"
+                  android:gravity="center">
+        <RelativeLayout android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.4">
+            <ImageView android:layout_height="wrap_content"
+                       android:layout_width="wrap_content"
+                       android:src="@drawable/bg_profil"
+                       android:layout_centerInParent="true"/>
+            <ImageButton android:layout_width="80dp"
+                         android:layout_height="80dp"
+                         android:background="@drawable/profile_image"
+                         android:layout_centerInParent="true"/>
+        </RelativeLayout>
+        <LinearLayout android:layout_width="0dp"
+                      android:layout_height="wrap_content"
+                      android:orientation="vertical"
+                      android:layout_weight="0.6"
+                      android:padding="10dp"
+                      android:gravity="center">
+            <EditText android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="10dp"
+                      android:hint="Adrien"/>
+            <EditText android:layout_width="fill_parent"
+                      android:layout_height="wrap_content"
+                      android:textSize="10dp"
+                      android:hint="Dulong"/>
+            <Button android:layout_marginTop="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="30dp"
+                    android:text="@string/modif_cover"
+                    android:background="@drawable/btn_params"/>
+      </LinearLayout>
+  </LinearLayout>
+
+</LinearLayout>
