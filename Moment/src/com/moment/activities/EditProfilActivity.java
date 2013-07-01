@@ -15,9 +15,13 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EditProfilActivity extends SherlockActivity implements View.OnClickListener{
+public class EditProfilActivity extends SherlockActivity implements View.OnClickListener {
+
+    EditText modif_prenom;
+    EditText modif_nom;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -30,10 +34,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         Button modif = (Button) findViewById(R.id.modif);
         Button valider = (Button) findViewById(R.id.btn_valider);
 
-        EditText modif_prenom = (EditText) findViewById(R.id.modif_prenom);
+        modif_prenom = (EditText) findViewById(R.id.modif_prenom);
         modif_prenom.setText(AppMoment.getInstance().user.getFirstName());
 
-        EditText modif_nom = (EditText) findViewById(R.id.modif_nom);
+        modif_nom = (EditText) findViewById(R.id.modif_nom);
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
 
         EditText phone = (EditText) findViewById(R.id.phone);
@@ -48,28 +52,34 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         EditText description = (EditText) findViewById(R.id.description);
         description.setText(AppMoment.getInstance().user.getDescription());
 
-        /*valider.setOnClickListener(new View.OnClickListener() {
+        valider.setOnClickListener(new View.OnClickListener() {
+
             @Override
             public void onClick(View v) {
 
                 RequestParams requestParams = new RequestParams();
                 requestParams.put("firstname",   modif_prenom.getText().toString());
                 requestParams.put("lastname",    modif_nom.getText().toString());
-                requestParams.put("phone",       phone.getText().toString());
-                requestParams.put("secondPhone", secondPhone.getText().toString());
-                requestParams.put("secondEmail", secondEmail.getText().toString());
-                requestParams.put("description", description.getText().toString());
+                //requestParams.put("phone",       phone.getText().toString());
+                //requestParams.put("secondPhone", secondPhone.getText().toString());
+                //requestParams.put("secondEmail", secondEmail.getText().toString());
+                //requestParams.put("description", description.getText().toString());
 
                 // TODO Photo
 
                 MomentApi.post("/user", requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        AppMoment.getInstance().user.setUserFromJson(response);
+                            updateTextFieldsAndUser();
                     }
                 });
             }
-        });*/
+        });
+    }
+
+    public void updateTextFieldsAndUser() {
+            AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
+            AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
     }
 
     @Override
