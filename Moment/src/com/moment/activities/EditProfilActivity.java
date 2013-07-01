@@ -68,12 +68,18 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             public void onClick(View v) {
 
                 RequestParams requestParams = new RequestParams();
-                requestParams.put("firstname",   modif_prenom.getText().toString());
-                requestParams.put("lastname",    modif_nom.getText().toString());
-                requestParams.put("phone",       phone.getText().toString());
-                requestParams.put("secondPhone", secondPhone.getText().toString());
-                requestParams.put("secondEmail", secondEmail.getText().toString());
-                requestParams.put("description", description.getText().toString());
+                if(modif_prenom.getText() != modif_prenom.getHint() && modif_prenom.getText() != null)
+                    requestParams.put("firstname",   modif_prenom.getText().toString());
+                if(modif_nom.getText() != modif_nom.getHint() && modif_nom.getText() != null)
+                    requestParams.put("lastname",    modif_nom.getText().toString());
+                if(phone.getText() != phone.getHint() && phone.getText() != null)
+                    requestParams.put("phone",       phone.getText().toString());
+                if(secondPhone.getText() != secondPhone.getHint() && secondPhone.getText() != null)
+                    requestParams.put("secondPhone", secondPhone.getText().toString());
+                if(secondEmail.getText() != secondEmail.getHint() && secondEmail.getText() != null)
+                    requestParams.put("secondEmail", secondEmail.getText().toString());
+                if(description.getText() != description.getHint() && description.getText() != null)
+                    requestParams.put("description", description.getText().toString());
 
                 // TODO Photo
 
