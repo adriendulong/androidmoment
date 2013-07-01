@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,6 +54,7 @@ public class TimelineActivity extends SlidingActivity {
     private TextView totalNotifText;
     private ProgressBar notifProgress;
     private int totalNotifs, nbNotifs, nbInvit;
+    private ScrollView scrollView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -84,6 +84,11 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                         AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
                         AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                     }
+
+                    @Override
+                    public void onFailure(Throwable e, JSONObject response){
+                        e.printStackTrace();
+                    }
                 });
             }
         });
