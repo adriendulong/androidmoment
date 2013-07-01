@@ -7,6 +7,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -40,6 +42,9 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         modif_nom = (EditText) findViewById(R.id.modif_nom);
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
 
+        EditText email = (EditText) findViewById(R.id.email);
+        email.setText(AppMoment.getInstance().user.getEmail());
+
         EditText phone = (EditText) findViewById(R.id.phone);
         phone.setText(AppMoment.getInstance().user.getNumTel());
 
@@ -70,16 +75,28 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 MomentApi.post("/user", requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                            updateTextFieldsAndUser();
+                        AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
+                        AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
+                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                     }
                 });
             }
         });
     }
 
-    public void updateTextFieldsAndUser() {
-            AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
-            AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected (MenuItem item){
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
