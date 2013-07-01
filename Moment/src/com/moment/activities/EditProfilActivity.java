@@ -24,6 +24,11 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
     EditText modif_prenom;
     EditText modif_nom;
+    EditText email;
+    EditText phone;
+    EditText secondPhone;
+    EditText secondEmail;
+    EditText description;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,19 +47,19 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         modif_nom = (EditText) findViewById(R.id.modif_nom);
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
 
-        EditText email = (EditText) findViewById(R.id.email);
+        email = (EditText) findViewById(R.id.email);
         email.setText(AppMoment.getInstance().user.getEmail());
 
-        EditText phone = (EditText) findViewById(R.id.phone);
+        phone = (EditText) findViewById(R.id.phone);
         phone.setText(AppMoment.getInstance().user.getNumTel());
 
-        EditText secondPhone = (EditText) findViewById(R.id.secondPhone);
+        secondPhone = (EditText) findViewById(R.id.secondPhone);
         secondPhone.setText(AppMoment.getInstance().user.getSecondNumTel());
 
-        EditText secondEmail = (EditText) findViewById(R.id.secondEmail);
+        secondEmail = (EditText) findViewById(R.id.secondEmail);
         secondEmail.setText(AppMoment.getInstance().user.getSecondEmail());
 
-        EditText description = (EditText) findViewById(R.id.description);
+        description = (EditText) findViewById(R.id.description);
         description.setText(AppMoment.getInstance().user.getDescription());
 
         valider.setOnClickListener(new View.OnClickListener() {
@@ -65,10 +70,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 RequestParams requestParams = new RequestParams();
                 requestParams.put("firstname",   modif_prenom.getText().toString());
                 requestParams.put("lastname",    modif_nom.getText().toString());
-                //requestParams.put("phone",       phone.getText().toString());
-                //requestParams.put("secondPhone", secondPhone.getText().toString());
-                //requestParams.put("secondEmail", secondEmail.getText().toString());
-                //requestParams.put("description", description.getText().toString());
+                requestParams.put("phone",       phone.getText().toString());
+                requestParams.put("secondPhone", secondPhone.getText().toString());
+                requestParams.put("secondEmail", secondEmail.getText().toString());
+                requestParams.put("description", description.getText().toString());
 
                 // TODO Photo
 
