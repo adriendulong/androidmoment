@@ -71,11 +71,23 @@ public class MomentDaoGenerator {
 
         Entity chat = schema.addEntity("Chat");
         chat.setTableName("chats");
+
         chat.addIdProperty();
 
         chat.addStringProperty("message");
 
         chat.addDateProperty("date");
+
+        /**
+         * Notifications
+         */
+
+        Entity notification = schema.addEntity("Notification");
+        notification.setTableName("notifications");
+
+        notification.addIntProperty("typeNotif");
+
+        notification.addDateProperty("time");
 
 /*        *//**//**
          * Photos
@@ -147,6 +159,8 @@ public class MomentDaoGenerator {
         chat.addToOne(moment, momentId);
         ToMany momentToChats = moment.addToMany(chat, userId);
         momentToChats.setName("chats");
+
+        Property notifId = user.addLongProperty("notifId").notNull().getProperty();
 
         new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
     }
