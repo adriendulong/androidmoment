@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_daogenerator" default="compile.module.daogenerator">
+  <dirname property="module.daogenerator.basedir" file="${ant.file.module_daogenerator}"/>
+  
+  <property name="module.jdk.home.daogenerator" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.daogenerator" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.daogenerator" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.daogenerator" value="${compiler.args}"/>
+  
+  <property name="daogenerator.output.dir" value="${module.daogenerator.basedir}/../../out/production/DaoGenerator"/>
+  <property name="daogenerator.testoutput.dir" value="${module.daogenerator.basedir}/../../out/test/DaoGenerator"/>
+  
+  <path id="daogenerator.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="daogenerator.module.production.classpath">
+    <path refid="${module.jdk.classpath.daogenerator}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.runtime.production.module.classpath">
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.module.classpath">
+    <path refid="${module.jdk.classpath.daogenerator}"/>
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.runtime.module.classpath">
+    <pathelement location="${daogenerator.testoutput.dir}"/>
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.daogenerator">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.daogenerator">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.daogenerator"/>
+  </patternset>
+  
+  <path id="daogenerator.module.sourcepath">
+    <dirset dir="${module.daogenerator.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.daogenerator" depends="compile.module.daogenerator.production,compile.module.daogenerator.tests" description="Compile module DaoGenerator"/>
+  
+  <target name="compile.module.daogenerator.production" depends="register.custom.compilers" description="Compile module DaoGenerator; production classes">
+    <mkdir dir="${daogenerator.output.dir}"/>
+    <javac2 destdir="${daogenerator.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.daogenerator}/javac">
+      <compilerarg line="${compiler.args.daogenerator}"/>
+      <bootclasspath refid="daogenerator.module.bootclasspath"/>
+      <classpath refid="daogenerator.module.production.classpath"/>
+      <src refid="daogenerator.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.daogenerator"/>
+    </javac2>
+    
+    <copy todir="${daogenerator.output.dir}">
+      <fileset dir="${module.daogenerator.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.daogenerator"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.daogenerator.tests" depends="register.custom.compilers,compile.module.daogenerator.production" description="compile module DaoGenerator; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.daogenerator" description="cleanup module">
+    <delete dir="${daogenerator.output.dir}"/>
+    <delete dir="${daogenerator.testoutput.dir}"/>
+  </target>
+</project>

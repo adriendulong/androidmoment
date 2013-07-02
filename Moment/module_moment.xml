@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_moment" default="compile.module.moment">
+  <dirname property="module.moment.basedir" file="${ant.file.module_moment}"/>
+  
+  <property name="module.jdk.home.moment" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.bin.moment" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.classpath.moment" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  <property name="compiler.args.moment" value="${compiler.args}"/>
+  
+  <property name="moment.output.dir" value="${module.moment.basedir}/../out/production/Moment"/>
+  <property name="moment.testoutput.dir" value="${module.moment.basedir}/../out/test/Moment"/>
+  
+  <path id="moment.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="moment.module.production.classpath">
+    <path refid="${module.jdk.classpath.moment}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="moment.runtime.production.module.classpath">
+    <pathelement location="${moment.output.dir}"/>
+    <path refid="viewpager.runtime.production.module.classpath"/>
+    <path refid="slidingmenu.runtime.production.module.classpath"/>
+    <path refid="facebook.runtime.production.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.production.module.classpath"/>
+    <path refid="pulltorefresh.runtime.production.module.classpath"/>
+    <path refid="google-play-services_lib.runtime.production.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="moment.module.classpath">
+    <path refid="${module.jdk.classpath.moment}"/>
+    <pathelement location="${moment.output.dir}"/>
+    <pathelement location="${viewpager.testoutput.dir}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${slidingmenu.testoutput.dir}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${facebook.testoutput.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+    <pathelement location="${actionbarsherlock.testoutput.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${pulltorefresh.testoutput.dir}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+    <pathelement location="${google-play-services_lib.testoutput.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="moment.runtime.module.classpath">
+    <pathelement location="${moment.testoutput.dir}"/>
+    <pathelement location="${moment.output.dir}"/>
+    <path refid="viewpager.runtime.module.classpath"/>
+    <path refid="slidingmenu.runtime.module.classpath"/>
+    <path refid="facebook.runtime.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.module.classpath"/>
+    <path refid="pulltorefresh.runtime.module.classpath"/>
+    <path refid="google-play-services_lib.runtime.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.moment">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.moment">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.moment"/>
+  </patternset>
+  
+  <path id="moment.module.sourcepath">
+    <dirset dir="${module.moment.basedir}">
+      <include name="gen"/>
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.moment" depends="compile.module.moment.production,compile.module.moment.tests" description="Compile module Moment"/>
+  
+  <target name="compile.module.moment.production" depends="register.custom.compilers,compile.module.viewpager,compile.module.slidingmenu,compile.module.facebook,compile.module.actionbarsherlock,compile.module.pulltorefresh,compile.module.google-play-services_lib" description="Compile module Moment; production classes">
+    <mkdir dir="${moment.output.dir}"/>
+    <javac2 destdir="${moment.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.moment}/javac">
+      <compilerarg line="${compiler.args.moment}"/>
+      <bootclasspath refid="moment.module.bootclasspath"/>
+      <classpath refid="moment.module.production.classpath"/>
+      <src refid="moment.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.moment"/>
+    </javac2>
+    
+    <copy todir="${moment.output.dir}">
+      <fileset dir="${module.moment.basedir}/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.moment"/>
+      </fileset>
+      <fileset dir="${module.moment.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.moment"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.moment.tests" depends="register.custom.compilers,compile.module.moment.production" description="compile module Moment; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.moment" description="cleanup module">
+    <delete dir="${moment.output.dir}"/>
+    <delete dir="${moment.testoutput.dir}"/>
+  </target>
+</project>
