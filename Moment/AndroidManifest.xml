@@ -201,10 +201,17 @@
         </activity>
 
         <activity
+            android:screenOrientation="portrait"
+            android:name=".activities.EditProfilActivity"
+            android:parentActivityName="com.moment.TimelineActivity"
+            android:label="ProfilActivity">
+    </activity>
+
+        <activity
                 android:screenOrientation="portrait"
-                android:name=".activities.EditProfilActivity"
-                android:parentActivityName="com.moment.TimelineActivity"
-                android:label="ProfilActivity">
+                android:name=".activities.InscriptionActivityStep2"
+                android:parentActivityName="com.moment.MomentActivity"
+                android:label="InscriptionActivityStep2">
         </activity>
 
     </application>

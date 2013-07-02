@@ -19,7 +19,7 @@
             android:src="@drawable/flech_valid"
             android:background="@null"
             android:onClick="inscription"
-            android:id="btn_next_inscription"/>
+            android:id="@+id/btn_next_inscription"/>
         <ImageButton android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
@@ -90,16 +90,18 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Homme"
-                        android:id="@+id/button"
-                        android:layout_gravity="left|center_vertical"/>
+                        android:id="@+id/btn_male"
+                        android:layout_gravity="left|center_vertical"
+                        android:onClick="setMale"/>
 
                 <Button
                         style="?android:attr/buttonStyleSmall"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Femme"
-                        android:id="@+id/button2"
-                        android:layout_gravity="right|center_vertical"/>
+                        android:id="@+id/btn_female"
+                        android:layout_gravity="right|center_vertical"
+                        android:onClick="setFemale"/>
 
             </LinearLayout>
 

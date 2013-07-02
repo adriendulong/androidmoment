@@ -60,7 +60,7 @@
 
             <EditText android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
-                      android:id="@+id/inscription_prenom"
+                      android:id="@+id/phone_num"
                       android:hint="Numéro de téléphone"
                       android:textSize="14dp"
                       android:singleLine="true"
