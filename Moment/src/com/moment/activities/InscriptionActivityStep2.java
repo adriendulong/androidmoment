@@ -20,6 +20,9 @@ import com.moment.classes.MomentApi;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class InscriptionActivityStep2 extends SherlockActivity {
 
     @Override
@@ -48,10 +51,14 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         EditText phoneEdit = (EditText)findViewById(R.id.phone_num);
         String phone = phoneEdit.getText().toString();
 
-        //TODO Validate phone number
-
         RequestParams params = new RequestParams();
-        params.put("phone", phone);
+
+        if(isPhoneNumber(phone))
+        {
+            params.put("phone", phone);
+        } else {
+            editPhoneAlert();
+        }
 
         MomentApi.post("user", params, new JsonHttpResponseHandler() {
             @Override
@@ -68,4 +75,30 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         startActivity(intent);
     }
 
+    public static boolean isPhoneNumber(String phone){
+        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
+        Matcher m = p.matcher(phone.toUpperCase());
+        return m.matches();
+    }
+
+    public void editPhoneAlert(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivityStep2.this);
+
+        alertDialogBuilder.setTitle("Numéro de téléphone incorrect");
+
+        alertDialogBuilder
+                .setMessage("Corriger le numéro")
+                .setCancelable(false)
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+                        dialog.dismiss();
+                        Intent returnIntent = new Intent();
+                        setResult(RESULT_OK, returnIntent);
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 }

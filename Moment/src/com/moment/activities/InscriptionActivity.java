@@ -101,12 +101,17 @@ public class InscriptionActivity extends SherlockActivity {
         Button female = (Button) findViewById(R.id.btn_female);
 
 
-
         RequestParams params = new RequestParams();
         params.put("firstname", prenom);
         params.put("lastname", nom);
         params.put("password", mdp);
-        params.put("email", email);
+
+        if(isEmailAdress(email))
+        {
+            params.put("email", email);
+        } else {
+            editEmailAlert();
+        }
         params.put("birth_date", bdate);
         params.put("sex", sex);
 
@@ -327,10 +332,22 @@ public class InscriptionActivity extends SherlockActivity {
         return m.matches();
     }
 
-    public static boolean isPhoneNumber(String phone){
-        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
-        Matcher m = p.matcher(phone.toUpperCase());
-        return m.matches();
-    }
+    public void editEmailAlert(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
 
+        alertDialogBuilder.setTitle("Adresse mail incorrect");
+
+        alertDialogBuilder
+                .setMessage("Corriger")
+                .setCancelable(false)
+                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog,int id) {
+
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 }
