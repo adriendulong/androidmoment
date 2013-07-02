@@ -40,6 +40,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class InscriptionActivity extends SherlockActivity {
 
@@ -317,6 +319,18 @@ public class InscriptionActivity extends SherlockActivity {
 
     public void setFemale(View view){
         sex = "F";
+    }
+
+    public static boolean isEmailAdress(String email){
+        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
+        Matcher m = p.matcher(email.toUpperCase());
+        return m.matches();
+    }
+
+    public static boolean isPhoneNumber(String phone){
+        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
+        Matcher m = p.matcher(phone.toUpperCase());
+        return m.matches();
     }
 
 }
