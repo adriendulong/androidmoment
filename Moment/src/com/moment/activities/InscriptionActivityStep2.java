@@ -48,6 +48,8 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         EditText phoneEdit = (EditText)findViewById(R.id.phone_num);
         String phone = phoneEdit.getText().toString();
 
+        //TODO Validate phone number
+
         RequestParams params = new RequestParams();
         params.put("phone", phone);
 
