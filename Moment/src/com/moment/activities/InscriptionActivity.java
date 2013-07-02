@@ -95,7 +95,6 @@ public class InscriptionActivity extends SherlockActivity {
         String mdp = mdpEdit.getText().toString();
         EditText birthdate = (EditText) findViewById(R.id.birthdate);
         String bdate = birthdate.getText().toString();
-
         Button male = (Button) findViewById(R.id.btn_male);
         Button female = (Button) findViewById(R.id.btn_female);
 
