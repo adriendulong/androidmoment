@@ -57,15 +57,15 @@
   
   <target name="compile.module.viewpager" depends="compile.module.viewpager.production,compile.module.viewpager.tests" description="Compile module viewPager"/>
   
-  <target name="compile.module.viewpager.production" depends="register.custom.compilers" description="Compile module viewPager; production classes">
+  <target name="compile.module.viewpager.production" description="Compile module viewPager; production classes">
     <mkdir dir="${viewpager.output.dir}"/>
-    <javac2 destdir="${viewpager.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.viewpager}/javac">
+    <javac destdir="${viewpager.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.viewpager}/javac">
       <compilerarg line="${compiler.args.viewpager}"/>
       <bootclasspath refid="viewpager.module.bootclasspath"/>
       <classpath refid="viewpager.module.production.classpath"/>
       <src refid="viewpager.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.viewpager"/>
-    </javac2>
+    </javac>
     
     <copy todir="${viewpager.output.dir}">
       <fileset dir="${module.viewpager.basedir}/gen">
@@ -81,7 +81,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.viewpager.tests" depends="register.custom.compilers,compile.module.viewpager.production" description="compile module viewPager; test classes" unless="skip.tests"/>
+  <target name="compile.module.viewpager.tests" depends="compile.module.viewpager.production" description="compile module viewPager; test classes" unless="skip.tests"/>
   
   <target name="clean.module.viewpager" description="cleanup module">
     <delete dir="${viewpager.output.dir}"/>

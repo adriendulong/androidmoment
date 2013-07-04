@@ -57,15 +57,15 @@
   
   <target name="compile.module.actionbarsherlock" depends="compile.module.actionbarsherlock.production,compile.module.actionbarsherlock.tests" description="Compile module actionbarsherlock"/>
   
-  <target name="compile.module.actionbarsherlock.production" depends="register.custom.compilers" description="Compile module actionbarsherlock; production classes">
+  <target name="compile.module.actionbarsherlock.production" description="Compile module actionbarsherlock; production classes">
     <mkdir dir="${actionbarsherlock.output.dir}"/>
-    <javac2 destdir="${actionbarsherlock.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.actionbarsherlock}/javac">
+    <javac destdir="${actionbarsherlock.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.actionbarsherlock}/javac">
       <compilerarg line="${compiler.args.actionbarsherlock}"/>
       <bootclasspath refid="actionbarsherlock.module.bootclasspath"/>
       <classpath refid="actionbarsherlock.module.production.classpath"/>
       <src refid="actionbarsherlock.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.actionbarsherlock"/>
-    </javac2>
+    </javac>
     
     <copy todir="${actionbarsherlock.output.dir}">
       <fileset dir="${module.actionbarsherlock.basedir}/src">
@@ -81,7 +81,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.actionbarsherlock.tests" depends="register.custom.compilers,compile.module.actionbarsherlock.production" description="compile module actionbarsherlock; test classes" unless="skip.tests"/>
+  <target name="compile.module.actionbarsherlock.tests" depends="compile.module.actionbarsherlock.production" description="compile module actionbarsherlock; test classes" unless="skip.tests"/>
   
   <target name="clean.module.actionbarsherlock" description="cleanup module">
     <delete dir="${actionbarsherlock.output.dir}"/>

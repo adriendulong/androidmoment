@@ -64,15 +64,15 @@
   
   <target name="compile.module.daogenerator" depends="compile.module.daogenerator.production,compile.module.daogenerator.tests" description="Compile module DaoGenerator"/>
   
-  <target name="compile.module.daogenerator.production" depends="register.custom.compilers" description="Compile module DaoGenerator; production classes">
+  <target name="compile.module.daogenerator.production" description="Compile module DaoGenerator; production classes">
     <mkdir dir="${daogenerator.output.dir}"/>
-    <javac2 destdir="${daogenerator.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.daogenerator}/javac">
+    <javac destdir="${daogenerator.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.daogenerator}/javac">
       <compilerarg line="${compiler.args.daogenerator}"/>
       <bootclasspath refid="daogenerator.module.bootclasspath"/>
       <classpath refid="daogenerator.module.production.classpath"/>
       <src refid="daogenerator.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.daogenerator"/>
-    </javac2>
+    </javac>
     
     <copy todir="${daogenerator.output.dir}">
       <fileset dir="${module.daogenerator.basedir}/src">
@@ -83,7 +83,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.daogenerator.tests" depends="register.custom.compilers,compile.module.daogenerator.production" description="compile module DaoGenerator; test classes" unless="skip.tests"/>
+  <target name="compile.module.daogenerator.tests" depends="compile.module.daogenerator.production" description="compile module DaoGenerator; test classes" unless="skip.tests"/>
   
   <target name="clean.module.daogenerator" description="cleanup module">
     <delete dir="${daogenerator.output.dir}"/>

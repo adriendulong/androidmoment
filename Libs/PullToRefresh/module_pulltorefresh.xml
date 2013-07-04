@@ -53,15 +53,15 @@
   
   <target name="compile.module.pulltorefresh" depends="compile.module.pulltorefresh.production,compile.module.pulltorefresh.tests" description="Compile module PullToRefresh"/>
   
-  <target name="compile.module.pulltorefresh.production" depends="register.custom.compilers" description="Compile module PullToRefresh; production classes">
+  <target name="compile.module.pulltorefresh.production" description="Compile module PullToRefresh; production classes">
     <mkdir dir="${pulltorefresh.output.dir}"/>
-    <javac2 destdir="${pulltorefresh.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pulltorefresh}/javac">
+    <javac destdir="${pulltorefresh.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pulltorefresh}/javac">
       <compilerarg line="${compiler.args.pulltorefresh}"/>
       <bootclasspath refid="pulltorefresh.module.bootclasspath"/>
       <classpath refid="pulltorefresh.module.production.classpath"/>
       <src refid="pulltorefresh.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.pulltorefresh"/>
-    </javac2>
+    </javac>
     
     <copy todir="${pulltorefresh.output.dir}">
       <fileset dir="${module.pulltorefresh.basedir}/src">
@@ -77,7 +77,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.pulltorefresh.tests" depends="register.custom.compilers,compile.module.pulltorefresh.production" description="compile module PullToRefresh; test classes" unless="skip.tests"/>
+  <target name="compile.module.pulltorefresh.tests" depends="compile.module.pulltorefresh.production" description="compile module PullToRefresh; test classes" unless="skip.tests"/>
   
   <target name="clean.module.pulltorefresh" description="cleanup module">
     <delete dir="${pulltorefresh.output.dir}"/>

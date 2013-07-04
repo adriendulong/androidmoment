@@ -49,31 +49,8 @@ public class MomentActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_moment);
+
         fontNumans = Typeface.createFromAsset(getAssets(), "fonts/Numans-Regular.otf");
-
-        Session.openActiveSession(this, true, new Session.StatusCallback() {
-
-            // callback when session changes state
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-                if (session.isOpened()) {
-
-                    // make request to the /me API
-                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-
-                        // callback after Graph API response with user object
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if (user != null) {
-                                TextView welcome = (TextView) findViewById(R.id.textView);
-                                welcome.setText("Hello " + user.getName() + "!");
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
 
         MomentApi.initialize(getApplicationContext());
 
@@ -146,6 +123,7 @@ public class MomentActivity extends Activity {
         }
 
         EditText password= (EditText) findViewById(R.id.password_login);
+
         password.setOnEditorActionListener(new OnEditorActionListener()
         {
             @Override
@@ -278,6 +256,10 @@ public class MomentActivity extends Activity {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
+    private void connectionserveur(View v) {
+        connectionserveur();
+    }
+
     private void connectionserveur(){
 
         String email = ((EditText)findViewById(R.id.email_login)).getText().toString();
@@ -288,9 +270,6 @@ public class MomentActivity extends Activity {
         final String regId = GCMRegistrar.getRegistrationId(this);
         if (regId.equals(""))
             GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
-
-
-
 
         //On cr�� notre futur User
         AppMoment.getInstance().user = new User();

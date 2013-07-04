@@ -53,15 +53,15 @@
   
   <target name="compile.module.google-play-services_lib" depends="compile.module.google-play-services_lib.production,compile.module.google-play-services_lib.tests" description="Compile module google-play-services_lib"/>
   
-  <target name="compile.module.google-play-services_lib.production" depends="register.custom.compilers" description="Compile module google-play-services_lib; production classes">
+  <target name="compile.module.google-play-services_lib.production" description="Compile module google-play-services_lib; production classes">
     <mkdir dir="${google-play-services_lib.output.dir}"/>
-    <javac2 destdir="${google-play-services_lib.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.google-play-services_lib}/javac">
+    <javac destdir="${google-play-services_lib.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.google-play-services_lib}/javac">
       <compilerarg line="${compiler.args.google-play-services_lib}"/>
       <bootclasspath refid="google-play-services_lib.module.bootclasspath"/>
       <classpath refid="google-play-services_lib.module.production.classpath"/>
       <src refid="google-play-services_lib.module.sourcepath"/>
       <patternset refid="excluded.from.compilation.google-play-services_lib"/>
-    </javac2>
+    </javac>
     
     <copy todir="${google-play-services_lib.output.dir}">
       <fileset dir="${module.google-play-services_lib.basedir}/src">
@@ -77,7 +77,7 @@
     </copy>
   </target>
   
-  <target name="compile.module.google-play-services_lib.tests" depends="register.custom.compilers,compile.module.google-play-services_lib.production" description="compile module google-play-services_lib; test classes" unless="skip.tests"/>
+  <target name="compile.module.google-play-services_lib.tests" depends="compile.module.google-play-services_lib.production" description="compile module google-play-services_lib; test classes" unless="skip.tests"/>
   
   <target name="clean.module.google-play-services_lib" description="cleanup module">
     <delete dir="${google-play-services_lib.output.dir}"/>
