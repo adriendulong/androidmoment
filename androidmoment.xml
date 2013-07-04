@@ -114,8 +114,6 @@
   
   <import file="${basedir}/Libs/PullToRefresh/module_pulltorefresh.xml"/>
   
-  <import file="${basedir}/Libs/facebook/TestApp/module_testapp.xml"/>
-  
   <import file="${basedir}/Libs/viewPager/module_viewpager.xml"/>
   
   <import file="${basedir}/Libs/slidingMenu/module_slidingmenu.xml"/>
