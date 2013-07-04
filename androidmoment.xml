@@ -124,7 +124,7 @@
     <!-- Perform any build initialization in this target -->
   </target>
   
-  <target name="clean" depends="clean.module.actionbarsherlock, clean.module.daogenerator, clean.module.facebook, clean.module.google-play-services_lib, clean.module.pulltorefresh, clean.module.testapp, clean.module.viewpager, clean.module.slidingmenu, clean.module.tests, clean.module.moment" description="cleanup all"/>
+  <target name="clean" depends="clean.module.actionbarsherlock, clean.module.daogenerator, clean.module.facebook, clean.module.google-play-services_lib, clean.module.pulltorefresh, clean.module.viewpager, clean.module.slidingmenu, clean.module.moment" description="cleanup all"/>
   
   <target name="build.modules" depends="init, clean, compile.module.actionbarsherlock, compile.module.daogenerator, compile.module.facebook, compile.module.google-play-services_lib, compile.module.pulltorefresh, compile.module.testapp, compile.module.viewpager, compile.module.slidingmenu, compile.module.tests, compile.module.moment" description="build all modules"/>
   
