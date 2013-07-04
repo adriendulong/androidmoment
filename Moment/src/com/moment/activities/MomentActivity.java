@@ -150,6 +150,8 @@ public class MomentActivity extends Activity {
 
     public void connect(View view) throws JSONException {
 
+
+
         RelativeLayout button_inscription = (RelativeLayout)findViewById(R.id.inscrire_button_login);
         button_inscription.setVisibility(View.INVISIBLE);
         EditText edit_email = (EditText)findViewById(R.id.email_login);
@@ -243,7 +245,7 @@ public class MomentActivity extends Activity {
     /** Appeler lorsque l'utilisateur clique sur le bouton de inscription */
     public void inscription(View view) {
        Log.d("Connection", "conncetion reussi");
-       
+
        
        //Creer et demarrer la timeline
        Intent intent = new Intent(this, InscriptionActivity.class);

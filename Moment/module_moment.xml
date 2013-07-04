@@ -2,7 +2,7 @@
 <project name="module_moment" default="compile.module.moment">
   <dirname property="module.moment.basedir" file="${ant.file.module_moment}"/>
   
-  <property name="module.jdk.home.moment" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.home.moment" value="${jdk.home.android_4.2.2_g oogle_apis}"/>
   <property name="module.jdk.bin.moment" value="${jdk.bin.android_4.2.2_google_apis}"/>
   <property name="module.jdk.classpath.moment" value="jdk.classpath.android_4.2.2_google_apis"/>
   

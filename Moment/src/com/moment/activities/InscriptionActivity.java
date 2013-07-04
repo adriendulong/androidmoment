@@ -4,8 +4,10 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.pm.Signature;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,15 +15,22 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.google.android.gcm.GCMRegistrar;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -38,6 +47,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -48,10 +59,11 @@ public class InscriptionActivity extends SherlockActivity {
     private Uri outputFileUri;
     private int YOUR_SELECT_PICTURE_REQUEST_CODE = 0;
     private Bitmap profile_picture;
-    String sex;
+    private String sex;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
         GCMRegistrar.checkDevice(this);
@@ -64,6 +76,28 @@ public class InscriptionActivity extends SherlockActivity {
         } else {
             Log.v("GCM", "Not registered and on server");
         }
+
+        Session.openActiveSession(this, true, new Session.StatusCallback() {
+
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+
+                if (session.isOpened()) {
+                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+                        // callback after Graph API response with user object
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            if (user != null) {
+                                EditText prenom = (EditText) findViewById(R.id.inscription_prenom);
+                                prenom.setText(user.getFirstName());
+                            }
+                        }
+                    });
+                }
+            }
+        });
+
     }
 
     @Override
@@ -269,6 +303,11 @@ public class InscriptionActivity extends SherlockActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession()
+                .onActivityResult(this, requestCode, resultCode, data);
+
         if(resultCode == RESULT_OK)
         {
             if(requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE)
