@@ -1,0 +1,1074 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="androidmoment" default="all">
+  
+  
+  <property file="androidmoment.properties"/>
+  <!-- Uncomment the following property if no tests compilation is needed -->
+  <!-- 
+  <property name="skip.tests" value="true"/>
+   -->
+  
+  <!-- Compiler options -->
+  
+  <property name="compiler.debug" value="on"/>
+  <property name="compiler.generate.no.warnings" value="off"/>
+  <property name="compiler.args" value="-target 1.6"/>
+  <property name="compiler.max.memory" value="128m"/>
+  <patternset id="ignored.files">
+    <exclude name="**/CVS/**"/>
+    <exclude name="**/SCCS/**"/>
+    <exclude name="**/RCS/**"/>
+    <exclude name="**/rcs/**"/>
+    <exclude name="**/.DS_Store/**"/>
+    <exclude name="**/.svn/**"/>
+    <exclude name="**/.pyc/**"/>
+    <exclude name="**/.pyo/**"/>
+    <exclude name="**/*.pyc/**"/>
+    <exclude name="**/*.pyo/**"/>
+    <exclude name="**/.git/**"/>
+    <exclude name="**/*.hprof/**"/>
+    <exclude name="**/_svn/**"/>
+    <exclude name="**/.hg/**"/>
+    <exclude name="**/*.lib/**"/>
+    <exclude name="**/*~/**"/>
+    <exclude name="**/__pycache__/**"/>
+    <exclude name="**/.bundle/**"/>
+    <exclude name="**/*.rbc/**"/>
+  </patternset>
+  <patternset id="compiler.excluded">
+    <exclude name="${basedir}/Moment/src/com/moment/fragments/PhotosFragment.java"/>
+    <exclude name="${basedir}/Libs/viewPager/gen/**"/>
+    <exclude name="${basedir}/Libs/facebook/gen/**"/>
+    <exclude name="${basedir}/Libs/actionbarsherlock/gen/**"/>
+    <exclude name="${basedir}/Libs/google-play-services_lib/gen/**"/>
+    <exclude name="${basedir}/Libs/slidingMenu/gen/**"/>
+    <exclude name="${basedir}/Moment/gen/**"/>
+    <exclude name="${basedir}/Libs/PullToRefresh/gen/**"/>
+    <exclude name="${basedir}/Libs/facebook/TestApp/gen/**"/>
+    <exclude name="${basedir}/Libs/facebook/tests/gen/**"/>
+  </patternset>
+  <patternset id="library.patterns">
+    <include name="*.zip"/>
+    <include name="*.apk"/>
+    <include name="*.war"/>
+    <include name="*.egg"/>
+    <include name="*.ear"/>
+    <include name="*.ane"/>
+    <include name="*.swc"/>
+    <include name="*.jar"/>
+  </patternset>
+  <patternset id="compiler.resources">
+    <exclude name="**/?*.java"/>
+    <exclude name="**/?*.form"/>
+    <exclude name="**/?*.class"/>
+    <exclude name="**/?*.groovy"/>
+    <exclude name="**/?*.scala"/>
+    <exclude name="**/?*.flex"/>
+    <exclude name="**/?*.kt"/>
+    <exclude name="**/?*.clj"/>
+  </patternset>
+  
+  <!-- JDK definitions -->
+  
+  <property name="jdk.bin.android_4.2.2_platform" value="${jdk.home.android_4.2.2_platform}/../../../../../Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home/bin"/>
+  <path id="jdk.classpath.android_4.2.2_platform">
+    <fileset dir="${jdk.home.android_4.2.2_platform}">
+      <include name="platforms/android-17/android.jar"/>
+      <include name="platforms/android-17/data/res"/>
+      <include name="tools/support/annotations.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="jdk.bin.android_4.2.2_google_apis" value="${jdk.home.android_4.2.2_google_apis}/../../../../../Library/Java/JavaVirtualMachines/jdk1.7.0_25.jdk/Contents/Home/bin"/>
+  <path id="jdk.classpath.android_4.2.2_google_apis">
+    <fileset dir="${jdk.home.android_4.2.2_google_apis}">
+      <include name="platforms/android-17/android.jar"/>
+      <include name="add-ons/addon-google_apis-google-17/libs/effects.jar"/>
+      <include name="add-ons/addon-google_apis-google-17/libs/usb.jar"/>
+      <include name="add-ons/addon-google_apis-google-17/libs/maps.jar"/>
+      <include name="platforms/android-17/data/res"/>
+      <include name="tools/support/annotations.jar"/>
+    </fileset>
+  </path>
+  
+  <property name="project.jdk.home" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="project.jdk.bin" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="project.jdk.classpath" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  
+  <!-- Project Libraries -->
+  
+  <path id="library.google-play-services.classpath">
+    <pathelement location="${basedir}/Libs/google-play-services_lib/libs/google-play-services.jar"/>
+  </path>
+  
+  <!-- Modules -->
+  
+  
+  <!-- Module actionbarsherlock -->
+  
+  <dirname property="module.actionbarsherlock.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.actionbarsherlock" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.actionbarsherlock" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.actionbarsherlock" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.actionbarsherlock" value="${compiler.args}"/>
+  
+  <property name="actionbarsherlock.output.dir" value="${module.actionbarsherlock.basedir}/out/production/actionbarsherlock"/>
+  <property name="actionbarsherlock.testoutput.dir" value="${module.actionbarsherlock.basedir}/out/test/actionbarsherlock"/>
+  
+  <path id="actionbarsherlock.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="actionbarsherlock.module.production.classpath">
+    <path refid="${module.jdk.classpath.actionbarsherlock}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="actionbarsherlock.runtime.production.module.classpath">
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="actionbarsherlock.module.classpath">
+    <path refid="${module.jdk.classpath.actionbarsherlock}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="actionbarsherlock.runtime.module.classpath">
+    <pathelement location="${actionbarsherlock.testoutput.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.actionbarsherlock">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.actionbarsherlock">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.actionbarsherlock"/>
+  </patternset>
+  
+  <path id="actionbarsherlock.module.sourcepath">
+    <dirset dir="${module.actionbarsherlock.basedir}/Libs/actionbarsherlock">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.actionbarsherlock" depends="compile.module.actionbarsherlock.production,compile.module.actionbarsherlock.tests" description="Compile module actionbarsherlock"/>
+  
+  <target name="compile.module.actionbarsherlock.production" description="Compile module actionbarsherlock; production classes">
+    <mkdir dir="${actionbarsherlock.output.dir}"/>
+    <javac destdir="${actionbarsherlock.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.actionbarsherlock}/javac">
+      <compilerarg line="${compiler.args.actionbarsherlock}"/>
+      <bootclasspath refid="actionbarsherlock.module.bootclasspath"/>
+      <classpath refid="actionbarsherlock.module.production.classpath"/>
+      <src refid="actionbarsherlock.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.actionbarsherlock"/>
+    </javac>
+    
+    <copy todir="${actionbarsherlock.output.dir}">
+      <fileset dir="${module.actionbarsherlock.basedir}/Libs/actionbarsherlock/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.actionbarsherlock"/>
+      </fileset>
+      <fileset dir="${module.actionbarsherlock.basedir}/Libs/actionbarsherlock/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.actionbarsherlock"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.actionbarsherlock.tests" depends="compile.module.actionbarsherlock.production" description="compile module actionbarsherlock; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.actionbarsherlock" description="cleanup module">
+    <delete dir="${actionbarsherlock.output.dir}"/>
+    <delete dir="${actionbarsherlock.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module DaoGenerator -->
+  
+  <dirname property="module.daogenerator.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.daogenerator" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.daogenerator" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.daogenerator" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.daogenerator" value="${compiler.args}"/>
+  
+  <property name="daogenerator.output.dir" value="${module.daogenerator.basedir}/out/production/DaoGenerator"/>
+  <property name="daogenerator.testoutput.dir" value="${module.daogenerator.basedir}/out/test/DaoGenerator"/>
+  
+  <path id="daogenerator.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="daogenerator.module.production.classpath">
+    <path refid="${module.jdk.classpath.daogenerator}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.runtime.production.module.classpath">
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.module.classpath">
+    <path refid="${module.jdk.classpath.daogenerator}"/>
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  <path id="daogenerator.runtime.module.classpath">
+    <pathelement location="${daogenerator.testoutput.dir}"/>
+    <pathelement location="${daogenerator.output.dir}"/>
+    <fileset dir="${basedir}/Libs/DaoGenerator/libs">
+      <patternset refid="library.patterns"/>
+    </fileset>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.daogenerator">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.daogenerator">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.daogenerator"/>
+  </patternset>
+  
+  <path id="daogenerator.module.sourcepath">
+    <dirset dir="${module.daogenerator.basedir}/Libs/DaoGenerator">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.daogenerator" depends="compile.module.daogenerator.production,compile.module.daogenerator.tests" description="Compile module DaoGenerator"/>
+  
+  <target name="compile.module.daogenerator.production" description="Compile module DaoGenerator; production classes">
+    <mkdir dir="${daogenerator.output.dir}"/>
+    <javac destdir="${daogenerator.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.daogenerator}/javac">
+      <compilerarg line="${compiler.args.daogenerator}"/>
+      <bootclasspath refid="daogenerator.module.bootclasspath"/>
+      <classpath refid="daogenerator.module.production.classpath"/>
+      <src refid="daogenerator.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.daogenerator"/>
+    </javac>
+    
+    <copy todir="${daogenerator.output.dir}">
+      <fileset dir="${module.daogenerator.basedir}/Libs/DaoGenerator/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.daogenerator"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.daogenerator.tests" depends="compile.module.daogenerator.production" description="compile module DaoGenerator; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.daogenerator" description="cleanup module">
+    <delete dir="${daogenerator.output.dir}"/>
+    <delete dir="${daogenerator.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module facebook -->
+  
+  <dirname property="module.facebook.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.facebook" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.bin.facebook" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.classpath.facebook" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  <property name="compiler.args.facebook" value="${compiler.args}"/>
+  
+  <property name="facebook.output.dir" value="${module.facebook.basedir}/out/production/facebook"/>
+  <property name="facebook.testoutput.dir" value="${module.facebook.basedir}/out/test/facebook"/>
+  
+  <path id="facebook.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="facebook.module.production.classpath">
+    <path refid="${module.jdk.classpath.facebook}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="facebook.runtime.production.module.classpath">
+    <pathelement location="${facebook.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="facebook.module.classpath">
+    <path refid="${module.jdk.classpath.facebook}"/>
+    <pathelement location="${facebook.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="facebook.runtime.module.classpath">
+    <pathelement location="${facebook.testoutput.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.facebook">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.facebook">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.facebook"/>
+  </patternset>
+  
+  <path id="facebook.module.sourcepath">
+    <dirset dir="${module.facebook.basedir}/Libs/facebook">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.facebook" depends="compile.module.facebook.production,compile.module.facebook.tests" description="Compile module facebook"/>
+  
+  <target name="compile.module.facebook.production" description="Compile module facebook; production classes">
+    <mkdir dir="${facebook.output.dir}"/>
+    <javac destdir="${facebook.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.facebook}/javac">
+      <compilerarg line="${compiler.args.facebook}"/>
+      <bootclasspath refid="facebook.module.bootclasspath"/>
+      <classpath refid="facebook.module.production.classpath"/>
+      <src refid="facebook.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.facebook"/>
+    </javac>
+    
+    <copy todir="${facebook.output.dir}">
+      <fileset dir="${module.facebook.basedir}/Libs/facebook/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.facebook"/>
+      </fileset>
+      <fileset dir="${module.facebook.basedir}/Libs/facebook/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.facebook"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.facebook.tests" depends="compile.module.facebook.production" description="compile module facebook; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.facebook" description="cleanup module">
+    <delete dir="${facebook.output.dir}"/>
+    <delete dir="${facebook.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module google-play-services_lib -->
+  
+  <dirname property="module.google-play-services_lib.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.google-play-services_lib" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.google-play-services_lib" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.google-play-services_lib" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.google-play-services_lib" value="${compiler.args}"/>
+  
+  <property name="google-play-services_lib.output.dir" value="${module.google-play-services_lib.basedir}/out/production/google-play-services_lib"/>
+  <property name="google-play-services_lib.testoutput.dir" value="${module.google-play-services_lib.basedir}/out/test/google-play-services_lib"/>
+  
+  <path id="google-play-services_lib.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="google-play-services_lib.module.production.classpath">
+    <path refid="${module.jdk.classpath.google-play-services_lib}"/>
+  </path>
+  
+  <path id="google-play-services_lib.runtime.production.module.classpath">
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+  </path>
+  
+  <path id="google-play-services_lib.module.classpath">
+    <path refid="${module.jdk.classpath.google-play-services_lib}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+  </path>
+  
+  <path id="google-play-services_lib.runtime.module.classpath">
+    <pathelement location="${google-play-services_lib.testoutput.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.google-play-services_lib">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.google-play-services_lib">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.google-play-services_lib"/>
+  </patternset>
+  
+  <path id="google-play-services_lib.module.sourcepath">
+    <dirset dir="${module.google-play-services_lib.basedir}/Libs/google-play-services_lib">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.google-play-services_lib" depends="compile.module.google-play-services_lib.production,compile.module.google-play-services_lib.tests" description="Compile module google-play-services_lib"/>
+  
+  <target name="compile.module.google-play-services_lib.production" description="Compile module google-play-services_lib; production classes">
+    <mkdir dir="${google-play-services_lib.output.dir}"/>
+    <javac destdir="${google-play-services_lib.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.google-play-services_lib}/javac">
+      <compilerarg line="${compiler.args.google-play-services_lib}"/>
+      <bootclasspath refid="google-play-services_lib.module.bootclasspath"/>
+      <classpath refid="google-play-services_lib.module.production.classpath"/>
+      <src refid="google-play-services_lib.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.google-play-services_lib"/>
+    </javac>
+    
+    <copy todir="${google-play-services_lib.output.dir}">
+      <fileset dir="${module.google-play-services_lib.basedir}/Libs/google-play-services_lib/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.google-play-services_lib"/>
+      </fileset>
+      <fileset dir="${module.google-play-services_lib.basedir}/Libs/google-play-services_lib/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.google-play-services_lib"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.google-play-services_lib.tests" depends="compile.module.google-play-services_lib.production" description="compile module google-play-services_lib; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.google-play-services_lib" description="cleanup module">
+    <delete dir="${google-play-services_lib.output.dir}"/>
+    <delete dir="${google-play-services_lib.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module PullToRefresh -->
+  
+  <dirname property="module.pulltorefresh.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.pulltorefresh" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.pulltorefresh" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.pulltorefresh" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.pulltorefresh" value="${compiler.args}"/>
+  
+  <property name="pulltorefresh.output.dir" value="${module.pulltorefresh.basedir}/out/production/PullToRefresh"/>
+  <property name="pulltorefresh.testoutput.dir" value="${module.pulltorefresh.basedir}/out/test/PullToRefresh"/>
+  
+  <path id="pulltorefresh.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="pulltorefresh.module.production.classpath">
+    <path refid="${module.jdk.classpath.pulltorefresh}"/>
+  </path>
+  
+  <path id="pulltorefresh.runtime.production.module.classpath">
+    <pathelement location="${pulltorefresh.output.dir}"/>
+  </path>
+  
+  <path id="pulltorefresh.module.classpath">
+    <path refid="${module.jdk.classpath.pulltorefresh}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+  </path>
+  
+  <path id="pulltorefresh.runtime.module.classpath">
+    <pathelement location="${pulltorefresh.testoutput.dir}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.pulltorefresh">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.pulltorefresh">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.pulltorefresh"/>
+  </patternset>
+  
+  <path id="pulltorefresh.module.sourcepath">
+    <dirset dir="${module.pulltorefresh.basedir}/Libs/PullToRefresh">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.pulltorefresh" depends="compile.module.pulltorefresh.production,compile.module.pulltorefresh.tests" description="Compile module PullToRefresh"/>
+  
+  <target name="compile.module.pulltorefresh.production" description="Compile module PullToRefresh; production classes">
+    <mkdir dir="${pulltorefresh.output.dir}"/>
+    <javac destdir="${pulltorefresh.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.pulltorefresh}/javac">
+      <compilerarg line="${compiler.args.pulltorefresh}"/>
+      <bootclasspath refid="pulltorefresh.module.bootclasspath"/>
+      <classpath refid="pulltorefresh.module.production.classpath"/>
+      <src refid="pulltorefresh.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.pulltorefresh"/>
+    </javac>
+    
+    <copy todir="${pulltorefresh.output.dir}">
+      <fileset dir="${module.pulltorefresh.basedir}/Libs/PullToRefresh/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.pulltorefresh"/>
+      </fileset>
+      <fileset dir="${module.pulltorefresh.basedir}/Libs/PullToRefresh/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.pulltorefresh"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.pulltorefresh.tests" depends="compile.module.pulltorefresh.production" description="compile module PullToRefresh; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.pulltorefresh" description="cleanup module">
+    <delete dir="${pulltorefresh.output.dir}"/>
+    <delete dir="${pulltorefresh.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module TestApp -->
+  
+  <dirname property="module.testapp.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.testapp" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.bin.testapp" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.classpath.testapp" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  <property name="compiler.args.testapp" value="${compiler.args}"/>
+  
+  <property name="testapp.output.dir" value="${module.testapp.basedir}/out/production/TestApp"/>
+  <property name="testapp.testoutput.dir" value="${module.testapp.basedir}/out/test/TestApp"/>
+  
+  <path id="testapp.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="testapp.module.production.classpath">
+    <path refid="${module.jdk.classpath.testapp}"/>
+  </path>
+  
+  <path id="testapp.runtime.production.module.classpath">
+    <pathelement location="${testapp.output.dir}"/>
+  </path>
+  
+  <path id="testapp.module.classpath">
+    <path refid="${module.jdk.classpath.testapp}"/>
+    <pathelement location="${testapp.output.dir}"/>
+  </path>
+  
+  <path id="testapp.runtime.module.classpath">
+    <pathelement location="${testapp.testoutput.dir}"/>
+    <pathelement location="${testapp.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.testapp">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.testapp">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.testapp"/>
+  </patternset>
+  
+  <path id="testapp.module.sourcepath">
+    <dirset dir="${module.testapp.basedir}/Libs/facebook/TestApp">
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.testapp" depends="compile.module.testapp.production,compile.module.testapp.tests" description="Compile module TestApp"/>
+  
+  <target name="compile.module.testapp.production" description="Compile module TestApp; production classes">
+    <mkdir dir="${testapp.output.dir}"/>
+    <javac destdir="${testapp.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.testapp}/javac">
+      <compilerarg line="${compiler.args.testapp}"/>
+      <bootclasspath refid="testapp.module.bootclasspath"/>
+      <classpath refid="testapp.module.production.classpath"/>
+      <src refid="testapp.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.testapp"/>
+    </javac>
+    
+    <copy todir="${testapp.output.dir}">
+      <fileset dir="${module.testapp.basedir}/Libs/facebook/TestApp/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.testapp"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.testapp.tests" depends="compile.module.testapp.production" description="compile module TestApp; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.testapp" description="cleanup module">
+    <delete dir="${testapp.output.dir}"/>
+    <delete dir="${testapp.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module viewPager -->
+  
+  <dirname property="module.viewpager.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.viewpager" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.viewpager" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.viewpager" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.viewpager" value="${compiler.args}"/>
+  
+  <property name="viewpager.output.dir" value="${module.viewpager.basedir}/out/production/viewPager"/>
+  <property name="viewpager.testoutput.dir" value="${module.viewpager.basedir}/out/test/viewPager"/>
+  
+  <path id="viewpager.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="viewpager.module.production.classpath">
+    <path refid="${module.jdk.classpath.viewpager}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="viewpager.runtime.production.module.classpath">
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="viewpager.module.classpath">
+    <path refid="${module.jdk.classpath.viewpager}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  <path id="viewpager.runtime.module.classpath">
+    <pathelement location="${viewpager.testoutput.dir}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.viewpager">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.viewpager">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.viewpager"/>
+  </patternset>
+  
+  <path id="viewpager.module.sourcepath">
+    <dirset dir="${module.viewpager.basedir}/Libs/viewPager">
+      <include name="gen"/>
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.viewpager" depends="compile.module.viewpager.production,compile.module.viewpager.tests" description="Compile module viewPager"/>
+  
+  <target name="compile.module.viewpager.production" description="Compile module viewPager; production classes">
+    <mkdir dir="${viewpager.output.dir}"/>
+    <javac destdir="${viewpager.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.viewpager}/javac">
+      <compilerarg line="${compiler.args.viewpager}"/>
+      <bootclasspath refid="viewpager.module.bootclasspath"/>
+      <classpath refid="viewpager.module.production.classpath"/>
+      <src refid="viewpager.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.viewpager"/>
+    </javac>
+    
+    <copy todir="${viewpager.output.dir}">
+      <fileset dir="${module.viewpager.basedir}/Libs/viewPager/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.viewpager"/>
+      </fileset>
+      <fileset dir="${module.viewpager.basedir}/Libs/viewPager/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.viewpager"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.viewpager.tests" depends="compile.module.viewpager.production" description="compile module viewPager; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.viewpager" description="cleanup module">
+    <delete dir="${viewpager.output.dir}"/>
+    <delete dir="${viewpager.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module slidingMenu -->
+  
+  <dirname property="module.slidingmenu.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.slidingmenu" value="${jdk.home.android_4.2.2_platform}"/>
+  <property name="module.jdk.bin.slidingmenu" value="${jdk.bin.android_4.2.2_platform}"/>
+  <property name="module.jdk.classpath.slidingmenu" value="jdk.classpath.android_4.2.2_platform"/>
+  
+  <property name="compiler.args.slidingmenu" value="${compiler.args}"/>
+  
+  <property name="slidingmenu.output.dir" value="${module.slidingmenu.basedir}/out/production/slidingMenu"/>
+  <property name="slidingmenu.testoutput.dir" value="${module.slidingmenu.basedir}/out/test/slidingMenu"/>
+  
+  <path id="slidingmenu.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="slidingmenu.module.production.classpath">
+    <path refid="${module.jdk.classpath.slidingmenu}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="slidingmenu.runtime.production.module.classpath">
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <path refid="actionbarsherlock.runtime.production.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="slidingmenu.module.classpath">
+    <path refid="${module.jdk.classpath.slidingmenu}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${actionbarsherlock.testoutput.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  <path id="slidingmenu.runtime.module.classpath">
+    <pathelement location="${slidingmenu.testoutput.dir}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <path refid="actionbarsherlock.runtime.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.slidingmenu">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.slidingmenu">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.slidingmenu"/>
+  </patternset>
+  
+  <path id="slidingmenu.module.sourcepath">
+    <dirset dir="${module.slidingmenu.basedir}/Libs/slidingMenu">
+      <include name="src"/>
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.slidingmenu" depends="compile.module.slidingmenu.production,compile.module.slidingmenu.tests" description="Compile module slidingMenu"/>
+  
+  <target name="compile.module.slidingmenu.production" depends="compile.module.actionbarsherlock" description="Compile module slidingMenu; production classes">
+    <mkdir dir="${slidingmenu.output.dir}"/>
+    <javac destdir="${slidingmenu.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.slidingmenu}/javac">
+      <compilerarg line="${compiler.args.slidingmenu}"/>
+      <bootclasspath refid="slidingmenu.module.bootclasspath"/>
+      <classpath refid="slidingmenu.module.production.classpath"/>
+      <src refid="slidingmenu.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.slidingmenu"/>
+    </javac>
+    
+    <copy todir="${slidingmenu.output.dir}">
+      <fileset dir="${module.slidingmenu.basedir}/Libs/slidingMenu/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.slidingmenu"/>
+      </fileset>
+      <fileset dir="${module.slidingmenu.basedir}/Libs/slidingMenu/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.slidingmenu"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.slidingmenu.tests" depends="compile.module.slidingmenu.production" description="compile module slidingMenu; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.slidingmenu" description="cleanup module">
+    <delete dir="${slidingmenu.output.dir}"/>
+    <delete dir="${slidingmenu.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module tests -->
+  
+  <dirname property="module.tests.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.tests" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.bin.tests" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.classpath.tests" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  <property name="compiler.args.tests" value="${compiler.args}"/>
+  
+  <property name="tests.output.dir" value="${module.tests.basedir}/out/production/tests"/>
+  <property name="tests.testoutput.dir" value="${module.tests.basedir}/out/test/tests"/>
+  
+  <path id="tests.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="tests.module.production.classpath">
+    <path refid="${module.jdk.classpath.tests}"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="tests.runtime.production.module.classpath">
+    <pathelement location="${tests.output.dir}"/>
+    <path refid="facebook.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="tests.module.classpath">
+    <path refid="${module.jdk.classpath.tests}"/>
+    <pathelement location="${tests.output.dir}"/>
+    <pathelement location="${facebook.testoutput.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="tests.runtime.module.classpath">
+    <pathelement location="${tests.testoutput.dir}"/>
+    <pathelement location="${tests.output.dir}"/>
+    <path refid="facebook.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.tests">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.tests">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.tests"/>
+  </patternset>
+  
+  <path id="tests.module.sourcepath">
+    <dirset dir="${module.tests.basedir}/Libs/facebook/tests">
+      <include name="gen"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.tests" depends="compile.module.tests.production,compile.module.tests.tests" description="Compile module tests"/>
+  
+  <target name="compile.module.tests.production" depends="compile.module.facebook" description="Compile module tests; production classes">
+    <mkdir dir="${tests.output.dir}"/>
+    <javac destdir="${tests.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.tests}/javac">
+      <compilerarg line="${compiler.args.tests}"/>
+      <bootclasspath refid="tests.module.bootclasspath"/>
+      <classpath refid="tests.module.production.classpath"/>
+      <src refid="tests.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.tests"/>
+    </javac>
+    
+    <copy todir="${tests.output.dir}">
+      <fileset dir="${module.tests.basedir}/Libs/facebook/tests/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.tests"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.tests.tests" depends="compile.module.tests.production" description="compile module tests; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.tests" description="cleanup module">
+    <delete dir="${tests.output.dir}"/>
+    <delete dir="${tests.testoutput.dir}"/>
+  </target>
+  
+  
+  <!-- Module Moment -->
+  
+  <dirname property="module.moment.basedir" file="${ant.file}"/>
+  
+  
+  <property name="module.jdk.home.moment" value="${jdk.home.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.bin.moment" value="${jdk.bin.android_4.2.2_google_apis}"/>
+  <property name="module.jdk.classpath.moment" value="jdk.classpath.android_4.2.2_google_apis"/>
+  
+  <property name="compiler.args.moment" value="${compiler.args}"/>
+  
+  <property name="moment.output.dir" value="${module.moment.basedir}/out/production/Moment"/>
+  <property name="moment.testoutput.dir" value="${module.moment.basedir}/out/test/Moment"/>
+  
+  <path id="moment.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="moment.module.production.classpath">
+    <path refid="${module.jdk.classpath.moment}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="moment.runtime.production.module.classpath">
+    <pathelement location="${moment.output.dir}"/>
+    <path refid="viewpager.runtime.production.module.classpath"/>
+    <path refid="slidingmenu.runtime.production.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.production.module.classpath"/>
+    <path refid="pulltorefresh.runtime.production.module.classpath"/>
+    <path refid="google-play-services_lib.runtime.production.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+    <path refid="facebook.runtime.production.module.classpath"/>
+  </path>
+  
+  <path id="moment.module.classpath">
+    <path refid="${module.jdk.classpath.moment}"/>
+    <pathelement location="${moment.output.dir}"/>
+    <pathelement location="${viewpager.testoutput.dir}"/>
+    <pathelement location="${viewpager.output.dir}"/>
+    <pathelement location="${slidingmenu.testoutput.dir}"/>
+    <pathelement location="${slidingmenu.output.dir}"/>
+    <pathelement location="${actionbarsherlock.testoutput.dir}"/>
+    <pathelement location="${actionbarsherlock.output.dir}"/>
+    <pathelement location="${pulltorefresh.testoutput.dir}"/>
+    <pathelement location="${pulltorefresh.output.dir}"/>
+    <pathelement location="${google-play-services_lib.testoutput.dir}"/>
+    <pathelement location="${google-play-services_lib.output.dir}"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+    <pathelement location="${facebook.testoutput.dir}"/>
+    <pathelement location="${facebook.output.dir}"/>
+  </path>
+  
+  <path id="moment.runtime.module.classpath">
+    <pathelement location="${moment.testoutput.dir}"/>
+    <pathelement location="${moment.output.dir}"/>
+    <path refid="viewpager.runtime.module.classpath"/>
+    <path refid="slidingmenu.runtime.module.classpath"/>
+    <path refid="actionbarsherlock.runtime.module.classpath"/>
+    <path refid="pulltorefresh.runtime.module.classpath"/>
+    <path refid="google-play-services_lib.runtime.module.classpath"/>
+    <pathelement location="${basedir}/Moment/libs/android-async-http-1.4.3.jar"/>
+    <pathelement location="${basedir}/Moment/libs/android-support-v4.jar"/>
+    <pathelement location="${basedir}/Moment/libs/gcm.jar"/>
+    <path refid="library.google-play-services.classpath"/>
+    <pathelement location="${basedir}/Libs/DaoGenerator/libs/greendao-1.3.0.jar"/>
+    <pathelement location="${basedir}/Moment/libs/maps.jar"/>
+    <path refid="facebook.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.moment">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.moment">
+    <patternset refid="compiler.excluded"/>
+    <patternset refid="excluded.from.module.moment"/>
+  </patternset>
+  
+  <path id="moment.module.sourcepath">
+    <dirset dir="${module.moment.basedir}/Moment">
+      <include name="gen"/>
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.moment" depends="compile.module.moment.production,compile.module.moment.tests" description="Compile module Moment"/>
+  
+  <target name="compile.module.moment.production" depends="compile.module.viewpager,compile.module.slidingmenu,compile.module.actionbarsherlock,compile.module.pulltorefresh,compile.module.google-play-services_lib,compile.module.facebook" description="Compile module Moment; production classes">
+    <mkdir dir="${moment.output.dir}"/>
+    <javac destdir="${moment.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.moment}/javac">
+      <compilerarg line="${compiler.args.moment}"/>
+      <bootclasspath refid="moment.module.bootclasspath"/>
+      <classpath refid="moment.module.production.classpath"/>
+      <src refid="moment.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.moment"/>
+    </javac>
+    
+    <copy todir="${moment.output.dir}">
+      <fileset dir="${module.moment.basedir}/Moment/gen">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.moment"/>
+      </fileset>
+      <fileset dir="${module.moment.basedir}/Moment/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+        <patternset refid="excluded.from.compilation.moment"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.moment.tests" depends="compile.module.moment.production" description="compile module Moment; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.moment" description="cleanup module">
+    <delete dir="${moment.output.dir}"/>
+    <delete dir="${moment.testoutput.dir}"/>
+  </target>
+  
+  <target name="init" description="Build initialization">
+    <!-- Perform any build initialization in this target -->
+  </target>
+  
+  <target name="clean" depends="clean.module.actionbarsherlock, clean.module.daogenerator, clean.module.facebook, clean.module.google-play-services_lib, clean.module.pulltorefresh, clean.module.testapp, clean.module.viewpager, clean.module.slidingmenu, clean.module.tests, clean.module.moment" description="cleanup all"/>
+  
+  <target name="build.modules" depends="init, clean, compile.module.actionbarsherlock, compile.module.daogenerator, compile.module.facebook, compile.module.google-play-services_lib, compile.module.pulltorefresh, compile.module.testapp, compile.module.viewpager, compile.module.slidingmenu, compile.module.tests, compile.module.moment" description="build all modules"/>
+  
+  <target name="all" depends="build.modules" description="build all"/>
+</project>
