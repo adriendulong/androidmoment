@@ -117,9 +117,7 @@
   <import file="${basedir}/Libs/viewPager/module_viewpager.xml"/>
   
   <import file="${basedir}/Libs/slidingMenu/module_slidingmenu.xml"/>
-  
-  <import file="${basedir}/Libs/facebook/tests/module_tests.xml"/>
-  
+
   <import file="${basedir}/Moment/module_moment.xml"/>
   
   <target name="init" description="Build initialization">
