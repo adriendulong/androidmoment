@@ -4,24 +4,22 @@ import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
-import android.content.pm.Signature;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -29,7 +27,11 @@ import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
+import com.facebook.internal.SessionTracker;
+import com.facebook.internal.Utility;
 import com.facebook.model.GraphUser;
 import com.google.android.gcm.GCMRegistrar;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -46,10 +48,13 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,13 +64,26 @@ public class InscriptionActivity extends SherlockActivity {
     private Uri outputFileUri;
     private int YOUR_SELECT_PICTURE_REQUEST_CODE = 0;
     private Bitmap profile_picture;
-    private String sex;
+    private String gender;
+    private URL user_pic;
+    private File pictureDir;
+    private File pictureOut;
+
+    private EditText nomEdit;
+    private EditText prenomEdit;
+    private EditText emailEdit;
+    private EditText mdpEdit ;
+    private EditText birthdate;
+    private Button male;
+    private Button female;
+
+    private ImageButton user_picture;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription);
+        pictureDir = getApplication().getCacheDir();
         GCMRegistrar.checkDevice(this);
         GCMRegistrar.checkManifest(this);
         final String regId = GCMRegistrar.getRegistrationId(this);
@@ -77,34 +95,26 @@ public class InscriptionActivity extends SherlockActivity {
             Log.v("GCM", "Not registered and on server");
         }
 
-        Session.openActiveSession(this, true, new Session.StatusCallback() {
+        nomEdit = (EditText)findViewById(R.id.inscription_nom);
+        prenomEdit = (EditText)findViewById(R.id.inscription_prenom);
+        emailEdit = (EditText)findViewById(R.id.inscription_email);
+        mdpEdit = (EditText)findViewById(R.id.inscription_mdp);
+        birthdate = (EditText) findViewById(R.id.birthdate);
+        male = (Button) findViewById(R.id.btn_male);
+        female = (Button) findViewById(R.id.btn_female);
+        user_picture = (ImageButton)findViewById(R.id.profile_picture);
+    }
 
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-
-                if (session.isOpened()) {
-                    Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-
-                        // callback after Graph API response with user object
-                        @Override
-                        public void onCompleted(GraphUser user, Response response) {
-                            if (user != null) {
-                                EditText prenom = (EditText) findViewById(R.id.inscription_prenom);
-                                prenom.setText(user.getFirstName());
-                            }
-                        }
-                    });
-                }
-            }
-        });
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        signInWithFacebook();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -120,19 +130,13 @@ public class InscriptionActivity extends SherlockActivity {
         openImageIntent();
     }
 
-    public void inscription(View view) throws JSONException {
-        EditText nomEdit = (EditText)findViewById(R.id.inscription_nom);
+    public void inscription(View view) throws JSONException, FileNotFoundException {
+
         String nom = nomEdit.getText().toString();
-        EditText prenomEdit = (EditText)findViewById(R.id.inscription_prenom);
         String prenom = prenomEdit.getText().toString();
-        EditText emailEdit = (EditText)findViewById(R.id.inscription_email);
         String email = emailEdit.getText().toString();
-        EditText mdpEdit = (EditText)findViewById(R.id.inscription_mdp);
         String mdp = mdpEdit.getText().toString();
-        EditText birthdate = (EditText) findViewById(R.id.birthdate);
         String bdate = birthdate.getText().toString();
-        Button male = (Button) findViewById(R.id.btn_male);
-        Button female = (Button) findViewById(R.id.btn_female);
 
 
         RequestParams params = new RequestParams();
@@ -146,22 +150,28 @@ public class InscriptionActivity extends SherlockActivity {
         } else {
             editEmailAlert();
         }
+
         params.put("birth_date", bdate);
-        params.put("sex", sex);
+        params.put("gender", gender);
 
         if (!GCMRegistrar.getRegistrationId(this).equals("")) params.put("notif_id", GCMRegistrar.getRegistrationId(this));
+
         params.put("os", "1");
         params.put("os_version", android.os.Build.VERSION.RELEASE);
         params.put("model", CommonUtilities.getDeviceName());
         params.put("device_id", AppMoment.getInstance().tel_id);
 
-
-        File image = getApplicationContext().getFileStreamPath("profile_picture");
-        if (image!=null){
-            try {
-                params.put("photo", image);
-                image.delete();
-            } catch(FileNotFoundException e) {}
+        if(pictureOut != null) {
+            params.put("photo", pictureOut);
+            pictureOut.deleteOnExit();
+        } else {
+            File image = getApplicationContext().getFileStreamPath("profile_picture");
+            if (image != null){
+                try {
+                    params.put("photo", image);
+                    image.delete();
+                } catch(FileNotFoundException e) { e.printStackTrace(); }
+            }
         }
 
         AppMoment.getInstance().user = new User();
@@ -172,8 +182,12 @@ public class InscriptionActivity extends SherlockActivity {
 
         MomentApi.initialize(getApplicationContext());
         MomentApi.post("register", params, new JsonHttpResponseHandler() {
+
             @Override
             public void onSuccess(JSONObject response) {
+
+                System.out.print("Inscription Step 1 OK");
+
                 Long id = Long.parseLong("-1");
 
                 try {
@@ -187,6 +201,9 @@ public class InscriptionActivity extends SherlockActivity {
                 MomentApi.get("user", null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
+
+                        System.out.print("Inscription Step 2 OK");
+
                         try {
                             String firstname = response.getString("firstname");
                             AppMoment.getInstance().user.setFirstName(firstname);
@@ -201,10 +218,10 @@ public class InscriptionActivity extends SherlockActivity {
 
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
 
-                            alertDialogBuilder.setTitle("Compte crééŽŽ");
+                            alertDialogBuilder.setTitle("OK");
 
                             alertDialogBuilder
-                                    .setMessage("Le compte a ŽtŽ crŽŽ :)")
+                                    .setMessage("OK")
                                     .setCancelable(false)
                                     .setPositiveButton("Cool",new DialogInterface.OnClickListener() {
                                         @Override
@@ -219,6 +236,8 @@ public class InscriptionActivity extends SherlockActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
+                        startActivity(intent);
                     }
                 });
             }
@@ -249,16 +268,7 @@ public class InscriptionActivity extends SherlockActivity {
                 AppMoment.getInstance().user = null;
             }
         });
-
-        Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
-        startActivity(intent);
-
     }
-
-
-    /**
-     * Retour vers le premier Žcran
-     */
 
     public void retour(View view){
         Intent intent = new Intent(this, MomentActivity.class);
@@ -358,11 +368,11 @@ public class InscriptionActivity extends SherlockActivity {
     }
 
     public void setMale(View view){
-        sex = "M";
+        gender = "M";
     }
 
     public void setFemale(View view){
-        sex = "F";
+        gender = "F";
     }
 
     public static boolean isEmailAdress(String email){
@@ -389,4 +399,106 @@ public class InscriptionActivity extends SherlockActivity {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
     }
+
+    private void signInWithFacebook() {
+
+        SessionTracker mSessionTracker = new SessionTracker(getBaseContext(), new Session.StatusCallback() {
+
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+            }
+        }, null, false);
+
+        String applicationId = Utility.getMetadataApplicationId(getBaseContext());
+        Session mCurrentSession = mSessionTracker.getSession();
+
+        if (mCurrentSession == null || mCurrentSession.getState().isClosed()) {
+            mSessionTracker.setSession(null);
+            Session session = new Session.Builder(getBaseContext()).setApplicationId(applicationId).build();
+            Session.setActiveSession(session);
+            mCurrentSession = session;
+        }
+
+        if (!mCurrentSession.isOpened()) {
+            Session.OpenRequest openRequest = null;
+            openRequest = new Session.OpenRequest(InscriptionActivity.this);
+
+            if (openRequest != null) {
+                openRequest.setDefaultAudience(SessionDefaultAudience.FRIENDS);
+                openRequest.setPermissions(Arrays.asList("user_birthday", "email"));
+                openRequest.setLoginBehavior(SessionLoginBehavior.SSO_WITH_FALLBACK);
+
+                mCurrentSession.openForRead(openRequest);
+
+                Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                        profilePictureTask.execute();
+                        Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
+                    }
+                });
+
+            }
+
+        }else {
+            Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                    profilePictureTask.execute();
+                    Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
+                }
+            });
+        }
+    }
+
+    private class ProfilePictureTask extends AsyncTask<Void, Void, Bitmap> {
+
+        private GraphUser user;
+
+        public ProfilePictureTask(GraphUser user) {
+            this.user = user;
+        }
+
+        @Override
+        protected Bitmap doInBackground(Void... params) {
+
+            try {
+                user_pic = new URL("http://graph.facebook.com/"+user.getId()+"/picture?width=200&height=200");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            assert user_pic != null;
+            Bitmap bitmap = null;
+            try {
+                bitmap = BitmapFactory.decodeStream(user_pic.openConnection().getInputStream());
+                pictureOut = File.createTempFile("usr_profil", ".jpg", pictureDir);
+                FileOutputStream fileOutputStream = new FileOutputStream(pictureOut);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return bitmap;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap){
+            if(user != null)
+            {
+                prenomEdit.setText(user.getFirstName());
+                nomEdit.setText(user.getLastName());
+                birthdate.setText(user.getBirthday());
+                emailEdit.setText(user.asMap().get("email").toString());
+                if(user.asMap().get("gender").toString().equals("male")) {
+                    gender = "M"; } else { gender = "F"; }
+            }
+
+            if(bitmap != null)
+                user_picture.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
+        }
+    }
+
 }
