@@ -1,5 +1,6 @@
 package com.moment.activities;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -20,7 +21,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -44,8 +44,6 @@ import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -53,9 +51,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,9 +79,6 @@ public class InscriptionActivity extends SherlockActivity {
     private Button male;
     private Button female;
     private ImageButton user_picture;
-
-    private List<NameValuePair> params = new ArrayList<NameValuePair>(2);
-
     private String gender;
 
     @Override
@@ -107,61 +105,79 @@ public class InscriptionActivity extends SherlockActivity {
         male = (Button) findViewById(R.id.btn_male);
         female = (Button) findViewById(R.id.btn_female);
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
-        params = new ArrayList<NameValuePair>(2);
 
-        SessionTracker mSessionTracker = new SessionTracker(getBaseContext(), new Session.StatusCallback() {
-
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-            }
-        }, null, false);
-
-        String applicationId = Utility.getMetadataApplicationId(getBaseContext());
-        Session mCurrentSession = mSessionTracker.getSession();
-
-        if (mCurrentSession == null || mCurrentSession.getState().isClosed()) {
-            mSessionTracker.setSession(null);
-            Session session = new Session.Builder(getBaseContext()).setApplicationId(applicationId).build();
-            Session.setActiveSession(session);
-            mCurrentSession = session;
+        try {
+            openActiveSession(this, true, fbStatusCallback, Arrays.asList(
+                    new String[] { "email",  "user_birthday"}), savedInstanceState);
         }
-
-        if (!mCurrentSession.isOpened()) {
-            Session.OpenRequest openRequest = null;
-            openRequest = new Session.OpenRequest(InscriptionActivity.this);
-
-            if (openRequest != null) {
-                openRequest.setDefaultAudience(SessionDefaultAudience.FRIENDS);
-                openRequest.setPermissions(Arrays.asList("user_birthday", "email"));
-                openRequest.setLoginBehavior(SessionLoginBehavior.SSO_WITH_FALLBACK);
-
-                mCurrentSession.openForRead(openRequest);
-
-                Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
-                    @Override
-                    public void onCompleted(GraphUser user, Response response) {
-                        ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
-                        profilePictureTask.execute();
-
-                        Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
-                    }
-                });
-
-            }
-
-        }else {
-            Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
-                    profilePictureTask.execute();
-                    Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
-                }
-            });
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
-    public void inscription(View view) throws JSONException, FileNotFoundException {
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (response != null) {
+                            try{
+
+                                prenomEdit.setText(user.getFirstName());
+                                nomEdit.setText(user.getLastName());
+
+                                emailEdit.setText(user.getProperty("email").toString());
+
+                                birthdate.setText(user.getBirthday());
+
+                                if(user.getProperty("gender").toString().equals("male")) {
+                                    setMale(male);
+                                } else {
+                                    setFemale(female);
+                                }
+
+                                ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                                profilePictureTask.execute();
+
+                            } catch(Exception e) {
+                                e.printStackTrace();
+                                Log.d("", "Exception e");
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    private  Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                       Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
+                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
+                SSO_WITH_FALLBACK).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+
+        Session session = Session.getActiveSession();
+        Log.d("" ,"" + session);
+        if (session == null) {
+            Log.d("", "" + savedInstanceState);
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForRead(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    public void inscription(View view) {
 
         String nom = nomEdit.getText().toString();
         String prenom = prenomEdit.getText().toString();
@@ -169,6 +185,16 @@ public class InscriptionActivity extends SherlockActivity {
         String mdp = mdpEdit.getText().toString();
         String bdate = birthdate.getText().toString();
 
+
+        java.util.Date d = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
+        try {
+            d = sdf.parse(bdate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        String str = String.valueOf(d.getTime());
 
         RequestParams params = new RequestParams();
         params.put("firstname", prenom);
@@ -182,7 +208,8 @@ public class InscriptionActivity extends SherlockActivity {
             editEmailAlert();
         }
 
-        params.put("birth_date", bdate);
+        //params.put("birth_date", str);
+
         params.put("sex", gender);
 
         if (!GCMRegistrar.getRegistrationId(this).equals("")) params.put("notif_id", GCMRegistrar.getRegistrationId(this));
@@ -193,45 +220,117 @@ public class InscriptionActivity extends SherlockActivity {
         params.put("device_id", AppMoment.getInstance().tel_id);
 
         if(pictureOut != null) {
-            params.put("photo", pictureOut);
-            pictureOut.deleteOnExit();
+            try {
+                params.put("photo", pictureOut);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
         } else {
+
             File image = getApplicationContext().getFileStreamPath("profile_picture");
             if (image != null){
                 try {
                     params.put("photo", image);
-                    image.delete();
                 } catch(FileNotFoundException e) { e.printStackTrace(); }
             }
         }
 
         MomentApi.initialize(getApplicationContext());
-        MomentApi.post("register", params, new JsonHttpResponseHandler() {
 
-            @Override
-            public void onSuccess(JSONObject response) {
+                MomentApi.post("register", params, new JsonHttpResponseHandler() {
 
-                System.out.print("Inscription Step 1 OK");
+                    @Override
+                    public void onSuccess(JSONObject response) {
 
-                Long id = Long.parseLong("-1");
+                        System.out.print("Inscription Step 1 OK");
 
-                try {
-                    id = response.getLong("id");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                        Long id = Long.parseLong("-1");
 
-                AppMoment.getInstance().user.setId(id);
+                        try {
+                            id = response.getLong("id");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
 
+
+                        AppMoment.getInstance().user = new User();
+                        AppMoment.getInstance().user.setId(id);
+                        AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
+
+                        MomentApi.get("user", null, new JsonHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+
+                                System.out.print("Inscription Step 2 OK");
+
+                                try {
+                                    String firstname = response.getString("firstname");
+                                    AppMoment.getInstance().user.setFirstName(firstname);
+
+                                    String lastname = response.getString("lastname");
+                                    AppMoment.getInstance().user.setLastName(lastname);
+
+                                    if(response.has("profile_picture_url")){
+                                        String profile_picture_url = response.getString("profile_picture_url");
+                                        AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
+                                    }
+
+                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+
+                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
+
+                                    alertDialogBuilder.setTitle("OK");
+
+                                    alertDialogBuilder
+                                            .setMessage("OK")
+                                            .setCancelable(false)
+                                            .setPositiveButton("Cool",new DialogInterface.OnClickListener() {
+                                                @Override
+                                                public void onClick(DialogInterface dialog,int id) {
+                                                    Intent intent = new Intent(InscriptionActivity.this, TimelineActivity.class);
+                                                    startActivity(intent);
+                                                }
+                                            });
+
+                                    AlertDialog alertDialog = alertDialogBuilder.create();
+                                    alertDialog.show();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
+                                startActivity(intent);
+                            }
+                        });
+                    }
+
+
+                    @Override
+                    public void onFailure(Throwable e, JSONObject errorResponse) {
+                        System.out.println(errorResponse.toString());
+
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
+
+                        alertDialogBuilder.setTitle("Compte crŽŽ");
+
+                        alertDialogBuilder
+                                .setMessage(errorResponse.toString())
+                                .setCancelable(false)
+                                .setPositiveButton("Mince !",new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        alertDialog.show();
+
+                        AppMoment.getInstance().user = null;
+                    }
+                });
             }
-
-            @Override
-            public void onFailure(Throwable e, JSONObject errorResponse) {
-                System.out.println(errorResponse.toString());
-            }
-        });
-    }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -251,7 +350,6 @@ public class InscriptionActivity extends SherlockActivity {
     public void selectImage(View view){
         openImageIntent();
     }
-
 
     public void retour(View view){
         Intent intent = new Intent(this, MomentActivity.class);
@@ -295,8 +393,7 @@ public class InscriptionActivity extends SherlockActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        Session.getActiveSession()
-                .onActivityResult(this, requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 
         if(resultCode == RESULT_OK)
         {
@@ -413,16 +510,6 @@ public class InscriptionActivity extends SherlockActivity {
 
         @Override
         protected void onPostExecute(Bitmap bitmap){
-            if(user != null)
-            {
-                prenomEdit.setText(user.getFirstName());
-                nomEdit.setText(user.getLastName());
-                birthdate.setText(user.getBirthday());
-                emailEdit.setText(user.asMap().get("email").toString());
-                if(user.asMap().get("gender").toString().equals("male")) {
-                    gender = "M"; } else { gender = "F"; }
-            }
-
             if(bitmap != null)
                 user_picture.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
         }

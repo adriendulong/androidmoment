@@ -65,6 +65,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
             public void onSuccess(JSONObject response) {
                 try {
                     AppMoment.getInstance().user.setNumTel(response.getString("phone"));
+                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

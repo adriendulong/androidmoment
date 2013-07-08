@@ -240,14 +240,8 @@ public class MomentActivity extends Activity {
          layout_buttons.startAnimation(animation);
     	
     }
-    
-    
-    /** Appeler lorsque l'utilisateur clique sur le bouton de inscription */
-    public void inscription(View view) {
-       Log.d("Connection", "conncetion reussi");
 
-       
-       //Creer et demarrer la timeline
+    public void inscription(View view) {
        Intent intent = new Intent(this, InscriptionActivity.class);
        startActivity(intent);
     }
