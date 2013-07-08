@@ -20,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -43,6 +44,8 @@ import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -64,11 +67,9 @@ public class InscriptionActivity extends SherlockActivity {
     private Uri outputFileUri;
     private int YOUR_SELECT_PICTURE_REQUEST_CODE = 0;
     private Bitmap profile_picture;
-    private String gender;
     private URL user_pic;
     private File pictureDir;
     private File pictureOut;
-
     private EditText nomEdit;
     private EditText prenomEdit;
     private EditText emailEdit;
@@ -76,8 +77,11 @@ public class InscriptionActivity extends SherlockActivity {
     private EditText birthdate;
     private Button male;
     private Button female;
-
     private ImageButton user_picture;
+
+    private List<NameValuePair> params = new ArrayList<NameValuePair>(2);
+
+    private String gender;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,31 +107,58 @@ public class InscriptionActivity extends SherlockActivity {
         male = (Button) findViewById(R.id.btn_male);
         female = (Button) findViewById(R.id.btn_female);
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
-    }
+        params = new ArrayList<NameValuePair>(2);
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        signInWithFacebook();
-    }
+        SessionTracker mSessionTracker = new SessionTracker(getBaseContext(), new Session.StatusCallback() {
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+            }
+        }, null, false);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
+        String applicationId = Utility.getMetadataApplicationId(getBaseContext());
+        Session mCurrentSession = mSessionTracker.getSession();
+
+        if (mCurrentSession == null || mCurrentSession.getState().isClosed()) {
+            mSessionTracker.setSession(null);
+            Session session = new Session.Builder(getBaseContext()).setApplicationId(applicationId).build();
+            Session.setActiveSession(session);
+            mCurrentSession = session;
         }
-        return super.onOptionsItemSelected(item);
-    }
 
-    public void selectImage(View view){
-        openImageIntent();
+        if (!mCurrentSession.isOpened()) {
+            Session.OpenRequest openRequest = null;
+            openRequest = new Session.OpenRequest(InscriptionActivity.this);
+
+            if (openRequest != null) {
+                openRequest.setDefaultAudience(SessionDefaultAudience.FRIENDS);
+                openRequest.setPermissions(Arrays.asList("user_birthday", "email"));
+                openRequest.setLoginBehavior(SessionLoginBehavior.SSO_WITH_FALLBACK);
+
+                mCurrentSession.openForRead(openRequest);
+
+                Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                        profilePictureTask.execute();
+
+                        Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
+                    }
+                });
+
+            }
+
+        }else {
+            Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                    profilePictureTask.execute();
+                    Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
+                }
+            });
+        }
     }
 
     public void inscription(View view) throws JSONException, FileNotFoundException {
@@ -152,7 +183,7 @@ public class InscriptionActivity extends SherlockActivity {
         }
 
         params.put("birth_date", bdate);
-        params.put("gender", gender);
+        params.put("sex", gender);
 
         if (!GCMRegistrar.getRegistrationId(this).equals("")) params.put("notif_id", GCMRegistrar.getRegistrationId(this));
 
@@ -174,12 +205,6 @@ public class InscriptionActivity extends SherlockActivity {
             }
         }
 
-        AppMoment.getInstance().user = new User();
-        AppMoment.getInstance().user.setEmail(email);
-
-        AppMoment.getInstance().user.setFirstName(prenom);
-        AppMoment.getInstance().user.setLastName(nom);
-
         MomentApi.initialize(getApplicationContext());
         MomentApi.post("register", params, new JsonHttpResponseHandler() {
 
@@ -198,83 +223,40 @@ public class InscriptionActivity extends SherlockActivity {
 
                 AppMoment.getInstance().user.setId(id);
 
-                MomentApi.get("user", null, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-
-                        System.out.print("Inscription Step 2 OK");
-
-                        try {
-                            String firstname = response.getString("firstname");
-                            AppMoment.getInstance().user.setFirstName(firstname);
-
-                            String lastname = response.getString("lastname");
-                            AppMoment.getInstance().user.setLastName(lastname);
-
-                            if(response.has("profile_picture_url")){
-                                String profile_picture_url = response.getString("profile_picture_url");
-                                AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
-                            }
-
-                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-
-                            alertDialogBuilder.setTitle("OK");
-
-                            alertDialogBuilder
-                                    .setMessage("OK")
-                                    .setCancelable(false)
-                                    .setPositiveButton("Cool",new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog,int id) {
-                                            Intent intent = new Intent(InscriptionActivity.this, TimelineActivity.class);
-                                            startActivity(intent);
-                                        }
-                                    });
-
-                            AlertDialog alertDialog = alertDialogBuilder.create();
-                            alertDialog.show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                        Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
-                        startActivity(intent);
-                    }
-                });
             }
-
 
             @Override
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 System.out.println(errorResponse.toString());
-
-                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-
-                alertDialogBuilder.setTitle("Compte crŽŽ");
-
-                alertDialogBuilder
-                        .setMessage(errorResponse.toString())
-                        .setCancelable(false)
-                        .setPositiveButton("Mince !",new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog,int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-
-                alertDialog.show();
-
-                AppMoment.getInstance().user = null;
             }
         });
     }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void selectImage(View view){
+        openImageIntent();
+    }
+
 
     public void retour(View view){
         Intent intent = new Intent(this, MomentActivity.class);
         startActivity(intent);
     }
-
 
     private void openImageIntent() {
 
@@ -309,10 +291,8 @@ public class InscriptionActivity extends SherlockActivity {
         startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
     }
 
-
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession()
@@ -400,59 +380,6 @@ public class InscriptionActivity extends SherlockActivity {
         alertDialog.show();
     }
 
-    private void signInWithFacebook() {
-
-        SessionTracker mSessionTracker = new SessionTracker(getBaseContext(), new Session.StatusCallback() {
-
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-            }
-        }, null, false);
-
-        String applicationId = Utility.getMetadataApplicationId(getBaseContext());
-        Session mCurrentSession = mSessionTracker.getSession();
-
-        if (mCurrentSession == null || mCurrentSession.getState().isClosed()) {
-            mSessionTracker.setSession(null);
-            Session session = new Session.Builder(getBaseContext()).setApplicationId(applicationId).build();
-            Session.setActiveSession(session);
-            mCurrentSession = session;
-        }
-
-        if (!mCurrentSession.isOpened()) {
-            Session.OpenRequest openRequest = null;
-            openRequest = new Session.OpenRequest(InscriptionActivity.this);
-
-            if (openRequest != null) {
-                openRequest.setDefaultAudience(SessionDefaultAudience.FRIENDS);
-                openRequest.setPermissions(Arrays.asList("user_birthday", "email"));
-                openRequest.setLoginBehavior(SessionLoginBehavior.SSO_WITH_FALLBACK);
-
-                mCurrentSession.openForRead(openRequest);
-
-                Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
-                    @Override
-                    public void onCompleted(GraphUser user, Response response) {
-                        ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
-                        profilePictureTask.execute();
-                        Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
-                    }
-                });
-
-            }
-
-        }else {
-            Request.executeMeRequestAsync(mCurrentSession, new Request.GraphUserCallback() {
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
-                    profilePictureTask.execute();
-                    Log.e("myConsultant", user.getId() + " " + user.getName() + " " + user.getInnerJSONObject());
-                }
-            });
-        }
-    }
-
     private class ProfilePictureTask extends AsyncTask<Void, Void, Bitmap> {
 
         private GraphUser user;
@@ -500,5 +427,4 @@ public class InscriptionActivity extends SherlockActivity {
                 user_picture.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
         }
     }
-
 }
