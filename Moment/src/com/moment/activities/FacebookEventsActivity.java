@@ -3,19 +3,14 @@ package com.moment.activities;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
-import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.moment.R;
-import com.moment.models.FbEvent;
 
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class FacebookEventsActivity extends SherlockActivity {
 
@@ -25,13 +20,21 @@ public class FacebookEventsActivity extends SherlockActivity {
         setContentView(R.layout.activity_facebook_events);
         
         Bundle extras = getIntent().getExtras();
+        try {
+            JSONArray events = new JSONArray(getIntent().getStringExtra("events"));
+            Log.d("events", events.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
 
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    
-    
+
+
     @Override
 	public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

@@ -125,9 +125,14 @@ public class CreationActivity extends SherlockActivity {
 
                     @Override
                     public void onCompleted(Response response) {
-                        System.out.println("Result: " + response.toString());
+                        JSONArray events = null;
+                        try {
+                            events = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         Intent intent = new Intent(getApplication(), FacebookEventsActivity.class);
-                        intent.putExtra("events", response.getGraphObject().getInnerJSONObject().toString());
+                        intent.putExtra("events", events.toString());
                         startActivity(intent);
                     }
                 });
