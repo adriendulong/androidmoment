@@ -1,5 +1,6 @@
 package com.moment.fragments;
 
+import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.Chat;
+import com.moment.models.Moment;
 import com.moment.models.User;
 
 import org.apache.http.HttpEntity;
@@ -43,6 +45,7 @@ public class ChatFragment extends Fragment {
     public View view;
     public LayoutInflater inflater;
     public Long momentId;
+    //private Moment moment;
 
     PullToRefreshScrollView scrollChat;
     ScrollView mScrollView;
@@ -83,81 +86,6 @@ public class ChatFragment extends Fragment {
     public void onStart(){
         super.onStart();
 
-        if(!AppMoment.getInstance().checkInternet()){
-            List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
-
-            for(Chat c : tempChats){
-
-                User user = AppMoment.getInstance().userDao.load(c.getUserId());
-
-                c.setUser(user);
-
-                if(c.getMomentId() == momentId){
-
-                    if(c.getUserId() ==  AppMoment.getInstance().user.getId()){
-                        messageRight(c);
-                    }
-
-                    else{
-                        messageLeft(c);
-                    }
-                }
-            }
-        }
-
-        if(AppMoment.getInstance().checkInternet()){
-            MomentApi.get("lastchats/"+momentId, null, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    try {
-
-                        JSONArray chats;
-
-                        if(!response.isNull("next_page"))
-                        {
-                            if(response.getInt("next_page") >= nextPage)
-                                nextPage = response.getInt("next_page");
-                            else
-                                nextPage = 0;
-                        }
-
-                        chats = response.getJSONArray("chats");
-
-                        ArrayList<Chat> tempChats = new ArrayList<Chat>();
-
-                        for(int i=0;i<chats.length();i++){
-
-                            Chat tempChat = new Chat();
-
-                            tempChat.chatFromJSON(chats.getJSONObject(i));
-                            User user = tempChat.getUser();
-
-                            if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null){
-                                tempChat.setMomentId(momentId);
-                                AppMoment.getInstance().chatDao.insert(tempChat);
-                                if(AppMoment.getInstance().userDao.load(user.getId()) == null)
-                                    AppMoment.getInstance().userDao.insert(user);
-                            }
-
-                            if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()){
-                                messageRight(tempChat);
-                            }
-
-                            else{
-                                messageLeft(tempChat);
-                            }
-
-                            tempChats.add(tempChat);
-                        }
-
-                        AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
     }
 
     @Override
@@ -425,6 +353,100 @@ public class ChatFragment extends Fragment {
                 e.printStackTrace();
                 return null;
             }
+        }
+
+    }
+
+
+    /**
+     * Function called when the activity got the Moment
+     */
+
+    public void createFragment(Long momentId){
+        this.momentId = momentId;
+
+        initChat();
+    }
+
+    /**
+     * Function that takes care to init the chats
+     */
+
+    public void initChat(){
+        if(!AppMoment.getInstance().checkInternet()){
+            List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
+
+            for(Chat c : tempChats){
+
+                User user = AppMoment.getInstance().userDao.load(c.getUserId());
+
+                c.setUser(user);
+
+                if(c.getMomentId() == momentId){
+
+                    if(c.getUserId() ==  AppMoment.getInstance().user.getId()){
+                        messageRight(c);
+                    }
+
+                    else{
+                        messageLeft(c);
+                    }
+                }
+            }
+        }
+
+        if(AppMoment.getInstance().checkInternet()){
+            MomentApi.get("lastchats/"+momentId, null, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+
+                        JSONArray chats;
+
+                        if(!response.isNull("next_page"))
+                        {
+                            if(response.getInt("next_page") >= nextPage)
+                                nextPage = response.getInt("next_page");
+                            else
+                                nextPage = 0;
+                        }
+
+                        chats = response.getJSONArray("chats");
+
+                        ArrayList<Chat> tempChats = new ArrayList<Chat>();
+
+                        for(int i=0;i<chats.length();i++){
+
+                            Chat tempChat = new Chat();
+
+                            tempChat.chatFromJSON(chats.getJSONObject(i));
+                            User user = tempChat.getUser();
+
+                            if(AppMoment.getInstance().chatDao.load(tempChat.getId()) == null){
+                                tempChat.setMomentId(momentId);
+                                AppMoment.getInstance().chatDao.insert(tempChat);
+                                if(AppMoment.getInstance().userDao.load(user.getId()) == null)
+                                    AppMoment.getInstance().userDao.insert(user);
+                            }
+
+                            if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()){
+                                messageRight(tempChat);
+                            }
+
+                            else{
+                                messageLeft(tempChat);
+                            }
+
+                            tempChats.add(tempChat);
+                        }
+
+                        AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
         }
 
     }

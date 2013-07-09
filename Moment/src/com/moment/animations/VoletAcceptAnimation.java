@@ -10,7 +10,7 @@ public class VoletAcceptAnimation extends Animation {
 	int height;
     View view;
     int initialHeight;
-    //State true= replié, false = déplié
+    //State true= repli√©, false = d√©pli√©
     boolean stateClosed;
     float pixelRatio;
     

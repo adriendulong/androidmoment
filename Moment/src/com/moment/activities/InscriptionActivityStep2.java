@@ -85,10 +85,10 @@ public class InscriptionActivityStep2 extends SherlockActivity {
     public void editPhoneAlert(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivityStep2.this);
 
-        alertDialogBuilder.setTitle("Numéro de téléphone incorrect");
+        alertDialogBuilder.setTitle("NumÃ©ro de tÃ©lÃ©phone incorrect");
 
         alertDialogBuilder
-                .setMessage("Corriger le numéro")
+                .setMessage("Corriger le numÃ©ro")
                 .setCancelable(false)
                 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                     @Override

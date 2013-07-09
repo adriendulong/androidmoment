@@ -54,7 +54,7 @@ public class FbEvent implements Parcelable {
         return this.title;
     }
 
-	//A partir de lˆ les fonction pour Parcelable
+	//A partir de la les fonction pour Parcelable
 	
 	@Override
 	public int describeContents() {

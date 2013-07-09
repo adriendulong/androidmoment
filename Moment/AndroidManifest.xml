@@ -49,7 +49,7 @@
 
     <application
             android:name=".AppMoment"
-            android:icon="@drawable/picto_o"
+            android:icon="@drawable/app_icon"
             android:label="@string/app_name"
             android:logo="@drawable/logo"
             android:theme="@style/Theme.Styled" >
@@ -57,13 +57,24 @@
 
         <service android:name=".activities.GCMIntentService" />
 
+        <!--
         <receiver android:name="com.google.android.gcm.GCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <category android:name="com.moment" />
             </intent-filter>
+        </receiver> -->
+
+        <receiver
+            android:name=".MomentBroadcastReceiver"
+            android:permission="com.google.android.c2dm.permission.SEND" >
+            <intent-filter>
+                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.moment" />
+            </intent-filter>
         </receiver>
+        <receiver android:name=".MomentBroadcastReceiver"/>
 
 
         <activity

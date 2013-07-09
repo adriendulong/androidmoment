@@ -53,12 +53,15 @@ public class InvitationsFragment extends Fragment {
 	public static final String POSITION = "Position";
 	private ListView listView;
 	private ArrayList<User> users;
+    private ArrayList<User> showUsers;
 	// facebook vars
 	private Facebook mFacebook;
 	private AsyncFacebookRunner mAsyncRunner;
 	private int position;
-	
-	public InvitationsFragment(){
+    private InvitationsAdapter adapter;
+
+
+    public InvitationsFragment(){
 		
 	}
 	
@@ -116,7 +119,7 @@ public class InvitationsFragment extends Fragment {
                                 users.add(tempUser);
                             }
 
-                            InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+                            adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
                             listView.setAdapter(adapter);
 
 
@@ -145,9 +148,66 @@ public class InvitationsFragment extends Fragment {
 	/**
 	 * Recupere tous les contacts et en cr�� des users
 	 */
-	
 
-	
+    public void readContacts(){
+
+        String[] projection =
+                {
+                        Contacts._ID,
+                        Contacts.DISPLAY_NAME
+                };
+        String sortOrder = Contacts.DISPLAY_NAME +
+                        " ASC";
+
+        String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? ";
+        String[] selectionArgs = new String[] { "1" };
+
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                projection, where, selectionArgs, sortOrder);
+
+        if (cur.getCount() > 0) {
+
+            while (cur.moveToNext()) {
+
+                User userCur = new User();
+
+                String id = cur.getString(cur.getColumnIndex(Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
+
+                System.out.println("ID : "+id+"    NAME : "+name);
+
+                if(!name.contains("@")){
+                    userCur.setFirstName(name);
+                    userCur.setIdCarnetAdresse(id);
+
+                    users.add(userCur);
+
+                }
+
+
+
+            }
+
+
+        }
+
+        Integer[] positions = new Integer[users.size()];
+
+        int i=0;
+        for(User user : users){
+            positions[i] = i;
+            i++;
+        }
+
+        cur.close();
+
+        //We get extra infos
+        ExtrasContactLoader asyncContact = new ExtrasContactLoader();
+        asyncContact.execute(positions);
+    }
+
+	/*
 	private void getContacts2(){
 
 			ContentResolver cr = getActivity().getContentResolver();
@@ -171,10 +231,10 @@ public class InvitationsFragment extends Fragment {
                     
                     //Photo
                     
-                    //ImagesContactLoader imContact = new ImagesContactLoader();
-                    //imContact.execute(user);
+                    ImagesContactLoader imContact = new ImagesContactLoader();
+                    imContact.execute(user);
                     
-                    /*
+
                     if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
                     	
                     	Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+ " = ?", new String[] { id }, null);
@@ -191,8 +251,8 @@ public class InvitationsFragment extends Fragment {
                         }
                         pCur.close();
                     	
-                    }*/
-                    
+                    }
+
                    
                     
                     
@@ -207,7 +267,7 @@ public class InvitationsFragment extends Fragment {
 			}
 
 			
-		}
+		}*/
 	
 	
 	/**
@@ -216,7 +276,7 @@ public class InvitationsFragment extends Fragment {
 	 * @return
 	 */
 	
-	
+	/*
 	public InputStream openPhoto(long contactId) {
 	     Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, contactId);
 	     Uri photoUri = Uri.withAppendedPath(contactUri, Contacts.Photo.CONTENT_DIRECTORY);
@@ -243,6 +303,7 @@ public class InvitationsFragment extends Fragment {
 	        }
 	     return null;
 	 }
+	 */
 	
 	
 	
@@ -261,7 +322,7 @@ public class InvitationsFragment extends Fragment {
 			super.onPreExecute();
 			Toast.makeText(getActivity().getApplicationContext(), "D�but du traitement asynchrone", Toast.LENGTH_LONG).show();
 			dialog = ProgressDialog.show(getActivity(), null, "Chargements des contacts");
-			
+
 		}
 
 		@Override
@@ -274,7 +335,7 @@ public class InvitationsFragment extends Fragment {
 		@Override
 		protected Void doInBackground(Boolean... arg0) {
 
-			getContacts2();
+			readContacts();
 			
 			
 			return null;
@@ -282,7 +343,7 @@ public class InvitationsFragment extends Fragment {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+			adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
 			Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est termin�", Toast.LENGTH_LONG).show();
 			dialog.dismiss();
@@ -297,10 +358,11 @@ public class InvitationsFragment extends Fragment {
 	 * @author adriendulong
 	 *
 	 */
+
 	
-	private class ImagesContactLoader extends AsyncTask<User, Integer, User>
+	private class ExtrasContactLoader extends AsyncTask<Integer, Integer, Boolean>
 	{
-		
+
 
 		@Override
 		protected void onPreExecute() {
@@ -313,76 +375,95 @@ public class InvitationsFragment extends Fragment {
 		protected void onProgressUpdate(Integer... values){
 			super.onProgressUpdate(values);
 			// Mise � jour de la ProgressBar
+
 			
 		}
 
 		@Override
-		protected User doInBackground(User... user) {
+		protected Boolean doInBackground(Integer... position) {
+                /*
+                String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? " +
+                        "AND "+
+                        ContactsContract.RawContacts.Data._ID+" = ?";
+                String[] selectionArgs = new String[] { "1",  users.get(i).getIdCarnetAdresse()};
 
-			ContentResolver cr = getActivity().getContentResolver();
-			
-			InputStream photoStream = openPhoto(Long.parseLong(user[0].getIdCarnetAdresse()));
-            if(photoStream!=null){
-            	user[0].setPhotoThumbnail(BitmapFactory.decodeStream(photoStream));
+                String[] projection =
+                        {
+                                ContactsContract.CommonDataKinds.Email.ADDRESS,
+                                ContactsContract.CommonDataKinds.Phone.NUMBER
+                        };
+
+                ContentResolver cr = getActivity().getContentResolver();
+                Cursor tCur = cr.query(ContactsContract.Data.CONTENT_URI,projection,
+                        where,
+                        selectionArgs, null);
+
+                while (tCur.moveToNext()) {
+                    String email = tCur.getString(tCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+                    System.out.println("EMAIL :" + email);
+                }
+
+                tCur.close();*/
+
+            ContentResolver cr = getActivity().getContentResolver();
+
+            for(Integer i : position){
+                System.out.println("name : " + users.get(i).getFirstName() + ", ID : " + users.get(i).getIdCarnetAdresse());
+
+                // get the phone number
+                Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                        new String[]{users.get(i).getIdCarnetAdresse()}, null);
+                while (pCur.moveToNext()) {
+                    String phone = pCur.getString(
+                            pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    System.out.println("phone" + phone);
+
+                    if(users.get(i).getNumTel()==null){
+                        users.get(i).setNumTel(phone);
+                    }
+                    else if(users.get(i).getSecondNumTel()==null){
+                        users.get(i).setSecondNumTel(phone);
+                        break;
+                    }
+                }
+                pCur.close();
+
+
+                // get email and type
+
+                Cursor emailCur = cr.query(
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        null,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                        new String[]{users.get(i).getIdCarnetAdresse()}, null);
+                while (emailCur.moveToNext()) {
+                    // This would allow you get several email addresses
+                    // if the email addresses were stored in an array
+                    String email = emailCur.getString(
+                            emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+                    String emailType = emailCur.getString(
+                            emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+
+                    System.out.println("Email " + email + " Email Type : " + emailType);
+                    if(users.get(i).getEmail()==null){
+                        users.get(i).setEmail(email);
+                    }
+                    else if(users.get(i).getSecondEmail()==null){
+                        users.get(i).setSecondEmail(email);
+                        break;
+                    }
+                }
+                emailCur.close();
             }
-            
-            Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+ " = ?", new String[] { user[0].getIdCarnetAdresse() }, null);
-            
-            	try{
-            		
-            		while (pCur.moveToNext()) {
-                        String phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        //System.out.println("phone" + phone);
-                        if(user[0].getNumTel()==null){
-                        	user[0].setNumTel(phone);
-                        }
-                        else if(user[0].getSecondNumTel()==null) user[0].setSecondNumTel(phone);
-                        
 
-                    }
-            		
-            	} catch (SQLException e) {
-      	          Log.e("e", "sql exception in dbio_count", e);            
-    	        } catch(Exception ex) {
-    	          Log.e("e", "other exception in dbio_count", ex);
-    	        } finally {
-    	          if (pCur != null) {
-    	        	  pCur.close();
-    	          }
-    	        }
-            	
-            	
-            	Cursor eCur = cr.query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID+ " = ?", new String[] { user[0].getIdCarnetAdresse() }, null);
-                
-            	try{
-            		
-            		while (eCur.moveToNext()) {
-                        String email = eCur.getString(eCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
-                        //System.out.println("email" + email);
-                        if(user[0].getEmail()==null){
-                        	user[0].setEmail(email);
-                        }
-                        else if(user[0].getSecondEmail()==null) user[0].setSecondEmail(email);
-                        
+            return true;
 
-                    }
-            		
-            	} catch (SQLException e) {
-      	          Log.e("e", "sql exception in dbio_count", e);            
-    	        } catch(Exception ex) {
-    	          Log.e("e", "other exception in dbio_count", ex);
-    	        } finally {
-    	          if (eCur != null) {
-    	        	  eCur.close();
-    	          }
-    	        }   	
-			
-			return user[0];
 		}
 
 		@Override
-		protected void onPostExecute(User user) {
-			
+		protected void onPostExecute(Boolean completed) {
+			if(completed) System.out.println("FINISHHHHHHH !!!!!!!!!!!!");
 			
 		}
 	}
@@ -480,7 +561,7 @@ public class InvitationsFragment extends Fragment {
     			getActivity().runOnUiThread(new Runnable() {
     				@Override
 					public void run() {
-    					InvitationsAdapter adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+    					adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
     	                listView.setAdapter(adapter);
     				}
     			});
@@ -526,7 +607,7 @@ public class InvitationsFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 	        
         	if(users.get(position).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getEmail());
-        	if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getNumTel());
+        	if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(position).getNumTel());
         	
         	if(!users.get(position).getIsSelect()){
         		View v = view.findViewById(R.id.bg_cell_invitations);
@@ -540,12 +621,20 @@ public class InvitationsFragment extends Fragment {
         		RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
 	            v.setBackgroundResource(R.drawable.background);
 	            InvitationActivity.invitesUser.remove(users.get(position));
+                InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
 	            
 	            users.get(position).setIsSelect(false);
         	}
         		
 
         }
+
+    }
+
+
+    public void updateSearch(String search){
+
+        adapter.getFilter().filter(search);
 
     }
     

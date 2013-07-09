@@ -61,89 +61,53 @@ public class InfosFragment extends Fragment {
     private Moment moment;
     private View view;
 
+    //All view elements
+    TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
+    ImageView image_cover, owner_picture;
+
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-        if(savedInstanceState == null) {
-            momentId = getActivity().getIntent().getLongExtra("id", 1);
-            moment = AppMoment.getInstance().user.getMomentById(momentId);
-        }
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		view = inflater.inflate(R.layout.fragment_infos, container, false);
 
-		TextView titreText = (TextView)view.findViewById(R.id.titre_moment);
-		titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
-		TextView flTitreText = (TextView)view.findViewById(R.id.fl_titre_moment);
-		flTitreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(0,1));
+		titreText = (TextView)view.findViewById(R.id.titre_moment);
+		flTitreText = (TextView)view.findViewById(R.id.fl_titre_moment);
+		descriptionText = (TextView)view.findViewById(R.id.infos_moment_description);
+		adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
 
-		TextView descriptionText = (TextView)view.findViewById(R.id.infos_moment_description);
-		descriptionText.setText(AppMoment.getInstance().user.getMomentById(momentId).getDescription());
-
-		TextView adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
-		adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
 
         maybeButton     = (ImageButton)view.findViewById(R.id.maybe_button);
         goingButton     = (ImageButton)view.findViewById(R.id.going_button);
         notGoigButton   = (ImageButton)view.findViewById(R.id.not_going_button);
 
-        updateRSVPBloc();
+		dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
+		dateFinText = (TextView)view.findViewById(R.id.infos_moment_date_fin);
 
-		GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
-		dateDebutCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateDebut());
-		
-		Calendar dateFinCalendar = Calendar.getInstance();
-		dateFinCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateFin());
+        guests_number = (TextView)view.findViewById(R.id.guests_number);
+        guests_coming = (TextView)view.findViewById(R.id.guests_coming);
+        guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
 
-		TextView dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
-		dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
-		
-		TextView dateFinText = (TextView)view.findViewById(R.id.infos_moment_date_fin);
-		dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
 
-		if(AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber()>0){
-			TextView guests_number = (TextView)view.findViewById(R.id.guests_number);
-			guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
-			
-			TextView guests_coming = (TextView)view.findViewById(R.id.guests_coming);
-			guests_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
-			
-			TextView guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
-			guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
-		}
 
-		if(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap()!=null){
-			Bitmap image_cover_bmp = AppMoment.getInstance().getBitmapFromMemCache(AppMoment.getInstance().user.getMomentById(momentId).getKeyBitmap());
-			ImageView image_cover = (ImageView)view.findViewById(R.id.photo_moment);
-			image_cover.setImageBitmap(image_cover_bmp);
-		}
-		
-		if(AppMoment.getInstance().user.getMomentById(momentId).getUser()!=null){
-			final ImageView owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
+        image_cover = (ImageView)view.findViewById(R.id.photo_moment);
+        owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
+        firstname = (TextView)view.findViewById(R.id.firstname_owner);
+        lastname = (TextView)view.findViewById(R.id.lastname_owner);
 
-			if(AppMoment.getInstance().user.getMomentById(momentId).getUser().getPictureProfileUrl()!=null) AppMoment.getInstance().user.getMomentById(momentId).getUser().printProfilePicture(owner_picture, true);
-			
-			TextView firstname = (TextView)view.findViewById(R.id.firstname_owner);
-			firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
-			
-			TextView lastname = (TextView)view.findViewById(R.id.lastname_owner);
-			lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
-		}
 		return view;
 	}
 
     @Override
     public void onStart(){
         super.onStart();
-        ViewGroup mapHost = (ViewGroup)view.findViewById(R.id.mapHost);
-        mapHost.requestTransparentRegion(mapHost);
-
-        setUpMapIfNeeded();
+        if(this.momentId!=null) initInfos();
     }
 
     @Override
@@ -317,6 +281,63 @@ public class InfosFragment extends Fragment {
             }
         });
 
+    }
+
+    /**
+     * Function called when the activity got the Moment
+     */
+
+    public void createFragment(Long momentId){
+        this.momentId = momentId;
+        moment = AppMoment.getInstance().user.getMomentById(momentId);
+
+        //We init only if we already built the view, otherwise the Start function will do it
+        if(titreText!=null) initInfos();
+
+    }
+
+
+    /**
+     * Function that takes care of building the infos fragment when we have the moment infos
+     */
+
+    public void initInfos(){
+        titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
+        flTitreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(0,1));
+        descriptionText.setText(AppMoment.getInstance().user.getMomentById(momentId).getDescription());
+        adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
+
+        //Update State
+        updateRSVPBloc();
+
+        //Dates
+        GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
+        dateDebutCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateDebut());
+        Calendar dateFinCalendar = Calendar.getInstance();
+        dateFinCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateFin());
+
+        dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
+        dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
+
+        //Cover
+        moment.printCover(image_cover, false);
+
+        //Owner
+        if(AppMoment.getInstance().user.getMomentById(momentId).getUser()!=null){
+            if(AppMoment.getInstance().user.getMomentById(momentId).getUser().getPictureProfileUrl()!=null) AppMoment.getInstance().user.getMomentById(momentId).getUser().printProfilePicture(owner_picture, true);
+            firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
+            lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
+        }
+
+        //Guests
+        if(AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber()>0){
+            guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
+            guests_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
+            guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
+        }
+
+        //Map
+        setUpMapIfNeeded();
     }
 
 

@@ -311,7 +311,7 @@ public class InscriptionActivity extends SherlockActivity {
 
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
 
-                        alertDialogBuilder.setTitle("Compte créé");
+                        alertDialogBuilder.setTitle("Compte cr√©√©");
 
                         alertDialogBuilder
                                 .setMessage(errorResponse.toString())

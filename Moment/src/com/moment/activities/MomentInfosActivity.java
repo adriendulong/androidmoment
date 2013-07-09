@@ -1,6 +1,7 @@
 package com.moment.activities;
 
 import android.app.ActivityOptions;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -16,11 +17,7 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -39,6 +36,7 @@ import com.moment.fragments.ChatFragment;
 import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
+import com.moment.models.Moment;
 import com.moment.models.User;
 
 import org.json.JSONException;
@@ -53,6 +51,13 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     static final int NEW_INVIT = 3;
     static final int LIST_INVIT = 4;
 
+    //PUSH TYPES
+    private int CHAT_PUSH = 3;
+    private int PHOTO_PUSH = 2;
+
+    //From push
+    private int type_id, moment_id;
+
 	LayoutInflater inflater;
 	Boolean stateAcceptVolet = false;
 	
@@ -62,17 +67,27 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 	private int position = 1;
 
     private InfosFragment infosFr;
+    private ChatFragment chatFr;
+    private PhotosFragment photosFr;
 
 	Menu myMenu;
 	private GoogleMap mMap;
 	
 	ArrayList<Fragment> fragments;
 
+    //The Moment
+    private Moment moment;
+
+    //Progress Dialog when loading Moment infos
+    private ProgressDialog  mProgressDialog;
+
+    //Debug Tag
+    private String TAG = "InfosActivity";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        momentID = getIntent().getLongExtra("id", 1);
 
         super.setContentView(R.layout.activity_moment_infos);
 
@@ -85,14 +100,25 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         String precedente = getIntent().getStringExtra("precedente");        
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
+        if(precedente.equals("push")){
+            type_id = getIntent().getIntExtra("type_id", -1);
+            moment_id = getIntent().getIntExtra("moment_id", -1);
+            momentID = getIntent().getLongExtra("moment_id", 1);
+
+            if (type_id == PHOTO_PUSH) position = 0;
+            else if(type_id == CHAT_PUSH) position = 2;
+        }
+        else momentID = getIntent().getLongExtra("id", 1);
 
         fragments = new ArrayList<Fragment>();
 
      	Bundle args = new Bundle();
         infosFr = new InfosFragment();
-     	fragments.add(Fragment.instantiate(this, PhotosFragment.class.getName()));
+        photosFr = new PhotosFragment();
+        chatFr = new ChatFragment();
+     	fragments.add(photosFr);
      	fragments.add(infosFr);
-   		fragments.add(Fragment.instantiate(this, ChatFragment.class.getName(), args));
+   		fragments.add(chatFr);
 
    		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
    		pager = (ViewPager) super.findViewById(R.id.viewpager);
@@ -121,7 +147,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 			}
 		});
 
+        //If we come from the moment creation we go to the invits
         if (precedente.equals("creation")) callInvit(NEW_INVIT);
+
+        //We get moment informations
+        getMoment();
     }
 
 
@@ -194,8 +224,22 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      return super.onOptionsItemSelected(item);
  }
 
+    /**
+     * Function called when user click on the guests block
+     * @param view
+     */
+
     public void listInvit(View view){
         callInvit(LIST_INVIT);
+    }
+
+    /**
+     * Function called when user click on plus next to the guests block
+     * @param view
+     */
+
+    public void addGuests(View view){
+        callInvit(NEW_INVIT);
     }
 
     public void postMessage(View view){
@@ -392,12 +436,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
             intent.putExtra("id", momentID);
 
-           // if (android.os.Build.VERSION.SDK_INT >= 16){
+            if (android.os.Build.VERSION.SDK_INT >= 16){
+                Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
+                startActivityForResult(intent, request_code, bndlanimation);
+            } else{
                 startActivityForResult(intent, request_code);
-                overridePendingTransition( R.anim.slide_in_left, R.anim.slide_out_left );
-            //} else{
-              //  startActivityForResult(intent, request_code);
-            //}
+            }
 
 
         }
@@ -456,6 +500,72 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void goingRsvp(View view){
         infosFr.goingRsvp();
+    }
+
+
+    /**
+     * This functions goal is to get the Moment informations
+     * <p>
+     *     It will first try on the local database, then to download it from the server
+     * </p>
+     * @param momentID
+     */
+
+    public void getMoment(){
+
+        //If we have it in the local database
+        if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
+            moment = AppMoment.getInstance().user.getMomentById(momentID);
+            //Chat fragment
+            if(pager.getCurrentItem()==2){
+                ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
+                ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+            }
+            else if(pager.getCurrentItem()==1){
+                ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
+                ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+            }
+        }
+        //Otherwise we try to get it from the server
+        else {
+            mProgressDialog = ProgressDialog.show(this, "Chargement", "Chargement des informations du moment");
+            MomentApi.get("moment/"+momentID, null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(getApplicationContext(), "Moment infos downloaded", Toast.LENGTH_SHORT).show();
+                    Moment tempMoment = new Moment();
+                    try{
+                        tempMoment.setMomentFromJson(response);
+                        Log.v(TAG, tempMoment.getName());
+
+                        //We add it in the local database
+                        AppMoment.getInstance().user.addMoment(tempMoment);
+
+                        //Chat fragment
+                        if(pager.getCurrentItem()==2){
+                            ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+                        }
+                        else if(pager.getCurrentItem()==1){
+                            ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+                        }
+
+                        mProgressDialog.dismiss();
+                    }catch(JSONException e){
+                        Log.e(TAG, "JSON problems");
+                    }
+
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    Toast.makeText(getApplicationContext(), "Problem when getting moment infos", Toast.LENGTH_SHORT).show();
+                    mProgressDialog.dismiss();
+                }
+            });
+        }
     }
     
 

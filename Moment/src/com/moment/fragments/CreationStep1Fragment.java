@@ -83,7 +83,7 @@ public class CreationStep1Fragment extends Fragment {
 	
 
 	/**
-	 * fonction utilisée afin de modifié la font de tous les champs
+	 * fonction utilis√©e afin de modifi√© la font de tous les champs
 	 */
 	
 	public void modifyFont(){

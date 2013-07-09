@@ -42,7 +42,7 @@ public class User {
     private String fbPhotoUrl;
     private String idCarnetAdresse;
     private String description;
-    private Boolean isSelect;
+    private Boolean isSelect = false;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;

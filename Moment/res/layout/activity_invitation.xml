@@ -34,7 +34,7 @@
                 android:textColor="@color/orange"
                 android:textSize="12dp"
                 android:layout_marginLeft="3dp"
-                android:text="13"/>
+                android:text="0"/>
             
             <TextView android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,11 +72,12 @@
         android:orientation="horizontal"
         android:background="@drawable/background">
         
-        <EditText android:layout_width="fill_parent"
+        <EditText android:id="@+id/search_guests"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="50dp"
-            android:hint="Rechercher ou ajouter par mail"
+            android:hint="Rechercher ou ajouter par mail/num de tel"
             android:textSize="12dp"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="4dp"/>

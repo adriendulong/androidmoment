@@ -6,8 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.actionbarsherlock.app.ActionBar;
@@ -37,6 +40,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     public static ArrayList<User> invitesUser;
     public static TextView nb_invites;
     private int idMoment;
+    private EditText searchGuests;
     ArrayList<InvitationsFragment> frs;
 
 	@Override
@@ -135,6 +139,26 @@ public class InvitationActivity extends SherlockFragmentActivity {
 				
 			}
 		});
+
+        //Get the edit text to search
+        searchGuests = (EditText)findViewById(R.id.search_guests);
+        searchGuests.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                System.out.println(s.toString());
+                mInvitationCollectionPagerAdapter.getItem(mViewPager.getCurrentItem()).updateSearch(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 		
 		
 	}

@@ -256,19 +256,23 @@ public class Moment {
 
     /** To-one relationship, resolved on first access. */
     public User getUser() {
-        long __key = this.userId;
-        if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
-            if (AppMoment.getInstance().daoSession == null) {
-                throw new DaoException("Entity is detached from DAO context");
+        if(this.user==null){
+            long __key = this.userId;
+            if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
+                if (AppMoment.getInstance().daoSession == null) {
+                    throw new DaoException("Entity is detached from DAO context");
+                }
+                UserDao targetDao = AppMoment.getInstance().daoSession.getUserDao();
+                User userNew = targetDao.load(__key);
+                synchronized (this) {
+                    user = userNew;
+                    user__resolvedKey = __key;
+                }
             }
-            UserDao targetDao = AppMoment.getInstance().daoSession.getUserDao();
-            User userNew = targetDao.load(__key);
-            synchronized (this) {
-                user = userNew;
-            	user__resolvedKey = __key;
-            }
+            return user;
         }
-        return user;
+        else return this.user;
+
     }
 
     public void setUser(User user) {
