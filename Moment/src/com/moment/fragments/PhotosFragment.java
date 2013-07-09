@@ -36,6 +36,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
+import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
@@ -74,6 +75,9 @@ public class PhotosFragment extends Fragment {
     private ArrayList<String> photos_uri;
     private ArrayList<Bitmap> photos_files;
 
+    //Fragment View
+    private View view;
+
     File tempFile;
 
     Intent intent;
@@ -85,7 +89,6 @@ public class PhotosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
-            momentID = getActivity().getIntent().getLongExtra("id", 1);
             savedInstanceState = getActivity().getIntent().getExtras();
             photos_files = new ArrayList<Bitmap>();
             if(savedInstanceState.getStringArrayList("photos") != null)
@@ -107,15 +110,10 @@ public class PhotosFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_photos, container, false);
+        view = inflater.inflate(R.layout.fragment_photos, container, false);
         detailPhoto = (RelativeLayout) inflater.inflate(R.layout.detail_photo, null);
         Log.e("PhotosFragment", "onCreateView");
-        User user = AppMoment.getInstance().user;
-        Moment moment = user.getMomentById(momentID);
-        photos = moment.getPhotos();
-        imageAdapter = new ImageAdapter(view.getContext(), photos);
-        gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
+
         return view;
     }
 
@@ -124,57 +122,12 @@ public class PhotosFragment extends Fragment {
         Log.e("PhotosFragment","OnStart");
         super.onStart();
 
-        if(!photos_files.isEmpty())
-        {
-            MultiUploadTask multiUploadTask = new MultiUploadTask();
-           multiUploadTask.execute();
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentID = ((MomentInfosActivity)getActivity()).getMomentId();
+            initPhoto();
         }
 
-        MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
-            public void onSuccess(JSONObject response) {
-                try {
-                    JSONArray jsonPhotos = response.getJSONArray("photos");
-
-                    for (int i = 0; i < jsonPhotos.length(); i++) {
-                        Photo photo = new Photo();
-                        photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                        AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                        imageAdapter.notifyDataSetChanged();
-
-                        if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
-                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
-                            imageLoadTask.execute(photo.getUrlThumbnail());
-                        } else {
-                            photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (position == 0) {
-
-
-                    startDialog();
-
-                } else {
-                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    if(photos.get(position - 1).getUrlOriginal() == null){
-                        intent.putExtra("position", (0));
-                    } else {
-                        intent.putExtra("position", (position - 1));
-                    }
-                    intent.putExtra("momentID", momentID);
-                    startActivity(intent);
-                }
-            }
-        });
     }
 
     private void startDialog() {
@@ -254,7 +207,7 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        imageAdapter.notifyDataSetChanged();
+        if(imageAdapter!=null) imageAdapter.notifyDataSetChanged();
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -518,6 +471,86 @@ public class PhotosFragment extends Fragment {
             }
             return bitmap;
         }
+
+    }
+
+    /**
+     * Functions called when the Moment is ready
+     *
+     * @param momentId
+     */
+
+    public void createFragment(Long momentId){
+        this.momentID = momentId;
+
+        initPhoto();
+    }
+
+    /**
+     * Function called to init the photo view when all the infos are ready
+     */
+
+    public void initPhoto(){
+
+        User user = AppMoment.getInstance().user;
+        Moment moment = user.getMomentById(momentID);
+            photos = moment.getPhotos();
+        imageAdapter = new ImageAdapter(view.getContext(), photos);
+        gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView.setAdapter(imageAdapter);
+
+
+        if(!photos_files.isEmpty())
+        {
+            MultiUploadTask multiUploadTask = new MultiUploadTask();
+            multiUploadTask.execute();
+        }
+
+        MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+
+            public void onSuccess(JSONObject response) {
+                try {
+                    JSONArray jsonPhotos = response.getJSONArray("photos");
+
+                    for (int i = 0; i < jsonPhotos.length(); i++) {
+                        Photo photo = new Photo();
+                        photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                        AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+                        imageAdapter.notifyDataSetChanged();
+
+                        if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
+                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
+                            imageLoadTask.execute(photo.getUrlThumbnail());
+                        } else {
+                            photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));
+                        }
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        gridView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (position == 0) {
+
+
+                    startDialog();
+
+                } else {
+                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
+                    if(photos.get(position - 1).getUrlOriginal() == null){
+                        intent.putExtra("position", (0));
+                    } else {
+                        intent.putExtra("position", (position - 1));
+                    }
+                    intent.putExtra("momentID", momentID);
+                    startActivity(intent);
+                }
+            }
+        });
 
     }
 }
