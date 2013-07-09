@@ -151,7 +151,7 @@ public class InscriptionActivity extends SherlockActivity {
         }
     };
 
-    private  Session openActiveSession(Activity activity, boolean allowLoginUI,
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
                                        Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
         Session.OpenRequest openRequest = new Session.OpenRequest(activity).
                 setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
