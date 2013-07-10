@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -22,26 +21,13 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.FacebookError;
-import com.facebook.model.GraphObject;
 import com.facebook.model.GraphUser;
 import com.moment.R;
 import com.moment.classes.CommonUtilities;
-import com.moment.models.FbEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -117,7 +103,7 @@ public class CreationActivity extends SherlockActivity {
     };
 
     public void getUserEvents() {
-        String fqlQuery = "SELECT eid, name, pic, creator, start_time, end_time, description FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid='"+ facebookUserId +"' and rsvp_status!='declined')";
+        String fqlQuery = "SELECT creator, eid, name, pic,  start_time, end_time, location, privacy, description FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid='"+ facebookUserId +"' and rsvp_status!='declined')";
         Bundle params = new Bundle();
         params.putString("q", fqlQuery);
         Request request = new Request(session, "/fql", params, HttpMethod.GET,
@@ -133,6 +119,7 @@ public class CreationActivity extends SherlockActivity {
                         }
                         Intent intent = new Intent(getApplication(), FacebookEventsActivity.class);
                         intent.putExtra("events", events.toString());
+                        intent.putExtra("session", session);
                         startActivity(intent);
                     }
                 });
