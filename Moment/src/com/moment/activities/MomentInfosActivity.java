@@ -538,6 +538,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     try{
                         tempMoment.setMomentFromJson(response);
                         Log.v(TAG, tempMoment.getName());
+                        moment = tempMoment;
 
                         //We add it in the local database
                         AppMoment.getInstance().user.addMoment(tempMoment);
@@ -549,6 +550,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         }
                         else if(pager.getCurrentItem()==1){
                             ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+                            ((PhotosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+                        }
+                        else if(pager.getCurrentItem()==0){
+                            ((PhotosFragment)mPagerAdapter.getItem(0)).createFragment(momentID);
                             ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
                         }
 
@@ -566,6 +572,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 }
             });
         }
+    }
+
+    public Long getMomentId(){
+        if(this.moment!=null) return this.momentID;
+        else return null;
+
     }
     
 

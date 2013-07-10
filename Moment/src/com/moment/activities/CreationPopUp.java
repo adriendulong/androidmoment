@@ -1,6 +1,7 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -199,7 +200,6 @@ public class CreationPopUp extends Activity {
      */
 
     public void inivitFriends(View view){
-        finish();
 
 
         //We build the request parameters
@@ -223,6 +223,10 @@ public class CreationPopUp extends Activity {
 
                 Log.d("SEND","OKKKKK");
 
+                Intent intent = new Intent();
+                intent.putExtra("privacy", privacy);
+                intent.putExtra("isOpenInvit", isInvit);
+                setResult(RESULT_OK, intent);
                 //We close the pop up and come back to the creation screen
                 finish();
 

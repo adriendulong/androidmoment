@@ -595,6 +595,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	moment.setAdresse(adressButton.getText().toString());
     	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
+
     
     	dialog = ProgressDialog.show(this, null, "Création en cours");
 
@@ -605,7 +606,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             			dialog.dismiss();
 
                         //We set the moment id and it to the user moments
-                        moment.setId(response.getLong("id"));
+                        moment.setMomentFromJson(response);
                         AppMoment.getInstance().user.addMoment(moment);
 
                         Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);
@@ -862,6 +863,26 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 					e.printStackTrace();
 				}
             }
+
+
+        }
+        //Finish activity
+        if(requestCode == POP_UP_CREA){
+            if(resultCode == RESULT_OK){
+                if(data.getExtras().containsKey("privacy")){
+                    AppMoment.getInstance().user.getMomentById(moment.getId()).setPrivacy(data.getIntExtra("privacy", 0));
+                    AppMoment.getInstance().user.getMomentById(moment.getId()).setIsOpenInvit(data.getBooleanExtra("isOpenInvit", false));
+                }
+
+                //We go the invit part, we pass the id of the moment
+                Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+                intent.putExtra("id", moment.getId());
+                intent.putExtra("precedente", "creation");
+
+                startActivity(intent);
+                finish();
+
+            }
         }
         if(requestCode == PLACE_CHOOSE){
 
@@ -879,18 +900,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             }
 
         }
-        //Finish activity
-        if(requestCode == POP_UP_CREA){
 
-            //We go the invit part, we pass the id of the moment
-            Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
-            intent.putExtra("id", moment.getId());
-            intent.putExtra("precedente", "creation");
-
-            startActivity(intent);
-            finish();
-
-        }
     }
    
 

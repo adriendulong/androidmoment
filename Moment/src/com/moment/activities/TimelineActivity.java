@@ -47,7 +47,7 @@ public class TimelineActivity extends SlidingActivity {
     private Intent intentMoment;
     private LayoutInflater inflater;
     private Long actuelMomentSelect = Long.parseLong("-1");
-    private RelativeLayout myMoments, news, profile, settings, missingMoments;
+    private RelativeLayout myMoments, profile, settings, missingMoments;
     private ListView notifsListView;
     private NotificationsAdapter adapter;
     private ArrayList<Notification> notifications;
@@ -55,6 +55,7 @@ public class TimelineActivity extends SlidingActivity {
     private ProgressBar notifProgress;
     private int totalNotifs, nbNotifs, nbInvit;
     private ScrollView scrollView;
+    private SlidingMenu sm;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,7 +66,7 @@ public class TimelineActivity extends SlidingActivity {
 
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
-        SlidingMenu sm = getSlidingMenu();
+        sm = getSlidingMenu();
         sm.setBehindOffset(250);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
@@ -75,7 +76,6 @@ public class TimelineActivity extends SlidingActivity {
 
         myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
         myMoments.setBackgroundResource(R.drawable.bg_section);
-        news = (RelativeLayout)sm.getRootView().findViewById(R.id.news_button_volet);
         profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
         settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
         missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
@@ -85,9 +85,8 @@ public class TimelineActivity extends SlidingActivity {
             public void onClick(View v) {
                 if(v.getId()==myMoments.getId()){
                     myMoments.setBackgroundResource(R.drawable.bg_section);
-                }
-                else if(v.getId()==news.getId()){
-                    news.setBackgroundResource(R.drawable.bg_section);
+                    toggle();
+
                 }
                 else if(v.getId()==profile.getId()){
                     profile.setBackgroundResource(R.drawable.bg_section);
@@ -111,9 +110,6 @@ public class TimelineActivity extends SlidingActivity {
                 if(v.getId()==myMoments.getId()){
                     myMoments.setBackgroundResource(R.drawable.bg_section);
                 }
-                else if(v.getId()==news.getId()){
-                    news.setBackgroundResource(R.drawable.bg_section);
-                }
                 else if(v.getId()==profile.getId()){
                     profile.setBackgroundResource(R.drawable.bg_section);
                 }
@@ -129,8 +125,6 @@ public class TimelineActivity extends SlidingActivity {
 
         myMoments.setOnClickListener(listener);
         myMoments.setOnTouchListener(touchListener);
-        news.setOnClickListener(listener);
-        news.setOnTouchListener(touchListener);
         profile.setOnClickListener(listener);
         profile.setOnTouchListener(touchListener);
         settings.setOnClickListener(listener);
