@@ -1,5 +1,6 @@
 package com.moment.activities;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
@@ -11,12 +12,19 @@ import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.MomentApi;
 import com.moment.models.FbEvent;
+import com.moment.models.Moment;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.text.ParseException;
 
 public class FacebookEventsActivity extends SherlockActivity {
 
@@ -28,7 +36,7 @@ public class FacebookEventsActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_events);
-        
+
         Bundle extras = getIntent().getExtras();
         session = (Session) extras.get("session");
 
@@ -62,15 +70,11 @@ public class FacebookEventsActivity extends SherlockActivity {
 
         fbEvent.setOwner_facebookId(event.getString("creator"));
 
-        Request.executeBatchAndWait(getUserInfo(event.getString("creator")));
+        getUserInfo(event.getString("creator"), fbEvent);
 
-        fbEvent.setOwner_firstname(eventOwner.getString("first_name"));
-        fbEvent.setOwner_picture_url(eventOwner.getString("pic"));
-
-        Log.e("FbEvent", fbEvent.toString());
     }
 
-    public Request getUserInfo(String userFacebookId) {
+    public void getUserInfo(String userFacebookId, final FbEvent fbEvent) {
         String fqlQuery = "SELECT first_name, pic FROM user WHERE uid='"+ userFacebookId +"'";
         Bundle params = new Bundle();
         params.putString("q", fqlQuery);
@@ -83,45 +87,51 @@ public class FacebookEventsActivity extends SherlockActivity {
                         try {
                             user = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
                             eventOwner = user.getJSONObject(0);
+                            fbEvent.setOwner_firstname(eventOwner.getString("first_name"));
+                            fbEvent.setOwner_picture_url(eventOwner.getString("pic"));
+                            try {
+                                uploadEvent(fbEvent);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            Log.e("Final Event", fbEvent.toString());
                         } catch (JSONException e) {
-                            e.printStackTrace();
+                            Log.e("Failure", e.toString());
                         }
                     }
                 });
-        return request;
+        Request.executeBatchAsync(request);
+    }
+
+    public void uploadEvent(FbEvent fbEvent) throws JSONException, ParseException {
+
+        MomentApi.post("newmoment", fbEvent.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                Moment moment = new Moment();
+                try {
+                    moment.setMomentFromJson(response);
+                    Log.e("Moment", moment.toString());
+                    //AppMoment.getInstance().user.addMoment(moment);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject errorResponse) {
+                Log.e("Failure",errorResponse.toString());
+            }
+        });
     }
 
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private class EventHandleTask extends AsyncTask<Void, Void, Void>
-    {
-        private JSONObject event;
-
-        public EventHandleTask(JSONObject event) {
-            this.event = event;
-        }
-
-        @Override
-        protected void onPreExecute(){
-
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-
-        }
     }
 }

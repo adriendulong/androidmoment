@@ -332,6 +332,36 @@ public class Moment {
         myDao.refresh(this);
     }
 
+    @Override
+    public String toString() {
+        return "Moment{" +
+                "id=" + id +
+                ", state=" + state +
+                ", guestNumber=" + guestNumber +
+                ", guestComing=" + guestComing +
+                ", guestNotComing=" + guestNotComing +
+                ", privacy=" + privacy +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", placeInformations='" + placeInformations + '\'' +
+                ", infoTransport='" + infoTransport + '\'' +
+                ", hashtag='" + hashtag + '\'' +
+                ", adresse='" + adresse + '\'' +
+                ", keyBitmap='" + keyBitmap + '\'' +
+                ", urlCover='" + urlCover + '\'' +
+                ", dateDebut=" + dateDebut +
+                ", dateFin=" + dateFin +
+                ", isOpenInvit=" + isOpenInvit +
+                ", userId=" + userId +
+                ", daoSession=" + daoSession +
+                ", myDao=" + myDao +
+                ", user=" + user +
+                ", user__resolvedKey=" + user__resolvedKey +
+                ", chats=" + chats +
+                ", photos=" + photos +
+                '}';
+    }
+
     // KEEP METHODS - put your custom methods here
 
     public void addChat(Chat chat){

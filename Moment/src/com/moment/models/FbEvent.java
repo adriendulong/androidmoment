@@ -1,7 +1,21 @@
 package com.moment.models;
 
+import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONException;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class FbEvent implements Parcelable {
 
@@ -162,6 +176,90 @@ public class FbEvent implements Parcelable {
         return CREATOR;
     }
 
+    public RequestParams getMomentRequestParams(Context context) throws JSONException, ParseException {
+
+        RequestParams momentPrams = new RequestParams();
+
+        momentPrams.put("name", this.name);
+
+        if(!this.address.equals("null"))
+        {
+            momentPrams.put("address", this.address);
+        } else {
+            momentPrams.put("address", "Test test test");
+        }
+
+        if(!this.startDate.equals("null"))
+        {
+            Date start;
+            try {
+                start = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.startDate);
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTime(start);
+                momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
+                momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
+
+            } catch (ParseException e) {
+
+                start = new SimpleDateFormat("yyyy-MM-dd").parse(this.startDate);
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTime(start);
+                momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
+                momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY) + ":" + startDate.get(Calendar.MINUTE));
+            }
+        }
+
+        if(!this.endDate.equals("null"))
+        {
+            Date end;
+            try {
+                end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.endDate);
+                Calendar endDate = Calendar.getInstance();
+                endDate.setTime(end);
+                momentPrams.put("endDate", ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH));
+                momentPrams.put("endTime", endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE));
+            } catch (ParseException e) {
+                    e.printStackTrace();
+            }
+        } else {
+            Date end;
+            try {
+                end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.startDate);
+                Calendar startDate = Calendar.getInstance();
+                startDate.setTime(end);
+                momentPrams.put("endDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+(startDate.get(Calendar.DAY_OF_MONTH)+1));
+                momentPrams.put("endTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
+
+            } catch (ParseException e) {
+                try {
+                    end = new SimpleDateFormat("yyyy-MM-dd").parse(this.startDate);
+                    Calendar startDate = Calendar.getInstance();
+                    startDate.setTime(end);
+                    momentPrams.put("endDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+(startDate.get(Calendar.DAY_OF_MONTH)+1));
+                    momentPrams.put("endTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
+
+                } catch (ParseException e1) {
+                    e1.printStackTrace();
+                }
+            }
+        }
+
+        if (this.description != null) momentPrams.put("description", this.description);
+
+        if(this.cover_photo_url != null){
+            File image = context.getFileStreamPath("cover_picture");
+            try {
+                momentPrams.put("photo", image);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Log.e("Params", momentPrams.toString());
+
+        return momentPrams;
+    }
+
     @Override
     public String toString() {
         return "FbEvent{" +
@@ -185,40 +283,40 @@ public class FbEvent implements Parcelable {
     }
 
     @Override
-	public int describeContents() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+    public int describeContents() {
+        // TODO Auto-generated method stub
+        return 0;
+    }
 
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		// TODO Auto-generated method stub
-		dest.writeString(id);
-		dest.writeString(title);
-		dest.writeString(startTime);
-		dest.writeString(address);
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        // TODO Auto-generated method stub
+        dest.writeString(id);
+        dest.writeString(title);
+        dest.writeString(startTime);
+        dest.writeString(address);
 
-	}
-	
-	public static final Parcelable.Creator<FbEvent> CREATOR = new Parcelable.Creator<FbEvent>(){
-			    @Override
-			    public FbEvent createFromParcel(Parcel source)
-			    {
-			        return new FbEvent(source);
-			    }
+    }
 
-			    @Override
-			    public FbEvent[] newArray(int size)
-			    {
-				return new FbEvent[size];
-			    }
-	};
+    public static final Parcelable.Creator<FbEvent> CREATOR = new Parcelable.Creator<FbEvent>(){
+        @Override
+        public FbEvent createFromParcel(Parcel source)
+        {
+            return new FbEvent(source);
+        }
+
+        @Override
+        public FbEvent[] newArray(int size)
+        {
+            return new FbEvent[size];
+        }
+    };
 
 
-	public FbEvent(Parcel in) {
-			this.id = in.readString();
-			this.title = in.readString();
-			this.startTime = in.readString();
-			this.address = in.readString();
-		}
+    public FbEvent(Parcel in) {
+        this.id = in.readString();
+        this.title = in.readString();
+        this.startTime = in.readString();
+        this.address = in.readString();
+    }
 }
