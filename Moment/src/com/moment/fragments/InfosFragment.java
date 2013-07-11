@@ -29,6 +29,7 @@ import com.google.android.maps.OverlayItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.activities.MomentInfosActivity;
 import com.moment.activities.MomentInfosActivity.Exchanger;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
@@ -101,13 +102,19 @@ public class InfosFragment extends Fragment {
         firstname = (TextView)view.findViewById(R.id.firstname_owner);
         lastname = (TextView)view.findViewById(R.id.lastname_owner);
 
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+            moment = AppMoment.getInstance().user.getMomentById(momentId);
+            initInfos();
+        }
+
 		return view;
 	}
 
     @Override
     public void onStart(){
         super.onStart();
-        if(this.momentId!=null) initInfos();
+
     }
 
     @Override

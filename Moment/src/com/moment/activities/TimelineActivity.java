@@ -1,5 +1,6 @@
 package com.moment.activities;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -26,10 +27,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.animations.TimelineAnimation;
-import com.moment.classes.CommonUtilities;
-import com.moment.classes.DatabaseHelper;
-import com.moment.classes.MomentApi;
-import com.moment.classes.NotificationsAdapter;
+import com.moment.classes.*;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
 import com.slidingmenu.lib.SlidingMenu;
@@ -49,13 +47,16 @@ public class TimelineActivity extends SlidingActivity {
     private Long actuelMomentSelect = Long.parseLong("-1");
     private RelativeLayout myMoments, profile, settings, missingMoments;
     private ListView notifsListView;
-    private NotificationsAdapter adapter;
     private ArrayList<Notification> notifications;
     private TextView totalNotifText;
     private ProgressBar notifProgress;
     private int totalNotifs, nbNotifs, nbInvit;
     private ScrollView scrollView;
     private SlidingMenu sm;
+    private ListView momentsList;
+    private List<Moment> moments;
+    private MomentsAdapter adapter;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +80,13 @@ public class TimelineActivity extends SlidingActivity {
         profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
         settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
         missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
+
+        moments = new ArrayList<Moment>();
+        //ListView
+        momentsList = (ListView)findViewById(R.id.list_moments);
+        momentsList.setSelector(android.R.color.transparent);
+        adapter = new MomentsAdapter(this, R.layout.timeline_moment, moments);
+        momentsList.setAdapter(adapter);
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -143,7 +151,7 @@ public class TimelineActivity extends SlidingActivity {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                     for (Moment moment : momentList){
                         AppMoment.getInstance().user.getMoments().add(moment);
-                        ajoutMoment(moment);
+                        //ajoutMoment(moment);
                     }
                 }
             }
@@ -165,12 +173,14 @@ public class TimelineActivity extends SlidingActivity {
                                 Moment momentTemp = new Moment();
                                 momentTemp.setMomentFromJson(momentJson);
                                 AppMoment.getInstance().user.addMoment(momentTemp);
-                                ajoutMoment(momentTemp);
+                                moments.add(momentTemp);
+                                //ajoutMoment(momentTemp);
 
                                 if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
                                     DatabaseHelper.addMoment(momentTemp);
                                 }
                             }
+                            adapter.notifyDataSetChanged();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -211,7 +221,7 @@ public class TimelineActivity extends SlidingActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    /*
     public void tap(View view){
         if(view.getId()==actuelMomentSelect){
             intentMoment = new Intent(this, MomentInfosActivity.class);
@@ -233,7 +243,7 @@ public class TimelineActivity extends SlidingActivity {
         //intentMoment = new Intent(this, MomentInfosActivity.class);
         //startActivity(intentMoment);
     }
-
+    */
 
     /**
      * Fonction appel�e quand le bouton "Moments" est selectionn�
@@ -275,6 +285,7 @@ public class TimelineActivity extends SlidingActivity {
      * @param nom
      */
 
+    /*
     public void ajoutMoment(Moment moment){
 
         LinearLayout momentsLayout = (LinearLayout)findViewById(R.id.timeline_moments);
@@ -304,7 +315,7 @@ public class TimelineActivity extends SlidingActivity {
 
         LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)momentLayout.getLayoutParams();
         params.setMargins(0, 10, 0, 50);
-    }
+    }*/
 
 
 
@@ -428,6 +439,48 @@ public class TimelineActivity extends SlidingActivity {
                 System.out.println(content);
             }
         });
+    }
+
+
+    public void selectedMoment(View view){
+        Log.v("TIMELINE", ""+view.getTag());
+
+        intentMoment = new Intent(this, MomentInfosActivity.class);
+        intentMoment.putExtra("precedente", "timeline");
+        intentMoment.putExtra("position", 1);
+        intentMoment.putExtra("id", (Long)view.getTag());
+        startActivity(intentMoment);
+
+    }
+
+    public void deleteMoment(View view){
+        Long momentId = (Long)view.getTag();
+        final Moment momentToDel = AppMoment.getInstance().user.getMomentById(momentId);
+
+        dialog = ProgressDialog.show(this, null, "Suppression en cours");
+
+        if(momentToDel.getUserId()==AppMoment.getInstance().user.getId()){
+            MomentApi.get("delmoment/"+momentId, null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    for(Moment moment : moments){
+                        if(moment.getId()==momentToDel.getId()) moments.remove(moment);
+                    }
+                    if(AppMoment.getInstance().user.getMoments().remove(momentToDel)) Log.v("TIMELINE", "REMOVED INSTANCE");
+                    //TODO : REMOVE en base
+                    adapter.notifyDataSetChanged();
+
+                    dialog.dismiss();
+
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    System.out.println(content);
+                }
+            });
+        }
     }
 
 

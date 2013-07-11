@@ -8,9 +8,8 @@
             android:id="@+id/scroll_chat"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginBottom="65dp"
-            android:layout_alignParentTop="true"
-            android:paddingTop="10dp">
+            android:layout_marginBottom="45dp"
+            android:layout_alignParentTop="true">
 
         <LinearLayout
                 android:id="@+id/chat_message_layout"
@@ -20,10 +19,12 @@
         </LinearLayout>
 
     </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
-
+    <ImageView android:layout_width="fill_parent"
+               android:layout_height="1dp"
+               android:background="@android:color/black"/>
     <LinearLayout android:id="@+id/layout_post_message"
         android:layout_width="fill_parent"
-        android:layout_height="65dp"
+        android:layout_height="45dp"
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:background="@color/gris_chat"
@@ -44,13 +45,13 @@
             android:layout_height="fill_parent"
             android:layout_weight="2"
             android:layout_marginLeft="5dp">
-            <ImageButton android:id="@+id/profile_picture_message_bar_chat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+            <ImageView android:id="@+id/profile_picture_message_bar_chat"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_centerInParent="true"
                 android:src="@drawable/envoyer_chat_button"
-                android:background="@drawable/envoyer_chat_button"
-                android:onClick="postMessage"/>
+                android:onClick="postMessage"
+                android:clickable="true"/>
         </RelativeLayout>
      </LinearLayout>
 </RelativeLayout>

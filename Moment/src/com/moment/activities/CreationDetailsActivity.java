@@ -864,39 +864,41 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 				}
             }
 
+            //Finish activity
+            if(requestCode == POP_UP_CREA){
+                if(resultCode == RESULT_OK){
+                    if(data.getExtras().containsKey("privacy")){
+                        AppMoment.getInstance().user.getMomentById(moment.getId()).setPrivacy(data.getIntExtra("privacy", 0));
+                        AppMoment.getInstance().user.getMomentById(moment.getId()).setIsOpenInvit(data.getBooleanExtra("isOpenInvit", false));
+                    }
 
-        }
-        //Finish activity
-        if(requestCode == POP_UP_CREA){
-            if(resultCode == RESULT_OK){
-                if(data.getExtras().containsKey("privacy")){
-                    AppMoment.getInstance().user.getMomentById(moment.getId()).setPrivacy(data.getIntExtra("privacy", 0));
-                    AppMoment.getInstance().user.getMomentById(moment.getId()).setIsOpenInvit(data.getBooleanExtra("isOpenInvit", false));
+                    //We go the invit part, we pass the id of the moment
+                    Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+                    intent.putExtra("id", moment.getId());
+                    intent.putExtra("precedente", "creation");
+
+                    startActivity(intent);
+                    finish();
+
                 }
-
-                //We go the invit part, we pass the id of the moment
-                Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
-                intent.putExtra("id", moment.getId());
-                intent.putExtra("precedente", "creation");
-
-                startActivity(intent);
-                finish();
-
             }
-        }
-        if(requestCode == PLACE_CHOOSE){
+            if(requestCode == PLACE_CHOOSE){
 
-            System.out.println("PLACES RESULT PAS ENCORE REPONSE");
+                System.out.println("PLACES RESULT PAS ENCORE REPONSE");
 
-            if(data.getExtras().containsKey("place_label")){
-                Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
-                adressButton.setText(data.getStringExtra("place_label"));
+                if(data.getExtras().containsKey("place_label")){
+                    Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
+                    adressButton.setText(data.getStringExtra("place_label"));
 
-                if(data.getStringExtra("place_label").length()>0){
-                    validateAdress=1;
-                    CreationDetailsActivity.validateSecondFields();
+                    if(data.getStringExtra("place_label").length()>0){
+                        validateAdress=1;
+                        CreationDetailsActivity.validateSecondFields();
+                    }
+                    else CreationDetailsActivity.validateSecondFields();
                 }
-                else CreationDetailsActivity.validateSecondFields();
+
+
+
             }
 
         }

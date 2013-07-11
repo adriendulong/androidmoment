@@ -412,6 +412,7 @@ public class Moment {
                 if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
                 if(owner.has("id")) this.user.setId(owner.getLong("id"));
                 this.userId = owner.getLong("id");
+                //TODO : Ajouter le owner à la base ? Car on enregistre l'id mais on le rajoute pas en base
             }
         }catch (JSONException e){
             Log.e("JSON EXCPETION", e.toString());

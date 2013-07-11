@@ -4,6 +4,7 @@ import android.app.ActivityOptions;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -516,15 +517,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         //If we have it in the local database
         if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
             moment = AppMoment.getInstance().user.getMomentById(momentID);
-            //Chat fragment
-            if(pager.getCurrentItem()==2){
-                ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
-                ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
-            }
-            else if(pager.getCurrentItem()==1){
-                ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
-                ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
-            }
         }
         //Otherwise we try to get it from the server
         else {
@@ -579,6 +571,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         else return null;
 
     }
+
     
 
 }

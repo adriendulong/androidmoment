@@ -1,23 +1,24 @@
 package com.moment.fragments;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.*;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.MomentApi;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
@@ -50,13 +51,14 @@ public class ChatFragment extends Fragment {
     PullToRefreshScrollView scrollChat;
     ScrollView mScrollView;
     LinearLayout layoutChat;
+    EditText editMessage;
+    private InputMethodManager imm;
 
     int nextPage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        momentId = getActivity().getIntent().getLongExtra("id", 1);
     }
 
     @Override
@@ -78,6 +80,11 @@ public class ChatFragment extends Fragment {
         });
 
         mScrollView = scrollChat.getRefreshableView();
+
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+            initChat();
+        }
 
         return view;
     }
@@ -120,16 +127,6 @@ public class ChatFragment extends Fragment {
             chat.getUser().printProfilePicture(userImage, true);
 
         layoutChat.addView(chatDroit);
-
-        /*new Handler().postDelayed((new Runnable(){
-
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
-
-        }), 200);*/
     }
 
     public void messageRight(Chat chat, int index){
@@ -158,15 +155,6 @@ public class ChatFragment extends Fragment {
 
         layoutChat.addView(chatDroit, index);
 
-        /*new Handler().postDelayed((new Runnable(){
-
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
-
-        }), 200);*/
     }
 
     public void messageLeft(Chat chat){
@@ -190,20 +178,11 @@ public class ChatFragment extends Fragment {
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
-            chat.getUser().printProfilePicture(userImage, true);
+            if(chat.getUser().getPictureProfileUrl()!=null) chat.getUser().printProfilePicture(userImage, true);
 
         layoutChat.addView(chatDroit);
 
-       /* new Handler().postDelayed((new Runnable(){
 
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
-
-        }), 200);
-        */
     }
 
     public void messageLeft(Chat chat, int index){
@@ -230,16 +209,16 @@ public class ChatFragment extends Fragment {
 
         layoutChat.addView(chatDroit, index);
 
-       /* new Handler().postDelayed((new Runnable(){
+        /*
+        new Handler().postDelayed((new Runnable(){
 
         	@Override
 			public void run(){
-        		ScrollView scrollChat = (ScrollView)view.findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
+                scrollChat.scrollTo(0, scrollChat.getBottom());
         	}
 
-        }), 200);
-        */
+        }), 200);*/
+
     }
 
     private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
