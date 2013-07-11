@@ -174,7 +174,6 @@ public class TimelineActivity extends SlidingActivity {
                                 momentTemp.setMomentFromJson(momentJson);
                                 AppMoment.getInstance().user.addMoment(momentTemp);
                                 moments.add(momentTemp);
-                                //ajoutMoment(momentTemp);
 
                                 if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
                                     DatabaseHelper.addMoment(momentTemp);

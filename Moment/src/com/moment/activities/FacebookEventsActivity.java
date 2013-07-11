@@ -1,5 +1,6 @@
 package com.moment.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -111,7 +112,9 @@ public class FacebookEventsActivity extends SherlockActivity {
                 Moment moment = new Moment();
                 try {
                     moment.setMomentFromJson(response);
-                    //Log.e("Moment", moment.toString());
+
+                    Intent intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                    startActivity(intent);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

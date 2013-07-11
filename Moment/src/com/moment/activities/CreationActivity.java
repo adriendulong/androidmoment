@@ -62,8 +62,8 @@ public class CreationActivity extends SherlockActivity {
                 SSO_WITH_FALLBACK).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
 
-        session = Session.getActiveSession();
-        Log.d("" ,"" + session);
+        session = null;
+
         if (session == null) {
             Log.d("", "" + savedInstanceState);
             if (savedInstanceState != null) {

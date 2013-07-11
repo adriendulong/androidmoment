@@ -103,6 +103,7 @@ public class InscriptionActivity extends SherlockActivity {
     private Button female;
     private ImageButton user_picture;
     private String gender;
+    private Bundle bundle;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,6 +111,7 @@ public class InscriptionActivity extends SherlockActivity {
         setContentView(R.layout.activity_inscription);
         pictureDir = getApplication().getCacheDir();
 
+        bundle = null;
         //GCM
         //Take care of GCM
         context = getApplicationContext();
@@ -132,9 +134,31 @@ public class InscriptionActivity extends SherlockActivity {
         female = (Button) findViewById(R.id.btn_female);
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Facebook")
+               .setTitle("Facebook");
+
+        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                facebookConnect();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+
+        dialog.show();
+
+    }
+
+    public void facebookConnect(){
         try {
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
-                    new String[] { "email",  "user_birthday"}), savedInstanceState);
+                    new String[] { "email",  "user_birthday"}), bundle);
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -183,11 +207,8 @@ public class InscriptionActivity extends SherlockActivity {
                 setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
                 SSO_WITH_FALLBACK).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
-
-        Session session = Session.getActiveSession();
-        Log.d("" ,"" + session);
+        Session session = null;
         if (session == null) {
-            Log.d("", "" + savedInstanceState);
             if (savedInstanceState != null) {
                 session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
             }
