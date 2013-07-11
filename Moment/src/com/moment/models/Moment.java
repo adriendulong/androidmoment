@@ -10,6 +10,7 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
+import com.moment.classes.DatabaseHelper;
 import com.moment.classes.Images;
 
 import org.json.JSONException;
@@ -332,6 +333,8 @@ public class Moment {
         myDao.refresh(this);
     }
 
+    // KEEP METHODS - put your custom methods here
+
     @Override
     public String toString() {
         return "Moment{" +
@@ -355,14 +358,12 @@ public class Moment {
                 ", userId=" + userId +
                 ", daoSession=" + daoSession +
                 ", myDao=" + myDao +
-                ", user=" + user +
+                ", user=" + user.toString() +
                 ", user__resolvedKey=" + user__resolvedKey +
                 ", chats=" + chats +
                 ", photos=" + photos +
                 '}';
     }
-
-    // KEEP METHODS - put your custom methods here
 
     public void addChat(Chat chat){
         this.chats.add(chat);
@@ -410,9 +411,19 @@ public class Moment {
                 if(owner.has("firstname")) this.user.setFirstName(owner.getString("firstname"));
                 if(owner.has("lastname")) this.user.setLastName(owner.getString("lastname"));
                 if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
-                if(owner.has("id")) this.user.setId(owner.getLong("id"));
-                this.userId = owner.getLong("id");
-                //TODO : Ajouter le owner à la base ? Car on enregistre l'id mais on le rajoute pas en base
+                if(owner.has("id"))
+                {
+                    this.user.setId(owner.getLong("id"));
+                    this.setUserId(owner.getLong("id"));
+                }
+                if(owner.has("facebookId")) this.user.setFacebookId(owner.getInt("facebookId"));
+
+                if(DatabaseHelper.getUserByIdFromDataBase(this.user.getId()) != null)
+                {
+                    AppMoment.getInstance().userDao.update(this.user);
+                } else {
+                    AppMoment.getInstance().userDao.insert(this.user);
+                }
             }
         }catch (JSONException e){
             Log.e("JSON EXCPETION", e.toString());

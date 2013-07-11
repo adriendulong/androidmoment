@@ -1,7 +1,5 @@
 package com.moment.activities;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
@@ -13,8 +11,6 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.FbEvent;

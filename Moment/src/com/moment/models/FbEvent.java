@@ -181,6 +181,7 @@ public class FbEvent implements Parcelable {
         RequestParams momentPrams = new RequestParams();
 
         momentPrams.put("name", this.name);
+        momentPrams.put("facebookId", this.facebookId);
 
         if(!this.address.equals("null"))
         {

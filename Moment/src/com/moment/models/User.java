@@ -283,6 +283,36 @@ public class User {
 
     // KEEP METHODS - put your custom methods here
 
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", facebookId=" + facebookId +
+                ", nbFollows=" + nbFollows +
+                ", nbFollowers=" + nbFollowers +
+                ", email='" + email + '\'' +
+                ", secondEmail='" + secondEmail + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", pictureProfileUrl='" + pictureProfileUrl + '\'' +
+                ", keyBitmap='" + keyBitmap + '\'' +
+                ", numTel='" + numTel + '\'' +
+                ", secondNumTel='" + secondNumTel + '\'' +
+                ", fbPhotoUrl='" + fbPhotoUrl + '\'' +
+                ", idCarnetAdresse='" + idCarnetAdresse + '\'' +
+                ", description='" + description + '\'' +
+                ", isSelect=" + isSelect +
+                ", daoSession=" + daoSession +
+                ", myDao=" + myDao +
+                ", moments=" + moments +
+                ", notifications=" + notifications +
+                ", invitations=" + invitations +
+                ", photoThumbnail=" + photoThumbnail +
+                ", photoOriginal=" + photoOriginal +
+                '}';
+    }
+
     public void addMoment(Moment moment){
         this.getMoments().add(moment);
     }
