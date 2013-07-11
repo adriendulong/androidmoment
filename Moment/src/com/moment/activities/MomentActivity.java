@@ -72,10 +72,7 @@ public class MomentActivity extends Activity {
      */
     static final String TAG = "GCMDemo";
 
-    TextView mDisplay;
     GoogleCloudMessaging gcm;
-    AtomicInteger msgId = new AtomicInteger();
-    SharedPreferences prefs;
     Context context;
     private String regid;
 	
