@@ -537,21 +537,22 @@ public class Moment {
             Log.e("Moment Cover", "DISTANT");
             this.setKeyBitmap("cover_moment_" + name.toLowerCase());
             String[] allowedContentTypes = new String[] { "image/png", "image/jpeg" };
-            client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
+            if(urlCover != null)
+                client.get(urlCover, new BinaryHttpResponseHandler(allowedContentTypes) {
 
-                @Override
-                public void onSuccess(byte[] fileData) {
+                    @Override
+                    public void onSuccess(byte[] fileData) {
 
-                    if(fileData!=null){
-                        InputStream is = new ByteArrayInputStream(fileData);
-                        Bitmap bmp = BitmapFactory.decodeStream(is);
+                        if(fileData!=null){
+                            InputStream is = new ByteArrayInputStream(fileData);
+                            Bitmap bmp = BitmapFactory.decodeStream(is);
 
-                        AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_" + name.toLowerCase(), bmp);
+                            AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_" + name.toLowerCase(), bmp);
 
-                        if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
-                        else targetView.setImageBitmap(bmp);
+                            if (isRounded) targetView.setImageBitmap(Images.getRoundedCornerBitmap(bmp));
+                            else targetView.setImageBitmap(bmp);
+                        }
                     }
-                }
 
                 @Override
                 public void handleFailureMessage(Throwable e, byte[] responseBody) {

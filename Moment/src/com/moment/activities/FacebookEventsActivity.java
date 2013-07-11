@@ -52,7 +52,11 @@ public class FacebookEventsActivity extends SherlockActivity {
 
     private void eventToMoment(JSONObject event) throws JSONException {
 
+        Log.e("Facebook JSON", event.toString());
+
         FbEvent fbEvent = new FbEvent();
+
+        fbEvent.setCover_photo_url(event.getJSONObject("pic_cover").getString("source"));
 
         fbEvent.setFacebookId(event.getString("eid"));
 
@@ -107,8 +111,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                 Moment moment = new Moment();
                 try {
                     moment.setMomentFromJson(response);
-                    Log.e("Moment", moment.toString());
-                    //AppMoment.getInstance().user.addMoment(moment);
+                    //Log.e("Moment", moment.toString());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

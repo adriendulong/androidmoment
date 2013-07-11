@@ -103,7 +103,7 @@ public class CreationActivity extends SherlockActivity {
     };
 
     public void getUserEvents() {
-        String fqlQuery = "SELECT creator, eid, name, pic,  start_time, end_time, location, privacy, description FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid='"+ facebookUserId +"' and rsvp_status!='declined')";
+        String fqlQuery = "SELECT creator, eid, name, pic_cover,  start_time, end_time, location, privacy, description FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid='"+ facebookUserId +"' and rsvp_status!='declined')";
         Bundle params = new Bundle();
         params.putString("q", fqlQuery);
         Request request = new Request(session, "/fql", params, HttpMethod.GET,

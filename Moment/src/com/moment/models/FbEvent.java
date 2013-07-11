@@ -1,8 +1,6 @@
 package com.moment.models;
 
 import android.content.Context;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 import com.loopj.android.http.RequestParams;
@@ -15,11 +13,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
-public class FbEvent implements Parcelable {
+public class FbEvent {
 
-    private String id;
     private String facebookId;
 
     private String owner_facebookId;
@@ -42,14 +38,6 @@ public class FbEvent implements Parcelable {
     private String cover_photo_url;
 
     public FbEvent() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getFacebookId() {
@@ -172,9 +160,6 @@ public class FbEvent implements Parcelable {
         this.cover_photo_url = cover_photo_url;
     }
 
-    public static Creator<FbEvent> getCreator() {
-        return CREATOR;
-    }
 
     public RequestParams getMomentRequestParams(Context context) throws JSONException, ParseException {
 
@@ -182,6 +167,8 @@ public class FbEvent implements Parcelable {
 
         momentPrams.put("name", this.name);
         momentPrams.put("facebookId", this.facebookId);
+        momentPrams.put("cover_photo_url", this.cover_photo_url);
+        momentPrams.put("state", "0");
 
         if(!this.address.equals("null"))
         {
@@ -247,15 +234,6 @@ public class FbEvent implements Parcelable {
 
         if (this.description != null) momentPrams.put("description", this.description);
 
-        if(this.cover_photo_url != null){
-            File image = context.getFileStreamPath("cover_picture");
-            try {
-                momentPrams.put("photo", image);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-        }
-
         Log.e("Params", momentPrams.toString());
 
         return momentPrams;
@@ -264,8 +242,7 @@ public class FbEvent implements Parcelable {
     @Override
     public String toString() {
         return "FbEvent{" +
-                "id='" + id + '\'' +
-                ", facebookId='" + facebookId + '\'' +
+                "facebookId='" + facebookId + '\'' +
                 ", owner_facebookId='" + owner_facebookId + '\'' +
                 ", owner_firstname='" + owner_firstname + '\'' +
                 ", owner_picture_url='" + owner_picture_url + '\'' +
@@ -281,43 +258,5 @@ public class FbEvent implements Parcelable {
                 ", endTime='" + endTime + '\'' +
                 ", cover_photo_url='" + cover_photo_url + '\'' +
                 '}';
-    }
-
-    @Override
-    public int describeContents() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        // TODO Auto-generated method stub
-        dest.writeString(id);
-        dest.writeString(title);
-        dest.writeString(startTime);
-        dest.writeString(address);
-
-    }
-
-    public static final Parcelable.Creator<FbEvent> CREATOR = new Parcelable.Creator<FbEvent>(){
-        @Override
-        public FbEvent createFromParcel(Parcel source)
-        {
-            return new FbEvent(source);
-        }
-
-        @Override
-        public FbEvent[] newArray(int size)
-        {
-            return new FbEvent[size];
-        }
-    };
-
-
-    public FbEvent(Parcel in) {
-        this.id = in.readString();
-        this.title = in.readString();
-        this.startTime = in.readString();
-        this.address = in.readString();
     }
 }
