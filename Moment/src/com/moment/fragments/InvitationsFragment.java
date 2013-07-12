@@ -14,6 +14,7 @@ import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -497,10 +498,21 @@ public class InvitationsFragment extends Fragment {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
                 Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
-                    public void onCompleted(List<GraphUser> users, Response response) {
+                    public void onCompleted(List<GraphUser> friends, Response response) {
                         if (response != null) {
                             try {
-                                Log.e("", response.toString());
+
+                                JSONArray d = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+
+                                for (int i = 0; i <d.length(); i++) {
+                                    JSONObject friend = d.getJSONObject(i);
+
+                                    User user = new User();
+                                    user.setFirstName(friend.getString("name"));
+                                    user.setFacebookId(friend.getInt("id"));
+                                    user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
+                                    users.add(user);
+                                }
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.d("", "Exception e");
@@ -536,42 +548,6 @@ public class InvitationsFragment extends Fragment {
         return null;
     }
 
-    private void getUserData(final Session session){
-        Request request = Request.newMeRequest(session,
-                new Request.GraphUserCallback() {
-                    @Override
-                    public void onCompleted(GraphUser user, Response response) {
-                        if(user != null && session == Session.getActiveSession()){
-                            getFriends();
-
-                        }
-                        if(response.getError() !=null){
-
-                        }
-                    }
-                });
-        request.executeAsync();
-    }
-
-    private void getFriends(){
-        Session activeSession = Session.getActiveSession();
-        if(activeSession.getState().isOpened()){
-            Request friendRequest = Request.newMyFriendsRequest(activeSession,
-                    new Request.GraphUserListCallback(){
-                        @Override
-                        public void onCompleted(List<GraphUser> users,
-                                                Response response) {
-                            Log.e("INFO", response.toString());
-
-                        }
-                    });
-            Bundle params = new Bundle();
-            params.putString("fields", "id, first_name, last_name, picture");
-            friendRequest.setParameters(params);
-            friendRequest.executeAsync();
-        }
-    }
-	
 	/**
 	    * Class utilis� lrsque l'utilisateur se connecte � Facebook 
 	    * @author adriendulong
