@@ -1,5 +1,6 @@
 package com.moment.fragments;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -23,12 +24,19 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionLoginBehavior;
+import com.facebook.SessionState;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.AsyncFacebookRunner.RequestListener;
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.Facebook.DialogListener;
 import com.facebook.android.FacebookError;
+import com.facebook.model.GraphUser;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -47,6 +55,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class InvitationsFragment extends Fragment {
 	
@@ -472,17 +482,95 @@ public class InvitationsFragment extends Fragment {
 	/**
 	 * Lorsqu'on arrive dans facebook onglet
 	 */
-	
-	public void facebook() {
-	       Log.d("Connection", "conncetion reussi");
-	       
-	       
-	       if(mFacebook.isSessionValid()){
-	    	   mAsyncRunner.request("me/friends", new FriendsRequestListener()); 
-	       }
-	       else mFacebook.authorize(getActivity(), AppMoment.PERMS_FB, new LoginDialogListener());
-	       
-	    }
+
+    public void facebook(){
+        try {
+            openActiveSession(getActivity(), true, fbStatusCallback, Arrays.asList(
+                    new String[]{}), null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
+                    public void onCompleted(List<GraphUser> users, Response response) {
+                        if (response != null) {
+                            try {
+                                Log.e("", response.toString());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("", "Exception e");
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
+                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
+                SSO_WITH_FALLBACK).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+        Session session = null;
+        if (session == null) {
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(getActivity(), null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(getActivity());
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForRead(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private void getUserData(final Session session){
+        Request request = Request.newMeRequest(session,
+                new Request.GraphUserCallback() {
+                    @Override
+                    public void onCompleted(GraphUser user, Response response) {
+                        if(user != null && session == Session.getActiveSession()){
+                            getFriends();
+
+                        }
+                        if(response.getError() !=null){
+
+                        }
+                    }
+                });
+        request.executeAsync();
+    }
+
+    private void getFriends(){
+        Session activeSession = Session.getActiveSession();
+        if(activeSession.getState().isOpened()){
+            Request friendRequest = Request.newMyFriendsRequest(activeSession,
+                    new Request.GraphUserListCallback(){
+                        @Override
+                        public void onCompleted(List<GraphUser> users,
+                                                Response response) {
+                            Log.e("INFO", response.toString());
+
+                        }
+                    });
+            Bundle params = new Bundle();
+            params.putString("fields", "id, first_name, last_name, picture");
+            friendRequest.setParameters(params);
+            friendRequest.executeAsync();
+        }
+    }
 	
 	/**
 	    * Class utilis� lrsque l'utilisateur se connecte � Facebook 
