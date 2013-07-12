@@ -2,6 +2,9 @@ package com.moment.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.*;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -18,10 +21,12 @@ import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Request;
@@ -59,11 +64,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class InscriptionActivity extends SherlockActivity {
+public class InscriptionActivity extends SherlockFragmentActivity {
 
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
@@ -98,7 +104,7 @@ public class InscriptionActivity extends SherlockActivity {
     private EditText prenomEdit;
     private EditText emailEdit;
     private EditText mdpEdit ;
-    private EditText birthdate;
+    private static Button birthdate;
     private Button male;
     private Button female;
     private ImageButton user_picture;
@@ -129,7 +135,7 @@ public class InscriptionActivity extends SherlockActivity {
         prenomEdit = (EditText)findViewById(R.id.inscription_prenom);
         emailEdit = (EditText)findViewById(R.id.inscription_email);
         mdpEdit = (EditText)findViewById(R.id.inscription_mdp);
-        birthdate = (EditText) findViewById(R.id.birthdate);
+        birthdate = (Button) findViewById(R.id.birthdate);
         male = (Button) findViewById(R.id.btn_male);
         female = (Button) findViewById(R.id.btn_female);
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
@@ -392,6 +398,11 @@ public class InscriptionActivity extends SherlockActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void showDatePickerDialog(View v) {
+        DialogFragment newFragment = new DatePickerFragment();
+        newFragment.show(this.getFragmentManager(), "datePicker");
     }
 
     public void selectImage(View view){
@@ -694,5 +705,25 @@ public class InscriptionActivity extends SherlockActivity {
                 new Timestamp(expirationTime));
         editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
         editor.commit();
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            birthdate.setText(""+ year + "-" + (month + 1) + "-" + day);
+        }
     }
 }
