@@ -3,18 +3,12 @@ package com.moment.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.database.Cursor;
-import android.database.SQLException;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.Contacts;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,72 +44,60 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class InvitationsFragment extends Fragment {
-	
-	public static final String POSITION = "Position";
-	private ListView listView;
-	private ArrayList<User> users;
+
+    public static final String POSITION = "Position";
+    private ListView listView;
+    private ArrayList<User> users;
     private ArrayList<User> showUsers;
-	// facebook vars
-	private Facebook mFacebook;
-	private AsyncFacebookRunner mAsyncRunner;
-	private int position;
+
+    private int position;
     private InvitationsAdapter adapter;
 
-
     public InvitationsFragment(){
-		
-	}
-	
 
-	@Override
-	public View onCreateView(LayoutInflater inflater,
-            ViewGroup container, Bundle savedInstanceState) {
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater,
+                             ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
-		
-		
+
+
         View rootView = inflater.inflate(
                 R.layout.activity_invitations_fragment, container, false);
         listView = (ListView)rootView.findViewById(R.id.list_view_contacts);
-        
+
         Myonclicklistneer myClickList = new Myonclicklistneer();
         listView.setOnItemClickListener(myClickList);
-        
-        
-       
-        
-        
+
         Bundle args = getArguments();
         position = args.getInt(POSITION);
-        
+
         System.out.println(""+position);
         if(users==null){
-        	if (position == 1){
-        		System.out.println("CCCOOONNNTTTACCCCTTSS");
-        		users = new ArrayList<User>();
-            	ContactLoader asyncContact = new ContactLoader();
-            	asyncContact.execute(true);
-            	
+            if (position == 1){
+                System.out.println("CCCOOONNNTTTACCCCTTSS");
+                users = new ArrayList<User>();
+                ContactLoader asyncContact = new ContactLoader();
+                asyncContact.execute(true);
+
 
             }
             else if (position == 0){
-            	users = new ArrayList<User>();
-            	mFacebook = new Facebook(AppMoment.APP_FB_ID);
-     	       mAsyncRunner = new AsyncFacebookRunner(mFacebook);
+                users = new ArrayList<User>();
+                facebook();
             }
             else {
-            	users = new ArrayList<User>();
-
+                users = new ArrayList<User>();
 
                 MomentApi.get("favoris", null, new JsonHttpResponseHandler() {
                     @Override
@@ -149,73 +131,8 @@ public class InvitationsFragment extends Fragment {
             }
         }
 
-        
+
         return rootView;
-    }
-	
-	
-	
-	
-	/**
-	 * Recupere tous les contacts et en cr�� des users
-	 */
-
-    public void readContacts(){
-
-        String[] projection =
-                {
-                        Contacts._ID,
-                        Contacts.DISPLAY_NAME
-                };
-        String sortOrder = Contacts.DISPLAY_NAME +
-                        " ASC";
-
-        String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? ";
-        String[] selectionArgs = new String[] { "1" };
-
-        ContentResolver cr = getActivity().getContentResolver();
-        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
-                projection, where, selectionArgs, sortOrder);
-
-        if (cur.getCount() > 0) {
-
-            while (cur.moveToNext()) {
-
-                User userCur = new User();
-
-                String id = cur.getString(cur.getColumnIndex(Contacts._ID));
-                String name = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
-
-                System.out.println("ID : "+id+"    NAME : "+name);
-
-                if(!name.contains("@")){
-                    userCur.setFirstName(name);
-                    userCur.setIdCarnetAdresse(id);
-
-                    users.add(userCur);
-
-                }
-
-
-
-            }
-
-
-        }
-
-        Integer[] positions = new Integer[users.size()];
-
-        int i=0;
-        for(User user : users){
-            positions[i] = i;
-            i++;
-        }
-
-        cur.close();
-
-        //We get extra infos
-        ExtrasContactLoader asyncContact = new ExtrasContactLoader();
-        asyncContact.execute(positions);
     }
 
 	/*
@@ -279,13 +196,12 @@ public class InvitationsFragment extends Fragment {
 
 			
 		}*/
-	
-	
-	/**
-	 * Recuperer photos contacts
-	 * @param contactId
-	 * @return
-	 */
+
+
+    /**
+     * Recuperer photos contacts
+     * @return
+     */
 	
 	/*
 	public InputStream openPhoto(long contactId) {
@@ -315,83 +231,216 @@ public class InvitationsFragment extends Fragment {
 	     return null;
 	 }
 	 */
-	
-	
-	
-	/**
-	 * Load async des contacts
-	 * @author adriendulong
-	 *
-	 */
-	
-	private class ContactLoader extends AsyncTask<Boolean, Integer, Void>
-	{
-		ProgressDialog dialog;
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			Toast.makeText(getActivity().getApplicationContext(), "D�but du traitement asynchrone", Toast.LENGTH_LONG).show();
-			dialog = ProgressDialog.show(getActivity(), null, "Chargements des contacts");
+    public void updateSearch(String search){
 
-		}
+        adapter.getFilter().filter(search);
 
-		@Override
-		protected void onProgressUpdate(Integer... values){
-			super.onProgressUpdate(values);
-			// Mise � jour de la ProgressBar
-			
-		}
+    }
 
-		@Override
-		protected Void doInBackground(Boolean... arg0) {
+    /**
+     * Recupere tous les contacts et en cr�� des users
+     */
 
-			readContacts();
-			
-			
-			return null;
-		}
+    public void readContacts(){
 
-		@Override
-		protected void onPostExecute(Void result) {
-			adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+        String[] projection =
+                {
+                        Contacts._ID,
+                        Contacts.DISPLAY_NAME
+                };
+        String sortOrder = Contacts.DISPLAY_NAME +
+                " ASC";
+
+        String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? ";
+        String[] selectionArgs = new String[] { "1" };
+
+        ContentResolver cr = getActivity().getContentResolver();
+        Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
+                projection, where, selectionArgs, sortOrder);
+
+        if (cur.getCount() > 0) {
+
+            while (cur.moveToNext()) {
+
+                User userCur = new User();
+
+                String id = cur.getString(cur.getColumnIndex(Contacts._ID));
+                String name = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
+
+                System.out.println("ID : "+id+"    NAME : "+name);
+
+                if(!name.contains("@")){
+                    userCur.setFirstName(name);
+                    userCur.setIdCarnetAdresse(id);
+
+                    users.add(userCur);
+
+                }
+
+
+
+            }
+
+
+        }
+
+        Integer[] positions = new Integer[users.size()];
+
+        int i=0;
+        for(User user : users){
+            positions[i] = i;
+            i++;
+        }
+
+        cur.close();
+
+        //We get extra infos
+        ExtrasContactLoader asyncContact = new ExtrasContactLoader();
+        asyncContact.execute(positions);
+    }
+
+    /**
+     * Lorsqu'on arrive dans facebook onglet
+     */
+
+    public void facebook(){
+        try {
+            openActiveSession(getActivity(), true, fbStatusCallback, Arrays.asList(
+                    new String[]{}), null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
+                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
+                SSO_WITH_FALLBACK).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+        Session session = null;
+        if (session == null) {
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(getActivity(), null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(getActivity());
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForRead(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
+                    public void onCompleted(List<GraphUser> friends, Response response) {
+                        if (response != null) {
+                            try {
+
+                                JSONArray d = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                                Log.e("FB", d.toString());
+                                adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+                                listView.setAdapter(adapter);
+                                for (int i = 0; i < d.length(); i++) {
+                                    JSONObject friend = d.getJSONObject(i);
+
+                                    User user = new User();
+                                    user.setFirstName(friend.getString("name"));
+                                    user.setFacebookId(friend.getInt("id"));
+                                    user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
+                                    users.add(user);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("", "Exception e");
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    /**
+     * Load async des contacts
+     * @author adriendulong
+     *
+     */
+
+    private class ContactLoader extends AsyncTask<Boolean, Integer, Void>
+    {
+        ProgressDialog dialog;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            Toast.makeText(getActivity().getApplicationContext(), "D�but du traitement asynchrone", Toast.LENGTH_LONG).show();
+            dialog = ProgressDialog.show(getActivity(), null, "Chargements des contacts");
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values){
+            super.onProgressUpdate(values);
+            // Mise � jour de la ProgressBar
+
+        }
+
+        @Override
+        protected Void doInBackground(Boolean... arg0) {
+
+            readContacts();
+
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+            adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
-			Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est termin�", Toast.LENGTH_LONG).show();
-			dialog.dismiss();
-		}
-	}
-	
-	
-	
-	
-	/**
-	 * Load async des Images des contacts
-	 * @author adriendulong
-	 *
-	 */
+            Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est termin�", Toast.LENGTH_LONG).show();
+            dialog.dismiss();
+        }
+    }
 
-	
-	private class ExtrasContactLoader extends AsyncTask<Integer, Integer, Boolean>
-	{
+    /**
+     * Load async des Images des contacts
+     * @author adriendulong
+     *
+     */
 
 
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			
-			
-		}
+    private class ExtrasContactLoader extends AsyncTask<Integer, Integer, Boolean>
+    {
 
-		@Override
-		protected void onProgressUpdate(Integer... values){
-			super.onProgressUpdate(values);
-			// Mise � jour de la ProgressBar
 
-			
-		}
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
 
-		@Override
-		protected Boolean doInBackground(Integer... position) {
+
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values){
+            super.onProgressUpdate(values);
+            // Mise � jour de la ProgressBar
+
+
+        }
+
+        @Override
+        protected Boolean doInBackground(Integer... position) {
                 /*
                 String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? " +
                         "AND "+
@@ -470,239 +519,86 @@ public class InvitationsFragment extends Fragment {
 
             return true;
 
-		}
-
-		@Override
-		protected void onPostExecute(Boolean completed) {
-			if(completed) System.out.println("FINISHHHHHHH !!!!!!!!!!!!");
-			
-		}
-	}
-	
-	
-	/**
-	 * Lorsqu'on arrive dans facebook onglet
-	 */
-
-    public void facebook(){
-        try {
-            openActiveSession(getActivity(), true, fbStatusCallback, Arrays.asList(
-                    new String[]{}), null);
         }
-        catch (Exception e) {
-            e.printStackTrace();
+
+        @Override
+        protected void onPostExecute(Boolean completed) {
+            if(completed) System.out.println("FINISHHHHHHH !!!!!!!!!!!!");
+
         }
     }
 
-    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-                Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
-                    public void onCompleted(List<GraphUser> friends, Response response) {
-                        if (response != null) {
-                            try {
 
-                                JSONArray d = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
 
-                                for (int i = 0; i <d.length(); i++) {
-                                    JSONObject friend = d.getJSONObject(i);
+    /**
+     * Recupere les infos des amis
+     */
 
-                                    User user = new User();
-                                    user.setFirstName(friend.getString("name"));
-                                    user.setFacebookId(friend.getInt("id"));
-                                    user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
-                                    users.add(user);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.d("", "Exception e");
-                            }
-
-                        }
-                    }
-                });
-            }
-        }
-    };
-
-    private Session openActiveSession(Activity activity, boolean allowLoginUI,
-                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
-                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
-                SSO_WITH_FALLBACK).setCallback(callback).
-                setDefaultAudience(SessionDefaultAudience.FRIENDS);
-        Session session = null;
-        if (session == null) {
-            if (savedInstanceState != null) {
-                session = Session.restoreSession(getActivity(), null, fbStatusCallback, savedInstanceState);
-            }
-            if (session == null) {
-                session = new Session(getActivity());
-            }
-            Session.setActiveSession(session);
-            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
-                session.openForRead(openRequest);
-                return session;
-            }
-        }
-        return null;
-    }
-
-	/**
-	    * Class utilis� lrsque l'utilisateur se connecte � Facebook 
-	    * @author adriendulong
-	    *
-	    */
-	   
-	private class LoginDialogListener implements DialogListener {
-	    	 
-    	@Override
-		public void onComplete(Bundle values) {
-    		Log.d("FACEBOOK", "OK");
-    		mAsyncRunner.request("me/friends", new FriendsRequestListener());
-    	}
-     
-    	@Override
-		public void onFacebookError(FacebookError e) {
-    		// TODO Auto-generated method stub
-     
-    	}
-
-    	@Override
-		public void onError(DialogError e) {
-    		// TODO Auto-generated method stub
-     
-    	}
-	     
-    	@Override
-		public void onCancel() {
-    		// TODO Auto-generated method stub
-     
-    	}
-    }
-	
-	
-	
-	/**
-	 * Recupere les infos des amis
-	 */
-	
-	/**
-     * Class utilis�e lorsque l'on recupere les �v�nements FB de l'utilisateur
+    /**
+     * Class utilis� lrsque l'utilisateur se connecte � Facebook
      * @author adriendulong
      *
      */
-    
-    private class FriendsRequestListener implements RequestListener {
-    	
-    	String fbReponse;
-    	 
-    	@Override
-		public void onComplete(String response, Object state) {
-    		try {
-    			// process the response here: executed in background thread
-    			Log.d("FACEBOOK RESP", "Response: " + response.toString());
-    			fbReponse = response;
-    			
-    			final JSONObject json = new JSONObject(response);
-    			JSONArray d = json.getJSONArray("data");
-    			
-    			for (int i = 0; i < d.length(); i++) {
-    				JSONObject friend = d.getJSONObject(i);
-    				
-    				User user = new User();
-    				user.setFirstName(friend.getString("name"));
-    				user.setFacebookId(friend.getInt("id"));
-    				user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
-    				users.add(user);
-     
-    			}
-     
-	     
-    			
-     
-    			//Lorsque l'on a les evenements on les affiche dans une nouvelle activit�
-    			getActivity().runOnUiThread(new Runnable() {
-    				@Override
-					public void run() {
-    					adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
-    	                listView.setAdapter(adapter);
-    				}
-    			});
-    		} catch (JSONException e) {
-    			Log.w("Facebook Erro", "JSON Error in response");
-    		}
-    	}
-     
-    	@Override
-		public void onIOException(IOException e, Object state) {
-    		// TODO Auto-generated method stub
-     
-    	}
-     
-    	@Override
-		public void onFileNotFoundException(FileNotFoundException e,
-    			Object state) {
-    		// TODO Auto-generated method stub
-     
-    	}
-     
-    	@Override
-		public void onMalformedURLException(MalformedURLException e,
-    			Object state) {
-    		// TODO Auto-generated method stub
-     
-    	}
-     
-    	@Override
-		public void onFacebookError(FacebookError e, Object state) {
-    		// TODO Auto-generated method stub
-     
-    	}
+
+    private class LoginDialogListener implements DialogListener {
+
+        @Override
+        public void onComplete(Bundle values) {
+            Log.d("FACEBOOK", "OK");
+        }
+
+        @Override
+        public void onFacebookError(FacebookError e) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onError(DialogError e) {
+            // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void onCancel() {
+            // TODO Auto-generated method stub
+
+        }
     }
-    
-    
-    
+
     //Listener list
     class Myonclicklistneer implements OnItemClickListener
     {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
-	        
-        	if(users.get(position).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getEmail());
-        	if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(position).getNumTel());
-        	
-        	if(!users.get(position).getIsSelect()){
-        		View v = view.findViewById(R.id.bg_cell_invitations);
-	            v.setBackgroundColor(getResources().getColor(R.color.orange));
-	            
-	           InvitationActivity.invitesUser.add(users.get(position));
-	           InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
-	           users.get(position).setIsSelect(true);
-        	}
-        	else{
-        		RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
-	            v.setBackgroundResource(R.drawable.background);
-	            InvitationActivity.invitesUser.remove(users.get(position));
+
+            if(users.get(position).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getEmail());
+            if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(position).getNumTel());
+
+            if(!users.get(position).getIsSelect()){
+                View v = view.findViewById(R.id.bg_cell_invitations);
+                v.setBackgroundColor(getResources().getColor(R.color.orange));
+
+                InvitationActivity.invitesUser.add(users.get(position));
                 InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
-	            
-	            users.get(position).setIsSelect(false);
-        	}
-        		
+                users.get(position).setIsSelect(true);
+            }
+            else{
+                RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
+                v.setBackgroundResource(R.drawable.background);
+                InvitationActivity.invitesUser.remove(users.get(position));
+                InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
+
+                users.get(position).setIsSelect(false);
+            }
+
 
         }
 
     }
 
 
-    public void updateSearch(String search){
-
-        adapter.getFilter().filter(search);
-
-    }
-    
-    
 
 }
 
