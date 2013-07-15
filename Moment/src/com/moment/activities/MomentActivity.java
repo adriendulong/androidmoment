@@ -192,9 +192,6 @@ public class MomentActivity extends Activity {
     }
 
     public void connect(View view) throws JSONException {
-
-
-
         RelativeLayout button_inscription = (RelativeLayout)findViewById(R.id.inscrire_button_login);
         button_inscription.setVisibility(View.INVISIBLE);
         EditText edit_email = (EditText)findViewById(R.id.email_login);

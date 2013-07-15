@@ -57,9 +57,9 @@ public class FacebookEventsActivity extends SherlockActivity {
 
         FbEvent fbEvent = new FbEvent();
 
-        fbEvent.setCover_photo_url(event.getJSONObject("pic_cover").getString("source"));
+        fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url"));
 
-        fbEvent.setFacebookId(event.getString("eid"));
+        fbEvent.setFacebookId(event.getString("id"));
 
         fbEvent.setAddress(event.getString("location"));
         fbEvent.setDescription(event.getString("description"));
@@ -69,9 +69,9 @@ public class FacebookEventsActivity extends SherlockActivity {
         fbEvent.setStartDate(event.getString("start_time"));
         fbEvent.setEndDate(event.getString("end_time"));
 
-        fbEvent.setOwner_facebookId(event.getString("creator"));
+        fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
 
-        getUserInfo(event.getString("creator"), fbEvent);
+        getUserInfo(event.getJSONObject("owner").getString("id"), fbEvent); //FIXME Deprecated with Graph API
 
     }
 
