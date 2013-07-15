@@ -19,6 +19,14 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionLoginBehavior;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
@@ -27,6 +35,7 @@ import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,7 +47,9 @@ import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
@@ -46,10 +57,16 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private Long momentID;
     private Photo photo;
     private int maxIndex;
+    private Session session;
+    private Bitmap bitmap;
+    private Bundle bundle;
+    private Activity activity = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        bundle = savedInstanceState;
 
         setContentView(R.layout.activity_detail_photo);
         final ImageView imageView = (ImageView) findViewById(R.id.photo_moment_detail);
@@ -69,7 +86,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         final ImageButton petitCoeur     = (ImageButton) findViewById(R.id.petit_coeur);
         final ImageButton trashButton    = (ImageButton) findViewById(R.id.trash);
         final ImageButton downloadButton = (ImageButton) findViewById(R.id.download);
-        final ImageButton facebookButton = (ImageButton) findViewById(R.id.button_facebook);
+        final ImageButton facebookButton = (ImageButton) findViewById(R.id.fb_share);
         final ImageButton twitterButton  = (ImageButton) findViewById(R.id.twitter);
         final EditText    nbPetitCoeur   = (EditText)    findViewById(R.id.editText);
         final TextView    prenom         = (TextView)    findViewById(R.id.prenom);
@@ -186,10 +203,18 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             }
         });
 
-/*        facebookButton.setOnClickListener(new View.OnClickListener() {
+        facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplication(), "On va facebooker" , Toast.LENGTH_LONG).show();
+                try {
+                    openActiveSession(activity, true, fbStatusCallback, Arrays.asList(
+                            new String[]{"publish_actions"}), bundle);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+                bitmap = photo.getBitmapOriginal();
+                sharePicture();
             }
         });
 
@@ -198,7 +223,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 Toast.makeText(getApplication(), "On va twitter" , Toast.LENGTH_LONG).show();
             }
-        });*/
+        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -292,6 +317,56 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 });
             }
         });
+    }
+
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
+                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
+                SSO_WITH_FALLBACK).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+
+        session = null;
+
+        if (session == null) {
+            Log.d("", "" + savedInstanceState);
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForPublish(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
+                    @Override
+                    public void onCompleted(Response response) {
+                        Log.d("Upload", response.toString());
+                    }
+
+                });
+            }
+        }
+    };
+
+    public void sharePicture() {
+        Request request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
+            @Override
+            public void onCompleted(Response response) {
+                Log.d("Upload", response.toString());
+            }
+        });
+        Request.executeBatchAsync(request);
     }
 
     @Override

@@ -75,6 +75,8 @@ public class PhotosFragment extends Fragment {
     private ArrayList<String> photos_uri;
     private ArrayList<Bitmap> photos_files;
 
+    private ThumbnailLoadTask imageLoadTask;
+
     //Fragment View
     private View view;
 
@@ -268,6 +270,7 @@ public class PhotosFragment extends Fragment {
 
         private final WeakReference<Photo> weakPhoto;
         private final WeakReference<ImageAdapter> weakAdapter;
+        private volatile boolean running = true;
 
         private ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
             this.weakPhoto = new WeakReference<Photo>(photo);
@@ -288,10 +291,15 @@ public class PhotosFragment extends Fragment {
             if(bitmap != null) {
                 final Photo photo = weakPhoto.get();
                 final ImageAdapter adapter = weakAdapter.get();
-                if(photo != null)
+                if(photo != null) {
                     photo.setBitmapThumbnail(bitmap);
+                }
+                try {
                     AppMoment.getInstance().addBitmapToMemoryCache("thumbnail_"+photo.getId(), photo.getBitmapThumbnail());
                 adapter.notifyDataSetChanged();
+                } catch (NullPointerException npe) {
+                    npe.printStackTrace();
+                }
             }
         }
 
@@ -519,7 +527,7 @@ public class PhotosFragment extends Fragment {
                         imageAdapter.notifyDataSetChanged();
 
                         if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
-                            ThumbnailLoadTask imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
+                            imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
                             imageLoadTask.execute(photo.getUrlThumbnail());
                         } else {
                             photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));
