@@ -22,6 +22,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class FacebookEventsActivity extends SherlockActivity {
 
@@ -51,25 +56,8 @@ public class FacebookEventsActivity extends SherlockActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void eventToMoment(JSONObject event) throws JSONException {
-
-        FbEvent fbEvent = new FbEvent();
-
-        fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url"));
-
-        fbEvent.setFacebookId(event.getString("id"));
-
-        fbEvent.setAddress(event.getString("location"));
-        fbEvent.setDescription(event.getString("description"));
-        fbEvent.setName(event.getString("name"));
-        fbEvent.setPrivacy(event.getString("privacy"));
-
-        fbEvent.setStartDate(event.getString("start_time"));
-        fbEvent.setEndDate(event.getString("end_time"));
-
-        fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
-
-        getUserInfo(event.getJSONObject("owner").getString("id"), fbEvent);
+    private void eventToMoment(JSONObject event) {
+        // TODO Parsing facebook event
     }
 
     public void getUserInfo(String userFacebookId, final FbEvent fbEvent) {

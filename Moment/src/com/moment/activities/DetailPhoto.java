@@ -366,7 +366,16 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 Log.d("Upload", response.toString());
             }
         });
+        Bundle params = request.getParameters();
+        params.putString("message", getApplication().getPackageResourcePath());
         Request.executeBatchAsync(request);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession()
+                .onActivityResult(this, requestCode, resultCode, data);
     }
 
     @Override
