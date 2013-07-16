@@ -1,6 +1,9 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -12,6 +15,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -60,6 +64,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private Session session;
     private Bitmap bitmap;
     private Bundle bundle;
+    private String message;
+    private EditText dialogText;
     private Activity activity = this;
 
     @Override
@@ -366,8 +372,25 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 Log.d("Upload", response.toString());
             }
         });
-        Bundle params = request.getParameters();
-        params.putString("message", getApplication().getPackageResourcePath());
+        final Bundle params = request.getParameters();
+
+        final Dialog dialog = new Dialog(this);
+        View view = getLayoutInflater().inflate(R.layout.custom_dialog, null);
+        dialog.setContentView(view);
+
+        dialogText = (EditText) view.findViewById(R.id.custom_dialog_text);
+        Button dialogBtn = (Button) view.findViewById(R.id.custom_dialog_button);
+        message = "Photo prise lors de l'évènement " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " " + photo.getUrlUnique() + " " + "#appmoment";
+        dialogText.setText(message);
+        dialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                message = dialogText.getText().toString();
+                dialog.cancel();
+            }
+        });
+        dialog.show();
+        params.putString("message", message);
         Request.executeBatchAsync(request);
     }
 

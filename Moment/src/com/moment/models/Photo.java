@@ -18,7 +18,9 @@ public class Photo {
 	private Bitmap bitmapThumbnail;
 	private String urlOriginal;
 	private String urlThumbnail;
+    private String urlUnique;
     private Date time;
+
 	
 	public int getId() {
 		return id;
@@ -76,6 +78,14 @@ public class Photo {
 		this.urlThumbnail = urlThumbnail;
 	}
 
+    public String getUrlUnique() {
+        return urlUnique;
+    }
+
+    public void setUrlUnique(String urlUnique) {
+        this.urlUnique = urlUnique;
+    }
+
     public Date getTime() {
         return time;
     }
@@ -95,6 +105,7 @@ public class Photo {
 			this.setNbLike(photoObject.getInt("nb_like"));
 			this.setUrlOriginal(photoObject.getString("url_original"));
 			this.setUrlThumbnail(photoObject.getString("url_thumbnail"));
+            this.setUrlUnique(photoObject.getString("unique_url"));
             Date timestamp = new Date(Long.valueOf(photoObject.getString("time"))*1000);
 
             this.setTime(timestamp);
