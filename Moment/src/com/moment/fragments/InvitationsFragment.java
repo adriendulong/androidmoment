@@ -25,15 +25,8 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
-import com.facebook.android.AsyncFacebookRunner;
-import com.facebook.android.AsyncFacebookRunner.RequestListener;
-import com.facebook.android.DialogError;
-import com.facebook.android.Facebook;
-import com.facebook.android.Facebook.DialogListener;
-import com.facebook.android.FacebookError;
 import com.facebook.model.GraphUser;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.InvitationActivity;
 import com.moment.classes.InvitationsAdapter;
@@ -44,9 +37,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -94,7 +84,7 @@ public class InvitationsFragment extends Fragment {
             }
             else if (position == 0){
                 users = new ArrayList<User>();
-                facebook();
+                //facebook();
             }
             else {
                 users = new ArrayList<User>();

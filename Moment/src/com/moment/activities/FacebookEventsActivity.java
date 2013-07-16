@@ -53,8 +53,6 @@ public class FacebookEventsActivity extends SherlockActivity {
 
     private void eventToMoment(JSONObject event) throws JSONException {
 
-        Log.e("Facebook JSON", event.toString());
-
         FbEvent fbEvent = new FbEvent();
 
         fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url"));
@@ -71,8 +69,7 @@ public class FacebookEventsActivity extends SherlockActivity {
 
         fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
 
-        getUserInfo(event.getJSONObject("owner").getString("id"), fbEvent); //FIXME Deprecated with Graph API
-
+        getUserInfo(event.getJSONObject("owner").getString("id"), fbEvent);
     }
 
     public void getUserInfo(String userFacebookId, final FbEvent fbEvent) {

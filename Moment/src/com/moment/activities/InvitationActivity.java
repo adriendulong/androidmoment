@@ -109,11 +109,11 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	            	myMenu.findItem(R.id.invitation_facebook).setIcon(R.drawable.picto_fbdown);
 	            	myMenu.findItem(R.id.invitation_contacts).setIcon(R.drawable.picto_phoneup);
 	            	myMenu.findItem(R.id.invitation_favoris).setIcon(R.drawable.picto_starup);
-	            	
-	            	if(frFb==null){
-	            		frFb = mInvitationCollectionPagerAdapter.getItem(0);
-	            		//frFb.facebook();
-	            	}
+
+                    if(frFb==null){
+                        frFb = mInvitationCollectionPagerAdapter.getItem(0);
+                        frFb.facebook();
+                    }
 	            	
 				}
 				//Favoris

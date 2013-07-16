@@ -62,7 +62,7 @@ public class CreationActivity extends SherlockActivity {
                 SSO_WITH_FALLBACK).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
 
-        session = null;
+//        session = null;
 
         if (session == null) {
             Log.d("", "" + savedInstanceState);
@@ -112,9 +112,11 @@ public class CreationActivity extends SherlockActivity {
 
                     @Override
                     public void onCompleted(Response response) {
+                        Log.d("RESPONSE", response.toString());
                         JSONArray events = null;
                         try {
                             events = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                            Log.d("EVENTS", events.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
@@ -147,7 +149,7 @@ public class CreationActivity extends SherlockActivity {
     public void facebook(View view) {
         try {
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
-                    new String[]{"email",  "user_birthday"}), bundle);
+                    new String[]{"user_events"}), bundle);
         }
         catch (Exception e) {
             e.printStackTrace();
