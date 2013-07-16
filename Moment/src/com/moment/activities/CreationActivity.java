@@ -38,7 +38,7 @@ public class CreationActivity extends SherlockActivity {
     private Bundle bundle;
     private Session session;
     private String facebookUserId;
-	
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

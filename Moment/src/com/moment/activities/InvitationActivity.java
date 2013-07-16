@@ -39,7 +39,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     private InvitationsFragment frFb;
     public static ArrayList<User> invitesUser;
     public static TextView nb_invites;
-    private int idMoment;
+    private long idMoment;
     private EditText searchGuests;
     ArrayList<InvitationsFragment> frs;
 
@@ -59,10 +59,9 @@ public class InvitationActivity extends SherlockFragmentActivity {
         nb_invites = (TextView)findViewById(R.id.invites_selected);
         
         //ON recupere l'id du moment que l'on vient de cr�er
-        idMoment = getIntent().getIntExtra("id", -1);
+        idMoment = getIntent().getLongExtra("id", -1);
 
-        
-        
+
         //Initi les fragments
         frs = new ArrayList<InvitationsFragment>();
         
