@@ -527,45 +527,7 @@ public class InvitationsFragment extends Fragment {
 
         }
     }
-
-
-
-    /**
-     * Recupere les infos des amis
-     */
-
-    /**
-     * Class utilis� lrsque l'utilisateur se connecte � Facebook
-     * @author adriendulong
-     *
-     */
-
-    private class LoginDialogListener implements DialogListener {
-
-        @Override
-        public void onComplete(Bundle values) {
-            Log.d("FACEBOOK", "OK");
-        }
-
-        @Override
-        public void onFacebookError(FacebookError e) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onError(DialogError e) {
-            // TODO Auto-generated method stub
-
-        }
-
-        @Override
-        public void onCancel() {
-            // TODO Auto-generated method stub
-
-        }
-    }
-
+    
     //Listener list
     class Myonclicklistneer implements OnItemClickListener
     {

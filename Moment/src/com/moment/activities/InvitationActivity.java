@@ -113,7 +113,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	            	
 	            	if(frFb==null){
 	            		frFb = mInvitationCollectionPagerAdapter.getItem(0);
-	            		frFb.facebook();
+	            		//frFb.facebook();
 	            	}
 	            	
 				}
