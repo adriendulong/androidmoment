@@ -12,11 +12,15 @@ import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.FbEvent;
 import com.moment.models.Moment;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +50,11 @@ public class FacebookEventsActivity extends SherlockActivity {
             events = new JSONArray(getIntent().getStringExtra("events"));
             for(int i = 0; i < events.length(); i++)
             {
-                eventToMoment(events.getJSONObject(i));
+                try {
+                    eventToMoment(events.getJSONObject(i));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -56,12 +64,103 @@ public class FacebookEventsActivity extends SherlockActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    private void eventToMoment(JSONObject event) {
-        // TODO Parsing facebook event
+//    - name
+//    - address
+//    - startDate
+//    - endDate
+//    - startTime (non obligatoire)
+//    - endTime (non obligatoire)
+//    - description (non obligatoire)
+//    - facebookId
+//    - owner_facebookId
+//    - owner_firstname
+//    - owner_picture_url
+//    - cover_photo_url
+//    - privacy
+//    - state , admin = 1, coming = 2, not coming = 3, on sait pas = 4, peut etre = 5
+
+
+    private void eventToMoment(JSONObject event) throws JSONException, ParseException {
+
+        FbEvent fbEvent = new FbEvent();
+
+        if(event.has("id")) { fbEvent.setFacebookId(event.getString("id")); }
+        if(event.has("name")) { fbEvent.setName(event.getString("name")); }
+        if(event.has("location")) { fbEvent.setAddress(event.getString("location")); }
+        if(event.has("description")) { fbEvent.setDescription(event.getString("description")); }
+        if(event.has("name")) { fbEvent.setName(event.getString("name")); }
+
+        if(event.has("owner")) {
+            fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
+            fbEvent.setOwner_firstname(event.getJSONObject("owner").getString("name"));
+
+            if(AppMoment.getInstance().user.getFacebookId() != null) {
+                if (AppMoment.getInstance().user.getFacebookId() == Integer.parseInt(event.getJSONObject("owner").getString("id"))) {
+                    fbEvent.setState("0");
+                }
+            }
+            getUserInfo(fbEvent.getOwner_facebookId(), fbEvent);
+        }
+
+        if(event.has("rsvp_status") && fbEvent.getState() == null) {
+            if(event.getString("rsvp_status").equals("attending")) { fbEvent.setState("2"); }
+            if(event.getString("rsvp_status").equals("maybe")) { fbEvent.setState("5"); }
+            if(event.getString("rsvp_status").equals("not answer")) { fbEvent.setState("4"); }
+        }
+
+        DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis();
+
+        if(event.has("start_time"))
+        {
+            if(event.getString("is_date_only").equals("false"))
+            {
+                DateTime start = parser.parseDateTime(event.getString("start_time"));
+                String start_date = start.getYear() + "-" + start.getMonthOfYear() + "-" +start.getDayOfMonth();
+                String start_time = start.getHourOfDay() + ":" + start.getMinuteOfHour();
+
+                fbEvent.setStartDate(start_date);
+                fbEvent.setStartTime(start_time);
+            } else {
+                fbEvent.setStartDate(event.getString("start_time"));
+            }
+        }
+
+        if(event.has("end_time"))
+        {
+            if(event.getString("is_date_only").equals("false"))
+            {
+                DateTime end = parser.parseDateTime(event.getString("end_time"));
+                String end_date = end.getYear() + "-" + end.getMonthOfYear() + "-" + end.getDayOfMonth();
+                String end_time = end.getHourOfDay() + ":" + end.getMinuteOfHour();
+
+                fbEvent.setEndDate(end_date);
+                fbEvent.setEndTime(end_time);
+            } else {
+                fbEvent.setEndDate(event.getString("end_time"));
+            }
+        } else {
+            if(event.getString("is_date_only").equals("false"))
+            {
+                DateTime end = parser.parseDateTime(event.getString("start_time"));
+                String end_date = end.getYear() + "-" + end.getMonthOfYear() + "-" + (end.getDayOfMonth() + 1);
+                String end_time = end.getHourOfDay() + ":" + end.getMinuteOfHour();
+
+                fbEvent.setEndDate(end_date);
+                fbEvent.setEndTime(end_time);
+            } else {
+                DateTime dt = DateTime.parse(event.getString("start_time"));
+                String year = String.valueOf(dt.getYear());
+                String month = String.valueOf(dt.getMonthOfYear());
+                String day = String.valueOf(dt.getDayOfMonth() + 1);
+                fbEvent.setEndTime(year + "-" + month + "-" +day);
+            }
+        }
+
+        uploadEvent(fbEvent);
     }
 
     public void getUserInfo(String userFacebookId, final FbEvent fbEvent) {
-        String fqlQuery = "SELECT first_name, pic FROM user WHERE uid='"+ userFacebookId +"'";
+        String fqlQuery = "SELECT pic FROM user WHERE uid='"+ userFacebookId +"'";
         Bundle params = new Bundle();
         params.putString("q", fqlQuery);
         Request request = new Request(session, "/fql", params, HttpMethod.GET,
@@ -73,7 +172,6 @@ public class FacebookEventsActivity extends SherlockActivity {
                         try {
                             user = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
                             eventOwner = user.getJSONObject(0);
-                            fbEvent.setOwner_firstname(eventOwner.getString("first_name"));
                             fbEvent.setOwner_picture_url(eventOwner.getString("pic"));
                             try {
                                 uploadEvent(fbEvent);
