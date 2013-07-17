@@ -1,10 +1,12 @@
 package com.moment.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -36,7 +38,7 @@ public class NotificationsActivity extends SherlockActivity {
     private ArrayList<Notification> invitations;
     private ImageView orangeIndicator;
     //Position on notif or invit
-    private int position;
+    private int positionTab;
     private DisplayMetrics metrics;
 
     private int NOTIFICATIONS = 0;
@@ -47,7 +49,7 @@ public class NotificationsActivity extends SherlockActivity {
         setContentView(R.layout.notifications_activity);
 
         //init position
-        position = NOTIFICATIONS;
+        positionTab = NOTIFICATIONS;
 
         //Get size screen
         metrics = new DisplayMetrics();
@@ -63,6 +65,19 @@ public class NotificationsActivity extends SherlockActivity {
         //Notifs adapter
         adapterNotifs = new NotificationsAdapter(this, R.layout.notifs_cell, notifications, NOTIFICATIONS);
         notifsListView.setAdapter(adapterNotifs);
+        notifsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Notification selectedNotifs = new Notification();
+                if (positionTab==NOTIFICATIONS) selectedNotifs = notifications.get(position);
+                else selectedNotifs = invitations.get(position);
+                Intent intent = new Intent(NotificationsActivity.this, MomentInfosActivity.class);
+                intent.putExtra("precedente", "notifs");
+                intent.putExtra("type_id", selectedNotifs.getTypeNotif());
+                intent.putExtra("moment_id", selectedNotifs.getMoment().getId());
+                startActivity(intent);
+            }
+        });
 
         //We also create the invit adapter
         invitations = new ArrayList<Notification>();
@@ -144,8 +159,8 @@ public class NotificationsActivity extends SherlockActivity {
 
     public void notifications(View view){
         Log.e("NOTIFS", "HERE NOTIFS");
-        if(position!=NOTIFICATIONS){
-            position = NOTIFICATIONS;
+        if(positionTab!=NOTIFICATIONS){
+            positionTab = NOTIFICATIONS;
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)orangeIndicator.getLayoutParams();
             params.setMargins(0,0,0,0);
             orangeIndicator.setLayoutParams(params);
@@ -157,8 +172,8 @@ public class NotificationsActivity extends SherlockActivity {
 
     public void invitations(View view){
         Log.e("INVITS", "HERE INVITS");
-        if(position!=INVITATIONS){
-            position = INVITATIONS;
+        if(positionTab!=INVITATIONS){
+            positionTab = INVITATIONS;
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)orangeIndicator.getLayoutParams();
             params.setMargins(metrics.widthPixels/2,0,0,0);
             orangeIndicator.setLayoutParams(params);

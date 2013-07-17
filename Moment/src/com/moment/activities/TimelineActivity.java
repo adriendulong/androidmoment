@@ -3,11 +3,14 @@ package com.moment.activities;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TimelineActivity extends SlidingActivity {
@@ -57,10 +61,13 @@ public class TimelineActivity extends SlidingActivity {
     private List<Moment> moments;
     private MomentsAdapter adapter;
     private ProgressDialog dialog;
+    private ImageView todayBtn;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.v("TIMELINE", "CRETAE");
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -74,6 +81,7 @@ public class TimelineActivity extends SlidingActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        todayBtn = (ImageView)findViewById(R.id.today_btn);
 
         myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
         myMoments.setBackgroundResource(R.drawable.bg_section);
@@ -157,6 +165,9 @@ public class TimelineActivity extends SlidingActivity {
             }
 
             else {
+                dialog = ProgressDialog.show(this, null, "Téléchargement des Moments");
+
+                MomentApi.initialize(getApplicationContext());
                 MomentApi.get("moments", null, new JsonHttpResponseHandler() {
 
                     @Override
@@ -180,12 +191,76 @@ public class TimelineActivity extends SlidingActivity {
                                 }
                             }
                             adapter.notifyDataSetChanged();
+
+                            dialog.dismiss();
+
+                            goToToday(false);
+
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                     }
+
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        Log.e("TIMELINE", content);
+                    }
+
                 });
             }
+        }
+        //After crash
+        else{
+            Log.e("TIMELINE", "LOSTTTTTT");
+            SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+            Long savedUserID = sharedPreferences.getLong("userID", -1);
+            AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedInstanceState.getLong("userID"));
+            Log.e("TIMELINE", "User id : "+savedInstanceState.getLong("userID"));
+
+            dialog = ProgressDialog.show(this, null, "Téléchargement des Moments");
+
+            MomentApi.initialize(getApplicationContext());
+            MomentApi.get("moments", null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        System.out.println(response.toString());
+                        JSONArray momentsArray = response.getJSONArray("moments");
+                        int nbMoments = momentsArray.length();
+                        Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
+
+                        for (int j = 0; j < nbMoments; j++) {
+
+                            JSONObject momentJson = (JSONObject) momentsArray.get(j);
+                            Moment momentTemp = new Moment();
+                            momentTemp.setMomentFromJson(momentJson);
+                            AppMoment.getInstance().user.addMoment(momentTemp);
+                            moments.add(momentTemp);
+
+                            if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                DatabaseHelper.addMoment(momentTemp);
+                            }
+                        }
+                        adapter.notifyDataSetChanged();
+
+                        dialog.dismiss();
+
+                        goToToday(false);
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    Log.e("TIMELINE", content);
+                }
+
+            });
+
+
         }
     }
 
@@ -218,6 +293,16 @@ public class TimelineActivity extends SlidingActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        savedInstanceState.putLong("userID", AppMoment.getInstance().user.getId());
+        // etc.
     }
 
     /*
@@ -463,8 +548,8 @@ public class TimelineActivity extends SlidingActivity {
 
                 @Override
                 public void onSuccess(JSONObject response) {
-                    for(Moment moment : moments){
-                        if(moment.getId()==momentToDel.getId()) moments.remove(moment);
+                    for(int i=0;i<moments.size();i++){
+                        if(moments.get(i).getId()==momentToDel.getId()) moments.remove(i);
                     }
                     if(AppMoment.getInstance().user.getMoments().remove(momentToDel)) Log.v("TIMELINE", "REMOVED INSTANCE");
                     //TODO : REMOVE en base
@@ -480,6 +565,58 @@ public class TimelineActivity extends SlidingActivity {
                 }
             });
         }
+    }
+
+
+    public void goToToday(Boolean smooth){
+
+        Display display = getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        int height = display.getHeight();
+
+        Resources r = getResources();
+        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, r.getDisplayMetrics());
+
+
+        if(smooth){
+            if(android.os.Build.VERSION.SDK_INT > 10) momentsList.smoothScrollToPositionFromTop(getNearestDate(), (height/2)-(int)px);
+            else momentsList.setSelectionFromTop(getNearestDate(), height/2);
+        }
+        else momentsList.setSelectionFromTop(getNearestDate(), height/2);
+
+        rotateToday();
+    }
+
+    /**
+     * Find the Moment which is the closest from today
+     * @return
+     */
+
+    public int getNearestDate() {
+        Date currentDate = new Date();
+        long minDiff = -1, currentTime = currentDate.getTime();
+        Date minDate = null;
+        int positionDate=-1;
+        for(int i=0;i<moments.size();i++){
+            long diff = Math.abs(currentTime - moments.get(i).getDateDebut().getTime());
+            if ((minDiff == -1) || (diff < minDiff)) {
+                minDiff = diff;
+                minDate = moments.get(i).getDateDebut();
+                positionDate = i;
+            }
+        }
+        return positionDate;
+    }
+
+    public void today(View view){
+        goToToday(true);
+    }
+
+    public void rotateToday(){
+        Matrix matrix=new Matrix();
+        todayBtn.setScaleType(ImageView.ScaleType.MATRIX);   //required
+        matrix.postRotate((float)90, todayBtn.getPivotX(), todayBtn.getPivotY());
+        todayBtn.setImageMatrix(matrix);
     }
 
 

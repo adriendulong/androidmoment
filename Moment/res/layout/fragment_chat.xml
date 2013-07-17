@@ -19,9 +19,6 @@
         </LinearLayout>
 
     </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
-    <ImageView android:layout_width="fill_parent"
-               android:layout_height="1dp"
-               android:background="@android:color/black"/>
     <LinearLayout android:id="@+id/layout_post_message"
         android:layout_width="fill_parent"
         android:layout_height="45dp"

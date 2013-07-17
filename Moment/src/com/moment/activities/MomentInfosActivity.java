@@ -101,13 +101,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         String precedente = getIntent().getStringExtra("precedente");        
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
-        if(precedente.equals("push")){
+        if(precedente.equals("push")||precedente.equals("notifs")){
             type_id = getIntent().getIntExtra("type_id", -1);
             moment_id = getIntent().getIntExtra("moment_id", -1);
             momentID = getIntent().getLongExtra("moment_id", 1);
 
             if (type_id == PHOTO_PUSH) position = 0;
             else if(type_id == CHAT_PUSH) position = 2;
+            else position=1;
         }
         else momentID = getIntent().getLongExtra("id", 1);
 

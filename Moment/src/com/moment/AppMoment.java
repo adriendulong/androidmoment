@@ -15,6 +15,8 @@ import com.moment.models.MomentDao;
 import com.moment.models.User;
 import com.moment.models.UserDao;
 
+import java.net.NetworkInterface;
+
 public class AppMoment extends Application {
 	
 	public User user;
@@ -78,8 +80,10 @@ public class AppMoment extends Application {
 
         if (wifi.isConnected()) {
             return true;
-        } else if (mobile.isConnected()) {
+        }else if(mobile!=null){
+            if (mobile.isConnected()) {
             return true;
+            }
         }
         return false;
     }

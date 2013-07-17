@@ -25,11 +25,14 @@
                   android:layout_marginTop="5dp">
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:textSize="12dp"
+                  android:textSize="14dp"
                   android:textColor="@android:color/white"
                   android:text="Coucou"
                   android:layout_gravity="center_horizontal"
-                  android:id="@+id/moment_name"/>
+                  android:id="@+id/moment_name"
+                  android:maxLength="100"
+                  android:ellipsize="end"
+                  android:singleLine="true"/>
         <TextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="12dp"

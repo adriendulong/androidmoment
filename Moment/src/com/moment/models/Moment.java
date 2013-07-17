@@ -389,10 +389,12 @@ public class Moment {
             this.state = moment.getInt("user_state");
             this.keyBitmap = "cover_moment_"+name.toLowerCase();
             String[] dateDedutTemp = moment.getString("startDate").split("-");
-            GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1]), Integer.parseInt(dateDedutTemp[2]));
+            Log.v("MOMENT", "Date début string "+dateDedutTemp.toString());
+            GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1])-1, Integer.parseInt(dateDedutTemp[2]));
             this.dateDebut = dateDebutGreg.getTime();
+            Log.v("MOMENT", "Date début DATE "+this.dateDebut.toString());
             String[] dateFinTemps = moment.getString("endDate").split("-");
-            GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1]), Integer.parseInt(dateFinTemps[2]));
+            GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1])-1, Integer.parseInt(dateFinTemps[2]));
             this.dateFin = dateFinGreg.getTime();
             if (moment.has("cover_photo_url")){
                 this.urlCover = moment.getString("cover_photo_url");

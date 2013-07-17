@@ -1,10 +1,6 @@
 package com.moment.activities;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.DialogFragment;
+import android.app.*;
 import android.content.*;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -110,6 +106,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private ImageButton user_picture;
     private String gender;
     private Bundle bundle;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -290,6 +287,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         }
 
         MomentApi.initialize(getApplicationContext());
+        dialog = ProgressDialog.show(this, null, "Inscription");
 
                 MomentApi.post("register", params, new JsonHttpResponseHandler() {
 
@@ -331,23 +329,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                                     AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
 
-                                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-
-                                    alertDialogBuilder.setTitle("OK");
-
-                                    alertDialogBuilder
-                                            .setMessage("OK")
-                                            .setCancelable(false)
-                                            .setPositiveButton("Cool",new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog,int id) {
-                                                    Intent intent = new Intent(InscriptionActivity.this, TimelineActivity.class);
-                                                    startActivity(intent);
-                                                }
-                                            });
-
-                                    AlertDialog alertDialog = alertDialogBuilder.create();
-                                    alertDialog.show();
+                                    dialog.dismiss();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }

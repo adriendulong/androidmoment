@@ -38,6 +38,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
     public View getView(int position, View convertView, ViewGroup parent) {
         View row = convertView;
         NotifHolder holder = null;
+        Notification notif = data.get(position);
 
 
         if(row == null)
@@ -61,10 +62,36 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
                 holder.nbGuest = (TextView)row.findViewById(R.id.nb_guests_moment_notif);
             }
 
+            //If it is a Photo notif
+            if(notif.getTypeNotif()==2){
+                String message = getContext().getString(R.string.notif_photo)+" "+notif.getMoment().getName();
+                holder.textNotif.setText(message);
+                holder.imageNotif.setImageResource(R.drawable.picto_photo_volet);
+
+            }
+            //New Chat
+            else if(notif.getTypeNotif()==3){
+                String message = getContext().getString(R.string.notif_message)+" "+notif.getMoment().getName();
+                holder.textNotif.setText(message);
+                holder.imageNotif.setImageResource(R.drawable.picto_message_volet);
+            }
+            else if(notif.getTypeNotif()==0){
+                holder.nameMoment.setText(notif.getMoment().getName());
+                holder.nbGuest.setText(""+notif.getMoment().getGuestNumber());
+
+                //Image
+                if(notif.getMoment().getUrlCover()!= null){
+                    notif.getMoment().printCover(holder.imageMoment, true);
+                }
+            }
+
+            row.setTag(holder);
 
 
-
-            Notification notif = data.get(position);
+        }
+        else
+        {
+            holder = (NotifHolder)row.getTag();
 
             //If it is a Photo notif
             if(notif.getTypeNotif()==2){
@@ -87,17 +114,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
                 if(notif.getMoment().getUrlCover()!= null){
                     notif.getMoment().printCover(holder.imageMoment, true);
                 }
-
-            row.setTag(holder);
-        }
-        else
-        {
-            holder = (NotifHolder)row.getTag();
-
-        }
-
-
-
+            }
 
         }
 
@@ -110,7 +127,6 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
         int typeId;
         TextView textNotif;
         ImageView imageNotif;
-
         ImageView imageMoment;
         TextView nameMoment;
         TextView nbGuest;

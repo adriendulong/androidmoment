@@ -1,6 +1,7 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -75,7 +76,9 @@ public class MomentActivity extends Activity {
     GoogleCloudMessaging gcm;
     Context context;
     private String regid;
-	
+    private ProgressDialog dialog;
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -292,7 +295,7 @@ public class MomentActivity extends Activity {
         imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
     }
 
-    private void connectionserveur(View v) {
+    public void connectionserveur(View v) {
         connectionserveur();
     }
 
@@ -323,6 +326,8 @@ public class MomentActivity extends Activity {
         //params.put("lang", Locale.getDefault().getDisplayLanguage());
 
         MomentApi.initialize(getApplicationContext());
+
+        dialog = ProgressDialog.show(this, null, "Connexion");
         MomentApi.post("login", params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -350,6 +355,8 @@ public class MomentActivity extends Activity {
                                     String profile_picture_url = response.getString("profile_picture_url");
                                     AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
                                 }
+
+                                dialog.dismiss();
 
                                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                                 startActivity(intent);
