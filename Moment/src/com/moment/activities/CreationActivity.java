@@ -129,7 +129,6 @@ public class CreationActivity extends SherlockActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getSupportMenuInflater().inflate(R.menu.activity_creation, menu);
         return true;
     }
 

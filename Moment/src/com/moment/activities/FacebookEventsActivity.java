@@ -89,6 +89,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("location")) { fbEvent.setAddress(event.getString("location")); }
         if(event.has("description")) { fbEvent.setDescription(event.getString("description")); }
         if(event.has("name")) { fbEvent.setName(event.getString("name")); }
+        if(event.has("picture")) { fbEvent.setCover_photo_url(event.getString("picture")); }
 
         if(event.has("owner")) {
             fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
