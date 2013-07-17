@@ -66,6 +66,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private Bundle bundle;
     private String message;
     private EditText dialogText;
+    private Bundle params;
+    private Request request;
     private Activity activity = this;
 
     @Override
@@ -366,13 +368,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     };
 
     public void sharePicture() {
-        Request request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
+        request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
                 Log.d("Upload", response.toString());
             }
         });
-        final Bundle params = request.getParameters();
+
+        params = request.getParameters();
 
         final Dialog dialog = new Dialog(this);
         View view = getLayoutInflater().inflate(R.layout.custom_dialog, null);
@@ -385,13 +388,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         dialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                message = dialogText.getText().toString();
+                setFacebookComment();
+                Request.executeBatchAsync(request);
                 dialog.cancel();
             }
         });
         dialog.show();
+    }
+
+    private void setFacebookComment() {
+        message = dialogText.getText().toString();
         params.putString("message", message);
-        Request.executeBatchAsync(request);
     }
 
     @Override
