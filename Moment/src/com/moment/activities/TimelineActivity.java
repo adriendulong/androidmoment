@@ -159,7 +159,8 @@ public class TimelineActivity extends SlidingActivity {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                     for (Moment moment : momentList){
                         AppMoment.getInstance().user.getMoments().add(moment);
-                        //ajoutMoment(moment);
+                        moments.add(moment);
+                        adapter.notifyDataSetChanged();
                     }
                 }
             }
@@ -203,7 +204,16 @@ public class TimelineActivity extends SlidingActivity {
 
                     @Override
                     public void onFailure(Throwable error, String content) {
-                        Log.e("TIMELINE", content);
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(), "Erreur lors du téléchargement des moments" , Toast.LENGTH_LONG).show();
+                        if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                            List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                            for (Moment moment : momentList){
+                                AppMoment.getInstance().user.getMoments().add(moment);
+                                moments.add(moment);
+                                adapter.notifyDataSetChanged();
+                            }
+                        }
                     }
 
                 });
@@ -213,7 +223,6 @@ public class TimelineActivity extends SlidingActivity {
         else{
             Log.e("TIMELINE", "LOSTTTTTT");
             SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
-            Long savedUserID = sharedPreferences.getLong("userID", -1);
             AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedInstanceState.getLong("userID"));
             Log.e("TIMELINE", "User id : "+savedInstanceState.getLong("userID"));
 
@@ -256,6 +265,16 @@ public class TimelineActivity extends SlidingActivity {
                 @Override
                 public void onFailure(Throwable error, String content) {
                     Log.e("TIMELINE", content);
+                    dialog.dismiss();
+                    Toast.makeText(getApplicationContext(), "Erreur lors du téléchargement des moments" , Toast.LENGTH_LONG).show();
+                    if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                        List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                        for (Moment moment : momentList){
+                            AppMoment.getInstance().user.getMoments().add(moment);
+                            moments.add(moment);
+                            adapter.notifyDataSetChanged();
+                        }
+                    }
                 }
 
             });

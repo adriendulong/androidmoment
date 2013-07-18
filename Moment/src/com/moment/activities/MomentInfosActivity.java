@@ -348,38 +348,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
     
     
-    
-    public void acceptBandeauAnim(View view){
-
-    	RelativeLayout voletLayout = (RelativeLayout)findViewById(R.id.volet_layout);
-    	Resources r = getResources();
-    	float ratio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
-
-    	if(!stateAcceptVolet){
-    		
-    		VoletAcceptAnimation anim = new VoletAcceptAnimation(voletLayout, 125, true, ratio);
-    		anim.setDuration(400);
-    		anim.setInterpolator(new DecelerateInterpolator());
-    		voletLayout.startAnimation(anim);
-    		
-    		stateAcceptVolet = true;
-    		
-    		
-    	}
-    	else{
-
-    		VoletAcceptAnimation anim = new VoletAcceptAnimation(voletLayout, 125, false, ratio);
-    		anim.setDuration(400);
-    		anim.setInterpolator(new DecelerateInterpolator());
-    		voletLayout.startAnimation(anim);
-    		
-    		stateAcceptVolet = false;
-    		
-    	}
-    		
-    }
-    
-    
     public static class Exchanger {
     	public static MapView mMapView;
     }
@@ -691,6 +659,19 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         super.onPause();
         //unregister our receiver
         this.unregisterReceiver(this.mReceiver);
+    }
+
+
+    /**
+     * When we click on the pen to modify the event
+     * @param view
+     */
+
+    public void modifyMoment(View view){
+        Intent modifyIntent = new Intent(this, CreationDetailsActivity.class);
+        modifyIntent.putExtra("nomMoment", moment.getName());
+        modifyIntent.putExtra("moment_id", moment.getId());
+        startActivity(modifyIntent);
     }
 
     
