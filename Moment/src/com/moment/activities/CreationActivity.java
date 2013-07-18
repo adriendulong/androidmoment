@@ -104,8 +104,6 @@ public class CreationActivity extends SherlockActivity {
 
     public void getUserEvents() {
         Bundle params = new Bundle();
-        //String fqlQuery = "SELECT creator, eid, name, pic_cover,  start_time, end_time, location, privacy, description FROM event WHERE eid IN (SELECT eid FROM event_member WHERE uid='"+ facebookUserId +"' and rsvp_status!='declined')";
-        //params.putString("q", fqlQuery);
         params.putString("fields","id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture");
         Request request = new Request(session, "me/events", params, HttpMethod.GET,
                 new Request.Callback() {
@@ -131,7 +129,6 @@ public class CreationActivity extends SherlockActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //getSupportMenuInflater().inflate(R.menu.activity_creation, menu);
         return true;
     }
 

@@ -59,8 +59,6 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
             holder = (UserHolder)row.getTag();
             holder.photo_thumbnail = (ImageView)row.findViewById(R.id.photo_invitation);
             holder.bg = row.findViewById(R.id.bg_cell_invitations);
-            
-          
         }
         
         User user = data.get(position);

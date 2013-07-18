@@ -173,65 +173,28 @@ public class FbEvent {
         momentPrams.put("owner_picture_url", this.getOwner_picture_url());
         momentPrams.put("state", "0");
 
-        if(!this.address.equals("null"))
+        if(this.address != null)
         {
             momentPrams.put("address", this.address);
         } else {
             momentPrams.put("address", "Test test test");
         }
 
-        if(!this.startDate.equals("null"))
+        if(this.getStartDate() != null)
         {
-            Date start;
-            try {
-                start = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.startDate);
-                Calendar startDate = Calendar.getInstance();
-                startDate.setTime(start);
-                momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
-                momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
-
-            } catch (ParseException e) {
-
-                start = new SimpleDateFormat("yyyy-MM-dd").parse(this.startDate);
-                Calendar startDate = Calendar.getInstance();
-                startDate.setTime(start);
-                momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
-                momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY) + ":" + startDate.get(Calendar.MINUTE));
+                momentPrams.put("startDate", this.getStartDate());
+            if(this.getStartTime() != null)
+            {
+                momentPrams.put("startTime", this.getStartTime());
             }
         }
 
-        if(!this.endDate.equals("null"))
+        if(this.getEndDate() != null)
         {
-            Date end;
-            try {
-                end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.endDate);
-                Calendar endDate = Calendar.getInstance();
-                endDate.setTime(end);
-                momentPrams.put("endDate", ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH));
-                momentPrams.put("endTime", endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE));
-            } catch (ParseException e) {
-                    e.printStackTrace();
-            }
-        } else {
-            Date end;
-            try {
-                end = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").parse(this.startDate);
-                Calendar startDate = Calendar.getInstance();
-                startDate.setTime(end);
-                momentPrams.put("endDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+(startDate.get(Calendar.DAY_OF_MONTH)+1));
-                momentPrams.put("endTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
-
-            } catch (ParseException e) {
-                try {
-                    end = new SimpleDateFormat("yyyy-MM-dd").parse(this.startDate);
-                    Calendar startDate = Calendar.getInstance();
-                    startDate.setTime(end);
-                    momentPrams.put("endDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+(startDate.get(Calendar.DAY_OF_MONTH)+1));
-                    momentPrams.put("endTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
-
-                } catch (ParseException e1) {
-                    e1.printStackTrace();
-                }
+            momentPrams.put("endDate", this.getEndDate());
+            if(this.getEndTime() != null)
+            {
+                momentPrams.put("endTime", this.getEndTime());
             }
         }
 
