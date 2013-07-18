@@ -270,9 +270,8 @@ public class PhotosFragment extends Fragment {
 
         private final WeakReference<Photo> weakPhoto;
         private final WeakReference<ImageAdapter> weakAdapter;
-        private volatile boolean running = true;
 
-        private ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter, Activity activity) {
+        private ThumbnailLoadTask(Photo photo, ImageAdapter imageAdapter) {
             this.weakPhoto = new WeakReference<Photo>(photo);
             this.weakAdapter = new WeakReference<ImageAdapter>(imageAdapter);
         }
@@ -527,7 +526,7 @@ public class PhotosFragment extends Fragment {
                         imageAdapter.notifyDataSetChanged();
 
                         if (AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()) == null) {
-                            imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter, getActivity());
+                            imageLoadTask = new ThumbnailLoadTask(photo, imageAdapter);
                             imageLoadTask.execute(photo.getUrlThumbnail());
                         } else {
                             photo.setBitmapThumbnail(AppMoment.getInstance().getBitmapFromMemCache("thumbnail_" + photo.getId()));

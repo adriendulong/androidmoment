@@ -9,6 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -54,6 +56,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import javax.xml.datatype.Duration;
 
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
@@ -174,6 +178,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     e.printStackTrace();
                 }
                 bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+                String[] paths = new String[1];
+                paths[0] = dir.getAbsolutePath();
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse(
+                        "file://"
+                        + Environment.getExternalStorageDirectory()
+                        + "/Pictures/Moment/")));
+
+                Toast.makeText(getApplicationContext(), "Photo enregistrée", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -458,8 +470,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 connection.setDoInput(true);
                 connection.connect();
                 InputStream input = connection.getInputStream();
-                Bitmap myBitmap = BitmapFactory.decodeStream(input);
-                return myBitmap;
+                bitmap = BitmapFactory.decodeStream(input);
+                return bitmap;
             } catch (IOException e) {
                 e.printStackTrace();
                 return null;

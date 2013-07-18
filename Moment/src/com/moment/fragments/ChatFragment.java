@@ -242,12 +242,16 @@ public class ChatFragment extends Fragment {
             JSONObject jsonChats = null;
 
             try {
-                jsonChats = getChatsFromURL("http://api.appmoment.fr/lastchats/" + momentId + "/" + nextPage);
+                jsonChats = getChatsFromURL("http://apidev.appmoment.fr/lastchats/" + momentId + "/" + nextPage);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
 
-            if(!jsonChats.isNull("next_page"))
+            if(jsonChats == null){
+                return null;
+            }
+
+            if(jsonChats.has("next_page"))
                 try {
                     if(jsonChats.getInt("next_page") >= nextPage)
                         nextPage = jsonChats.getInt("next_page");
@@ -294,18 +298,21 @@ public class ChatFragment extends Fragment {
 
         @Override
         protected void onPostExecute(ArrayList<Chat> chats) {
-            scrollChat.onRefreshComplete();
-            int index = 0;
-            for(Chat chat : chats){
-                if (chat.getUser().getId() == AppMoment.getInstance().user.getId()) {
-                    messageRight(chat, index);
+            if(chats != null)
+            {
+                int index = 0;
+                for(Chat chat : chats){
+                    if (chat.getUser().getId() == AppMoment.getInstance().user.getId()) {
+                        messageRight(chat, index);
 
-                } else {
-                    messageLeft(chat, index);
+                    } else {
+                        messageLeft(chat, index);
+                    }
+                    index ++;
                 }
-                index ++;
             }
 
+            scrollChat.onRefreshComplete();
             super.onPostExecute(chats);
         }
 
