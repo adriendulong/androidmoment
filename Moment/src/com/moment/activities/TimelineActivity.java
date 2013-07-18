@@ -159,7 +159,7 @@ public class TimelineActivity extends SlidingActivity {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                     for (Moment moment : momentList){
                         AppMoment.getInstance().user.getMoments().add(moment);
-
+                        //ajoutMoment(moment);
                     }
                 }
             }

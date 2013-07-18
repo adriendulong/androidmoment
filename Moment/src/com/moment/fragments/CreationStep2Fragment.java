@@ -47,12 +47,12 @@ public class CreationStep2Fragment extends Fragment {
 		}
 		
 		if(this.moment.getAdresse()!=null){
-			EditText adresse = (EditText)view.findViewById(R.id.creation_moment_adresse);
+			Button adresse = (Button)view.findViewById(R.id.creation_moment_adresse);
 			adresse.setText(this.moment.getAdresse());
 		}
 		
 		if(this.moment.getPlaceInformations()!=null){
-			Button infosLieu = (Button)view.findViewById(R.id.creation_moment_infos_lieu);
+			EditText infosLieu = (EditText)view.findViewById(R.id.creation_moment_infos_lieu);
 			infosLieu.setText(this.moment.getPlaceInformations());
 		}
 		

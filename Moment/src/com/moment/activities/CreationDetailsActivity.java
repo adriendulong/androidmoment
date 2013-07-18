@@ -69,7 +69,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	ImageButton dateDebut;
 	private Moment moment;
 	private static Menu myMenu;
-	private int validateFirst = 0;
+	private static Boolean validateFirst = false;
 	private static int validateSecond = 0;
 	public static int validateDescription = 0;
 	public static int validateAdress = 0;
@@ -80,6 +80,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     private int PLACE_CHOOSE = 10;
     private int POP_UP_CREA = 11;
 	private ProgressDialog dialog;
+    private Boolean inModif = false;
 
 	
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
@@ -95,11 +96,21 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         //On recupere le nom du moment
         String nomMoment = getIntent().getStringExtra("nomMoment");
         Log.d("Nom Moment", nomMoment);
+        if(getIntent().hasExtra("moment_id")){
+            moment = AppMoment.getInstance().user.getMomentById(getIntent().getLongExtra("moment_id", 0));
+            inModif = true;
+            validateFirst = true;
+            validateSecond = 1;
+            validateDescription = 1;
+            validateAdress = 1;
+        }
         
         //On cree l'objet Moment qui servira pendant toute la creation
-        moment = new Moment();
-        
-        moment.setName(nomMoment);
+        if(moment==null){
+            moment = new Moment();
+            moment.setName(nomMoment);
+        }
+
 
         // On instantie le fragment manager et on vient ajouter le premier fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -122,8 +133,15 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
     	if(step==0){
-    		menu.findItem(R.id.left_options_creation).setVisible(false);
-    		menu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+            if(inModif){
+                myMenu.findItem(R.id.left_options_creation).setVisible(false);
+                myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+                myMenu.findItem(R.id.right_options_creation).setEnabled(true);
+            }
+            else{
+                menu.findItem(R.id.left_options_creation).setVisible(false);
+                menu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+            }
     	}
     	else if(step==1){
     		menu.findItem(R.id.left_options_creation).setVisible(true);
@@ -170,21 +188,27 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             
             case R.id.right_options_creation:
             	if(step==0 || step == -1){
-            		
-            		downTwo();
-            		
-            		myMenu.findItem(R.id.left_options_creation).setVisible(true);
-            		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
-            		
-            		step = 1;
-            		
-            		
-            		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-         	       fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
-         	       
-         	       fragmentTransaction.replace(android.R.id.content, fragment2);
-         	       fragmentTransaction.commit();
+                    if(validateFirst){
+                        downTwo();
 
+                        if(validateSecond==1){
+                            myMenu.findItem(R.id.left_options_creation).setVisible(true);
+                            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
+                        }
+                        else{
+                            myMenu.findItem(R.id.left_options_creation).setVisible(true);
+                            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
+                        }
+
+                        step = 1;
+
+
+                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
+
+                        fragmentTransaction.replace(android.R.id.content, fragment2);
+                        fragmentTransaction.commit();
+                    }
             	}
             	else{
             		System.out.println("VALIDERRRR");
@@ -236,48 +260,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	       
 	    }
     
-    
-    /**
-     * Une fois que le 2eme ecran est apparu on ecoute tout changement
-     */
-    
-    public void prepareTwo(){
-    	
-    	EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
-    	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
 
-    	descriptionEdit.addTextChangedListener(new TextWatcher(){
-            @Override
-			public void afterTextChanged(Editable s) {}
-            @Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            @Override
-			public void onTextChanged(CharSequence s, int start, int before, int count){
-            	if(count >0) validateDescription = 1;
-            	else validateDescription = 0;
-            	
-            	System.out.println("CA BOUGE");
-            	
-            	CreationDetailsActivity.validateSecondFields();
-            }
-        });
-    	
-    	
-    	infosLieuEdit.addTextChangedListener(new TextWatcher(){
-            @Override
-			public void afterTextChanged(Editable s) {}
-            @Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-            @Override
-			public void onTextChanged(CharSequence s, int start, int before, int count){
-            	if(count >0) validateInfosLieu = 1;
-            	else validateInfosLieu = 0;
-            	
-            	CreationDetailsActivity.validateSecondFields();
-            }
-        }); 
-    	
-    }
     
     
     /**
@@ -366,7 +349,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     		this.moment.setDescription(description.getText().toString());
     	}
     	
-    	EditText adresse = (EditText)findViewById(R.id.creation_moment_adresse);
+    	Button adresse = (Button)findViewById(R.id.creation_moment_adresse);
     	if(adresse.getText()!=null){
     		this.moment.setAdresse(adresse.getText().toString());
     	}
@@ -375,6 +358,10 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	if(infosLieu.getText()!=null){
     		this.moment.setPlaceInformations(infosLieu.getText().toString());
     	}
+
+        myMenu.findItem(R.id.left_options_creation).setVisible(false);
+        myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+        myMenu.findItem(R.id.right_options_creation).setEnabled(true);
     	
     	/*EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
     	if(hashtag.getText()!=null){
@@ -382,43 +369,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	}*/
 
     }
-    
-    
-    /**
-     * Gere le retour � la step 2
-     * @param v
-     */
-    
-    public void upThree(View v){
-    	
-    	FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-    	fragmentTransaction.setCustomAnimations(R.anim.custom_in_inverse,R.anim.custom_out_inverse);
-	       
-	    fragmentTransaction.replace(android.R.id.content, fragment2);
-	    fragmentTransaction.commit();
-	    
-	    //Date debut
-        /*Calendar calDebut = Calendar.getInstance();
-        calDebut.setTime(moment.getDateDebut());
-        int anneeDebut = calDebut.get(Calendar.YEAR);
-        int moisDebut = calDebut.get(Calendar.MONTH);
-        int jourDebut = calDebut.get(Calendar.DAY_OF_MONTH);
-    	
-    	TextView dateDebut = (TextView)findViewById(R.id.spinner_date_debut);
-    	dateDebut.setText(""+jourDebut+"/"+moisDebut+"/"+anneeDebut);
-    	
-    	
-    	//DateFin
-    	Calendar calFin = Calendar.getInstance();
-        calFin.setTime(moment.getDateFin());
-        int anneeFin = calDebut.get(Calendar.YEAR);
-        int moisFin = calDebut.get(Calendar.MONTH);
-        int jourFin = calDebut.get(Calendar.DAY_OF_MONTH);
-    	
-    	TextView dateFin = (TextView)findViewById(R.id.spinner_date_fin);
-    	dateFin.setText(""+jourFin+"/"+moisFin+"/"+anneeFin);*/
-    }
-    
     
     /**
      * Gere le date picker pour choisir la date de d�but
@@ -570,8 +520,17 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 			// Do something with the date chosen by the user
 			//updateTextDate(year, month, day);
 			this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
+
+            if(this.dateEdit.getTag().equals("debutDate")){
+                Log.e("CREATION", "TAG DATE DEBUT");
+                validateFirstDate = true;
+            }
+            else{
+                Log.e("CREATION", "TAG DATE FIN");
+                validateSecondDate = true;
+            }
+
             validateFirstFields();
-		
 		}
 	}
     
@@ -598,14 +557,15 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
     	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
 
-    
-    	dialog = ProgressDialog.show(this, null, "Création en cours");
 
-    	MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-            		try {
-            			dialog.dismiss();
+
+        if(!inModif){
+            dialog = ProgressDialog.show(this, null, "Création en cours");
+            MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        dialog.dismiss();
 
                         //We set the moment id and it to the user moments
                         moment.setMomentFromJson(response);
@@ -615,19 +575,55 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                         intent.putExtra("momentId", moment.getId());
                         startActivityForResult(intent, POP_UP_CREA);
 
-						
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            	}
-            
-            	@Override
-	            public void onFailure(Throwable e, JSONObject errorResponse) {
-	        			System.out.println(errorResponse.toString());
-	        			dialog.dismiss();
-	        	}
+
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable e, JSONObject errorResponse) {
+                    System.out.println(errorResponse.toString());
+                    dialog.dismiss();
+                }
             });
+        }
+        else{
+            dialog = ProgressDialog.show(this, null, "Modification en cours");
+            MomentApi.post("moment/"+moment.getId(), moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    try {
+                        dialog.dismiss();
+
+                        //We set the moment id and it to the user moments
+                        moment.setMomentFromJson(response);
+                        AppMoment.getInstance().user.addMoment(moment);
+
+                        Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+                        intent.putExtra("id", moment.getId());
+                        intent.putExtra("precedente", "creation");
+                        startActivity(intent);
+
+
+                    } catch (JSONException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable e, JSONObject errorResponse) {
+                    System.out.println(errorResponse.toString());
+                    dialog.dismiss();
+                }
+            });
+        }
+    
+
+
+
     	
 
     }
@@ -663,15 +659,12 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
      */
     public static void validateFirstFields(){
-    	
-    	//Button dateDebut = (Button)findViewById(R.id.date_debut_button);
-    	//Button dateFin = (Button)findViewById(R.id.date_fin_button);
-    	/*
-    	if((dateDebut.getText()!=null) && (dateFin.getText()!=null)){
-    		this.validateFirst = 1;
-    		myMenu.getItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+
+    	if(validateFirstDate && validateSecondDate){
+    		validateFirst = true;
+    		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
     		
-    	}*/
+    	}
     	
     }
     
@@ -905,6 +898,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
         }
 
+    }
+
+    /**
+     * Can be called by the fragment if all the fields are already filled when the fragment is built
+     */
+
+    public void validateFirstStep(){
+        validateFirstDate = true;
+        validateSecondDate = true;
+        validateFirstFields();
     }
    
 
