@@ -63,6 +63,12 @@ public class GuestsFragment extends Fragment {
             Log.d("POSITION FRAGMENT", ""+position);
         }
 
+        if(savedInstanceState!=null){
+            users = savedInstanceState.getParcelableArrayList("users");
+            adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+            listView.setAdapter(adapter);
+        }
+
         return rootView;
     }
 
@@ -98,5 +104,11 @@ public class GuestsFragment extends Fragment {
         public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelableArrayList("users", users);
     }
 }

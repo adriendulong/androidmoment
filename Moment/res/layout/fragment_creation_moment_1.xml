@@ -159,7 +159,7 @@
                             android:layout_width="180dp"
                             android:layout_height="40dp"
                             android:text="Date Fin"
-                            android:background="@null"
+                            android:background="@color/orange"
                             android:textSize="14dp"
                             android:textColor="@color/gris_texte"
                             android:layout_marginRight="10dp"
@@ -168,7 +168,7 @@
                             android:layout_width="100dp"
                             android:layout_height="40dp"
                             android:text="Heure Fin"
-                            android:background="@null"
+                            android:background="@color/orange"
                             android:textSize="14dp"
                             android:textColor="@color/gris_texte"
                             android:onClick="heureFin"/>

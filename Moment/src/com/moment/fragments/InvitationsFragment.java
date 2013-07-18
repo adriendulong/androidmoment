@@ -27,6 +27,7 @@ import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.InvitationActivity;
 import com.moment.classes.InvitationsAdapter;
@@ -72,8 +73,10 @@ public class InvitationsFragment extends Fragment {
         Bundle args = getArguments();
         position = args.getInt(POSITION);
 
+        Log.v("INVIT", "création fragment");
+
         System.out.println(""+position);
-        if(users==null){
+        if(savedInstanceState==null){
             if (position == 1){
                 System.out.println("CCCOOONNNTTTACCCCTTSS");
                 users = new ArrayList<User>();
@@ -88,6 +91,7 @@ public class InvitationsFragment extends Fragment {
             }
             else {
                 users = new ArrayList<User>();
+                Log.v("INVIT", "création fragment Favoris");
 
                 MomentApi.get("favoris", null, new JsonHttpResponseHandler() {
                     @Override
@@ -119,6 +123,12 @@ public class InvitationsFragment extends Fragment {
                 });
 
             }
+        }
+        else{
+            users = savedInstanceState.getParcelableArrayList("users");
+            Log.v("INVIT", "NB de users : "+users.size());
+            adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+            listView.setAdapter(adapter);
         }
 
 
@@ -548,6 +558,17 @@ public class InvitationsFragment extends Fragment {
 
         }
 
+    }
+
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putParcelableArrayList("users", users);
+        // Save UI state changes to the savedInstanceState.
+        // This bundle will be passed to onCreate if the process is
+        // killed and restarted.
+        // etc.
     }
 
 

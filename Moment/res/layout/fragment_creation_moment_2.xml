@@ -69,14 +69,48 @@
 
 
 	     </LinearLayout>
-
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="left"
+                  android:text="Description"
+                  android:textColor="@color/orange"
+                  android:layout_marginLeft="20dp"
+                  android:layout_marginTop="15dp"/>
+        <ImageView android:layout_width="fill_parent"
+                   android:layout_height="2dp"
+                   android:background="@color/orange"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginRight="20dp"
+                   android:layout_marginTop="3dp"/>
+        <EditText android:id="@+id/creation_moment_description"
+                  android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:lines="3"
+                  android:hint="@string/creation_moment_description_evenement"
+                  android:textSize="14sp"
+                  android:layout_marginLeft="20dp"
+                  android:layout_marginRight="20dp"
+                  android:layout_marginTop="10dp"/>
+        <TextView android:layout_width="fill_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="left"
+                  android:text="Lieu"
+                  android:textColor="@color/orange"
+                  android:layout_marginLeft="20dp"
+                  android:layout_marginTop="20dp"/>
+        <ImageView android:layout_width="fill_parent"
+                   android:layout_height="2dp"
+                   android:background="@color/orange"
+                   android:layout_marginLeft="20dp"
+                   android:layout_marginRight="20dp"
+                   android:layout_marginTop="3dp"/>
         <Button android:id="@+id/creation_moment_adresse"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
             android:background="@drawable/btn_place"
             android:onClick="choosePlace"
             android:text="@string/creation_moment_adresse"
-            android:textSize="18dp"
+            android:textSize="16dp"
             android:textColor="@color/gris_texte"
             android:gravity="left|center_vertical"
             android:paddingLeft="10dp"
@@ -90,29 +124,6 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"/>
-        <TextView android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="left"
-            android:text="Description"
-            android:textColor="@color/orange"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="40dp"/>
-        <ImageView android:layout_width="fill_parent"
-            android:layout_height="2dp"
-            android:background="@color/orange"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="5dp"/>
-        <EditText android:id="@+id/creation_moment_description"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:lines="4"
-            android:hint="@string/creation_moment_description_evenement"
-            android:textSize="14sp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"/>
-
         <!--
 	    <LinearLayout android:layout_width="fill_parent"
 	          android:layout_height="wrap_content"

@@ -74,6 +74,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	public static int validateDescription = 0;
 	public static int validateAdress = 0;
 	public static int validateInfosLieu = 0;
+    private static Boolean validateFirstDate = false, validateSecondDate = false;
 	private Uri outputFileUri;
 	private int YOUR_SELECT_PICTURE_REQUEST_CODE = 1;
     private int PLACE_CHOOSE = 10;
@@ -569,6 +570,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 			// Do something with the date chosen by the user
 			//updateTextDate(year, month, day);
 			this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
+            validateFirstFields();
 		
 		}
 	}
@@ -660,16 +662,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     /**
      * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
      */
-    public void validateFirstFields(){
+    public static void validateFirstFields(){
     	
-    	Button dateDebut = (Button)findViewById(R.id.date_debut_button);
-    	Button dateFin = (Button)findViewById(R.id.date_fin_button);
-    	
+    	//Button dateDebut = (Button)findViewById(R.id.date_debut_button);
+    	//Button dateFin = (Button)findViewById(R.id.date_fin_button);
+    	/*
     	if((dateDebut.getText()!=null) && (dateFin.getText()!=null)){
     		this.validateFirst = 1;
     		myMenu.getItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
     		
-    	}
+    	}*/
     	
     }
     

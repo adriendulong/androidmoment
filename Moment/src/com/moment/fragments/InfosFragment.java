@@ -33,8 +33,11 @@ import com.moment.activities.MomentInfosActivity;
 import com.moment.activities.MomentInfosActivity.Exchanger;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
+import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -68,6 +71,8 @@ public class InfosFragment extends Fragment {
 
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton;
+
+    private final Transformation roundTrans = new RoundTransformation();
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -309,29 +314,29 @@ public class InfosFragment extends Fragment {
      */
 
     public void initInfos(){
-        titreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(1));
-        flTitreText.setText(AppMoment.getInstance().user.getMomentById(momentId).getName().substring(0,1));
-        descriptionText.setText(AppMoment.getInstance().user.getMomentById(momentId).getDescription());
-        adresse.setText(AppMoment.getInstance().user.getMomentById(momentId).getAdresse());
+        titreText.setText(moment.getName().substring(1));
+        flTitreText.setText(moment.getName().substring(0,1));
+        descriptionText.setText(moment.getDescription());
+        adresse.setText(moment.getAdresse());
 
         //Update State
         updateRSVPBloc();
 
         //Dates
         GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
-        dateDebutCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateDebut());
+        dateDebutCalendar.setTime(moment.getDateDebut());
         Calendar dateFinCalendar = Calendar.getInstance();
-        dateFinCalendar.setTime(AppMoment.getInstance().user.getMomentById(momentId).getDateFin());
+        dateFinCalendar.setTime(moment.getDateFin());
 
         dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
         dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
 
         //Cover
-        moment.printCover(image_cover, false);
+        Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
 
         //Owner
-        if(AppMoment.getInstance().user.getMomentById(momentId).getUser()!=null){
-            if(AppMoment.getInstance().user.getMomentById(momentId).getUser().getPictureProfileUrl()!=null) AppMoment.getInstance().user.getMomentById(momentId).getUser().printProfilePicture(owner_picture, true);
+        if(moment.getUser()!=null){
+            if(moment.getUser().getPictureProfileUrl()!=null) Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).transform(roundTrans).into(owner_picture);
             firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
             lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
         }

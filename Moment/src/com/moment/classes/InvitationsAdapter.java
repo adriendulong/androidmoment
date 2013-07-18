@@ -8,6 +8,8 @@ import android.widget.*;
 
 import com.moment.R;
 import com.moment.models.User;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
 
@@ -18,6 +20,7 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
     ArrayList<User> data = new ArrayList<User>();
     private ArrayList<User> mOriginalValues;
     private UserFilter userFilter;
+    private final Transformation roundTrans = new RoundTransformation();
     
     public InvitationsAdapter(Context context, int layoutResourceId, ArrayList<User> data) {
         super(context, layoutResourceId, data);
@@ -66,16 +69,11 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
         holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         holder.bg.setBackgroundResource(R.drawable.background);
         
-        if(user.getPhotoThumbnail()!=null){
-        	System.out.println("NOT NULL");
-            holder.photo_thumbnail.setImageBitmap(Images.getRoundedCornerBitmap(user.getPhotoThumbnail()));
+        if(user.getPictureProfileUrl()!=null){
+            Picasso.with(context).load(user.getPictureProfileUrl()).transform(roundTrans).resize(100,100).into(holder.photo_thumbnail);
         }
         else if(user.getFbPhotoUrl()!=null){
-        	Images.printImageFromUrl(holder.photo_thumbnail, true, user.getFbPhotoUrl());
-        }
-        else if(user.getPictureProfileUrl()!=null){
-            //TODO : Verifier si existe pas dans le cache ?
-            Images.printImageFromUrl(holder.photo_thumbnail, true, user.getPictureProfileUrl());
+            Picasso.with(context).load(user.getFbPhotoUrl()).transform(roundTrans).resize(100,100).into(holder.photo_thumbnail);
         }
         else{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);

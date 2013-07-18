@@ -1,9 +1,9 @@
 package com.moment.activities;
 
 import android.app.ActivityOptions;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
+import android.content.*;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
@@ -40,6 +40,7 @@ import com.moment.models.Chat;
 import com.moment.models.Moment;
 import com.moment.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -84,6 +85,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     //Debug Tag
     private String TAG = "InfosActivity";
+
+    //Receiver
+    private BroadcastReceiver mReceiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -544,7 +548,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         else if(pager.getCurrentItem()==1){
                             ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
                             ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
-                            ((PhotosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+                            ((PhotosFragment)mPagerAdapter.getItem(0)).createFragment(momentID);
                         }
                         else if(pager.getCurrentItem()==0){
                             ((PhotosFragment)mPagerAdapter.getItem(0)).createFragment(momentID);
@@ -571,6 +575,122 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         if(this.moment!=null) return this.momentID;
         else return null;
 
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        IntentFilter intentFilter = new IntentFilter(
+                "com.google.android.c2dm.intent.RECEIVE");
+        mReceiver = new BroadcastReceiver() {
+            private int type_notifs, chat_id, photo_id;
+            private Long moment_id;
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                try{
+                    JSONArray array = new JSONArray(intent.getExtras().getString("data"));
+                    JSONObject jsonMessage = array.getJSONObject(0);
+                    moment_id = jsonMessage.getLong("moment_id");
+                    type_notifs = jsonMessage.getInt("type_notif");
+                    Log.v("PUSSH", "LAAAA, moment_id :"+moment_id+"  type_notifs : "+type_notifs+" Notre moment id "+momentID);
+
+                    if(type_notifs==CHAT_PUSH){
+                        if(moment_id.equals(momentID)){
+                            Log.v("PUSSH", "Ceci est un chat");
+                            chat_id = jsonMessage.getInt("chat_id");
+                            //If we are on the chat, we print it
+                            if(pager.getCurrentItem()==2||pager.getCurrentItem()==1){
+                                Log.v("PUSSH", "On est dans le chat");
+                                MomentApi.get("chat/"+chat_id, null, new JsonHttpResponseHandler() {
+
+                                    @Override
+                                    public void onSuccess(JSONObject response) {
+                                        Toast.makeText(getApplicationContext(), "Nouveau message", Toast.LENGTH_SHORT).show();
+                                        Chat tempChat = new Chat();
+                                        try{
+                                            tempChat.chatFromJSON(response.getJSONObject("chat"));
+                                        }catch (JSONException e){
+                                            Log.e("JSON", "Probleme JSON");
+                                        }
+
+
+                                        Log.v("PUSSH", response.toString());
+
+                                        //We add it
+                                        tempChat.__setDaoSession(AppMoment.getInstance().daoSession);
+                                        tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
+                                        tempChat.setUser(tempChat.getUser());
+                                        AppMoment.getInstance().user.getMomentById(momentID).addChat(tempChat);
+                                        AppMoment.getInstance().chatDao.insert(tempChat);
+
+                                        messageLeft(tempChat);
+
+                                        if(pager.getCurrentItem()==1) pager.setCurrentItem(2);
+
+                                    }
+
+                                    @Override
+                                    public void onFailure(Throwable error, String content) {
+                                        Toast.makeText(getApplicationContext(), "Problème chat", Toast.LENGTH_SHORT).show();
+
+                                    }
+                                });
+                            }
+                        }
+                        else{
+                            AlertDialog.Builder monDialogue = new AlertDialog.Builder(MomentInfosActivity.this);
+                            monDialogue.setTitle("Nouveau chat");
+                            monDialogue.setMessage("Test");
+
+                            //Bouton du dialogue
+                            monDialogue.setPositiveButton("Consulter", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Intent intentMoment = new Intent(MomentInfosActivity.this, MomentInfosActivity.class);
+                                    intentMoment.putExtra("precedente", "notifs");
+                                    intentMoment.putExtra("type_id", type_notifs);
+                                    intentMoment.putExtra("moment_id", moment_id);
+                                    startActivity(intentMoment);
+
+                                }
+                            });
+                            monDialogue.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                }
+                            });
+
+                            monDialogue.show();
+                        }
+                    }
+                    else if(type_notifs==PHOTO_PUSH){
+                        Log.v("PUSSH", "Ceci est un chat");
+                        photo_id = jsonMessage.getInt("photo_id");
+                        //If we are on the chat, we print it
+                        if(pager.getCurrentItem()==0||pager.getCurrentItem()==1){
+                            Log.v("PUSSH", "On est dans le chat");
+                            Toast.makeText(getApplicationContext(), "Nouvelle Photo", Toast.LENGTH_SHORT).show();
+                        }
+
+                    }
+
+
+                }catch(JSONException e){
+                    Log.e(TAG, "JSON Problem");
+                }
+            }
+        };
+        //registering our receiver
+        this.registerReceiver(mReceiver, intentFilter);
+    }
+    @Override
+    protected void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+        //unregister our receiver
+        this.unregisterReceiver(this.mReceiver);
     }
 
     

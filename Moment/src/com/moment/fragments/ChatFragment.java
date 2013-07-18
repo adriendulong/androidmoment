@@ -20,10 +20,13 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.MomentApi;
+import com.moment.classes.RoundTransformation;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
 import com.moment.models.User;
 
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -55,6 +58,7 @@ public class ChatFragment extends Fragment {
     private InputMethodManager imm;
 
     int nextPage;
+    private final Transformation roundTrans = new RoundTransformation();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -124,7 +128,8 @@ public class ChatFragment extends Fragment {
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
-            chat.getUser().printProfilePicture(userImage, true);
+            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
+
 
         layoutChat.addView(chatDroit);
     }
@@ -151,7 +156,7 @@ public class ChatFragment extends Fragment {
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
-            chat.getUser().printProfilePicture(userImage, true);
+            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
         layoutChat.addView(chatDroit, index);
 
@@ -178,7 +183,7 @@ public class ChatFragment extends Fragment {
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
-            if(chat.getUser().getPictureProfileUrl()!=null) chat.getUser().printProfilePicture(userImage, true);
+            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
         layoutChat.addView(chatDroit);
 
@@ -205,7 +210,7 @@ public class ChatFragment extends Fragment {
         ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
 
         if(AppMoment.getInstance().checkInternet())
-            chat.getUser().printProfilePicture(userImage, true);
+            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
         layoutChat.addView(chatDroit, index);
 

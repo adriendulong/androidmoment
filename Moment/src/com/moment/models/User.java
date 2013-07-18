@@ -2,6 +2,8 @@ package com.moment.models;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.widget.ImageView;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -25,7 +27,7 @@ import de.greenrobot.dao.DaoException;
 /**
  * Entity mapped to table users.
  */
-public class User {
+public class User implements Parcelable {
 
     private Long id;
     private Integer facebookId;
@@ -367,7 +369,7 @@ public class User {
 
     public void setUserFromJson(JSONObject userJson){
         try {
-            this.setId(userJson.getLong("id"));
+            if(userJson.has("id")) this.setId(userJson.getLong("id"));
             if(userJson.has("firstname")) this.setFirstName(userJson.getString("firstname"));
             if(userJson.has("lastname")) this.setLastName(userJson.getString("lastname"));
             if(userJson.has("email")) this.setEmail(userJson.getString("email"));
@@ -410,6 +412,45 @@ public class User {
         else{
             targetView.setImageBitmap(Images.getRoundedCornerBitmap(AppMoment.getInstance().getBitmapFromMemCache("profile_picture_"+id)));
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(firstName);
+        dest.writeString(lastName);
+        dest.writeString(email);
+        dest.writeString(secondEmail);
+        dest.writeString(numTel);
+        dest.writeString(secondNumTel);
+        dest.writeString(pictureProfileUrl);
+        dest.writeString(fbPhotoUrl);
+    }
+
+    public static final Parcelable.Creator<User> CREATOR
+            = new Parcelable.Creator<User>() {
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    private User(Parcel in) {
+        firstName = in.readString();
+        lastName = in.readString();
+        email = in.readString();
+        secondEmail = in.readString();
+        numTel = in.readString();
+        secondNumTel = in.readString();
+        pictureProfileUrl = in.readString();
+        fbPhotoUrl = in.readString();
     }
     // KEEP METHODS END
 

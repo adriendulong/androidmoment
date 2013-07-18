@@ -111,14 +111,16 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         prenom.setText(photo.getUser().getFirstName().toUpperCase());
         nom.setText(" " + photo.getUser().getLastName().toUpperCase());
 
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(photo.getTime());
-        int dateJour = cal.get(Calendar.DAY_OF_MONTH);
-        int dateMois = cal.get(Calendar.MONTH) + 1;
-        int hh       = cal.get(Calendar.HOUR_OF_DAY);
-        int mm       = cal.get(Calendar.MINUTE);
-        jour.setText(dateJour+"/"+dateMois+" ");
-        mois.setText(hh+":"+mm);
+        if(photo.getTime()!=null){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(photo.getTime());
+            int dateJour = cal.get(Calendar.DAY_OF_MONTH);
+            int dateMois = cal.get(Calendar.MONTH) + 1;
+            int hh       = cal.get(Calendar.HOUR_OF_DAY);
+            int mm       = cal.get(Calendar.MINUTE);
+            jour.setText(dateJour+"/"+dateMois+" ");
+            mois.setText(hh+":"+mm);
+        }
 
         nbPetitCoeur.setClickable(false);
         nbPetitCoeur.setEnabled(false);
@@ -380,7 +382,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         dialogText = (EditText) view.findViewById(R.id.custom_dialog_text);
         Button dialogBtn = (Button) view.findViewById(R.id.custom_dialog_button);
-        message = "Photo prise lors de l'évènement " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " " + photo.getUrlUnique() + " " + "#appmoment";
+        message = "Photo prise lors de l'Ã©vÃ¨nement " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " " + photo.getUrlUnique() + " " + "#appmoment";
         dialogText.setText(message);
         dialogBtn.setOnClickListener(new View.OnClickListener() {
             @Override

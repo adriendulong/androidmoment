@@ -98,6 +98,7 @@
         <activity
                 android:screenOrientation="portrait"
                 android:name=".activities.CreationActivity"
+                android:windowSoftInputMode="stateHidden"
                 android:label="@string/title_activity_creation">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -187,7 +188,8 @@
         <activity
                 android:screenOrientation="portrait"
                 android:name=".activities.ListGuestsActivity"
-                android:label="ListGuestsActivity"/>
+                android:label="ListGuestsActivity"
+                android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activities.NotificationsActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
