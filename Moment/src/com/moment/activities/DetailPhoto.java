@@ -1,63 +1,46 @@
 package com.moment.activities;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.MediaScannerConnection;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
+import com.squareup.picasso.Picasso;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.ref.WeakReference;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-
-import javax.xml.datatype.Duration;
 
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
@@ -72,7 +55,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private EditText dialogText;
     private Bundle params;
     private Request request;
-    private Activity activity = this;
+    private final Activity activity = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,13 +66,14 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_detail_photo);
         final ImageView imageView = (ImageView) findViewById(R.id.photo_moment_detail);
 
+
         position = getIntent().getIntExtra("position", 0);
         momentID = getIntent().getLongExtra("momentID", 0);
         maxIndex = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1;
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-        ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, photo);
-        imageLoadTask.execute(photo.getUrlOriginal());
+
+        Picasso.with(this).load(photo.getUrlOriginal()).fit().into(imageView);
 
         final ImageButton closeButton    = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
@@ -149,7 +133,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             previousButton.setVisibility(View.INVISIBLE);
         }
 
-        if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+        if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                 || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
         {
             trashButton.setImageResource(R.drawable.trash);
@@ -169,6 +153,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                         + String.valueOf(System.currentTimeMillis())
                         + ".jpg");
 
+                assert ((BitmapDrawable) imageView.getDrawable()) != null;
                 Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
 
                 FileOutputStream out = null;
@@ -177,6 +162,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } catch (FileNotFoundException e) {
                     e.printStackTrace();
                 }
+                assert bitmap != null;
                 bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
                 String[] paths = new String[1];
                 paths[0] = dir.getAbsolutePath();
@@ -192,7 +178,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         trashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
                     MomentApi.get("delphoto/" +AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getId(), null, new AsyncHttpResponseHandler() {
@@ -230,7 +216,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 try {
                     openActiveSession(activity, true, fbStatusCallback, Arrays.asList(
-                            new String[]{"publish_actions"}), bundle);
+                            "publish_actions"), bundle);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -252,13 +238,12 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position++;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position));
-                imageLoadTask.execute(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUrlOriginal());
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).fit().into(imageView);
                 if(position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){v.setVisibility(View.INVISIBLE);}
                 if(position > 0){previousButton.setVisibility(View.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));; nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
+                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); nbPetitCoeur.setVisibility(EditText.GONE);}
-                if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
                     trashButton.setImageResource(R.drawable.trash);
@@ -284,13 +269,12 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position--;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                ImageLoadTask imageLoadTask = new ImageLoadTask(imageView, AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position));
-                imageLoadTask.execute(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUrlOriginal());
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).fit().into(imageView);
                 if(position == 0){v.setVisibility(View.INVISIBLE);}
                 if(position < AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){nextButton.setVisibility(View.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));; nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
+                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); nbPetitCoeur.setVisibility(EditText.GONE);}
-                if(AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId()
+                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
                     trashButton.setImageResource(R.drawable.trash);
@@ -350,24 +334,22 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         session = null;
 
+        Log.d("", "" + savedInstanceState);
+        if (savedInstanceState != null) {
+            session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
+        }
         if (session == null) {
-            Log.d("", "" + savedInstanceState);
-            if (savedInstanceState != null) {
-                session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
-            }
-            if (session == null) {
-                session = new Session(this);
-            }
-            Session.setActiveSession(session);
-            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
-                session.openForPublish(openRequest);
-                return session;
-            }
+            session = new Session(this);
+        }
+        Session.setActiveSession(session);
+        if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+            session.openForPublish(openRequest);
+            return session;
         }
         return null;
     }
 
-    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+    private final Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
                 Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
@@ -381,7 +363,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         }
     };
 
-    public void sharePicture() {
+    private void sharePicture() {
         request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
@@ -395,6 +377,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         View view = getLayoutInflater().inflate(R.layout.custom_dialog, null);
         dialog.setContentView(view);
 
+        assert view != null;
         dialogText = (EditText) view.findViewById(R.id.custom_dialog_text);
         Button dialogBtn = (Button) view.findViewById(R.id.custom_dialog_button);
         message = "Photo prise lors de l'évènement " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " " + photo.getUrlUnique() + " " + "#appmoment";
@@ -411,6 +394,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     }
 
     private void setFacebookComment() {
+        assert dialogText.getText() != null;
         message = dialogText.getText().toString();
         params.putString("message", message);
     }
@@ -425,57 +409,4 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     @Override
     public void onClick(View v) {}
 
-    public class ImageLoadTask extends AsyncTask<String, Void, Bitmap> {
-
-        private final Photo photo;
-        private final WeakReference<ImageView> weakImageView;
-        private ProgressBar spinner;
-
-        public ImageLoadTask(ImageView imageView, Photo photo) {
-            this.weakImageView = new WeakReference<ImageView>(imageView);
-            this.photo = photo;
-            this.spinner = (ProgressBar) findViewById(R.id.progressBar);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            spinner.setVisibility(ProgressBar.VISIBLE);
-        }
-
-        protected Bitmap doInBackground(String... params) {
-            if(photo.getBitmapOriginal() == null){
-                final Bitmap bitmap = getBitmapFromURL(params[0]);
-                return bitmap;
-            }
-            else{
-                return photo.getBitmapOriginal();
-            }
-        }
-
-        protected void onPostExecute(Bitmap bitmap) {
-            if(bitmap != null) {
-                final ImageView imageView = weakImageView.get();
-                if(photo.getBitmapOriginal() == null)
-                    photo.setBitmapOriginal(bitmap);
-                if(imageView != null)
-                    spinner.setVisibility(ProgressBar.GONE);
-                imageView.setImageBitmap(bitmap);
-            }
-        }
-
-        public Bitmap getBitmapFromURL(String src) {
-            try {
-                URL url = new URL(src);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setDoInput(true);
-                connection.connect();
-                InputStream input = connection.getInputStream();
-                bitmap = BitmapFactory.decodeStream(input);
-                return bitmap;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-    }
 }
