@@ -296,8 +296,8 @@ public class InvitationsFragment extends Fragment {
         cur.close();
 
         //We get extra infos
-        ExtrasContactLoader asyncContact = new ExtrasContactLoader();
-        asyncContact.execute(positions);
+        //ExtrasContactLoader asyncContact = new ExtrasContactLoader();
+        //asyncContact.execute(positions);
     }
 
     /**
@@ -533,26 +533,34 @@ public class InvitationsFragment extends Fragment {
     {
 
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
+        public void onItemClick(AdapterView<?> parent, View view, int positionClick, long arg3) {
 
-            if(users.get(position).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(position).getEmail());
-            if(users.get(position).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(position).getNumTel());
+            if(users.get(positionClick).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(positionClick).getEmail());
+            if(users.get(positionClick).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(positionClick).getNumTel());
 
-            if(!users.get(position).getIsSelect()){
+            if(!users.get(positionClick).getIsSelect()){
                 View v = view.findViewById(R.id.bg_cell_invitations);
                 v.setBackgroundColor(getResources().getColor(R.color.orange));
 
-                InvitationActivity.invitesUser.add(users.get(position));
+                InvitationActivity.invitesUser.add(users.get(positionClick));
                 InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
-                users.get(position).setIsSelect(true);
+
+                //On va chercher les infos supp sur le user
+                if(position==1){
+                    getExtrasInfos(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1));
+                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail());
+                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail());
+                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel()!=null) Log.d("CONTACTS", "Tel : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel());
+                }
+                users.get(positionClick).setIsSelect(true);
             }
             else{
                 RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
                 v.setBackgroundResource(R.drawable.background);
-                InvitationActivity.invitesUser.remove(users.get(position));
+                InvitationActivity.invitesUser.remove(users.get(positionClick));
                 InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
 
-                users.get(position).setIsSelect(false);
+                users.get(positionClick).setIsSelect(false);
             }
 
 
@@ -569,6 +577,58 @@ public class InvitationsFragment extends Fragment {
         // This bundle will be passed to onCreate if the process is
         // killed and restarted.
         // etc.
+    }
+
+
+    private void getExtrasInfos(User user){
+        ContentResolver cr = getActivity().getContentResolver();
+        System.out.println("name : " + user.getFirstName() + ", ID : " + user.getIdCarnetAdresse());
+
+        // get the phone number
+        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                new String[]{user.getIdCarnetAdresse()}, null);
+        while (pCur.moveToNext()) {
+            String phone = pCur.getString(
+                    pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            System.out.println("phone" + phone);
+
+            if(user.getNumTel()==null){
+                user.setNumTel(phone);
+            }
+            else if(user.getSecondNumTel()==null){
+                user.setSecondNumTel(phone);
+                break;
+            }
+        }
+        pCur.close();
+
+
+        // get email and type
+
+        Cursor emailCur = cr.query(
+                ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                null,
+                ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                new String[]{user.getIdCarnetAdresse()}, null);
+        while (emailCur.moveToNext()) {
+            // This would allow you get several email addresses
+            // if the email addresses were stored in an array
+            String email = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            String emailType = emailCur.getString(
+                    emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
+
+            System.out.println("Email " + email + " Email Type : " + emailType);
+            if(user.getEmail()==null){
+                user.setEmail(email);
+            }
+            else if(user.getSecondEmail()==null){
+                user.setSecondEmail(email);
+                break;
+            }
+        }
+        emailCur.close();
     }
 
 

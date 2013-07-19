@@ -348,7 +348,7 @@ public class User implements Parcelable {
 
         JSONObject userJson = new JSONObject();
 
-        if(id>0){
+        if(id!=null){
             userJson.put("id", this.id);
         }
         else{
@@ -356,7 +356,7 @@ public class User implements Parcelable {
             if(firstName!=null) userJson.put("firstname", this.firstName);
             if(lastName!=null) userJson.put("lastname", this.lastName);
             if(numTel!=null) userJson.put("phone", this.numTel);
-            if(facebookId>0) userJson.put("facebookId", this.facebookId);
+            if(facebookId!=null) userJson.put("facebookId", this.facebookId);
             if(fbPhotoUrl !=null) userJson.put("photo", this.fbPhotoUrl);
             if(secondEmail!=null) userJson.put("secondEmail", this.secondEmail);
             if(secondNumTel!=null) userJson.put("secondPhone", this.secondNumTel);

@@ -40,6 +40,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.DatabaseHelper;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.CreationStep1Fragment;
@@ -594,23 +595,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             MomentApi.post("moment/"+moment.getId(), moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
-                    try {
-                        dialog.dismiss();
-
-                        //We set the moment id and it to the user moments
-                        moment.setMomentFromJson(response);
-                        AppMoment.getInstance().user.addMoment(moment);
-
-                        Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
-                        intent.putExtra("id", moment.getId());
-                        intent.putExtra("precedente", "creation");
-                        startActivity(intent);
+                    dialog.dismiss();
 
 
-                    } catch (JSONException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
+                    AppMoment.getInstance().user.getMoments().remove(moment);
+                    DatabaseHelper.removeMoment(moment);
+
+                    Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+                    intent.putExtra("id", moment.getId());
+                    intent.putExtra("precedente", "modif");
+                    startActivity(intent);
                 }
 
                 @Override

@@ -15,9 +15,11 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.JsonHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.GuestsFragment;
+import com.moment.models.Moment;
 import com.moment.models.User;
 
 import org.json.JSONArray;
@@ -30,6 +32,7 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
 
     private ArrayList<GuestsFragment> frs;
     private Long idMoment;
+    private Moment moment;
     private ArrayList<User> owners, admins, comings, notComings, maybe, uk, allComings;
     private InvitationCollectionPagerAdapter mInvitationCollectionPagerAdapter;
     private ViewPager mViewPager;
@@ -200,8 +203,10 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         myMenu = menu;
-
         getSupportMenuInflater().inflate(R.menu.activity_guests_list, menu);
+
+        if(AppMoment.getInstance().user.getId()!=AppMoment.getInstance().user.getMomentById(idMoment).getUserId()) myMenu.findItem(R.id.add_guests).setVisible(false);
+
         return true;
     }
 

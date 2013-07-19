@@ -674,6 +674,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         startActivity(modifyIntent);
     }
 
+
+
+    public void goPhotos(View view){
+        pager.setCurrentItem(0);
+    }
+
     
 
 }

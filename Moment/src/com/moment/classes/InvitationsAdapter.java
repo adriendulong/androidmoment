@@ -152,7 +152,11 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
             if (results.count == 0)
                 notifyDataSetInvalidated();
             else {
-                data = (ArrayList<User>) results.values;
+                //data = (ArrayList<User>) results.values;
+                data.clear();
+                for (User user : (ArrayList<User>)results.values){
+                    data.add(user);
+                }
                 notifyDataSetChanged();
             }
 

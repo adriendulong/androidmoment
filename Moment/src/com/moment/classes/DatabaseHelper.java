@@ -31,4 +31,8 @@ public class DatabaseHelper {
         AppMoment.getInstance().user.getMoments().add(moment);
     }
 
+    public static  void removeMoment(Moment moment){
+        AppMoment.getInstance().momentDao.delete(moment);
+    }
+
 }

@@ -12,10 +12,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -68,9 +65,11 @@ public class InfosFragment extends Fragment {
     //All view elements
     TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
     ImageView image_cover, owner_picture;
+    private RelativeLayout modifLayout;
+    private ImageView blocRSVP;
 
     //State buttons
-    private ImageButton maybeButton, goingButton, notGoigButton;
+    private ImageButton maybeButton, goingButton, notGoigButton, addGuests;
 
     private final Transformation roundTrans = new RoundTransformation();
 	
@@ -92,6 +91,7 @@ public class InfosFragment extends Fragment {
         maybeButton     = (ImageButton)view.findViewById(R.id.maybe_button);
         goingButton     = (ImageButton)view.findViewById(R.id.going_button);
         notGoigButton   = (ImageButton)view.findViewById(R.id.not_going_button);
+        addGuests = (ImageButton)view.findViewById(R.id.add_guests);
 
 		dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
 		dateFinText = (TextView)view.findViewById(R.id.infos_moment_date_fin);
@@ -99,6 +99,9 @@ public class InfosFragment extends Fragment {
         guests_number = (TextView)view.findViewById(R.id.guests_number);
         guests_coming = (TextView)view.findViewById(R.id.guests_coming);
         guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
+        modifLayout = (RelativeLayout)view.findViewById(R.id.modif_layout);
+
+        blocRSVP = (ImageView)view.findViewById(R.id.bloc_rsvp);
 
 
 
@@ -346,6 +349,16 @@ public class InfosFragment extends Fragment {
             guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
             guests_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
             guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
+        }
+
+        //If it is not the owner we have to hide some stuff
+        if(moment.getUserId()!=AppMoment.getInstance().user.getId()){
+            modifLayout.setVisibility(View.INVISIBLE);
+            addGuests.setVisibility(View.INVISIBLE);
+
+            RelativeLayout .LayoutParams params = (RelativeLayout.LayoutParams)blocRSVP.getLayoutParams();
+            params.setMargins(0, 0, 5, 0); //substitute parameters for left, top, right, bottom
+            blocRSVP.setLayoutParams(params);
         }
 
         //Map
