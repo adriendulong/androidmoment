@@ -213,7 +213,7 @@ public class PhotosFragment extends Fragment {
             }
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).into(imageView); }
+            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).placeholder(R.drawable.picto_photo_vide).into(imageView); }
             return imageView;
         }
     }
