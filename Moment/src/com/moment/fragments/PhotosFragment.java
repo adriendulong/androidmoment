@@ -107,8 +107,6 @@ public class PhotosFragment extends Fragment {
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
-
-
         if(photos == null && photos_uri == null)
         {
             photos = moment.getPhotos();
@@ -143,6 +141,7 @@ public class PhotosFragment extends Fragment {
             }
 
             imageAdapter = new ImageAdapter(view.getContext(), photos);
+            imageAdapter.notifyDataSetChanged();
 
             for(String s: photos_uri)
             {
