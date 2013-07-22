@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,14 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -40,6 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -95,6 +91,7 @@ public class TimelineActivity extends SlidingActivity {
         momentsList.setSelector(android.R.color.transparent);
         adapter = new MomentsAdapter(this, R.layout.timeline_moment, moments);
         momentsList.setAdapter(adapter);
+        momentsList.setOnScrollListener(new TImelineScrollListener());
 
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
@@ -617,6 +614,156 @@ public class TimelineActivity extends SlidingActivity {
         todayBtn.setScaleType(ImageView.ScaleType.MATRIX);   //required
         matrix.postRotate((float)90, todayBtn.getPivotX(), todayBtn.getPivotY());
         todayBtn.setImageMatrix(matrix);
+    }
+
+
+    /**
+     * Background task that will load the next moments
+     */
+
+
+    private class TImelineScrollListener implements AbsListView.OnScrollListener {
+
+        private int visibleThreshold = 1;
+        private int currentPage = 0;
+        private int previousTotal = 0;
+        private boolean loading = true;
+        private boolean allFutur = false;
+        private boolean allPast = false;
+        private String TAG = "ScrollListener";
+
+        public TImelineScrollListener() {
+        }
+        public TImelineScrollListener(int visibleThreshold) {
+            this.visibleThreshold = visibleThreshold;
+        }
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem,
+                             int visibleItemCount, int totalItemCount) {
+            if (loading) {
+                if (totalItemCount > previousTotal) {
+                    loading = false;
+                    previousTotal = totalItemCount;
+                    currentPage++;
+                }
+            }
+
+            //We load futur moments
+            if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
+                if(!allFutur){
+                    Log.d(TAG, "LOAD FUTUR MOMENTS");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = df.format(moments.get(moments.size()-1).getDateDebut());
+                    MomentApi.get("momentsafter/"+date+"/1", null, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            try {
+                                System.out.println(response.toString());
+                                JSONArray momentsArray = response.getJSONArray("moments");
+                                int nbMoments = momentsArray.length();
+
+                                for (int j = 0; j < nbMoments; j++) {
+
+                                    JSONObject momentJson = (JSONObject) momentsArray.get(j);
+                                    Moment momentTemp = new Moment();
+                                    momentTemp.setMomentFromJson(momentJson);
+                                    AppMoment.getInstance().user.addMoment(momentTemp);
+                                    moments.add(momentTemp);
+
+
+                                    if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                        DatabaseHelper.addMoment(momentTemp);
+                                    }
+
+                                }
+
+                                loading = false;
+
+                                if(nbMoments==0) allFutur = true;
+                                else adapter.notifyDataSetChanged();
+
+                                Toast.makeText(getApplicationContext(), "Moments supp : " + nbMoments, Toast.LENGTH_LONG).show();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            Log.e("TIMELINE", content);
+                            Toast.makeText(getApplicationContext(),"Echec", Toast.LENGTH_LONG).show();
+                        }
+
+                    });
+
+                    loading = true;
+                }
+
+            }
+            //We load old moments
+            else if (!loading && (firstVisibleItem) <= 3) {
+                if(!allPast){
+                    Log.d(TAG, "Load PAST MOMENTS");
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+                    String date = df.format(moments.get(0).getDateDebut());
+                    MomentApi.get("momentsafter/"+date+"/0", null, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            try {
+                                System.out.println(response.toString());
+                                JSONArray momentsArray = response.getJSONArray("moments");
+                                int nbMoments = momentsArray.length();
+
+                                for (int j = 0; j < nbMoments; j++) {
+
+                                    JSONObject momentJson = (JSONObject) momentsArray.get(j);
+                                    Moment momentTemp = new Moment();
+                                    momentTemp.setMomentFromJson(momentJson);
+                                    AppMoment.getInstance().user.addMoment(momentTemp);
+                                    moments.add(0, momentTemp);
+
+
+                                    if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                        DatabaseHelper.addMoment(momentTemp);
+                                    }
+
+                                }
+
+                                if(nbMoments==0) allPast = true;
+                                else {
+                                    adapter.notifyDataSetChanged();
+                                    momentsList.setSelection(nbMoments+1);
+                                }
+
+                                Toast.makeText(getApplicationContext(), "Moments supp : " + nbMoments, Toast.LENGTH_LONG).show();
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            Log.e("TIMELINE", content);
+                            Toast.makeText(getApplicationContext(),"Echec", Toast.LENGTH_LONG).show();
+                        }
+
+                    });
+
+                    loading = true;
+                }
+
+            }
+        }
+
+        @Override
+        public void onScrollStateChanged(AbsListView view, int scrollState) {
+        }
+
     }
 
 

@@ -79,6 +79,7 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
                 destIntent.putExtra("moment_id", moment_id);
                 destIntent.putExtra("message", message);
                 destIntent.putExtra("precedente", "push");
+                Log.d(TAG, "Type : "+type_id);
             }
             else if(type_id==PHOTO_PUSH){
                 Log.v(TAG, "PHOTO PUSH");

@@ -552,10 +552,14 @@ public class InvitationsFragment extends Fragment {
 
                 //On va chercher les infos supp sur le user
                 if(position==1){
-                    getExtrasInfos(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1));
-                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail());
-                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail());
-                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel()!=null) Log.d("CONTACTS", "Tel : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel());
+                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getIdCarnetAdresse()!=null)
+                    {
+                        getExtrasInfos(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1));
+                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail());
+                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail());
+                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel()!=null) Log.d("CONTACTS", "Tel : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel());
+                    }
+
                 }
                 users.get(positionClick).setIsSelect(true);
             }

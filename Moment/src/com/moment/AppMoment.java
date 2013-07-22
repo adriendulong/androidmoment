@@ -2,20 +2,20 @@ package com.moment;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
 
-import com.moment.models.ChatDao;
-import com.moment.models.DaoMaster;
-import com.moment.models.DaoSession;
-import com.moment.models.MomentDao;
-import com.moment.models.User;
-import com.moment.models.UserDao;
+import com.moment.activities.TimelineActivity;
+import com.moment.classes.DatabaseHelper;
+import com.moment.models.*;
 
 import java.net.NetworkInterface;
+import java.util.List;
 
 public class AppMoment extends Application {
 	
@@ -26,6 +26,7 @@ public class AppMoment extends Application {
 
 	public static final String APP_FB_ID = "445031162214877";
 	public static final String[] PERMS_FB = new String[] { "user_events", "read_friendlists", "user_about_me", "friends_about_me" };
+    public static final String PREFS_NAME = "MomentPrefs";
 	public String tel_id;
 
     public DaoMaster.DevOpenHelper helper;
@@ -100,6 +101,24 @@ public class AppMoment extends Application {
 
     public Bitmap getBitmapFromMemCache(String key) {
         return mMemoryCache.get(key);
+    }
+
+    public void getUser(){
+        //We try to get the user
+        SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        if(!DatabaseHelper.getUsersFromDataBase().isEmpty()){
+            Long savedUserID = sharedPreferences.getLong("userID", -1);
+            user = DatabaseHelper.getUserByIdFromDataBase(savedUserID);
+        }
+
+        if(user!=null){
+            if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                for (Moment moment : momentList){
+                    user.getMoments().add(moment);
+                }
+            }
+        }
     }
 
 }

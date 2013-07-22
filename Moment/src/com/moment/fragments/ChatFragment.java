@@ -85,10 +85,7 @@ public class ChatFragment extends Fragment {
 
         mScrollView = scrollChat.getRefreshableView();
 
-        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
-            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
-            initChat();
-        }
+
 
         return view;
     }
@@ -96,6 +93,10 @@ public class ChatFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+            initChat();
+        }
 
     }
 
@@ -364,6 +365,7 @@ public class ChatFragment extends Fragment {
      */
 
     public void initChat(){
+        Log.d("CHATFRAGMENT", "INIT");
         if(!AppMoment.getInstance().checkInternet()){
             List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
 

@@ -104,8 +104,10 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         String precedente = getIntent().getStringExtra("precedente");        
 
+
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
         if(precedente.equals("push")||precedente.equals("notifs")){
+            Log.d("MOMENTINFOS", "TYPE INIT : "+getIntent().getIntExtra("type_id", -1));
             type_id = getIntent().getIntExtra("type_id", -1);
             moment_id = getIntent().getIntExtra("moment_id", -1);
             momentID = getIntent().getLongExtra("moment_id", 1);
@@ -115,6 +117,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             else position=1;
         }
         else momentID = getIntent().getLongExtra("id", 1);
+
+        Log.d("MOMENTINFOS", "Position : "+position);
+        Log.d("MOMENTINFOS", "TYPE : "+type_id);
 
         fragments = new ArrayList<Fragment>();
 
@@ -488,6 +493,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void getMoment(){
 
         //If we have it in the local database
+        Log.d("MOMENTINFOS", "Moment id :"+momentID);
+        AppMoment.getInstance().getUser();
         if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
             moment = AppMoment.getInstance().user.getMomentById(momentID);
         }

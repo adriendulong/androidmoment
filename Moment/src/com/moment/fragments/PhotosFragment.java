@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +28,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -41,12 +43,14 @@ import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -64,6 +68,7 @@ public class PhotosFragment extends Fragment {
 
     private ArrayList<Photo> photos;
     private ArrayList<String> photos_uri;
+    private ArrayList<Bitmap> photos_files;
 
     private View view;
 
@@ -77,12 +82,22 @@ public class PhotosFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if(savedInstanceState == null) {
             savedInstanceState = getActivity().getIntent().getExtras();
-
+            photos_files = new ArrayList<Bitmap>();
 
             assert savedInstanceState != null;
             if(savedInstanceState.getStringArrayList("photos") != null)
             {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
+                assert photos_uri != null;
+                for(String s : photos_uri) {
+                    File tempFile = new File(s);
+                    try {
+                        FileInputStream fi = new FileInputStream(tempFile);
+                        photos_files.add(BitmapFactory.decodeStream(fi)) ;
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -100,80 +115,6 @@ public class PhotosFragment extends Fragment {
             this.momentID = ((MomentInfosActivity)getActivity()).getMomentId();
             initPhoto();
         }
-    }
-
-    private void initPhoto(){
-
-        User user = AppMoment.getInstance().user;
-        Moment moment = user.getMomentById(momentID);
-
-        if(photos == null && photos_uri == null)
-        {
-            photos = moment.getPhotos();
-
-            MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
-
-                public void onSuccess(JSONObject response) {
-                    try {
-                        JSONArray jsonPhotos = response.getJSONArray("photos");
-
-                        for (int i = 0; i < jsonPhotos.length(); i++) {
-                            Photo photo = new Photo();
-                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                            imageAdapter.notifyDataSetChanged();
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            imageAdapter = new ImageAdapter(view.getContext(), photos);
-
-        }
-
-        if(photos_uri != null)
-        {
-            if(photos == null)
-            {
-                photos = moment.getPhotos();
-            }
-
-            imageAdapter = new ImageAdapter(view.getContext(), photos);
-            imageAdapter.notifyDataSetChanged();
-
-            for(String s: photos_uri)
-            {
-                Photo photo = new Photo();
-                photos.add(photo);
-                imageAdapter.notifyDataSetChanged();
-                new MultiUploadTask(s, photo).execute();
-            }
-            photos_uri.clear();
-        }
-
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
-
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (position == 0) {
-                    startDialog();
-                } else {
-                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    if (photos.get(position - 1).getUrlOriginal() == null) {
-                        intent.putExtra("position", (0));
-                    } else {
-                        intent.putExtra("position", (position - 1));
-                    }
-                    intent.putExtra("momentID", momentID);
-                    startActivity(intent);
-                }
-            }
-        });
-
     }
 
     private void startDialog() {
@@ -222,6 +163,7 @@ public class PhotosFragment extends Fragment {
         {
             if(photos_uri == null) { photos_uri = new ArrayList<String>(); }
             photos_uri.add(outputFileUri.getPath());
+            new MultiUploadTask().execute();
         }
     }
 
@@ -276,12 +218,6 @@ public class PhotosFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onStop(){
-        super.onStop();
-        imageAdapter.notifyDataSetInvalidated();
-    }
-
     private class MultiUploadTask extends AsyncTask<Void, Void, Void>
     {
         private final Context context;
@@ -289,14 +225,11 @@ public class PhotosFragment extends Fragment {
         private final NotificationManager notificationManager;
         private Notification notification;
         private Photo photo;
-        private String uri;
 
 
-        public MultiUploadTask(String uri, Photo photo){
+        public MultiUploadTask(){
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            this.uri = uri;
-            this.photo = photo;
         }
 
         @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -319,69 +252,142 @@ public class PhotosFragment extends Fragment {
         }
 
         @Override
+        protected void onPreExecute(){
+            createNotification("FUCK","YEAH",false);
+            photo = new Photo();
+            photos.add(photo);
+            imageAdapter.notifyDataSetChanged();
+        }
+
+        @Override
         protected Void doInBackground(Void... params) {
 
             RequestParams requestParams = new RequestParams();
 
-            final File file = new File(uri);
-            bitmap = BitmapFactory.decodeFile(file.getPath());
+            for(String s : photos_uri){
+                File file = new File(s);
+                bitmap = BitmapFactory.decodeFile(file.getPath());
 
-            try {
-                FileOutputStream stream = new FileOutputStream(file);
-                bitmap = Images.resizeBitmap(bitmap, 1500);
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                stream.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            try {
-                requestParams.put("photo", file);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
+                try {
+                    FileOutputStream stream = new FileOutputStream(file);
+                    bitmap = Images.resizeBitmap(bitmap, 1500);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    requestParams.put("photo", file);
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
 
-            MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(JSONObject response) {
+                MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
 
+                        try {
+                            JSONObject json = response.getJSONObject("success");
 
-                    try {
-                        JSONObject json = response.getJSONObject("success");
+                            photo.setId(json.getInt("id"));
 
-                        photo.setId(json.getInt("id"));
+                            photo.setNbLike(json.getInt("nb_like"));
+                            photo.setUrlOriginal(json.getString("url_original"));
+                            photo.setUrlThumbnail(json.getString("url_thumbnail"));
+                            photo.setUrlUnique(json.getString("unique_url"));
+                            Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
 
-                        photo.setNbLike(json.getInt("nb_like"));
-                        photo.setUrlOriginal(json.getString("url_original"));
-                        photo.setUrlThumbnail(json.getString("url_thumbnail"));
-                        photo.setUrlUnique(json.getString("unique_url"));
-                        Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
-
-                        photo.setTime(timestamp);
-                        User user = new User();
-                        user.setUserFromJson(json.getJSONObject("taken_by"));
-                        photo.setUser(user);
-                        Picasso.with(context).load(photo.getUrlThumbnail()).fit();
+                            photo.setTime(timestamp);
+                            User user = new User();
+                            user.setUserFromJson(json.getJSONObject("taken_by"));
+                            photo.setUser(user);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Picasso.with(context).load(photo.getUrlThumbnail());
                         imageAdapter.notifyDataSetChanged();
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        createNotification("YEAH", "FUCK", true);
                     }
+                    @Override
+                    public void onFailure(Throwable e,JSONObject response){
+                        e.printStackTrace();
+                        System.out.println(response.toString());
+                    }
+                });
 
-                }
-                @Override
-                public void onFailure(Throwable e,JSONObject response){
-                    e.printStackTrace();
-                    System.out.println(response.toString());
-                }
-            });
-
+            }
             return null;
         }
+
     }
 
     public void createFragment(Long momentId){
         this.momentID = momentId;
+
         initPhoto();
     }
 
+    /**
+     * Function called to init the photo view when all the infos are ready
+     */
+
+    private void initPhoto(){
+
+        User user = AppMoment.getInstance().user;
+        Moment moment = user.getMomentById(momentID);
+
+        if(photos == null)
+        {
+            photos = moment.getPhotos();
+
+            MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+
+                public void onSuccess(JSONObject response) {
+                    try {
+                        JSONArray jsonPhotos = response.getJSONArray("photos");
+
+                        for (int i = 0; i < jsonPhotos.length(); i++) {
+                            Photo photo = new Photo();
+                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+                            imageAdapter.notifyDataSetChanged();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
+        imageAdapter = new ImageAdapter(view.getContext(), photos);
+        GridView gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView.setAdapter(imageAdapter);
+
+
+        if(!photos_files.isEmpty())
+        {
+            MultiUploadTask multiUploadTask = new MultiUploadTask();
+            multiUploadTask.execute();
+        }
+
+        gridView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (position == 0) {
+                    startDialog();
+                } else {
+                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
+                    if (photos.get(position - 1).getUrlOriginal() == null) {
+                        intent.putExtra("position", (0));
+                    } else {
+                        intent.putExtra("position", (position - 1));
+                    }
+                    intent.putExtra("momentID", momentID);
+                    startActivity(intent);
+                }
+            }
+        });
+
+    }
 }

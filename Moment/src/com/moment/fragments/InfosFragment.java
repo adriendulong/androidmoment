@@ -33,6 +33,7 @@ import com.moment.classes.PositionOverlay;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 
+import com.moment.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import org.json.JSONObject;
@@ -52,6 +53,7 @@ public class InfosFragment extends Fragment {
     private int OWNER = 0;
     private int ADMIN = 1;
     private int UNKOWN = 4;
+    private int PUBLIC = 2;
 	
 	private String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
 	private String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
@@ -352,17 +354,26 @@ public class InfosFragment extends Fragment {
         }
 
         //If it is not the owner we have to hide some stuff
-        if(moment.getUserId()!=AppMoment.getInstance().user.getId()){
-            modifLayout.setVisibility(View.INVISIBLE);
+        if(!canInvite(AppMoment.getInstance().user)){
             addGuests.setVisibility(View.INVISIBLE);
-
             RelativeLayout .LayoutParams params = (RelativeLayout.LayoutParams)blocRSVP.getLayoutParams();
             params.setMargins(0, 0, 5, 0); //substitute parameters for left, top, right, bottom
             blocRSVP.setLayoutParams(params);
         }
 
+        if(AppMoment.getInstance().user.getId()!=moment.getUserId()){
+            modifLayout.setVisibility(View.INVISIBLE);
+        }
+
         //Map
         setUpMapIfNeeded();
+    }
+
+    private Boolean canInvite(User user){
+        if(moment.getPrivacy()==PUBLIC) return true;
+        else if(moment.getIsOpenInvit()) return true;
+        else if(user.getId()==moment.getUserId()) return true;
+        else return false;
     }
 
 

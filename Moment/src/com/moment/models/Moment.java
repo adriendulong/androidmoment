@@ -405,6 +405,8 @@ public class Moment {
             this.guestNotComing = moment.getInt("guests_not_coming");
             if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
             if(moment.has("description")) this.description = moment.getString("description");
+            if(moment.has("privacy")) this.privacy = moment.getInt("privacy");
+            if(moment.has("isOpenInvit")) this.isOpenInvit = moment.getBoolean("isOpenInvit");
 
             if (moment.has("owner")){
                 JSONObject owner = moment.getJSONObject("owner");

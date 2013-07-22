@@ -90,7 +90,7 @@ public class MomentActivity extends Activity {
 
         if (MomentApi.myCookieStore.getCookies().size()>0){
 
-            SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+            SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
 
             if(!DatabaseHelper.getUsersFromDataBase().isEmpty()){
                 Long savedUserID = sharedPreferences.getLong("userID", -1);
@@ -336,7 +336,7 @@ public class MomentActivity extends Activity {
                     id = Long.parseLong(response.getString("id"));
                     AppMoment.getInstance().user.setId(id);
 
-                    SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
+                    SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPreferences.edit();
                     editor.putLong("userID", id);
                     editor.commit();
@@ -372,6 +372,13 @@ public class MomentActivity extends Activity {
                 }
                 System.out.println(id);
             }
+
+            public void onFailure(Throwable error, String content) {
+                // By default, call the deprecated onFailure(Throwable) for compatibility
+                Log.e("HTTP", content);
+                dialog.dismiss();
+            }
+
         });
     }
 

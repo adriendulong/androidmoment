@@ -1,6 +1,8 @@
 package com.moment.activities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -266,13 +268,42 @@ public class InvitationActivity extends SherlockFragmentActivity {
 			} 
 	       
 			//On lance la progress dialog
-			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Ajout d'invit�s");
+			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
+            se.setContentType("application/json");
 			
 	       MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
 	            @Override
 	            public void onSuccess(String response) {
 		            System.out.println(response);
                     dialog.dismiss();
+
+
+                    ArrayList<User> SMSUsers = new ArrayList<User>();
+                    for(User user:invitesUser){
+
+                        //On fait pas pour les favoris
+                        if(user.getId()==null){
+                            if(user.getNumTel()!=null){
+                                //We send and SMS
+                                SMSUsers.add(user);
+                            }
+                        }
+                    }
+
+                    if(SMSUsers.size()>0){
+                        String _messageNumber="";
+                        for(int i=0;i<SMSUsers.size();i++){
+                            _messageNumber += SMSUsers.get(i).getNumTel();
+                            if(i<(SMSUsers.size()-1)) _messageNumber += ";";
+                        }
+
+                        String messageText = "Hi , Just SMSed to say hello";
+                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                        sendIntent.setData(Uri.parse("sms:" + _messageNumber));
+                        sendIntent.putExtra("sms_body", messageText);
+                        startActivity(sendIntent);
+
+                    }
 
                     finish();
                     overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );

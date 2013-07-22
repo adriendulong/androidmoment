@@ -62,8 +62,14 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
         }
         
         User user = data.get(position);
-        holder.txtFirstname.setText(user.getFirstName());
-        holder.txtLastname.setText(user.getLastName());
+        if((user.getFirstName()==null)&&(user.getLastName()==null)){
+            if(user.getEmail()!=null) holder.txtFirstname.setText(user.getEmail());
+            else if(user.getNumTel()!=null) holder.txtFirstname.setText(user.getNumTel());
+        }
+        else{
+            holder.txtFirstname.setText(user.getFirstName());
+            holder.txtLastname.setText(user.getLastName());
+        }
         holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
         holder.bg.setBackgroundResource(R.drawable.background);
         
@@ -138,6 +144,29 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
                         }
                     }
                 }
+
+
+                if(FilteredUsers.size()==0){
+                    User customUser = new User();
+                    if(constraint.length()==1){
+                        if(Character.isLetter(constraint.charAt(0))){
+                            customUser.setEmail(constraint.toString());
+                        }
+                        else{
+                            customUser.setNumTel(constraint.toString());
+                        }
+                    }
+                    else{
+                        if(Character.isLetter(constraint.charAt(1))){
+                            customUser.setEmail(constraint.toString());
+                        }
+                        else{
+                            customUser.setNumTel(constraint.toString());
+                        }
+                    }
+                    FilteredUsers.add(customUser);
+
+                 }
                 // set the Filtered result to return
                 results.count = FilteredUsers.size();
                 results.values = FilteredUsers;
