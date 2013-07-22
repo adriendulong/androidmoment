@@ -107,6 +107,8 @@ public class PhotosFragment extends Fragment {
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
+
+
         if(photos == null && photos_uri == null)
         {
             photos = moment.getPhotos();
@@ -128,6 +130,9 @@ public class PhotosFragment extends Fragment {
                     }
                 }
             });
+
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+
         }
 
         if(photos_uri != null)
@@ -137,16 +142,18 @@ public class PhotosFragment extends Fragment {
                 photos = moment.getPhotos();
             }
 
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+
             for(String s: photos_uri)
             {
                 Photo photo = new Photo();
                 photos.add(photo);
+                imageAdapter.notifyDataSetChanged();
                 new MultiUploadTask(s, photo).execute();
             }
             photos_uri.clear();
         }
 
-        imageAdapter = new ImageAdapter(view.getContext(), photos);
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
 
