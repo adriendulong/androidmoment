@@ -230,7 +230,6 @@ public class PhotosFragment extends Fragment {
         public MultiUploadTask(){
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            this.photo = new Photo();
         }
 
         @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -255,6 +254,7 @@ public class PhotosFragment extends Fragment {
         @Override
         protected void onPreExecute(){
             createNotification("FUCK","YEAH",false);
+            photo = new Photo();
             photos.add(photo);
             imageAdapter.notifyDataSetChanged();
         }
@@ -286,14 +286,8 @@ public class PhotosFragment extends Fragment {
                     @Override
                     public void onSuccess(JSONObject response) {
 
-                        Log.e("resposnse", response.toString());
-
-
-
                         try {
                             JSONObject json = response.getJSONObject("success");
-                            Log.e("------------------------ JSON --------------------------------------", json.toString());
-
 
                             photo.setId(json.getInt("id"));
 
@@ -317,7 +311,8 @@ public class PhotosFragment extends Fragment {
                     }
                     @Override
                     public void onFailure(Throwable e,JSONObject response){
-
+                        e.printStackTrace();
+                        System.out.println(response.toString());
                     }
                 });
 
