@@ -242,7 +242,7 @@ public class ChatFragment extends Fragment {
             JSONObject jsonChats = null;
 
             try {
-                jsonChats = getChatsFromURL("http://apidev.appmoment.fr/lastchats/" + momentId + "/" + nextPage);
+                jsonChats = getChatsFromURL(MomentApi.BASE_URL + momentId + "/" + nextPage);
             } catch (JSONException e) {
                 e.printStackTrace();
             }

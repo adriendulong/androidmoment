@@ -3,6 +3,7 @@ package com.moment.fragments;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -314,11 +315,15 @@ public class InvitationsFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(getActivity(), requestCode, resultCode, data);
+    }
+
     private Session openActiveSession(Activity activity, boolean allowLoginUI,
                                       Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
-                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
-                SSO_WITH_FALLBACK).setCallback(callback).
+        Session.OpenRequest openRequest = new Session.OpenRequest(this).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
         Session session = null;
         if (session == null) {
