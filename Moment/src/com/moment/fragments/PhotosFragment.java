@@ -54,6 +54,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class PhotosFragment extends Fragment {
 
@@ -169,11 +170,9 @@ public class PhotosFragment extends Fragment {
     public class ImageAdapter extends BaseAdapter {
 
         private final Context context;
-        private final ArrayList<Photo> photos;
 
         public ImageAdapter(Context context, ArrayList<Photo> photos) {
             this.context = context;
-            this.photos = photos;
         }
 
         @Override
@@ -199,20 +198,19 @@ public class PhotosFragment extends Fragment {
 
             if(convertView == null) {
                 imageView = new ImageView(context);
+
+                float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+
+                imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setCropToPadding(true);
+                imageView.setPadding(10, 10, 10, 10);
+                imageView.setBackgroundColor(Color.WHITE);
             }
 
             else {
                 imageView = (ImageView) convertView;
             }
-
-            float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
-
-            imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setCropToPadding(true);
-            imageView.setPadding(10, 10, 10, 10);
-            imageView.setBackgroundColor(Color.WHITE);
-
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
             else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).into(imageView); }
@@ -232,7 +230,6 @@ public class PhotosFragment extends Fragment {
         public MultiUploadTask(){
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            imageAdapter.notifyDataSetChanged();
             this.photo = new Photo();
         }
 
@@ -257,13 +254,13 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPreExecute(){
+            createNotification("FUCK","YEAH",false);
             photos.add(photo);
             imageAdapter.notifyDataSetChanged();
         }
 
         @Override
         protected Void doInBackground(Void... params) {
-            createNotification("FUCK","YEAH",false);
 
             RequestParams requestParams = new RequestParams();
 
@@ -288,9 +285,35 @@ public class PhotosFragment extends Fragment {
                 MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        createNotification("YEAH", "FUCK", true);
-                        photo.photoFromJSON(response);
+
+                        Log.e("resposnse", response.toString());
+
+
+
+                        try {
+                            JSONObject json = response.getJSONObject("success");
+                            Log.e("------------------------ JSON --------------------------------------", json.toString());
+
+
+                            photo.setId(json.getInt("id"));
+
+                            photo.setNbLike(json.getInt("nb_like"));
+                            photo.setUrlOriginal(json.getString("url_original"));
+                            photo.setUrlThumbnail(json.getString("url_thumbnail"));
+                            photo.setUrlUnique(json.getString("unique_url"));
+                            Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
+
+                            photo.setTime(timestamp);
+                            User user = new User();
+                            user.setUserFromJson(json.getJSONObject("taken_by"));
+                            photo.setUser(user);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        Picasso.with(context).load(photo.getUrlThumbnail());
                         imageAdapter.notifyDataSetChanged();
+
+                        createNotification("YEAH", "FUCK", true);
                     }
                     @Override
                     public void onFailure(Throwable e,JSONObject response){
@@ -318,7 +341,30 @@ public class PhotosFragment extends Fragment {
 
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
-        photos = moment.getPhotos();
+
+        if(photos == null)
+        {
+            photos = moment.getPhotos();
+
+            MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+
+                public void onSuccess(JSONObject response) {
+                    try {
+                        JSONArray jsonPhotos = response.getJSONArray("photos");
+
+                        for (int i = 0; i < jsonPhotos.length(); i++) {
+                            Photo photo = new Photo();
+                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+                            imageAdapter.notifyDataSetChanged();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }
+
         imageAdapter = new ImageAdapter(view.getContext(), photos);
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
@@ -329,24 +375,6 @@ public class PhotosFragment extends Fragment {
             MultiUploadTask multiUploadTask = new MultiUploadTask();
             multiUploadTask.execute();
         }
-
-        MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
-
-            public void onSuccess(JSONObject response) {
-                try {
-                    JSONArray jsonPhotos = response.getJSONArray("photos");
-
-                    for (int i = 0; i < jsonPhotos.length(); i++) {
-                        Photo photo = new Photo();
-                        photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                        AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                        imageAdapter.notifyDataSetChanged();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
