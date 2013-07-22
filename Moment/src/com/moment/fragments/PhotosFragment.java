@@ -88,16 +88,6 @@ public class PhotosFragment extends Fragment {
             if(savedInstanceState.getStringArrayList("photos") != null)
             {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
-                assert photos_uri != null;
-                for(String s : photos_uri) {
-                    File tempFile = new File(s);
-                    try {
-                        FileInputStream fi = new FileInputStream(tempFile);
-                        photos_files.add(BitmapFactory.decodeStream(fi)) ;
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                }
             }
         }
     }
@@ -163,7 +153,7 @@ public class PhotosFragment extends Fragment {
         {
             if(photos_uri == null) { photos_uri = new ArrayList<String>(); }
             photos_uri.add(outputFileUri.getPath());
-            new MultiUploadTask().execute();
+//            new MultiUploadTask().execute();
         }
     }
 
@@ -254,9 +244,14 @@ public class PhotosFragment extends Fragment {
         @Override
         protected void onPreExecute(){
             createNotification("FUCK","YEAH",false);
-            photo = new Photo();
-            photos.add(photo);
-            imageAdapter.notifyDataSetChanged();
+
+
+            for(String s : photos_uri)
+            {
+                photos.add(new Photo());
+                imageAdapter.notifyDataSetChanged();
+            }
+
         }
 
         @Override
@@ -264,7 +259,10 @@ public class PhotosFragment extends Fragment {
 
             RequestParams requestParams = new RequestParams();
 
+            int i = photos_uri.size() - 1;
+
             for(String s : photos_uri){
+
                 File file = new File(s);
                 bitmap = BitmapFactory.decodeFile(file.getPath());
 
@@ -282,9 +280,14 @@ public class PhotosFragment extends Fragment {
                     e.printStackTrace();
                 }
 
+                photo = photos.get((photos.size()-1) - i);
+
+                i--;
+
                 MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
+
 
                         try {
                             JSONObject json = response.getJSONObject("success");
@@ -304,10 +307,6 @@ public class PhotosFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Picasso.with(context).load(photo.getUrlThumbnail());
-                        imageAdapter.notifyDataSetChanged();
-
-                        createNotification("YEAH", "FUCK", true);
                     }
                     @Override
                     public void onFailure(Throwable e,JSONObject response){
@@ -320,74 +319,84 @@ public class PhotosFragment extends Fragment {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void result){
+            for(int i = photos_uri.size() - 1; i > photos.size() - 1; i--)
+            {
+                Picasso.with(context).load(photo.getUrlThumbnail());
+                imageAdapter.notifyDataSetChanged();
+
+            }
+            createNotification("YEAH", "FUCK", true);
+        }
     }
 
-    public void createFragment(Long momentId){
-        this.momentID = momentId;
+        public void createFragment(Long momentId){
+            this.momentID = momentId;
 
-        initPhoto();
-    }
+            initPhoto();
+        }
 
-    /**
-     * Function called to init the photo view when all the infos are ready
-     */
+        /**
+         * Function called to init the photo view when all the infos are ready
+         */
 
-    private void initPhoto(){
+        private void initPhoto(){
 
-        User user = AppMoment.getInstance().user;
-        Moment moment = user.getMomentById(momentID);
+            User user = AppMoment.getInstance().user;
+            Moment moment = user.getMomentById(momentID);
 
-        if(photos == null)
-        {
-            photos = moment.getPhotos();
+            if(photos == null)
+            {
+                photos = moment.getPhotos();
 
-            MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+                MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
-                public void onSuccess(JSONObject response) {
-                    try {
-                        JSONArray jsonPhotos = response.getJSONArray("photos");
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            JSONArray jsonPhotos = response.getJSONArray("photos");
 
-                        for (int i = 0; i < jsonPhotos.length(); i++) {
-                            Photo photo = new Photo();
-                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                            imageAdapter.notifyDataSetChanged();
+                            for (int i = 0; i < jsonPhotos.length(); i++) {
+                                Photo photo = new Photo();
+                                photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                                AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+                                imageAdapter.notifyDataSetChanged();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    }
+                });
+            }
+
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+            GridView gridView = (GridView) view.findViewById(R.id.gridview);
+            gridView.setAdapter(imageAdapter);
+
+
+            if(photos_uri != null)
+            {
+                MultiUploadTask multiUploadTask = new MultiUploadTask();
+                multiUploadTask.execute();
+            }
+
+            gridView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    if (position == 0) {
+                        startDialog();
+                    } else {
+                        Intent intent = new Intent(getActivity(), DetailPhoto.class);
+                        if (photos.get(position - 1).getUrlOriginal() == null) {
+                            intent.putExtra("position", (0));
+                        } else {
+                            intent.putExtra("position", (position - 1));
+                        }
+                        intent.putExtra("momentID", momentID);
+                        startActivity(intent);
                     }
                 }
             });
+
         }
-
-        imageAdapter = new ImageAdapter(view.getContext(), photos);
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
-
-
-        if(!photos_files.isEmpty())
-        {
-            MultiUploadTask multiUploadTask = new MultiUploadTask();
-            multiUploadTask.execute();
-        }
-
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (position == 0) {
-                    startDialog();
-                } else {
-                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    if (photos.get(position - 1).getUrlOriginal() == null) {
-                        intent.putExtra("position", (0));
-                    } else {
-                        intent.putExtra("position", (position - 1));
-                    }
-                    intent.putExtra("momentID", momentID);
-                    startActivity(intent);
-                }
-            }
-        });
-
     }
-}
