@@ -1,8 +1,11 @@
 package com.moment.classes;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Patterns;
 import android.view.View;
 
 public final class CommonUtilities {
@@ -65,5 +68,48 @@ public final class CommonUtilities {
         } else {
             return android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
         }
+    }
+
+    public final static boolean isValidTel(CharSequence target) {
+        if (target == null) {
+            return false;
+        } else {
+            String number = target.toString();
+            if(number.matches("\\d{10}")) return true;
+            else if (number.startsWith("+")){
+                if(number.substring(1).matches("\\d{11}")) return true;
+                else return false;
+            }
+            else if((number.startsWith("0033"))){
+                if(number.substring(4).matches("\\d{9}")) return true;
+                else return false;
+            }
+            else return false;
+        }
+    }
+
+    public final static void popAlert(String title, String message, String cancel, Context context){
+        // NO SMS HERE :(
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+
+        // set title
+        alertDialogBuilder.setTitle(title);
+
+        // set dialog message
+        alertDialogBuilder
+                .setMessage(message)
+                .setCancelable(false)
+                .setNegativeButton(cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
+                    }
+                });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        // show it
+        alertDialog.show();
     }
 }

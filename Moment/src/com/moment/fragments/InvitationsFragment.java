@@ -31,6 +31,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.InvitationActivity;
+import com.moment.classes.CommonUtilities;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
@@ -539,14 +540,12 @@ public class InvitationsFragment extends Fragment {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int positionClick, long arg3) {
+            boolean isValid = true;
 
             if(users.get(positionClick).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(positionClick).getEmail());
             if(users.get(positionClick).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(positionClick).getNumTel());
 
             if(!users.get(positionClick).getIsSelect()){
-                View v = view.findViewById(R.id.bg_cell_invitations);
-                v.setBackgroundColor(getResources().getColor(R.color.orange));
-
                 InvitationActivity.invitesUser.add(users.get(positionClick));
                 InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
 
@@ -561,7 +560,29 @@ public class InvitationsFragment extends Fragment {
                     }
 
                 }
-                users.get(positionClick).setIsSelect(true);
+
+
+                User tempUser = InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1);
+                //Not a good email
+                if(tempUser.getNumTel()!=null){
+                    if(!CommonUtilities.isValidTel(tempUser.getNumTel())){
+                        CommonUtilities.popAlert("Information erronnée", "Numéro de téléphone invalide", "Ok", getActivity());
+                        isValid = false;
+                    }
+                }
+                if(tempUser.getEmail()!=null){
+                    if(!CommonUtilities.isValidEmail(tempUser.getEmail())){
+                        CommonUtilities.popAlert("Information erronnée", "Adresse email invalide", "Ok", getActivity());
+                        isValid = false;
+                    }
+                }
+
+                if(isValid){
+                    View v = view.findViewById(R.id.bg_cell_invitations);
+                    v.setBackgroundColor(getResources().getColor(R.color.orange));
+                    users.get(positionClick).setIsSelect(true);
+                }
+
             }
             else{
                 RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
