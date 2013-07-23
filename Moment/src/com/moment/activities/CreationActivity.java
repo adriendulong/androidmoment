@@ -22,6 +22,7 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.CommonUtilities;
 
@@ -105,6 +106,18 @@ public class CreationActivity extends SherlockActivity {
     public void getUserEvents() {
         Bundle params = new Bundle();
         params.putString("fields","id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture");
+
+        if(AppMoment.getInstance().user.getFacebookId() == null)
+        {
+            Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+
+                @Override
+                public void onCompleted(GraphUser user, Response response) {
+                    AppMoment.getInstance().user.setFacebookId(Long.parseLong(user.getId()));
+                }
+            });
+        }
+
         Request request = new Request(session, "me/events", params, HttpMethod.GET,
                 new Request.Callback() {
 

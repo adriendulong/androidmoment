@@ -69,18 +69,17 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("location")) { fbEvent.setAddress(event.getString("location")); }
         if(event.has("description")) { fbEvent.setDescription(event.getString("description")); }
         if(event.has("name")) { fbEvent.setName(event.getString("name")); }
-        if(event.has("picture")) { fbEvent.setCover_photo_url(event.getString("picture")); }
+        if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
 
         if(event.has("owner")) {
-            fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
-            fbEvent.setOwner_firstname(event.getJSONObject("owner").getString("name"));
-
-            if(AppMoment.getInstance().user.getFacebookId() != null) {
-                if (AppMoment.getInstance().user.getFacebookId() == Integer.parseInt(event.getJSONObject("owner").getString("id"))) {
-                    fbEvent.setState("0");
-                }
+            if(event.getJSONObject("owner").getString("id").equals(AppMoment.getInstance().user.getFacebookId().toString()))
+            {
+                fbEvent.setState("0");
+            } else {
+                fbEvent.setOwner_facebookId(event.getJSONObject("owner").getString("id"));
+                fbEvent.setOwner_firstname(event.getJSONObject("owner").getString("name"));
+                getUserInfo(fbEvent.getOwner_facebookId(), fbEvent);
             }
-            getUserInfo(fbEvent.getOwner_facebookId(), fbEvent);
         }
 
         if(event.has("rsvp_status") && fbEvent.getState() == null) {

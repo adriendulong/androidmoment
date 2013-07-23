@@ -89,7 +89,7 @@ public class UserDao extends AbstractDao<User, Long> {
             stmt.bindLong(1, id);
         }
  
-        Integer facebookId = entity.getFacebookId();
+        Long facebookId = entity.getFacebookId();
         if (facebookId != null) {
             stmt.bindLong(2, facebookId);
         }
@@ -182,7 +182,7 @@ public class UserDao extends AbstractDao<User, Long> {
     public User readEntity(Cursor cursor, int offset) {
         User entity = new User( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // facebookId
+            cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1), // facebookId
             cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2), // nbFollows
             cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3), // nbFollowers
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // email
@@ -205,7 +205,7 @@ public class UserDao extends AbstractDao<User, Long> {
     @Override
     public void readEntity(Cursor cursor, User entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setFacebookId(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
+        entity.setFacebookId(cursor.isNull(offset + 1) ? null : cursor.getLong(offset + 1));
         entity.setNbFollows(cursor.isNull(offset + 2) ? null : cursor.getInt(offset + 2));
         entity.setNbFollowers(cursor.isNull(offset + 3) ? null : cursor.getInt(offset + 3));
         entity.setEmail(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));

@@ -30,7 +30,7 @@ import de.greenrobot.dao.DaoException;
 public class User implements Parcelable {
 
     private Long id;
-    private Integer facebookId;
+    private Long facebookId;
     private Integer nbFollows;
     private Integer nbFollowers;
     private String email;
@@ -68,7 +68,7 @@ public class User implements Parcelable {
         this.id = id;
     }
 
-    public User(Long id, Integer facebookId, Integer nbFollows, Integer nbFollowers, String email, String secondEmail, String firstName, String lastName, String pictureProfileUrl, String keyBitmap, String numTel, String secondNumTel, String fbPhotoUrl, String idCarnetAdresse, String description, Boolean isSelect) {
+    public User(Long id, Long facebookId, Integer nbFollows, Integer nbFollowers, String email, String secondEmail, String firstName, String lastName, String pictureProfileUrl, String keyBitmap, String numTel, String secondNumTel, String fbPhotoUrl, String idCarnetAdresse, String description, Boolean isSelect) {
         this.id = id;
         this.facebookId = facebookId;
         this.nbFollows = nbFollows;
@@ -101,11 +101,11 @@ public class User implements Parcelable {
         this.id = id;
     }
 
-    public Integer getFacebookId() {
+    public Long getFacebookId() {
         return facebookId;
     }
 
-    public void setFacebookId(Integer facebookId) {
+    public void setFacebookId(Long facebookId) {
         this.facebookId = facebookId;
     }
 
@@ -374,7 +374,7 @@ public class User implements Parcelable {
             if(userJson.has("lastname")) this.setLastName(userJson.getString("lastname"));
             if(userJson.has("email")) this.setEmail(userJson.getString("email"));
             if(userJson.has("profile_picture_url")) this.setPictureProfileUrl(userJson.getString("profile_picture_url"));
-            if(userJson.has("facebookId")) this.setFacebookId(userJson.getInt("facebookId"));
+            if(userJson.has("facebookId")) this.setFacebookId(userJson.getLong("facebookId"));
             if(userJson.has("description")) this.setDescription(userJson.getString("description"));
             if(userJson.has("nbFollowers")) this.setNbFollowers(userJson.getInt("nbFollowers"));
             if(userJson.has("nbFollows")) this.setNbFollows(userJson.getInt("nbFollows"));

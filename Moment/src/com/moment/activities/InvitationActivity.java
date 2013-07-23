@@ -300,7 +300,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 }
 
                 if(FBUsers.size()>0){
-                    ArrayList<Integer> fbids = new ArrayList<Integer>();
+                    ArrayList<Long> fbids = new ArrayList<Long>();
                     for(User usr: FBUsers){
                         fbids.add(usr.getFacebookId());
                     }

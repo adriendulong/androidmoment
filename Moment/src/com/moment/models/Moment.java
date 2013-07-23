@@ -420,7 +420,7 @@ public class Moment {
                     this.user.setId(owner.getLong("id"));
                     this.setUserId(owner.getLong("id"));
                 }
-                if(owner.has("facebookId")) this.user.setFacebookId(owner.getInt("facebookId"));
+                if(owner.has("facebookId")) this.user.setFacebookId(owner.getLong("facebookId"));
 
                 if(DatabaseHelper.getUserByIdFromDataBase(this.user.getId()) != null)
                 {

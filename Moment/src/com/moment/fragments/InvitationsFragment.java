@@ -360,7 +360,7 @@ public class InvitationsFragment extends Fragment {
 
                                     User user = new User();
                                     user.setFirstName(friend.getString("name"));
-                                    user.setFacebookId(friend.getInt("id"));
+                                    user.setFacebookId(friend.getLong("id"));
                                     user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
                                     users.add(user);
                                 }
