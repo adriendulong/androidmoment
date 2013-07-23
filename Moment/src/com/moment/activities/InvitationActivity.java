@@ -76,9 +76,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
             frs.add(fragment);
         }
         
-        
-        
-        
         // Le page adapter qui va gerer le passage d'une page � l'autre
         mInvitationCollectionPagerAdapter =
                 new InvitationCollectionPagerAdapter(
@@ -234,8 +231,15 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	        return "OBJECT " + (position + 1);
 	    }
 	}
-	
-	
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
+            inviteSMS();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
 	
 	//Modifier le label du nombre d'invites
 	public static void modifyNbInvites(){
@@ -246,7 +250,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	
 	//On envoit l'invitation au serveur pour tout ces users
 	
-	public void invite(View view) throws JSONException{
+	public void inviteFacebook(View view) throws JSONException{
 
 		
 	       JSONArray users = new JSONArray();
@@ -277,37 +281,25 @@ public class InvitationActivity extends SherlockFragmentActivity {
 		            System.out.println(response);
                     dialog.dismiss();
 
+                    ArrayList<User> FBUsers = new ArrayList<User>();
 
-                    ArrayList<User> SMSUsers = new ArrayList<User>();
                     for(User user:invitesUser){
-
-                        //On fait pas pour les favoris
-                        if(user.getId()==null){
-                            if(user.getNumTel()!=null){
-                                //We send and SMS
-                                SMSUsers.add(user);
-                            }
+                        if(user.getId()==null && user.getFacebookId() != null){
+                            FBUsers.add(user);
                         }
                     }
 
-                    if(SMSUsers.size()>0){
-                        String _messageNumber="";
-                        for(int i=0;i<SMSUsers.size();i++){
-                            _messageNumber += SMSUsers.get(i).getNumTel();
-                            if(i<(SMSUsers.size()-1)) _messageNumber += ";";
+                    if(FBUsers.size()>0){
+                        ArrayList<Integer> fbids = new ArrayList<Integer>();
+                        for(User usr: FBUsers){
+                            fbids.add(usr.getFacebookId());
                         }
 
-                        String messageText = "Hi , Just SMSed to say hello";
-                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                        sendIntent.setData(Uri.parse("sms:" + _messageNumber));
-                        sendIntent.putExtra("sms_body", messageText);
-                        startActivity(sendIntent);
-
+                        Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
+                        intent.putExtra("fbids", fbids);
+                        startActivityForResult(intent, 0);
                     }
 
-                    finish();
-                    overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
-		               
 	            }
 
                public void onFailure(Throwable error, String content) {
@@ -319,5 +311,79 @@ public class InvitationActivity extends SherlockFragmentActivity {
 		
 		
 	}
+
+    public void inviteSMS() throws JSONException {
+
+        JSONArray users = new JSONArray();
+        for(int i=0;i<invitesUser.size();i++){
+            users.put(invitesUser.get(i).getUserToJSON());
+        }
+
+        JSONObject object = new JSONObject();
+        object.put("users", users);
+
+        System.out.println(object.toString());
+
+        StringEntity se = null;
+        try {
+            se = new StringEntity(object.toString());
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        //On lance la progress dialog
+        final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
+        se.setContentType("application/json");
+
+        MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(String response) {
+                System.out.println(response);
+                dialog.dismiss();
+
+
+                ArrayList<User> SMSUsers = new ArrayList<User>();
+
+                for(User user:invitesUser){
+
+                    //On fait pas pour les favoris
+                    if(user.getId()==null && user.getNumTel() != null){
+                        SMSUsers.add(user);
+                    }
+
+                }
+
+                if(SMSUsers.size()>0){
+                    String _messageNumber="";
+                    for(int i=0;i<SMSUsers.size();i++){
+                        assert SMSUsers.get(i).getNumTel().matches("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
+                        _messageNumber += SMSUsers.get(i).getNumTel();
+                        if(i<(SMSUsers.size()-1)) _messageNumber += ";";
+                    }
+
+                    String messageText = "Hi , Just SMSed to say hello";
+                    Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                    sendIntent.setData(Uri.parse("sms:" + _messageNumber));
+                    sendIntent.putExtra("sms_body", messageText);
+                    startActivity(sendIntent);
+
+                }
+
+
+
+                finish();
+                overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+            }
+
+            public void onFailure(Throwable error, String content) {
+                // By default, call the deprecated onFailure(Throwable) for compatibility
+                System.out.println(content);
+                dialog.dismiss();
+            }
+        });
+
+
+    }
 
 }

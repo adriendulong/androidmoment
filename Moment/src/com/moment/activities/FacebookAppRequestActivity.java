@@ -41,8 +41,9 @@ public class FacebookAppRequestActivity extends Activity {
 
                     @Override
                     public void onComplete(Bundle values, FacebookException error) {
-                        Intent intent = new Intent(getApplicationContext(), TimelineActivity.class);
-                        startActivity(intent);
+                        Intent returnIntent = new Intent();
+                        setResult(RESULT_OK,returnIntent);
+                        finish();
                     }
                 })
                 .build();
