@@ -18,6 +18,7 @@ import com.moment.activities.TimelineActivity;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.*;
+import org.apache.http.cookie.Cookie;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -131,34 +132,17 @@ public class AppMoment extends Application {
 
     public void disconnect(){
 
-        //Remove all the moments from the DB
         for(Moment moment:user.getMoments()){
             DatabaseHelper.removeMoment(moment);
         }
 
-        //Remove the cookie and the user id in the shared pref
-        MomentApi.myCookieStore.clear();
+
         SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
         sharedPreferences.edit().remove("userID").commit();
-
-        MomentApi.get("logout/"+tel_id, null, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onSuccess(JSONObject response) {
-                Log.d("DISCONNECT", "Disonnected");
-            }
-
-            @Override
-            public void onFailure(Throwable error, String content) {
-                Log.d("DISCONNECT", "Pb :"+content);
-            }
-
-        });
-
         //Finally remove the user
         user.delete();
+        DatabaseHelper.removeUser(user);
         user = null;
-
 
     }
 

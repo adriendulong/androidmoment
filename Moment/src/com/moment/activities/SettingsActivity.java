@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -11,8 +12,12 @@ import android.widget.ImageButton;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.MomentApi;
+import org.apache.http.cookie.Cookie;
+import org.json.JSONObject;
 
 public class SettingsActivity extends SherlockActivity implements View.OnClickListener{
 
@@ -137,7 +142,35 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
     public void disconnect(View view){
         AppMoment.getInstance().disconnect();
 
-        Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
-        startActivity(startIntent);
+        MomentApi.get("logout/" + AppMoment.getInstance().tel_id, null, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.d("DISCONNECT", "Disonnected");
+                //Remove the cookie and the user id in the shared pref
+                for (Cookie c : MomentApi.myCookieStore.getCookies()) {
+                    MomentApi.myCookieStore.getCookies().remove(c);
+                }
+                Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
+                startActivity(startIntent);
+
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                Log.d("DISCONNECT", "Pb :" + content);
+                //Remove all the moments from the DB
+                //Remove the cookie and the user id in the shared pref
+                for (Cookie c : MomentApi.myCookieStore.getCookies()) {
+                    MomentApi.myCookieStore.getCookies().remove(c);
+                }
+                Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
+                startActivity(startIntent);
+
+            }
+
+        });
+
+
     }
 }
