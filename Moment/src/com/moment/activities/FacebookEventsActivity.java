@@ -46,6 +46,7 @@ public class FacebookEventsActivity extends SherlockActivity {
             for(int i = 0; i < events.length(); i++)
             {
                 try {
+
                     eventToMoment(events.getJSONObject(i));
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -58,22 +59,6 @@ public class FacebookEventsActivity extends SherlockActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
-
-//    - name
-//    - address
-//    - startDate
-//    - endDate
-//    - startTime (non obligatoire)
-//    - endTime (non obligatoire)
-//    - description (non obligatoire)
-//    - facebookId
-//    - owner_facebookId
-//    - owner_firstname
-//    - owner_picture_url
-//    - cover_photo_url
-//    - privacy
-//    - state , admin = 1, coming = 2, not coming = 3, on sait pas = 4, peut etre = 5
-
 
     private void eventToMoment(JSONObject event) throws JSONException, ParseException {
 

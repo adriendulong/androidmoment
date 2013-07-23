@@ -140,7 +140,6 @@ public class AppMoment extends Application {
         SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
         sharedPreferences.edit().remove("userID").commit();
         //Finally remove the user
-        user.delete();
         DatabaseHelper.removeUser(user);
         user = null;
 
