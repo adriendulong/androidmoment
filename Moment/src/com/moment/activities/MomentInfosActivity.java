@@ -494,7 +494,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         //If we have it in the local database
         Log.d("MOMENTINFOS", "Moment id :"+momentID);
-        AppMoment.getInstance().getUser();
+        if(AppMoment.getInstance().user == null ) AppMoment.getInstance().getUser();
         if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
             moment = AppMoment.getInstance().user.getMomentById(momentID);
         }

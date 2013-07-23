@@ -1,7 +1,10 @@
 package com.moment.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -20,6 +23,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;
@@ -271,51 +275,82 @@ public class InvitationActivity extends SherlockFragmentActivity {
 			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
             se.setContentType("application/json");
 			
-	       MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
-	            @Override
-	            public void onSuccess(String response) {
-		            System.out.println(response);
-                    dialog.dismiss();
+	       MomentApi.postJSON(this, "newguests/" + idMoment, se, new AsyncHttpResponseHandler() {
+               @Override
+               public void onSuccess(String response) {
+                   System.out.println(response);
+                   dialog.dismiss();
 
 
-                    ArrayList<User> SMSUsers = new ArrayList<User>();
-                    for(User user:invitesUser){
+                   ArrayList<User> SMSUsers = new ArrayList<User>();
+                   for (User user : invitesUser) {
 
-                        //On fait pas pour les favoris
-                        if(user.getId()==null){
-                            if(user.getNumTel()!=null){
-                                //We send and SMS
-                                SMSUsers.add(user);
-                            }
-                        }
-                    }
+                       //On fait pas pour les favoris
+                       if (user.getId() == null) {
+                           if (user.getNumTel() != null) {
+                               //We send and SMS
+                               SMSUsers.add(user);
+                           }
+                       }
+                   }
 
-                    if(SMSUsers.size()>0){
-                        String _messageNumber="";
-                        for(int i=0;i<SMSUsers.size();i++){
-                            _messageNumber += SMSUsers.get(i).getNumTel();
-                            if(i<(SMSUsers.size()-1)) _messageNumber += ";";
-                        }
+                   //Send SMS
+                   if (SMSUsers.size() > 0) {
+                       String _messageNumber = "";
+                       for (int i = 0; i < SMSUsers.size(); i++) {
+                           if (SMSUsers.get(i).getNumTel().startsWith("0033") || SMSUsers.get(i).getNumTel().startsWith("+33") || SMSUsers.get(i).getNumTel().startsWith("07") || SMSUsers.get(i).getNumTel().startsWith("06"))
+                               _messageNumber += SMSUsers.get(i).getNumTel();
+                           if (i < (SMSUsers.size() - 1)) _messageNumber += ";";
+                       }
 
-                        String messageText = "Hi , Just SMSed to say hello";
-                        Intent sendIntent = new Intent(Intent.ACTION_VIEW);
-                        sendIntent.setData(Uri.parse("sms:" + _messageNumber));
-                        sendIntent.putExtra("sms_body", messageText);
-                        startActivity(sendIntent);
+                       if (getApplication().getPackageManager().hasSystemFeature(PackageManager.FEATURE_TELEPHONY)) {
+                           // THIS PHONE HAS SMS FUNCTIONALITY
+                           String messageText = "Je viens de t'inviter à '"+AppMoment.getInstance().user.getMomentById(idMoment).getName()+"' sur l'application Moment : <unique_url>. Rejoins nous pour partager toutes les photos et organiser l'évènement. A bientôt, "+ AppMoment.getInstance().user.getFirstName();
+                           Intent sendIntent = new Intent(Intent.ACTION_VIEW);
+                           sendIntent.setData(Uri.parse("sms:" + _messageNumber));
+                           sendIntent.putExtra("sms_body", messageText);
+                           startActivity(sendIntent);
+                       } else {
+                           // NO SMS HERE :(
+                           AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                   InvitationActivity.this);
 
-                    }
+                           // set title
+                           alertDialogBuilder.setTitle("SMS Impossible");
 
-                    finish();
-                    overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
-		               
-	            }
+                           // set dialog message
+                           alertDialogBuilder
+                                   .setMessage("On aurait du envoyer à : " + _messageNumber)
+                                   .setCancelable(false)
+                                   .setNegativeButton("Dommage !", new DialogInterface.OnClickListener() {
+                                       public void onClick(DialogInterface dialog, int id) {
+                                           // if this button is clicked, just close
+                                           // the dialog box and do nothing
+                                           dialog.cancel();
+                                       }
+                                   });
+
+                           // create alert dialog
+                           AlertDialog alertDialog = alertDialogBuilder.create();
+                           // show it
+                           alertDialog.show();
+
+                       }
+
+
+                   }
+
+                   finish();
+                   overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+
+               }
 
                public void onFailure(Throwable error, String content) {
                    // By default, call the deprecated onFailure(Throwable) for compatibility
                    System.out.println(content);
                    dialog.dismiss();
                }
-	        });
+           });
 		
 		
 	}
