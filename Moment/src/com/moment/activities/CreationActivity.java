@@ -2,6 +2,7 @@ package com.moment.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
@@ -39,6 +40,7 @@ public class CreationActivity extends SherlockActivity {
     private Bundle bundle;
     private Session session;
     private String facebookUserId;
+    private ProgressDialog dialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,9 @@ public class CreationActivity extends SherlockActivity {
         setContentView(R.layout.activity_creation);
 
         bundle = savedInstanceState;
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Recuperation des evenements Facebook");
 
         CommonUtilities.disableHardwareRendering(getWindow().getDecorView());
         
@@ -131,6 +136,7 @@ public class CreationActivity extends SherlockActivity {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+                        dialog.dismiss();
                         Intent intent = new Intent(getApplication(), FacebookEventsActivity.class);
                         intent.putExtra("events", events.toString());
                         intent.putExtra("session", session);
@@ -158,6 +164,7 @@ public class CreationActivity extends SherlockActivity {
 
     public void facebook(View view) {
         try {
+            dialog.show();
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
                     new String[]{"user_events"}), bundle);
         }

@@ -1,9 +1,11 @@
 package com.moment.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -37,12 +39,12 @@ public class FacebookEventsActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_events);
-
         Bundle extras = getIntent().getExtras();
         session = (Session) extras.get("session");
 
         try {
             events = new JSONArray(getIntent().getStringExtra("events"));
+            Toast.makeText(this, "Evenements Facebook " + events.length(), Toast.LENGTH_LONG).show();
             for(int i = 0; i < events.length(); i++)
             {
                 try {
@@ -72,7 +74,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
 
         if(event.has("owner")) {
-            if(event.getJSONObject("owner").getString("id").equals(AppMoment.getInstance().user.getFacebookId().toString()))
+            if(event.getJSONObject("owner").getString("id").equals(AppMoment.getInstance().user.getFacebookId()))
             {
                 fbEvent.setState("0");
             } else {
