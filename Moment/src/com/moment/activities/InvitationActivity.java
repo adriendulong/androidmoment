@@ -377,7 +377,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
             }
 
             public void onFailure(Throwable error, String content) {
-                // By default, call the deprecated onFailure(Throwable) for compatibility
+                // By default, call the deprecated onFailure(Throwable) for compatibility !!!!
                 System.out.println(content);
                 dialog.dismiss();
             }
