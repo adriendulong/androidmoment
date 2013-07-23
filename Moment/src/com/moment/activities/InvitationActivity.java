@@ -37,12 +37,13 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	
 	private InvitationCollectionPagerAdapter mInvitationCollectionPagerAdapter;
     private ViewPager mViewPager;
-    private Menu myMenu;
+    Menu myMenu;
     private InvitationsFragment frFb;
     public static ArrayList<User> invitesUser;
     public static TextView nb_invites;
     private long idMoment;
-    private ArrayList<InvitationsFragment> frs;
+    private EditText searchGuests;
+    ArrayList<InvitationsFragment> frs;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -125,7 +126,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	            	myMenu.findItem(R.id.invitation_favoris).setIcon(R.drawable.picto_stardown);
 				}
 				
-
 			}
 			
 			@Override
@@ -142,7 +142,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 		});
 
         //Get the edit text to search
-        EditText searchGuests = (EditText) findViewById(R.id.search_guests);
+        searchGuests = (EditText)findViewById(R.id.search_guests);
         searchGuests.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -250,9 +250,9 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
 		
 	       JSONArray users = new JSONArray();
-        for (User anInvitesUser : invitesUser) {
-            users.put(anInvitesUser.getUserToJSON());
-        }
+	       for(int i=0;i<invitesUser.size();i++){
+	    	  users.put(invitesUser.get(i).getUserToJSON());
+	       }
 	       
 	       JSONObject object = new JSONObject();
 	       object.put("users", users);
@@ -269,8 +269,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 	       
 			//On lance la progress dialog
 			final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
-        assert se != null;
-        se.setContentType("application/json");
+            se.setContentType("application/json");
 			
 	       MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
 	            @Override
@@ -280,23 +279,20 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
 
                     ArrayList<User> SMSUsers = new ArrayList<User>();
-                    ArrayList<User> FBUsers = new ArrayList<User>();
                     for(User user:invitesUser){
 
                         //On fait pas pour les favoris
-                        if(user.getId()==null && user.getNumTel() != null){
+                        if(user.getId()==null){
+                            if(user.getNumTel()!=null){
+                                //We send and SMS
                                 SMSUsers.add(user);
-                        }
-
-                        if(user.getId()==null && user.getFacebookId() != null){
-                            FBUsers.add(user);
+                            }
                         }
                     }
 
                     if(SMSUsers.size()>0){
                         String _messageNumber="";
                         for(int i=0;i<SMSUsers.size();i++){
-                            assert SMSUsers.get(i).getNumTel().matches("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
                             _messageNumber += SMSUsers.get(i).getNumTel();
                             if(i<(SMSUsers.size()-1)) _messageNumber += ";";
                         }
@@ -307,16 +303,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
                         sendIntent.putExtra("sms_body", messageText);
                         startActivity(sendIntent);
 
-                    }
-
-                    if(FBUsers.size()>0){
-                        ArrayList<Integer> fbids = new ArrayList<Integer>();
-                        for(User usr: FBUsers){
-                            fbids.add(usr.getFacebookId());
-                        }
-                        Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
-                        intent.putExtra("fbids", fbids);
-                        startActivity(intent);
                     }
 
                     finish();
