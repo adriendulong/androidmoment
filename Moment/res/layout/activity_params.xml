@@ -140,7 +140,9 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton6"
+                            android:id="@+id/invitPush"
+                            android:tag="0"
+                            android:onClick="modifParamsPush"
                             android:background="@drawable/btn_notif"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -153,8 +155,10 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton7"
+                            android:id="@+id/invitMail"
                             android:clickable="true"
+                            android:tag="0"
+                            android:onClick="modifParamsMail"
                             android:background="@drawable/btn_message"
                             android:layout_gravity="center"
                             />
@@ -198,7 +202,9 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton8"
+                            android:id="@+id/photoPush"
+                            android:tag="2"
+                            android:onClick="modifParamsPush"
                             android:background="@drawable/btn_notif"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -211,8 +217,10 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton9"
+                            android:id="@+id/photoMail"
                             android:clickable="true"
+                            android:tag="2"
+                            android:onClick="modifParamsMail"
                             android:background="@drawable/btn_message"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -255,7 +263,9 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton10"
+                            android:id="@+id/chatPush"
+                            android:tag="3"
+                            android:onClick="modifParamsPush"
                             android:background="@drawable/btn_notif"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -268,8 +278,10 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton11"
+                            android:id="@+id/chatMail"
                             android:clickable="true"
+                            android:onClick="modifParamsMail"
+                            android:tag="3"
                             android:background="@drawable/btn_message"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -312,7 +324,9 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton4"
+                            android:id="@+id/modifPush"
+                            android:onClick="modifParamsPush"
+                            android:tag="1"
                             android:background="@drawable/btn_notif"
                             android:layout_gravity="center"/>
                 </LinearLayout>
@@ -325,8 +339,10 @@
                     <ImageButton
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/imageButton5"
+                            android:id="@+id/modifMail"
                             android:clickable="true"
+                            android:onClick="modifParamsMail"
+                            android:tag="1"
                             android:background="@drawable/btn_message"
                             android:layout_gravity="center"/>
                 </LinearLayout>
