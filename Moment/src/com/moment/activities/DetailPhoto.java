@@ -73,7 +73,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
 
-        Picasso.with(this).load(photo.getUrlOriginal()).placeholder(R.drawable.picto_photo_vide).fit().into(imageView);
+        Picasso.with(this).load(photo.getUrlOriginal()).resize(280,280).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
 
         final ImageButton closeButton    = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
@@ -238,7 +238,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position++;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).placeholder(R.drawable.picto_photo_vide).fit().into(imageView);
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize(280,280).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
                 if(position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){v.setVisibility(View.INVISIBLE);}
                 if(position > 0){previousButton.setVisibility(View.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
@@ -269,7 +269,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position--;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).placeholder(R.drawable.picto_photo_vide).fit().into(imageView);
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize(280,280).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
                 if(position == 0){v.setVisibility(View.INVISIBLE);}
                 if(position < AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){nextButton.setVisibility(View.VISIBLE);}
                 if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}

@@ -1,7 +1,6 @@
 package com.moment.activities;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -9,15 +8,12 @@ import android.widget.EditText;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
-import com.moment.models.User;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 public class EditProfilActivity extends SherlockActivity implements View.OnClickListener {

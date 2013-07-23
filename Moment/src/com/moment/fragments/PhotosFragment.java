@@ -213,7 +213,7 @@ public class PhotosFragment extends Fragment {
             }
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).placeholder(R.drawable.picto_photo_vide).into(imageView); }
+            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).resize(90,90).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView); }
             return imageView;
         }
     }
@@ -304,7 +304,7 @@ public class PhotosFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Picasso.with(context).load(photo.getUrlThumbnail());
+                        Picasso.with(context).load(photo.getUrlThumbnail()).resize(90,90).centerCrop();
                         imageAdapter.notifyDataSetChanged();
 
                         createNotification("YEAH", "FUCK", true);
