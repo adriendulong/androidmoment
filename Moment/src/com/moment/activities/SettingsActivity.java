@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.moment.AppMoment;
 import com.moment.R;
 
 public class SettingsActivity extends SherlockActivity implements View.OnClickListener{
@@ -127,4 +128,16 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
     @Override
     public void onClick(View v) {}
+
+    /**
+     * Disconnect the user from the app
+     * @param view
+     */
+
+    public void disconnect(View view){
+        AppMoment.getInstance().disconnect();
+
+        Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
+        startActivity(startIntent);
+    }
 }
