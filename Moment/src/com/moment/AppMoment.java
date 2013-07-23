@@ -7,12 +7,20 @@ import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
+import android.provider.Settings;
 import android.support.v4.util.LruCache;
 import android.telephony.TelephonyManager;
 
+import android.util.Log;
+import android.widget.Toast;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.activities.TimelineActivity;
 import com.moment.classes.DatabaseHelper;
+import com.moment.classes.MomentApi;
 import com.moment.models.*;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.NetworkInterface;
 import java.util.List;
@@ -52,8 +60,8 @@ public class AppMoment extends Application {
         sInstance = this;
         this.initializeInstance();
 
-        final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-        tel_id = tm.getDeviceId();
+        tel_id = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
 
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
         final int cacheSize = maxMemory / 8;
@@ -119,6 +127,39 @@ public class AppMoment extends Application {
                 }
             }
         }
+    }
+
+    public void disconnect(){
+
+        //Remove all the moments from the DB
+        for(Moment moment:user.getMoments()){
+            DatabaseHelper.removeMoment(moment);
+        }
+
+        //Remove the cookie and the user id in the shared pref
+        MomentApi.myCookieStore.clear();
+        SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
+        sharedPreferences.edit().remove("userID").commit();
+
+        MomentApi.get("logout/"+tel_id, null, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                Log.d("DISCONNECT", "Disonnected");
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                Log.d("DISCONNECT", "Pb :"+content);
+            }
+
+        });
+
+        //Finally remove the user
+        user.delete();
+        user = null;
+
+
     }
 
 }
