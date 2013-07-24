@@ -373,23 +373,26 @@ public class PhotosFragment extends Fragment {
                             AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
                             imageAdapter.notifyDataSetChanged();
                         }
+
+                        if(!photos_files.isEmpty())
+                        {
+                            MultiUploadTask multiUploadTask = new MultiUploadTask();
+                            multiUploadTask.execute();
+                        }
+
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                 }
             });
+        } else if (photos != null && !photos.isEmpty() && !photos_files.isEmpty()) {
+            MultiUploadTask multiUploadTask = new MultiUploadTask();
+            multiUploadTask.execute();
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);
         GridView gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
-
-
-        if(!photos_files.isEmpty())
-        {
-            MultiUploadTask multiUploadTask = new MultiUploadTask();
-            multiUploadTask.execute();
-        }
 
         gridView.setOnItemClickListener(new OnItemClickListener() {
             @Override
