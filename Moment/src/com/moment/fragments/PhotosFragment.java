@@ -345,6 +345,11 @@ public class PhotosFragment extends Fragment {
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void result){
+            imageAdapter.notifyDataSetChanged();
+        }
+
     }
 
     public void createFragment(Long momentId){
