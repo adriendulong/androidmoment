@@ -139,8 +139,8 @@ public class PhotosFragment extends Fragment {
 
     private void startDialog() {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getActivity());
-        myAlertDialog.setTitle("Upload Pictures Option");
-        myAlertDialog.setMessage("How do you want to set your picture?");
+        myAlertDialog.setTitle("Partager des Photos");
+        myAlertDialog.setMessage("Prendre une photo ou importer des photos depuis la galerie");
 
         myAlertDialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {

@@ -179,7 +179,6 @@ public class TimelineActivity extends SlidingActivity {
                             System.out.println(response.toString());
                             JSONArray momentsArray = response.getJSONArray("moments");
                             int nbMoments = momentsArray.length();
-                            Toast.makeText(getApplicationContext(), "Nombre de Moments " + nbMoments, Toast.LENGTH_LONG).show();
 
                             for (int j = 0; j < nbMoments; j++) {
 
@@ -710,8 +709,6 @@ public class TimelineActivity extends SlidingActivity {
 
                                 if(nbMoments==0) allFutur = true;
                                 else adapter.notifyDataSetChanged();
-
-                                Toast.makeText(getApplicationContext(), "Moments supp : " + nbMoments, Toast.LENGTH_LONG).show();
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
