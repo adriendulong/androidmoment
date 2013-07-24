@@ -117,6 +117,13 @@ public class PhotosFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        photos.clear();
+        Log.e("PhotoFragment","DESTROY");
+    }
+
     private void startDialog() {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getActivity());
         myAlertDialog.setTitle("Upload Pictures Option");
