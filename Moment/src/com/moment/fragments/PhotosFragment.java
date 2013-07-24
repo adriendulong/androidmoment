@@ -195,11 +195,11 @@ public class PhotosFragment extends Fragment {
         public View  getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
+            float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+            float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
 
             if(convertView == null) {
                 imageView = new ImageView(context);
-
-                float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
 
                 imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -213,7 +213,7 @@ public class PhotosFragment extends Fragment {
             }
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).resize(90,90).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView); }
+            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView); }
             return imageView;
         }
     }

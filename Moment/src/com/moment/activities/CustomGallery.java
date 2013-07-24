@@ -67,7 +67,7 @@ public class CustomGallery extends SherlockActivity {
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
             thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
                     getApplicationContext().getContentResolver(), id,
-                    MediaStore.Images.Thumbnails.MICRO_KIND, null);
+                    MediaStore.Images.Thumbnails.MINI_KIND, null);
             arrPath[i]= imagecursor.getString(dataColumnIndex);
         }
 
