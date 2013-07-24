@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
@@ -55,7 +57,7 @@ public class TimelineActivity extends SlidingActivity {
     private Intent intentMoment;
     private LayoutInflater inflater;
     private Long actuelMomentSelect = Long.parseLong("-1");
-    private RelativeLayout myMoments, profile, settings, missingMoments;
+    private RelativeLayout myMoments, profile, settings;
     private ListView notifsListView;
     private ArrayList<Notification> notifications;
     private TextView totalNotifText;
@@ -68,6 +70,7 @@ public class TimelineActivity extends SlidingActivity {
     private MomentsAdapter adapter;
     private ProgressDialog dialog;
     private ImageView todayBtn;
+    private Bitmap todayBitmap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,8 @@ public class TimelineActivity extends SlidingActivity {
         myMoments.setBackgroundResource(R.drawable.bg_section);
         profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
         settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
-        missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
+        //missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
+        todayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.btn_today);
 
         moments = new ArrayList<Moment>();
         //ListView
@@ -121,9 +125,6 @@ public class TimelineActivity extends SlidingActivity {
                     Intent intent = new Intent(getApplication(), SettingsActivity.class);
                     startActivity(intent);
                 }
-                else if(v.getId()==missingMoments.getId()){
-                    missingMoments.setBackgroundResource(R.drawable.bg_section);
-                }
             }
         };
 
@@ -139,9 +140,6 @@ public class TimelineActivity extends SlidingActivity {
                 else if(v.getId()==settings.getId()){
                     settings.setBackgroundResource(R.drawable.bg_section);
                 }
-                else if(v.getId()==missingMoments.getId()){
-                    missingMoments.setBackgroundResource(R.drawable.bg_section);
-                }
                 return false;
             }
         };
@@ -152,8 +150,6 @@ public class TimelineActivity extends SlidingActivity {
         profile.setOnTouchListener(touchListener);
         settings.setOnClickListener(listener);
         settings.setOnTouchListener(touchListener);
-        missingMoments.setOnClickListener(listener);
-        missingMoments.setOnTouchListener(touchListener);
 
         notifications = new ArrayList<Notification>();
 
@@ -612,8 +608,6 @@ public class TimelineActivity extends SlidingActivity {
             else momentsList.setSelectionFromTop(getNearestDate(), height/2);
         }
         else momentsList.setSelectionFromTop(getNearestDate(), height/2);
-
-        rotateToday();
     }
 
     /**
@@ -641,11 +635,12 @@ public class TimelineActivity extends SlidingActivity {
         goToToday(true);
     }
 
-    public void rotateToday(){
+    public void rotateToday(float deg){
         Matrix matrix=new Matrix();
-        todayBtn.setScaleType(ImageView.ScaleType.MATRIX);   //required
-        matrix.postRotate((float)90, todayBtn.getPivotX(), todayBtn.getPivotY());
-        todayBtn.setImageMatrix(matrix);
+        matrix.postRotate(deg);
+        Bitmap rot = Bitmap.createBitmap(todayBitmap, 0, 0, todayBitmap.getWidth(), todayBitmap.getHeight(),
+                matrix, true);
+        todayBtn.setImageBitmap(rot);
     }
 
 
