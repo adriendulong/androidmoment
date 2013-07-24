@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.ContextThemeWrapper;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -187,9 +188,9 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
-                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_this);
-                    alertDialogBuilder.setTitle("Suppression Photo");
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
                     alertDialogBuilder
+                            .setTitle("Suppression Photo")
                             .setMessage("Voulez vous vraiment supprimer cette photo ? Cette action est irreversible !")
                             .setCancelable(false)
                             .setNegativeButton("Non", new DialogInterface.OnClickListener() {
