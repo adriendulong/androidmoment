@@ -1,7 +1,9 @@
 package com.moment.activities;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -543,33 +545,55 @@ public class TimelineActivity extends SlidingActivity {
     }
 
     public void deleteMoment(View view){
-        Long momentId = (Long)view.getTag();
+        final Long momentId = (Long)view.getTag();
         final Moment momentToDel = AppMoment.getInstance().user.getMomentById(momentId);
 
-        dialog = ProgressDialog.show(this, null, "Suppression en cours");
-
-        if(momentToDel.getUserId()==AppMoment.getInstance().user.getId()){
-            MomentApi.get("delmoment/"+momentId, null, new JsonHttpResponseHandler() {
-
-                @Override
-                public void onSuccess(JSONObject response) {
-                    for(int i=0;i<moments.size();i++){
-                        if(moments.get(i).getId()==momentToDel.getId()) moments.remove(i);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        // set title
+        alertDialogBuilder.setTitle("Suppresion Moment");
+        // set dialog message
+        alertDialogBuilder
+                .setMessage("Voulez vous vraiment supprimer ce Moment ? Cette action est irreversible !")
+                .setCancelable(false)
+                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // if this button is clicked, just close
+                        // the dialog box and do nothing
+                        dialog.cancel();
                     }
-                    if(AppMoment.getInstance().user.getMoments().remove(momentToDel)) Log.v("TIMELINE", "REMOVED INSTANCE");
-                    //TODO : REMOVE en base
-                    adapter.notifyDataSetChanged();
+                })
+                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        final ProgressDialog progressDialog = ProgressDialog.show(TimelineActivity.this, null, "Suppression en cours");
 
-                    dialog.dismiss();
+                        if(momentToDel.getUserId()==AppMoment.getInstance().user.getId()){
+                            MomentApi.get("delmoment/"+momentId, null, new JsonHttpResponseHandler() {
 
-                }
+                                @Override
+                                public void onSuccess(JSONObject response) {
+                                    for(int i=0;i<moments.size();i++){
+                                        if(moments.get(i).getId().equals(momentToDel.getId())) moments.remove(i);
+                                    }
+                                    if(AppMoment.getInstance().user.getMoments().remove(momentToDel)) Log.v("TIMELINE", "REMOVED INSTANCE");
+                                    //TODO : REMOVE en base
+                                    adapter.notifyDataSetChanged();
 
-                @Override
-                public void onFailure(Throwable error, String content) {
-                    System.out.println(content);
-                }
-            });
-        }
+                                    progressDialog.dismiss();
+
+                                }
+
+                                @Override
+                                public void onFailure(Throwable error, String content) {
+                                    System.out.println(content);
+                                    progressDialog.dismiss();
+                                }
+                            });
+                        }
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
     }
 
 
