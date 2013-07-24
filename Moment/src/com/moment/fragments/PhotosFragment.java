@@ -118,6 +118,19 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
+    public void onPause(){
+        super.onPause();
+        Log.e("PhotoFragment","PAUSE");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        imageAdapter.notifyDataSetChanged();
+        Log.e("PhotoFragment","RESUME");
+    }
+
+    @Override
     public void onDestroy(){
         super.onDestroy();
         photos.clear();

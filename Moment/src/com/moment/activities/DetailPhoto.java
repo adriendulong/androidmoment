@@ -1,11 +1,12 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -173,8 +174,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 paths[0] = dir.getAbsolutePath();
                 sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED, Uri.parse(
                         "file://"
-                        + Environment.getExternalStorageDirectory()
-                        + "/Pictures/Moment/")));
+                                + Environment.getExternalStorageDirectory()
+                                + "/Pictures/Moment/")));
 
                 Toast.makeText(getApplicationContext(), "Photo enregistrée", Toast.LENGTH_LONG).show();
             }
@@ -186,30 +187,48 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
-                    MomentApi.get("delphoto/" +AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getId(), null, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(String response) {
-                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().remove(position);
-                            if(position == 0 && maxIndex == 0) {
-                                closeButton.performClick();
-                            } else if (position == 0 && maxIndex > 0) {
-                                maxIndex --;
-                                nextButton.performClick();
-                            } else if (position == maxIndex && maxIndex > 0) {
-                                maxIndex --;
-                                previousButton.performClick();
-                            } else {
-                                maxIndex --;
-                                position --;
-                                nextButton.performClick();
-                            }
-                        }
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(_this);
+                    alertDialogBuilder.setTitle("Suppression Photo");
+                    alertDialogBuilder
+                            .setMessage("Voulez vous vraiment supprimer cette photo ? Cette action est irreversible !")
+                            .setCancelable(false)
+                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
 
-                        @Override
-                        public void onFailure(Throwable e, String response) {
-                            Log.e(response, "Alors what ?");
-                        }
-                    });
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    MomentApi.get("delphoto/" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getId(), null, new AsyncHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(String response) {
+                                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().remove(position);
+                                            if (position == 0 && maxIndex == 0) {
+                                                closeButton.performClick();
+                                            } else if (position == 0 && maxIndex > 0) {
+                                                maxIndex--;
+                                                nextButton.performClick();
+                                            } else if (position == maxIndex && maxIndex > 0) {
+                                                maxIndex--;
+                                                previousButton.performClick();
+                                            } else {
+                                                maxIndex--;
+                                                position--;
+                                                nextButton.performClick();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onFailure(Throwable e, String response) {
+                                            Log.e(response, "Alors what ?");
+                                        }
+                                    });
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
                 } else {
                     Toast.makeText(getApplication(), "On va balancer" , Toast.LENGTH_LONG).show();
                 }
