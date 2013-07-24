@@ -86,6 +86,9 @@ public class CustomGallery extends SherlockActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+
             case R.id.validate:
                 Intent intent = new Intent(this, MomentInfosActivity.class);
                 intent.putExtra("precedente", "timeline");
