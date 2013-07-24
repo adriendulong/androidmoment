@@ -56,8 +56,9 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private EditText dialogText;
     private Bundle params;
     private Request request;
-    private final Activity activity = this;
-    float pxBitmap;
+    private float pxBitmap;
+    private ImageView imageView;
+    private DetailPhoto _this = this;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +67,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         bundle = savedInstanceState;
 
         setContentView(R.layout.activity_detail_photo);
-        final ImageView imageView = (ImageView) findViewById(R.id.photo_moment_detail);
+        imageView = (ImageView) findViewById(R.id.photo_moment_detail);
 
 
         position = getIntent().getIntExtra("position", 0);
@@ -157,8 +158,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                         + String.valueOf(System.currentTimeMillis())
                         + ".jpg");
 
-                assert ((BitmapDrawable) imageView.getDrawable()) != null;
-                Bitmap bitmap = ((BitmapDrawable) imageView.getDrawable()).getBitmap();
+                imageView.buildDrawingCache();
+                bitmap = imageView.getDrawingCache();
 
                 FileOutputStream out = null;
                 try {
@@ -219,7 +220,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 try {
-                    openActiveSession(activity, true, fbStatusCallback, Arrays.asList(
+                    openActiveSession(_this, true, fbStatusCallback, Arrays.asList(
                             "publish_actions"), bundle);
                 }
                 catch (Exception e) {
