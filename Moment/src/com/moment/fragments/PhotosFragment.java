@@ -357,7 +357,7 @@ public class PhotosFragment extends Fragment {
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
-        if(photos == null)
+        if(photos == null || photos.isEmpty())
         {
             photos = moment.getPhotos();
 
