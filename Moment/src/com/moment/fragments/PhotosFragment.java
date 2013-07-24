@@ -183,7 +183,11 @@ public class PhotosFragment extends Fragment {
         {
             if(photos_uri == null) { photos_uri = new ArrayList<String>(); }
             photos_uri.add(outputFileUri.getPath());
-            new MultiUploadTask().execute();
+            for(String s: photos_uri){
+                MultiUploadTask multiUploadTask = new MultiUploadTask(s);
+                multiUploadTask.execute();
+            }
+            photos_uri.clear();
         }
     }
 
@@ -245,11 +249,13 @@ public class PhotosFragment extends Fragment {
         private final NotificationManager notificationManager;
         private Notification notification;
         private Photo photo;
+        private String photo_uri;
 
 
-        public MultiUploadTask(){
+        public MultiUploadTask(String photo_uri){
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            this.photo_uri = photo_uri;
         }
 
         @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
@@ -274,9 +280,10 @@ public class PhotosFragment extends Fragment {
         @Override
         protected void onPreExecute(){
             createNotification("FUCK","YEAH",false);
-            photo = new Photo();
-            photos.add(photo);
-            imageAdapter.notifyDataSetChanged();
+
+                photo = new Photo();
+                photos.add(photo);
+                imageAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -284,8 +291,8 @@ public class PhotosFragment extends Fragment {
 
             RequestParams requestParams = new RequestParams();
 
-            for(String s : photos_uri){
-                File file = new File(s);
+
+                File file = new File(photo_uri);
                 bitmap = BitmapFactory.decodeFile(file.getPath());
 
                 try {
@@ -335,8 +342,6 @@ public class PhotosFragment extends Fragment {
                         System.out.println(response.toString());
                     }
                 });
-
-            }
             return null;
         }
 
@@ -374,10 +379,13 @@ public class PhotosFragment extends Fragment {
                             imageAdapter.notifyDataSetChanged();
                         }
 
-                        if(!photos_files.isEmpty())
+                        if(!photos_files.isEmpty() && !photos_uri.isEmpty())
                         {
-                            MultiUploadTask multiUploadTask = new MultiUploadTask();
-                            multiUploadTask.execute();
+                            for(String s: photos_uri){
+                                MultiUploadTask multiUploadTask = new MultiUploadTask(s);
+                                multiUploadTask.execute();
+                            }
+                            photos_uri.clear();
                         }
 
                     } catch (JSONException e) {
@@ -385,9 +393,12 @@ public class PhotosFragment extends Fragment {
                     }
                 }
             });
-        } else if (photos != null && !photos.isEmpty() && !photos_files.isEmpty()) {
-            MultiUploadTask multiUploadTask = new MultiUploadTask();
-            multiUploadTask.execute();
+        } else if (photos != null && !photos.isEmpty() && !photos_files.isEmpty() && !photos_uri.isEmpty()) {
+            for(String s: photos_uri){
+                MultiUploadTask multiUploadTask = new MultiUploadTask(s);
+                multiUploadTask.execute();
+            }
+            photos_uri.clear();
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);
