@@ -18,6 +18,7 @@
                android:layout_alignParentLeft="true"
                android:background="@drawable/btn_today"
                android:onClick="today"
+               android:rotation="90"
                android:id="@+id/today_btn"
                android:layout_marginLeft="20dp"
                android:layout_marginBottom="20dp"/>
