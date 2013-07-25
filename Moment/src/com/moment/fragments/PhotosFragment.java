@@ -64,8 +64,6 @@ public class PhotosFragment extends Fragment {
 
     private Uri outputFileUri;
 
-    private Bitmap bitmap = null;
-
     private ArrayList<Photo> photos;
     private ArrayList<String> photos_uri;
     private ArrayList<Bitmap> photos_files;
@@ -249,7 +247,7 @@ public class PhotosFragment extends Fragment {
         private final NotificationManager notificationManager;
         private Notification notification;
         private Photo photo;
-        private String photo_uri;
+        private final String photo_uri;
 
 
         public MultiUploadTask(String photo_uri){
@@ -293,7 +291,7 @@ public class PhotosFragment extends Fragment {
 
 
                 File file = new File(photo_uri);
-                bitmap = BitmapFactory.decodeFile(file.getPath());
+            Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
 
                 try {
                     FileOutputStream stream = new FileOutputStream(file);

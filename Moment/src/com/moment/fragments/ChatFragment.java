@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
@@ -84,7 +85,6 @@ public class ChatFragment extends Fragment {
             this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
             initChat();
         }
-
     }
 
     @Override

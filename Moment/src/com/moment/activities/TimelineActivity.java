@@ -763,8 +763,6 @@ public class TimelineActivity extends SlidingActivity {
                                     momentsList.setSelection(nbMoments+1);
                                 }
 
-                                Toast.makeText(getApplicationContext(), "Moments supp : " + nbMoments, Toast.LENGTH_LONG).show();
-
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
