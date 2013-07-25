@@ -58,7 +58,7 @@ import java.util.List;
 
 @SuppressLint("ValidFragment")
 public class CreationDetailsActivity extends SherlockFragmentActivity {
-	
+
 	//Step = 0 premiere etape, step = 1 deuxieme etape
 	private int step = -1;
 	FragmentTransaction fragmentTransaction;
@@ -81,18 +81,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	private ProgressDialog dialog;
     private Boolean inModif = false;
 
-	
+
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
 	static int pickerChosen = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_creation_details);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
-        //On recupere le nom du moment
+
         String nomMoment = getIntent().getStringExtra("nomMoment");
         Log.d("Nom Moment", nomMoment);
         if(getIntent().hasExtra("moment_id")){
@@ -103,7 +101,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             validateDescription = 1;
             validateAdress = 1;
         }
-        
+
         //On cree l'objet Moment qui servira pendant toute la creation
         if(moment==null){
             moment = new Moment();
@@ -116,19 +114,19 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         fragmentTransaction = fragmentManager.beginTransaction();
       	fragment = new CreationStep1Fragment();
       	fragment2 = new CreationStep2Fragment();
-      	
+
         fragmentTransaction.add(android.R.id.content, fragment);
         fragmentTransaction.commit();
     }
 
-  
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.activity_creation, menu);
         myMenu = menu;
         return true;
     }
-    
+
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
     	if(step==0){
@@ -146,11 +144,11 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     		menu.findItem(R.id.left_options_creation).setVisible(true);
     		menu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
     	}
-    	
-    	
+
+
     	return super.onPrepareOptionsMenu(menu);
     }
-    
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -160,31 +158,31 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             case R.id.left_options_creation:
             	if(step==0) return true;
             	else{
-            		
+
             		//On enregistre les champs
             		upOne();
-            		
+
             		hideKeyboard();
-            		
+
             		step = 0;
 
             		//supportInvalidateOptionsMenu();
-            		
+
             		myMenu.findItem(R.id.left_options_creation).setVisible(false);
             		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
             		myMenu.findItem(R.id.right_options_creation).setEnabled(true);
 
-            		
-            		
+
+
             		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 	fragmentTransaction.setCustomAnimations(R.anim.custom_in_inverse,R.anim.custom_out_inverse);
-            	       
+
             	    fragmentTransaction.replace(android.R.id.content, fragment);
             	    fragmentTransaction.commit();
 
                 }
             	return true;
-            
+
             case R.id.right_options_creation:
             	if(step==0 || step == -1){
                     if(validateFirst){
@@ -219,20 +217,20 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 					}
             	}
             	return true;
-               
+
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    
+
+
     /**
      * Gere le passage de la step 1 � la step2
      * @param view
      */
-    
+
     public void down(View view) {
-	       Log.d("Down", "DOWN OK");  
-	       
+	       Log.d("Down", "DOWN OK");
+
 	       //On r�cup�re tous les �l�ments rentr�s
 	       EditText nomLieu = (EditText)findViewById(R.id.edit_lieu);
 	       //EditText numeroAdresse = (EditText)findViewById(R.id.edit_adresse_numero_rue);
@@ -240,32 +238,32 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	       EditText adresse = (EditText)findViewById(R.id.edit_adresse);
 	       EditText adresseInfoLieu = (EditText)findViewById(R.id.edit_info_lieu);
 	       EditText adresseInfoTransport = (EditText)findViewById(R.id.edit_adresse_info_transport);
-	       
+
 	       //Adresse adressTemp = new Adresse(numeroAdresse.getText().toString(), Integer.parseInt(adresseCodePostal.getText().toString()), adresseVille.getText().toString());
-	       
+
 	       moment.setPlaceInformations(adresseInfoLieu.getText().toString());
 	       moment.setInfoTransport(adresseInfoTransport.getText().toString());
 	       moment.setAdresse(adresse.getText().toString());
 	       //moment.setTitre(nomLieu.getText().toString());
-	       
-	       
-	       
-	       
+
+
+
+
 	       FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
 	       fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
-	       
+
 	       fragmentTransaction.replace(android.R.id.content, fragment2);
 	       fragmentTransaction.commit();
-	       
-	    }
-    
 
-    
-    
+	    }
+
+
+
+
     /**
      * GEre le passage � la 2eme etape
      */
-    
+
     public void downTwo() {
        Log.d("Down", "DOWN OK");
        GregorianCalendar calendarDebut;
@@ -333,26 +331,26 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
        moment.setDateFin(calendarFin.getTime());
 
        System.out.println(moment.getDateFin().toString());
-	       
+
 	 }
-    
-    
+
+
     /**
      * Gere le retour � la step 1
      */
-    
+
     public void upOne(){
-    	
+
     	EditText description = (EditText)findViewById(R.id.creation_moment_description);
     	if(description.getText()!=null){
     		this.moment.setDescription(description.getText().toString());
     	}
-    	
+
     	Button adresse = (Button)findViewById(R.id.creation_moment_adresse);
     	if(adresse.getText()!=null){
     		this.moment.setAdresse(adresse.getText().toString());
     	}
-    	
+
     	EditText infosLieu = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	if(infosLieu.getText()!=null){
     		this.moment.setPlaceInformations(infosLieu.getText().toString());
@@ -368,82 +366,82 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	}*/
 
     }
-    
+
     /**
      * Gere le date picker pour choisir la date de d�but
      * @param view
      */
-    
+
     public void dateDebut(View view) {
-    	
+
     	//On ouvre le date picker
     	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
-	       
+
 	}
-    
+
     /**
      * Gere le time picker pour l'heure de d�but
      * @param view
      */
-    
+
     public void heureDebut(View view) {
-	       
+
     	//On ouvre le time picker
     	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_debut_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
-	       
-	       
+
+
 	}
-    
+
     /**
      * Gere le date picker pour choisir la date de fin
      * @param view
      */
-    
+
     public void dateFin(View view) {
-	       
+
     	//On ouvre le date picker
     	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
 	}
-    
+
     /**
      * Gere le time picker pour l'heure de fin
      * @param view
      */
-    
+
     public void heureFin(View view) {
-	       
+
     	//On ouvre le time picker
     	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_fin_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
-	       
+
 	}
-    
-    
-    
+
+
+
     /**
      * TimePicker Fragment : g�re l'ouverture d'une boite de dialogue pour choisir la date
      * @author adriendulong
      *
      */
-    
+
     @SuppressLint("ValidFragment")
 	public static class TimePickerFragment extends DialogFragment
 	    implements TimePickerDialog.OnTimeSetListener {
-    	
+
     	Button heureEdit;
-    	
+
     	public TimePickerFragment(Button heureEdit){
     		//if wichDebut = 0 ==> D�but else Fin
     		this.heureEdit = heureEdit;
     	}
-	
+
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			int hour, minute;
-			
+
 			if(this.heureEdit.getText().toString().split(":").length!=2){
 				// Use the current time as the default values for the picker
 				final Calendar c = Calendar.getInstance();
@@ -454,13 +452,13 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 				hour = Integer.parseInt(this.heureEdit.getText().toString().split(":")[0]);
 				minute = Integer.parseInt(this.heureEdit.getText().toString().split(":")[1]);
 			}
-			
-			
+
+
 			// Create a new instance of TimePickerDialog and return it
 			return new TimePickerDialog(getActivity(), this, hour, minute,
 			DateFormat.is24HourFormat(getActivity()));
 		}
-		
+
 		@Override
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 			// Do something with the time chosen by the user
@@ -468,23 +466,23 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 				if(minute>9) this.heureEdit.setText(""+hourOfDay+":"+minute);
                 else this.heureEdit.setText(""+hourOfDay+":0"+minute);
 
-				
+
 			}
 		}
-    
-    
+
+
     /**
      * TimePicker Fragment : g�re l'ouverture d'une boite de dialogue pour choisir la date
      * @author adriendulong
      *
      */
-    
+
     @SuppressLint("ValidFragment")
 	public static class DatePickerFragment extends DialogFragment
     implements DatePickerDialog.OnDateSetListener {
-    	
+
     	Button dateEdit;
-    	
+
     	public DatePickerFragment(Button dateEdit){
     		//if wichDebut = 0 ==> D�but else Fin
     		this.dateEdit = dateEdit;
@@ -494,7 +492,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
 			// Use the current date as the default date in the picker
 			int year, month, day;
-			
+
 			if(this.dateEdit.getText().toString().split("/").length!=3){
 				final Calendar c = Calendar.getInstance();
 				year = c.get(Calendar.YEAR);
@@ -507,13 +505,13 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 				month -= 1;
 				day = Integer.parseInt(this.dateEdit.getText().toString().split("/")[0]);
 			}
-			
-			
-			
+
+
+
 			// Create a new instance of DatePickerDialog and return it
 			return new DatePickerDialog(getActivity(), this, year, month, day);
 		}
-		
+
 		@Override
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			// Do something with the date chosen by the user
@@ -532,14 +530,14 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             validateFirstFields();
 		}
 	}
-    
-    
+
+
     /**
      * Fonction appel�e quand on clique sur cr�ation d'un moment
-     * @throws JSONException 
-     *  
+     * @throws JSONException
+     *
      */
-    
+
     public void creerMoment() throws JSONException {
 
 
@@ -548,8 +546,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
     	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	//EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
-    	
-    	
+
+
     	Log.d("Description", descriptionEdit.getText().toString());
     	moment.setDescription(descriptionEdit.getText().toString());
     	moment.setAdresse(adressButton.getText().toString());
@@ -612,11 +610,11 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 }
             });
         }
-    
 
 
 
-    	
+
+
 
     }
 
@@ -625,28 +623,28 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      * Function that return the moment to the fracment
      * @return Moment
      */
-    
+
     public Moment getMoment(){
     	return this.moment;
     }
-    
+
     /**
      * Fonction pour cacher le clavier
      */
-    
+
     private void hideKeyboard()
     {
-    	InputMethodManager inputManager = (InputMethodManager)            
-    			  getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE); 
+    	InputMethodManager inputManager = (InputMethodManager)
+    			  getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
     	if(this.getCurrentFocus()!=null){
-    		inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),      
+    		inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
     			    InputMethodManager.HIDE_NOT_ALWAYS);
     	}
-    			    
+
     }
-    
-    
-    
+
+
+
     /**
      * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
      */
@@ -655,18 +653,18 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	if(validateFirstDate && validateSecondDate){
     		validateFirst = true;
     		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
-    		
+
     	}
-    	
+
     }
-    
-    
+
+
     /**
      * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
      */
     public static void validateSecondFields(){
-    	
-    	
+
+
     	if((validateDescription==1)&&(validateAdress==1)){
     		validateSecond = 1;
     		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
@@ -678,16 +676,16 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
     		myMenu.findItem(R.id.right_options_creation).setEnabled(false);
     	}
-    	
-    	
+
+
     }
-    
-    
+
+
     /**
      * L'utilisateur d�cide de changer la photo du moment
      * @param view
      */
-    
+
     public void changePhoto(View view){
     	openImageIntent();
     }
@@ -701,15 +699,15 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         Intent intent = new Intent(this, PlacePickerActivity.class);
         startActivityForResult(intent, PLACE_CHOOSE);
     }
-    
-    
-    
-    
+
+
+
+
     /**
      * Gestion prise photo
      */
-    
-    
+
+
     private void openImageIntent() {
 
     	// Determine Uri of camera image to save.
@@ -719,7 +717,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	final String fname = "photo_moment.png";
     	final File sdImageMainDirectory = new File(root, fname);
     	outputFileUri = Uri.fromFile(sdImageMainDirectory);
-    	
+
 
     	    // Camera.
     	    final List<Intent> cameraIntents = new ArrayList<Intent>();
@@ -748,8 +746,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
     	    startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
     	}
-    
-    
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data)
     {
@@ -786,7 +784,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 {
                     selectedImageUri = data == null ? null : data.getData();
                 }
-                
+
                 try {
                 	//On recupere l'image, on la sauvegarde dans l'internal storage et on l'efface de l'external
 					Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
@@ -828,20 +826,20 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 				    Log.d("FINALE PATH !!!!", path);
 				  
 					*/
-					
-					
+
+
 					bitmap = Images.resizeBitmap(bitmap, 1000);
 					Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
-					
-					
+
+
 					AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
 					this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
-					
+
 					ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
 					moment_image.setImageBitmap(bitmap);
 					//profile_picture = Images.resizeBitmap(bitmap, 600);
 					//Images.saveImageToInternalStorage(profile_picture, getApplicationContext(), "profile_picture", 100);
-					
+
 				} catch (FileNotFoundException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -901,6 +899,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         validateSecondDate = true;
         validateFirstFields();
     }
-   
+
 
 }

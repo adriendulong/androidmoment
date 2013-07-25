@@ -1,17 +1,18 @@
 package com.moment.fragments;
 
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.*;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
@@ -22,11 +23,10 @@ import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Chat;
-import com.moment.models.Moment;
 import com.moment.models.User;
-
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -46,24 +46,14 @@ import java.util.List;
 
 public class ChatFragment extends Fragment {
 
-    public View view;
-    public LayoutInflater inflater;
-    public Long momentId;
-    //private Moment moment;
+    private View view;
+    private LayoutInflater inflater;
+    private Long momentId;
+    private PullToRefreshScrollView scrollChat;
+    private LinearLayout layoutChat;
 
-    PullToRefreshScrollView scrollChat;
-    ScrollView mScrollView;
-    LinearLayout layoutChat;
-    EditText editMessage;
-    private InputMethodManager imm;
-
-    int nextPage;
+    private int nextPage;
     private final Transformation roundTrans = new RoundTransformation();
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -72,8 +62,10 @@ public class ChatFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         this.inflater = inflater;
 
-        layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-        scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
+        if (view != null) {
+            layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
+            scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
+        }
 
         scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
 
@@ -82,11 +74,6 @@ public class ChatFragment extends Fragment {
                 new GetDataTask().execute();
             }
         });
-
-        mScrollView = scrollChat.getRefreshableView();
-
-
-
         return view;
     }
 
@@ -107,124 +94,181 @@ public class ChatFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    public void messageRight(Chat chat){
+    private void messageRight(Chat chat){
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
 
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+        TextView message = null;
+        TextView heure   = null;
+        TextView autheur = null;
+        ImageView userImage = null;
 
-        message.setText(chat.getMessage());
-        autheur.setText(chat.getUser().getFirstName());
+        if (chatDroit != null) {
+            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            heure = (TextView)chatDroit.findViewById(R.id.heure);
+        }
+
+        if (message != null) {
+            message.setText(chat.getMessage());
+        }
+
+        if (autheur != null) {
+            autheur.setText(chat.getUser().getFirstName());
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
-        heure.setText(""+hh+":"+mm);
 
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (heure != null) {
+            heure.setText(""+hh+":"+mm);
+        }
+
+        if (chatDroit != null) {
+            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        }
 
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
+        if (chatDroit != null) {
+            layoutChat.addView(chatDroit);
+        }
 
-        layoutChat.addView(chatDroit);
     }
 
-    public void messageRight(Chat chat, int index){
+    private void messageRight(Chat chat, int index){
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
 
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
+        TextView message = null;
+        TextView heure   = null;
+        TextView autheur = null;
+        ImageView userImage = null;
 
-        message.setText(chat.getMessage());
-        autheur.setText(chat.getUser().getFirstName());
+        if (chatDroit != null) {
+            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            heure = (TextView)chatDroit.findViewById(R.id.heure);
+        }
+
+        if (message != null) {
+            message.setText(chat.getMessage());
+        }
+
+        if (autheur != null) {
+            autheur.setText(chat.getUser().getFirstName());
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
-        heure.setText(""+hh+":"+mm);
 
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (heure != null) {
+            heure.setText(""+hh+":"+mm);
+        }
+
+        if (chatDroit != null) {
+            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        }
 
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
-        layoutChat.addView(chatDroit, index);
+        if (chatDroit != null) {
+            layoutChat.addView(chatDroit, index);
+        }
 
     }
 
-    public void messageLeft(Chat chat){
+    private void messageLeft(Chat chat){
         layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
 
-        message.setText(chat.getMessage());
-        autheur.setText(chat.getUser().getFirstName());
+        TextView message = null;
+        TextView autheur = null;
+        TextView heure = null;
+        ImageView userImage = null;
+
+        if (chatDroit != null) {
+            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            heure   = (TextView)chatDroit.findViewById(R.id.heure);
+            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        }
+
+        if (message != null) {
+            message.setText(chat.getMessage());
+        }
+
+        if (autheur != null) {
+            autheur.setText(chat.getUser().getFirstName());
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
-        heure.setText(""+hh+":"+mm);
 
-
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (heure != null) {
+            heure.setText(""+hh+":"+mm);
+        }
 
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
-        layoutChat.addView(chatDroit);
-
-
+        if (chatDroit != null) {
+            layoutChat.addView(chatDroit);
+        }
     }
 
-    public void messageLeft(Chat chat, int index){
+    private void messageLeft(Chat chat, int index){
         layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-        TextView autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-        TextView heure   = (TextView)chatDroit.findViewById(R.id.heure);
 
-        message.setText(chat.getMessage());
-        autheur.setText(chat.getUser().getFirstName());
+        TextView message = null;
+        TextView autheur = null;
+        TextView heure = null;
+        ImageView userImage = null;
+
+        if (chatDroit != null) {
+            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            heure = (TextView) chatDroit.findViewById(R.id.heure);
+            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        }
+
+        if (message != null) {
+            message.setText(chat.getMessage());
+        }
+
+        if (autheur != null) {
+            autheur.setText(chat.getUser().getFirstName());
+        }
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
-        heure.setText(""+hh+":"+mm);
 
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (heure != null) {
+            heure.setText(""+hh+":"+mm);
+        }
 
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
-        layoutChat.addView(chatDroit, index);
 
-        /*
-        new Handler().postDelayed((new Runnable(){
-
-        	@Override
-			public void run(){
-                scrollChat.scrollTo(0, scrollChat.getBottom());
-        	}
-
-        }), 200);*/
-
+        if (chatDroit != null) {
+            layoutChat.addView(chatDroit, index);
+        }
     }
 
     private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
@@ -271,27 +315,29 @@ public class ChatFragment extends Fragment {
 
             ArrayList<Chat> tempChats = new ArrayList<Chat>();
 
-            for (int i = 0; i < chats.length(); i++) {
+            if (chats != null) {
+                for (int i = 0; i < chats.length(); i++) {
 
-                Chat tempChat = new Chat();
+                    Chat tempChat = new Chat();
 
-                try {
-                    tempChat.chatFromJSON(chats.getJSONObject(i));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    try {
+                        tempChat.chatFromJSON(chats.getJSONObject(i));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    User user = tempChat.getUser();
+
+                    if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {
+                        tempChat.setMomentId(momentId);
+                        AppMoment.getInstance().chatDao.insert(tempChat);
+                        if (AppMoment.getInstance().userDao.load(user.getId()) == null)
+                            AppMoment.getInstance().userDao.insert(user);
+                    }
+
+                    tempChats.add(tempChat);
+
                 }
-
-                User user = tempChat.getUser();
-
-                if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {
-                    tempChat.setMomentId(momentId);
-                    AppMoment.getInstance().chatDao.insert(tempChat);
-                    if (AppMoment.getInstance().userDao.load(user.getId()) == null)
-                        AppMoment.getInstance().userDao.insert(user);
-                }
-
-                tempChats.add(tempChat);
-
             }
             return tempChats;
         }
@@ -303,7 +349,7 @@ public class ChatFragment extends Fragment {
             {
                 int index = 0;
                 for(Chat chat : chats){
-                    if (chat.getUser().getId() == AppMoment.getInstance().user.getId()) {
+                    if (chat.getUser().getId().equals(AppMoment.getInstance().user.getId())) {
                         messageRight(chat, index);
 
                     } else {
@@ -323,23 +369,22 @@ public class ChatFragment extends Fragment {
                 httpclient.setCookieStore(MomentApi.myCookieStore);
                 HttpGet httpGet = new HttpGet(url);
                 httpGet.setHeader("Content-type", "application/json");
-                InputStream inputStream = null;
-                String result = null;
+                InputStream inputStream;
+                String result;
                 HttpResponse response = httpclient.execute(httpGet);
                 HttpEntity entity = response.getEntity();
                 inputStream = entity.getContent();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
                 StringBuilder sb = new StringBuilder();
 
-                String line = null;
+                String line;
                 while ((line = reader.readLine()) != null)
                 {
-                    sb.append(line + "\n");
+                    sb.append(line).append("\n");
                 }
                 result = sb.toString();
-                JSONObject jObject = new JSONObject(result);
 
-                return jObject;
+                return new JSONObject(result);
 
             } catch (IOException e) {
                 e.printStackTrace();
@@ -364,7 +409,7 @@ public class ChatFragment extends Fragment {
      * Function that takes care to init the chats
      */
 
-    public void initChat(){
+    private void initChat(){
         Log.d("CHATFRAGMENT", "INIT");
         if(!AppMoment.getInstance().checkInternet()){
             List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
@@ -422,7 +467,7 @@ public class ChatFragment extends Fragment {
                                     AppMoment.getInstance().userDao.insert(user);
                             }
 
-                            if(tempChat.getUser().getId() ==  AppMoment.getInstance().user.getId()){
+                            if(tempChat.getUser().getId().equals(AppMoment.getInstance().user.getId())){
                                 messageRight(tempChat);
                             }
 
