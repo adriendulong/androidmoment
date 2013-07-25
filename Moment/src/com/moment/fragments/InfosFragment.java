@@ -47,26 +47,24 @@ import java.util.Locale;
 public class InfosFragment extends Fragment {
 
     //Different states
-    private int COMING = 2;
-    private int NOT_COMING = 3;
-    private int MAYBE = 5;
-    private int OWNER = 0;
-    private int ADMIN = 1;
-    private int UNKOWN = 4;
-    private int PUBLIC = 2;
-	
-	private String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
-	private String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
-	static final int PICK_CAMERA_COVER = 1;
+    private final int COMING = 2;
+    private final int NOT_COMING = 3;
+    private final int MAYBE = 5;
+    private final int OWNER = 0;
+    private final int ADMIN = 1;
+    private final int UNKOWN = 4;
+
+    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
+	private final String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
+	private static final int PICK_CAMERA_COVER = 1;
 	private GoogleMap mMap;
     private Long momentId;
     private int stateAnwser;
     private Moment moment;
-    private View view;
 
     //All view elements
-    TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
-    ImageView image_cover, owner_picture;
+    private TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
+    private ImageView image_cover, owner_picture;
     private RelativeLayout modifLayout;
     private ImageView blocRSVP;
 
@@ -74,43 +72,43 @@ public class InfosFragment extends Fragment {
     private ImageButton maybeButton, goingButton, notGoigButton, addGuests;
 
     private final Transformation roundTrans = new RoundTransformation();
-	
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-		view = inflater.inflate(R.layout.fragment_infos, container, false);
+        View view = inflater.inflate(R.layout.fragment_infos, container, false);
 
-		titreText = (TextView)view.findViewById(R.id.titre_moment);
-		flTitreText = (TextView)view.findViewById(R.id.fl_titre_moment);
-		descriptionText = (TextView)view.findViewById(R.id.infos_moment_description);
-		adresse = (TextView)view.findViewById(R.id.infos_moment_adresse);
+        if (view != null) {
+            titreText = (TextView) view.findViewById(R.id.titre_moment);
+        }
 
-
-        maybeButton     = (ImageButton)view.findViewById(R.id.maybe_button);
-        goingButton     = (ImageButton)view.findViewById(R.id.going_button);
-        notGoigButton   = (ImageButton)view.findViewById(R.id.not_going_button);
-        addGuests = (ImageButton)view.findViewById(R.id.add_guests);
-
-		dateDebutText = (TextView)view.findViewById(R.id.infos_moment_date_debut);
-		dateFinText = (TextView)view.findViewById(R.id.infos_moment_date_fin);
-
-        guests_number = (TextView)view.findViewById(R.id.guests_number);
-        guests_coming = (TextView)view.findViewById(R.id.guests_coming);
-        guests__not_coming = (TextView)view.findViewById(R.id.guests_not_coming);
-        modifLayout = (RelativeLayout)view.findViewById(R.id.modif_layout);
-
-        blocRSVP = (ImageView)view.findViewById(R.id.bloc_rsvp);
+        if (view != null) {
+            flTitreText = (TextView) view.findViewById(R.id.fl_titre_moment);
+        }
+        descriptionText = (TextView) view.findViewById(R.id.infos_moment_description);
+		adresse = (TextView) view.findViewById(R.id.infos_moment_adresse);
 
 
+        maybeButton     = (ImageButton) view.findViewById(R.id.maybe_button);
+        goingButton     = (ImageButton) view.findViewById(R.id.going_button);
+        notGoigButton   = (ImageButton) view.findViewById(R.id.not_going_button);
+        addGuests = (ImageButton) view.findViewById(R.id.add_guests);
 
-        image_cover = (ImageView)view.findViewById(R.id.photo_moment);
-        owner_picture = (ImageView)view.findViewById(R.id.photo_owner);
-        firstname = (TextView)view.findViewById(R.id.firstname_owner);
-        lastname = (TextView)view.findViewById(R.id.lastname_owner);
+		dateDebutText = (TextView) view.findViewById(R.id.infos_moment_date_debut);
+		dateFinText = (TextView) view.findViewById(R.id.infos_moment_date_fin);
+
+        guests_number = (TextView) view.findViewById(R.id.guests_number);
+        guests_coming = (TextView) view.findViewById(R.id.guests_coming);
+        guests__not_coming = (TextView) view.findViewById(R.id.guests_not_coming);
+        modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
+
+        blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
+
+
+
+        image_cover = (ImageView) view.findViewById(R.id.photo_moment);
+        owner_picture = (ImageView) view.findViewById(R.id.photo_owner);
+        firstname = (TextView) view.findViewById(R.id.firstname_owner);
+        lastname = (TextView) view.findViewById(R.id.lastname_owner);
 
         if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
             this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
@@ -120,17 +118,6 @@ public class InfosFragment extends Fragment {
 
 		return view;
 	}
-
-    @Override
-    public void onStart(){
-        super.onStart();
-
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
-        super.onSaveInstanceState(savedInstanceState);
-    }
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -147,7 +134,7 @@ public class InfosFragment extends Fragment {
 
     }
 
-    public void modifyPhotoMoment(Bitmap photo) {
+    private void modifyPhotoMoment(Bitmap photo) {
       ImageView photoMoment = (ImageView)getActivity().findViewById(R.id.photo_moment);
       photoMoment.setImageBitmap(photo);
     }
@@ -161,8 +148,11 @@ public class InfosFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_CAMERA_COVER) {
             Bundle extras = data.getExtras();
-            Bitmap mImageBitmap = (Bitmap) extras.get("data");
-            modifyPhotoMoment(mImageBitmap);
+            Bitmap mImageBitmap = null;
+            if (extras != null) {
+                mImageBitmap = (Bitmap) extras.get("data");
+                modifyPhotoMoment(mImageBitmap);
+            }
         }
     }
 
@@ -170,17 +160,17 @@ public class InfosFragment extends Fragment {
         if (mMap == null) {
             mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
             if (mMap != null) {
-                double lat=0;
-                double lon=0;
+                double lat;
+                double lon;
                 Geocoder geocoder = new Geocoder(getActivity());
 
                 try {
                     List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
 
-                    if (addresses.size() == 0) {
+                    if (addresses.size() > 0) {
 
-                      }
-                      else {
+
+
                           Address x = addresses.get(0);
                           lat = x.getLatitude();
                           lon = x.getLongitude();
@@ -197,7 +187,7 @@ public class InfosFragment extends Fragment {
 
                           mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                      }
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -318,7 +308,7 @@ public class InfosFragment extends Fragment {
      * Function that takes care of building the infos fragment when we have the moment infos
      */
 
-    public void initInfos(){
+    private void initInfos(){
         titreText.setText(moment.getName().substring(1));
         flTitreText.setText(moment.getName().substring(0,1));
         descriptionText.setText(moment.getDescription());
@@ -357,7 +347,9 @@ public class InfosFragment extends Fragment {
         if(!canInvite(AppMoment.getInstance().user)){
             addGuests.setVisibility(View.INVISIBLE);
             RelativeLayout .LayoutParams params = (RelativeLayout.LayoutParams)blocRSVP.getLayoutParams();
-            params.setMargins(0, 0, 5, 0); //substitute parameters for left, top, right, bottom
+            if (params != null) {
+                params.setMargins(0, 0, 5, 0); //substitute parameters for left, top, right, bottom
+            }
             blocRSVP.setLayoutParams(params);
         }
 
@@ -370,10 +362,9 @@ public class InfosFragment extends Fragment {
     }
 
     private Boolean canInvite(User user){
-        if(moment.getPrivacy()==PUBLIC) return true;
-        else if(moment.getIsOpenInvit()) return true;
-        else if(user.getId()==moment.getUserId()) return true;
-        else return false;
+        int PUBLIC = 2;
+        if(moment.getPrivacy()== PUBLIC) return true;
+        else return moment.getIsOpenInvit() || user.getId() == moment.getUserId();
     }
 
 
