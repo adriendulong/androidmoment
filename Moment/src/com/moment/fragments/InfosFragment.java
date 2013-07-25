@@ -46,6 +46,7 @@ import java.util.Locale;
 
 public class InfosFragment extends Fragment {
 
+    private static final int PICK_CAMERA_COVER = 1;
     //Different states
     private final int COMING = 2;
     private final int NOT_COMING = 3;
@@ -53,71 +54,20 @@ public class InfosFragment extends Fragment {
     private final int OWNER = 0;
     private final int ADMIN = 1;
     private final int UNKOWN = 4;
-
     private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
-	private final String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
-	private static final int PICK_CAMERA_COVER = 1;
-	private GoogleMap mMap;
+    private final String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
+    private final Transformation roundTrans = new RoundTransformation();
+    private GoogleMap mMap;
     private Long momentId;
     private int stateAnwser;
     private Moment moment;
-
     //All view elements
     private TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
     private ImageView image_cover, owner_picture;
     private RelativeLayout modifLayout;
     private ImageView blocRSVP;
-
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton, addGuests;
-
-    private final Transformation roundTrans = new RoundTransformation();
-
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_infos, container, false);
-
-        if (view != null) {
-            titreText = (TextView) view.findViewById(R.id.titre_moment);
-        }
-
-        if (view != null) {
-            flTitreText = (TextView) view.findViewById(R.id.fl_titre_moment);
-        }
-        descriptionText = (TextView) view.findViewById(R.id.infos_moment_description);
-		adresse = (TextView) view.findViewById(R.id.infos_moment_adresse);
-
-
-        maybeButton     = (ImageButton) view.findViewById(R.id.maybe_button);
-        goingButton     = (ImageButton) view.findViewById(R.id.going_button);
-        notGoigButton   = (ImageButton) view.findViewById(R.id.not_going_button);
-        addGuests = (ImageButton) view.findViewById(R.id.add_guests);
-
-		dateDebutText = (TextView) view.findViewById(R.id.infos_moment_date_debut);
-		dateFinText = (TextView) view.findViewById(R.id.infos_moment_date_fin);
-
-        guests_number = (TextView) view.findViewById(R.id.guests_number);
-        guests_coming = (TextView) view.findViewById(R.id.guests_coming);
-        guests__not_coming = (TextView) view.findViewById(R.id.guests_not_coming);
-        modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
-
-        blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
-
-
-
-        image_cover = (ImageView) view.findViewById(R.id.photo_moment);
-        owner_picture = (ImageView) view.findViewById(R.id.photo_owner);
-        firstname = (TextView) view.findViewById(R.id.firstname_owner);
-        lastname = (TextView) view.findViewById(R.id.lastname_owner);
-
-        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
-            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
-            moment = AppMoment.getInstance().user.getMomentById(momentId);
-            initInfos();
-        }
-
-		return view;
-	}
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -134,9 +84,51 @@ public class InfosFragment extends Fragment {
 
     }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_infos, container, false);
+
+        if (view != null) {
+            titreText = (TextView) view.findViewById(R.id.titre_moment);
+            descriptionText = (TextView) view.findViewById(R.id.infos_moment_description);
+            flTitreText = (TextView) view.findViewById(R.id.fl_titre_moment);
+            adresse = (TextView) view.findViewById(R.id.infos_moment_adresse);
+
+            maybeButton     = (ImageButton) view.findViewById(R.id.maybe_button);
+            goingButton     = (ImageButton) view.findViewById(R.id.going_button);
+            notGoigButton   = (ImageButton) view.findViewById(R.id.not_going_button);
+            addGuests = (ImageButton) view.findViewById(R.id.add_guests);
+
+            dateDebutText = (TextView) view.findViewById(R.id.infos_moment_date_debut);
+            dateFinText = (TextView) view.findViewById(R.id.infos_moment_date_fin);
+
+            guests_number = (TextView) view.findViewById(R.id.guests_number);
+            guests_coming = (TextView) view.findViewById(R.id.guests_coming);
+            guests__not_coming = (TextView) view.findViewById(R.id.guests_not_coming);
+            modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
+
+            blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
+
+
+
+            image_cover = (ImageView) view.findViewById(R.id.photo_moment);
+            owner_picture = (ImageView) view.findViewById(R.id.photo_owner);
+            firstname = (TextView) view.findViewById(R.id.firstname_owner);
+            lastname = (TextView) view.findViewById(R.id.lastname_owner);
+        }
+
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+            moment = AppMoment.getInstance().user.getMomentById(momentId);
+            initInfos();
+        }
+
+        return view;
+    }
+
     private void modifyPhotoMoment(Bitmap photo) {
-      ImageView photoMoment = (ImageView)getActivity().findViewById(R.id.photo_moment);
-      photoMoment.setImageBitmap(photo);
+        ImageView photoMoment = (ImageView)getActivity().findViewById(R.id.photo_moment);
+        photoMoment.setImageBitmap(photo);
     }
 
     public void touchedPhoto(){
@@ -148,7 +140,7 @@ public class InfosFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_CAMERA_COVER) {
             Bundle extras = data.getExtras();
-            Bitmap mImageBitmap = null;
+            Bitmap mImageBitmap;
             if (extras != null) {
                 mImageBitmap = (Bitmap) extras.get("data");
                 modifyPhotoMoment(mImageBitmap);
@@ -171,21 +163,21 @@ public class InfosFragment extends Fragment {
 
 
 
-                          Address x = addresses.get(0);
-                          lat = x.getLatitude();
-                          lon = x.getLongitude();
+                        Address x = addresses.get(0);
+                        lat = x.getLatitude();
+                        lon = x.getLongitude();
 
-                          final LatLng ADRESS = new LatLng(lat,lon);
+                        final LatLng ADRESS = new LatLng(lat,lon);
 
-                          //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ADRESS, 15));
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ADRESS, 15));
 
-                          CameraPosition cameraPosition = new CameraPosition.Builder()
-                              .target(ADRESS)      // Sets the center of the map to Mountain View
-                              .zoom(10)                   // Sets the zoom
-                              .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                              .build();
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(ADRESS)      // Sets the center of the map to Mountain View
+                                .zoom(10)                   // Sets the zoom
+                                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
+                                .build();
 
-                          mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                     }
                 } catch (IOException e) {
@@ -303,7 +295,6 @@ public class InfosFragment extends Fragment {
 
     }
 
-
     /**
      * Function that takes care of building the infos fragment when we have the moment infos
      */
@@ -363,12 +354,11 @@ public class InfosFragment extends Fragment {
 
     private Boolean canInvite(User user){
         int PUBLIC = 2;
-        if(moment.getPrivacy()== PUBLIC) return true;
-        else return moment.getIsOpenInvit() || user.getId() == moment.getUserId();
+        return moment.getPrivacy() == PUBLIC || moment.getIsOpenInvit() || user.getId() == moment.getUserId();
     }
 
 
-	  
-	  
+
+
 
 }
