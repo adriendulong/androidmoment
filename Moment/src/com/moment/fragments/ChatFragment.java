@@ -102,11 +102,13 @@ public class ChatFragment extends Fragment {
         TextView message = null;
         TextView heure   = null;
         TextView autheur = null;
+        TextView date = null;
         ImageView userImage = null;
 
         if (chatDroit != null) {
             message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
             autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            date = (TextView) chatDroit.findViewById(R.id.date);
             heure = (TextView)chatDroit.findViewById(R.id.heure);
         }
 
@@ -120,11 +122,17 @@ public class ChatFragment extends Fragment {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
         if (heure != null) {
             heure.setText(""+hh+":"+mm);
+        }
+
+        if(date != null) {
+            date.setText(""+day+" "+month);
         }
 
         if (chatDroit != null) {
@@ -148,11 +156,13 @@ public class ChatFragment extends Fragment {
         TextView message = null;
         TextView heure   = null;
         TextView autheur = null;
+        TextView date = null;
         ImageView userImage = null;
 
         if (chatDroit != null) {
             message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
             autheur = (TextView)chatDroit.findViewById(R.id.autheur);
+            date = (TextView) chatDroit.findViewById(R.id.date);
             heure = (TextView)chatDroit.findViewById(R.id.heure);
         }
 
@@ -166,11 +176,17 @@ public class ChatFragment extends Fragment {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
         if (heure != null) {
             heure.setText(""+hh+":"+mm);
+        }
+
+        if(date != null) {
+            date.setText(""+day+" "+month);
         }
 
         if (chatDroit != null) {
@@ -187,20 +203,21 @@ public class ChatFragment extends Fragment {
     }
 
     private void messageLeft(Chat chat){
-        layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-        scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
+
+        LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
+        LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
 
         TextView message = null;
+        TextView heure   = null;
         TextView autheur = null;
-        TextView heure = null;
+        TextView date = null;
         ImageView userImage = null;
 
-        if (chatDroit != null) {
-            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-            heure   = (TextView)chatDroit.findViewById(R.id.heure);
-            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (chatGauche != null) {
+            message = (TextView)chatGauche.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatGauche.findViewById(R.id.autheur);
+            date = (TextView) chatGauche.findViewById(R.id.date);
+            heure = (TextView)chatGauche.findViewById(R.id.heure);
         }
 
         if (message != null) {
@@ -213,6 +230,8 @@ public class ChatFragment extends Fragment {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -220,29 +239,38 @@ public class ChatFragment extends Fragment {
             heure.setText(""+hh+":"+mm);
         }
 
+        if(date != null) {
+            date.setText(""+day+" "+month);
+        }
+
+        if (chatGauche != null) {
+            userImage = (ImageView)chatGauche.findViewById(R.id.photo_user);
+        }
+
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
-        if (chatDroit != null) {
-            layoutChat.addView(chatDroit);
+        if (chatGauche != null) {
+            layoutChat.addView(chatGauche);
         }
+
     }
 
     private void messageLeft(Chat chat, int index){
-        layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
-        scrollChat = (PullToRefreshScrollView)view.findViewById(R.id.scroll_chat);
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
+        LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
+        LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
 
         TextView message = null;
+        TextView heure   = null;
         TextView autheur = null;
-        TextView heure = null;
+        TextView date = null;
         ImageView userImage = null;
 
-        if (chatDroit != null) {
-            message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
-            autheur = (TextView)chatDroit.findViewById(R.id.autheur);
-            heure = (TextView) chatDroit.findViewById(R.id.heure);
-            userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        if (chatGauche != null) {
+            message = (TextView)chatGauche.findViewById(R.id.chat_message_text);
+            autheur = (TextView)chatGauche.findViewById(R.id.autheur);
+            date = (TextView) chatGauche.findViewById(R.id.date);
+            heure = (TextView)chatGauche.findViewById(R.id.heure);
         }
 
         if (message != null) {
@@ -255,6 +283,8 @@ public class ChatFragment extends Fragment {
 
         Calendar cal = Calendar.getInstance();
         cal.setTime(chat.getDate());
+        int day = cal.get(Calendar.DAY_OF_MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -262,12 +292,19 @@ public class ChatFragment extends Fragment {
             heure.setText(""+hh+":"+mm);
         }
 
+        if(date != null) {
+            date.setText(""+day+" "+month);
+        }
+
+        if (chatGauche != null) {
+            userImage = (ImageView)chatGauche.findViewById(R.id.photo_user);
+        }
+
         if(AppMoment.getInstance().checkInternet())
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
-
-        if (chatDroit != null) {
-            layoutChat.addView(chatDroit, index);
+        if (chatGauche != null) {
+            layoutChat.addView(chatGauche, index);
         }
     }
 

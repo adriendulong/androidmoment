@@ -1,9 +1,13 @@
 package com.moment.activities;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -12,6 +16,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
 
 import org.json.JSONObject;
@@ -25,6 +30,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     EditText secondPhone;
     EditText secondEmail;
     EditText description;
+    ImageView profil_picture;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -36,6 +42,8 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
         Button modif = (Button) findViewById(R.id.modif);
         Button valider = (Button) findViewById(R.id.btn_valider);
+
+        profil_picture = (ImageView) findViewById(R.id.profil_picture_edit);
 
         modif_prenom = (EditText) findViewById(R.id.modif_prenom);
         modif_prenom.setText(AppMoment.getInstance().user.getFirstName());
@@ -109,6 +117,23 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void touchedPhoto(View view){
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(takePictureIntent, 0);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == 0) {
+            Bundle extras = data.getExtras();
+            Bitmap mImageBitmap;
+            if (extras != null) {
+                mImageBitmap = (Bitmap) extras.get("data");
+                profil_picture.setImageBitmap(Images.getRoundedCornerBitmap(mImageBitmap));
+            }
+        }
     }
 
     @Override
