@@ -44,29 +44,29 @@ import java.sql.Timestamp;
 
 public class MomentActivity extends Activity {
 
-	public static Typeface fontNumans;
-    public static final String EXTRA_MESSAGE = "message";
-    public static final String PROPERTY_REG_ID = "registration_id";
+	private static Typeface fontNumans;
+    private static final String EXTRA_MESSAGE = "message";
+    private static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME =
             "onServerExpirationTimeMs";
     /**
      * Default lifespan (7 days) of a reservation until it is considered expired.
      */
-    public static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
+    private static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
 
     /**
      * Substitute you own sender ID here.
      */
-    String SENDER_ID = CommonUtilities.SENDER_ID;
+    private final String SENDER_ID = CommonUtilities.SENDER_ID;
 
     /**
      * Tag used on log messages.
      */
-    static final String TAG = "GCMDemo";
+    private static final String TAG = "GCMDemo";
 
-    GoogleCloudMessaging gcm;
-    Context context;
+    private GoogleCloudMessaging gcm;
+    private Context context;
     private String regid;
     private ProgressDialog dialog;
 
@@ -458,7 +458,7 @@ public class MomentActivity extends Activity {
         {
             public void run()
             {
-                String msg = "";
+                String msg;
                 try {
                     if (gcm == null) {
                         gcm = GoogleCloudMessaging.getInstance(context);
