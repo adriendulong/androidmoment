@@ -19,6 +19,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Session;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.moment.R;
 import com.moment.classes.MomentApi;
@@ -235,6 +236,8 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
         try {
             inviteSMS();
         } catch (JSONException e) {
@@ -324,7 +327,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     public void inviteSMS() throws JSONException {
 
-        if(SMSUsers.size()>0){
+        if(SMSUsers != null && SMSUsers.size()>0){
             String _messageNumber="";
             for(int i=0;i<SMSUsers.size();i++){
                 assert SMSUsers.get(i).getNumTel().matches("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
@@ -340,7 +343,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
         }
 
-        finish();
+        //finish();
         overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
     }
 

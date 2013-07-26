@@ -309,7 +309,7 @@ public class InvitationsFragment extends Fragment {
     public void facebook(){
         try {
             openActiveSession(getActivity(), true, fbStatusCallback, Arrays.asList(
-                    new String[]{}), null);
+                    new String[]{"email"}), null);
         }
         catch (Exception e) {
             e.printStackTrace();
