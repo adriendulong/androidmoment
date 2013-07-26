@@ -19,9 +19,9 @@ public class FacebookAppRequestActivity extends Activity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
-        ArrayList<Integer> fbids = intent.getIntegerArrayListExtra("fbids");
+        ArrayList<String> fbids = intent.getStringArrayListExtra("fbids");
         String fbidlist = "";
-        for(Integer fbid: fbids)
+        for(String fbid: fbids)
         {
             fbidlist = fbidlist + fbid + ",";
         }

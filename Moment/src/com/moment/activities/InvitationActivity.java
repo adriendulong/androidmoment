@@ -236,8 +236,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
         try {
             inviteSMS();
         } catch (JSONException e) {
@@ -303,14 +301,20 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 }
 
                 if(FBUsers.size()>0){
-                    ArrayList<Long> fbids = new ArrayList<Long>();
+                    ArrayList<String> fbids = new ArrayList<String>();
                     for(User usr: FBUsers){
-                        fbids.add(usr.getFacebookId());
+                        fbids.add(usr.getFacebookId().toString());
                     }
 
                     Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
                     intent.putExtra("fbids", fbids);
                     startActivityForResult(intent, 0);
+                } else {
+                    try {
+                        inviteSMS();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
 
             }
@@ -340,11 +344,9 @@ public class InvitationActivity extends SherlockFragmentActivity {
             sendIntent.setData(Uri.parse("sms:" + _messageNumber));
             sendIntent.putExtra("sms_body", messageText);
             startActivity(sendIntent);
-
+            finish();
+            overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
         }
-
-        //finish();
-        overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
     }
 
 }
