@@ -1,17 +1,30 @@
 package com.moment.activities;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionLoginBehavior;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
@@ -21,16 +34,24 @@ import com.moment.classes.MomentApi;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Arrays;
+import java.util.List;
+
 public class EditProfilActivity extends SherlockActivity implements View.OnClickListener {
 
-    EditText modif_prenom;
-    EditText modif_nom;
-    EditText email;
-    EditText phone;
-    EditText secondPhone;
-    EditText secondEmail;
-    EditText description;
-    ImageView profil_picture;
+    private EditText modif_prenom;
+    private EditText modif_nom;
+    private EditText phone;
+    private EditText secondPhone;
+    private EditText secondEmail;
+    private EditText description;
+    private ImageView profil_picture;
+    private Uri mImageCaptureUri;
+    private ProgressDialog progressDialog;
+    private String facebookId;
+    private Session session;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,6 +64,8 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         Button modif = (Button) findViewById(R.id.modif);
         Button valider = (Button) findViewById(R.id.btn_valider);
 
+        ImageButton facebook = (ImageButton) findViewById(R.id.edit_profil_fb);
+
         profil_picture = (ImageView) findViewById(R.id.profil_picture_edit);
 
         modif_prenom = (EditText) findViewById(R.id.modif_prenom);
@@ -51,7 +74,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         modif_nom = (EditText) findViewById(R.id.modif_nom);
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
 
-        email = (EditText) findViewById(R.id.email);
+        EditText email = (EditText) findViewById(R.id.email);
         email.setText(AppMoment.getInstance().user.getEmail());
 
         phone = (EditText) findViewById(R.id.phone);
@@ -71,6 +94,8 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             @Override
             public void onClick(View v) {
 
+                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
+
                 RequestParams requestParams = new RequestParams();
                 if(modif_prenom.getText() != modif_prenom.getHint() && modif_prenom.getText() != null)
                     requestParams.put("firstname",   modif_prenom.getText().toString());
@@ -84,25 +109,89 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                     requestParams.put("secondEmail", secondEmail.getText().toString());
                 if(description.getText() != description.getHint() && description.getText() != null)
                     requestParams.put("description", description.getText().toString());
+                if(facebookId != null)
+                    requestParams.put("facebookId", facebookId);
+                if(mImageCaptureUri != null) {
+                    File photo = new File(mImageCaptureUri.getPath());
+                    try {
+                        requestParams.put("photo", photo);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                // TODO Photo
-
-                MomentApi.post("/user", requestParams, new JsonHttpResponseHandler() {
+                MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
-                        AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
+                        AppMoment.getInstance().user.setUserFromJson(response);
                         AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                        progressDialog.cancel();
                     }
 
                     @Override
                     public void onFailure(Throwable e, JSONObject response){
                         e.printStackTrace();
+                        progressDialog.cancel();
+                        Toast.makeText(EditProfilActivity.this, "Une erreur s'est produite", Toast.LENGTH_LONG).show();
                     }
                 });
             }
         });
+
+        facebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openActiveSession(EditProfilActivity.this, true, fbStatusCallback, Arrays.asList(
+                        new String[]{"email"}), new Bundle());
+            }
+        });
     }
+
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
+                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
+                SSO_WITH_FALLBACK).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+
+//        session = null;
+
+        if (session == null) {
+            Log.d("", "" + savedInstanceState);
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForRead(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (response != null) {
+                            try {
+                                facebookId = user.getId();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("", "Exception e");
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -121,6 +210,9 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
     public void touchedPhoto(View view){
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mImageCaptureUri = null;
+        takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
+                mImageCaptureUri);
         startActivityForResult(takePictureIntent, 0);
     }
 
@@ -133,6 +225,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 mImageBitmap = (Bitmap) extras.get("data");
                 profil_picture.setImageBitmap(Images.getRoundedCornerBitmap(mImageBitmap));
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+            Session.getActiveSession()
+                    .onActivityResult(this, requestCode, resultCode, data);
         }
     }
 

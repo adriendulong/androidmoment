@@ -41,6 +41,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -124,6 +125,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
+        String monthString = new DateFormatSymbols().getMonths()[month];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -132,7 +134,7 @@ public class ChatFragment extends Fragment {
         }
 
         if(date != null) {
-            date.setText(""+day+" "+month);
+            date.setText(""+day+" "+monthString);
         }
 
         if (chatDroit != null) {
@@ -178,6 +180,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
+        String monthString = new DateFormatSymbols().getMonths()[month];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -186,7 +189,7 @@ public class ChatFragment extends Fragment {
         }
 
         if(date != null) {
-            date.setText(""+day+" "+month);
+            date.setText(""+day+" "+monthString);
         }
 
         if (chatDroit != null) {
@@ -232,6 +235,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
+        String monthString = new DateFormatSymbols().getMonths()[month];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -240,7 +244,7 @@ public class ChatFragment extends Fragment {
         }
 
         if(date != null) {
-            date.setText(""+day+" "+month);
+            date.setText(""+day+" "+monthString);
         }
 
         if (chatGauche != null) {
@@ -285,6 +289,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
+        String monthString = new DateFormatSymbols().getMonths()[month];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -293,7 +298,7 @@ public class ChatFragment extends Fragment {
         }
 
         if(date != null) {
-            date.setText(""+day+" "+month);
+            date.setText(""+day+" "+monthString);
         }
 
         if (chatGauche != null) {

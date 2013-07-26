@@ -220,7 +220,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/btn_rgl_fb"
-                        android:layout_centerInParent="true"/>
+                        android:layout_centerInParent="true"
+                        android:id="@+id/edit_profil_fb"/>
             </RelativeLayout>
         </LinearLayout>
 
