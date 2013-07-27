@@ -6,10 +6,7 @@ import android.support.v4.app.NavUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ListView;
+import android.widget.*;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
@@ -40,6 +37,7 @@ public class NotificationsActivity extends SherlockActivity {
     //Position on notif or invit
     private int positionTab;
     private DisplayMetrics metrics;
+    private TextView defaultNotifs;
 
     private int NOTIFICATIONS = 0;
     private int INVITATIONS = 1;
@@ -86,56 +84,69 @@ public class NotificationsActivity extends SherlockActivity {
         //Get graphic elements
         orangeIndicator = (ImageView)findViewById(R.id.orange_indicator);
         orangeIndicator.getLayoutParams().width = metrics.widthPixels/2;
+
+        defaultNotifs = (TextView)findViewById(R.id.default_notifs);
     }
 
     @Override
     public void onStart(){
         super.onStart();
 
-        //Init list
-        for(int i=0;i<AppMoment.getInstance().user.getNotifications().size();i++){
-            notifications.add(AppMoment.getInstance().user.getNotifications().get(i));
-        }
-        adapterNotifs.notifyDataSetChanged();
+        if(notifications.size()==0){
+            //Init list
+            for(int i=0;i<AppMoment.getInstance().user.getNotifications().size();i++){
+                notifications.add(AppMoment.getInstance().user.getNotifications().get(i));
+            }
+            adapterNotifs.notifyDataSetChanged();
 
-        //We init with the invitations otherwise we go to get it
-        if(AppMoment.getInstance().user.getInvitations()!=null){
-            for(int i=0;i<AppMoment.getInstance().user.getInvitations().size();i++){
-                invitations.add(AppMoment.getInstance().user.getInvitations().get(i));
+            if(notifications.size()==0){
+                notifsListView.setVisibility(View.GONE);
             }
         }
-        else{
-            MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
 
-                @Override
-                public void onSuccess(JSONObject response) {
-                    try {
-                        JSONArray notifsObject = response.getJSONArray("invitations");
 
-                        for (int i = 0; i < notifsObject.length(); i++) {
+        if(invitations.size()==0){
+            //We init with the invitations otherwise we go to get it
+            if(AppMoment.getInstance().user.getInvitations()!=null){
+                for(int i=0;i<AppMoment.getInstance().user.getInvitations().size();i++){
+                    invitations.add(AppMoment.getInstance().user.getInvitations().get(i));
+                }
+            }
+            else{
+                MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
 
-                            Notification notif = new Notification();
-                            notif.setFromJson(notifsObject.getJSONObject(i));
-                            invitations.add(notif);
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            JSONArray notifsObject = response.getJSONArray("invitations");
+
+                            for (int i = 0; i < notifsObject.length(); i++) {
+
+                                Notification notif = new Notification();
+                                notif.setFromJson(notifsObject.getJSONObject(i));
+                                invitations.add(notif);
+                            }
+
+                            AppMoment.getInstance().user.setInvitations(invitations);
+
+                            Log.e("NB INVITATIONS", ""+AppMoment.getInstance().user.getInvitations().size());
+
+
+                            adapterInvits.notifyDataSetChanged();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-
-                        AppMoment.getInstance().user.setInvitations(invitations);
-
-                        Log.e("NB INVITATIONS", ""+AppMoment.getInstance().user.getInvitations().size());
-
-
-                        adapterInvits.notifyDataSetChanged();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
 
-                @Override
-                public void onFailure(Throwable error, String content) {
-                    System.out.println(content);
-                }
-            });
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        System.out.println(content);
+                    }
+                });
+            }
+
         }
+
 
 
     }
@@ -166,6 +177,14 @@ public class NotificationsActivity extends SherlockActivity {
             orangeIndicator.setLayoutParams(params);
 
             notifsListView.setAdapter(adapterNotifs);
+        }
+
+        if(notifications.size()==0){
+            notifsListView.setVisibility(View.GONE);
+            defaultNotifs.setText(R.string.notifs_vide);
+        }
+        else{
+            notifsListView.setVisibility(View.VISIBLE);
         }
 
     }
@@ -217,6 +236,13 @@ public class NotificationsActivity extends SherlockActivity {
             }
             */
 
+        }
+        if(invitations.size()==0){
+            notifsListView.setVisibility(View.GONE);
+            defaultNotifs.setText(R.string.invits_vide);
+        }
+        else{
+            notifsListView.setVisibility(View.VISIBLE);
         }
 
     }

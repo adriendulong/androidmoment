@@ -94,7 +94,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             @Override
             public void onClick(View v) {
 
-                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
+                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise Ã  jour");
 
                 RequestParams requestParams = new RequestParams();
                 if(modif_prenom.getText() != modif_prenom.getHint() && modif_prenom.getText() != null)

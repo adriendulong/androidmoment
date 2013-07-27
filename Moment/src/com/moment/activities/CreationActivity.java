@@ -9,9 +9,12 @@ import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -41,6 +44,7 @@ public class CreationActivity extends SherlockActivity {
     private Session session;
     private String facebookUserId;
     private ProgressDialog dialog;
+    private EditText edit_nom_moment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,20 @@ public class CreationActivity extends SherlockActivity {
         
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        edit_nom_moment = (EditText)findViewById(R.id.edit_nom_moment);
+
+        edit_nom_moment.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    valideNom(v);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
         fontNumans = Typeface.createFromAsset(getAssets(),
                 "fonts/Numans-Regular.otf");

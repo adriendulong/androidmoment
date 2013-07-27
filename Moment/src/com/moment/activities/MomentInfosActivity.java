@@ -279,7 +279,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
 			    AppMoment.getInstance().chatDao.insert(chat);
 
-		    	messageRight(chat);
+                chatFr.messageRight(chat, -1);
 
 		    	postMessage.setText("");
             }

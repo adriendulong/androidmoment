@@ -17,10 +17,13 @@ import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Date;
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class CreationStep1Fragment extends Fragment {
 	private Moment moment;
+    private Button dateDebut, dateFin, heureDebut, heureFin;
 
 	
 	
@@ -45,6 +48,13 @@ public class CreationStep1Fragment extends Fragment {
 		
 		TextView name = (TextView)view.findViewById(R.id.creation_moment_name);
 		name.setText(this.moment.getName());
+
+        //Buttons
+        //Buttons
+        dateDebut = (Button)view.findViewById(R.id.date_debut_button);
+        heureDebut = (Button)view.findViewById(R.id.heure_debut_button);
+        dateFin = (Button)view.findViewById(R.id.date_fin_button);
+        heureFin = (Button)view.findViewById(R.id.heure_fin_button);
 		
 		if(this.moment.getKeyBitmap()!=null){
 			ImageView photo_moment = (ImageView)view.findViewById(R.id.creation_moment_image);
@@ -64,9 +74,7 @@ public class CreationStep1Fragment extends Fragment {
             moisDebut +=1;
             int jourDebut = calDebut.get(Calendar.DAY_OF_MONTH);
 
-            Button dateDebut = (Button)view.findViewById(R.id.date_debut_button);
             dateDebut.setText(""+jourDebut+"/"+moisDebut+"/"+anneeDebut);
-            Button heureDebut = (Button)view.findViewById((R.id.heure_debut_button));
             heureDebut.setText(calDebut.get(Calendar.HOUR)+":"+calDebut.get(Calendar.MINUTE));
         }
 
@@ -80,10 +88,7 @@ public class CreationStep1Fragment extends Fragment {
             moisFin += 1;
             int jourFin = calFin.get(Calendar.DAY_OF_MONTH);
 
-            Button dateFin = (Button)view.findViewById(R.id.date_fin_button);
             dateFin.setText(""+jourFin+"/"+moisFin+"/"+anneeFin);
-
-            Button heureFin = (Button)view.findViewById((R.id.heure_fin_button));
             heureFin.setText(calFin.get(Calendar.HOUR)+":"+calFin.get(Calendar.MINUTE));
 		}
 
@@ -92,15 +97,46 @@ public class CreationStep1Fragment extends Fragment {
 		return view;
 	}
 	
+    public Date getStartDate(){
+        int jourDebut = Integer.parseInt(dateDebut.getText().toString().split("/")[0]);
+        int moisDebut = Integer.parseInt(dateDebut.getText().toString().split("/")[1])-1;
+        int anneeDebut = Integer.parseInt(dateDebut.getText().toString().split("/")[2]);
+        GregorianCalendar calendarDebut;
 
-	/**
-	 * fonction utilisée afin de modifié la font de tous les champs
-	 */
-	
-	public void initView(){
-		if(moment!=null){
 
+        if (heureDebut.getText().toString().split(":").length ==2){
+            int heureDebutInt = Integer.parseInt(heureDebut.getText().toString().split(":")[0]);
+            int minuteDebutInt = Integer.parseInt(heureDebut.getText().toString().split(":")[1]);
+            calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut, heureDebutInt, minuteDebutInt);
         }
-	}
+        else{
+            calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut);
+        }
+
+
+        return new Date(calendarDebut.getTimeInMillis());
+    }
+
+    public Date getEndDate(){
+        int jourFin = Integer.parseInt(dateFin.getText().toString().split("/")[0]);
+        int moisFin = Integer.parseInt(dateFin.getText().toString().split("/")[1])-1;
+        int anneeFin = Integer.parseInt(dateFin.getText().toString().split("/")[2]);
+        GregorianCalendar calendarFin;
+
+
+        if (heureFin.getText().toString().split(":").length ==2){
+            int heureFinInt = Integer.parseInt(heureFin.getText().toString().split(":")[0]);
+            int minuteFinInt = Integer.parseInt(heureFin.getText().toString().split(":")[1]);
+            calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin, heureFinInt, minuteFinInt);
+        }
+        else{
+            calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin);
+        }
+
+
+        return new Date(calendarFin.getTimeInMillis());
+    }
+
+
 
 }

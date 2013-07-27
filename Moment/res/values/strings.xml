@@ -174,4 +174,8 @@
     <!-- Modif Profil -->
     <string name="modif_cover">Modifier la cover</string>
 
+    <!-- Notifs & Invites -->
+    <string name="notifs_vide">Aucune notification pour le moment :( \n\n Des vacances, un voyage, une soirée ? Pensez à créer un moment pour l\'organiser et partager toutes les photos avec vos amis</string>
+    <string name="invits_vide">Aucune invitation pour l\'instant.</string>
+
 </resources>

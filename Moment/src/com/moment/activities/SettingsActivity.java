@@ -97,7 +97,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
                 intent.setType("message/rfc822");
                 intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Hello Moment, un petit mot");
-                intent.putExtra(Intent.EXTRA_TEXT, "C'était juste pour vous dire");
+                intent.putExtra(Intent.EXTRA_TEXT, "C'Ã©tait juste pour vous dire");
 
                 startActivity(Intent.createChooser(intent, "Send Email"));
             }

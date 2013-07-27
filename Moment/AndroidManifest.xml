@@ -165,6 +165,7 @@
         <activity
                 android:screenOrientation="portrait"
                 android:name=".activities.InvitationActivity"
+                android:windowSoftInputMode="stateHidden"
                 android:label="@string/title_activity_invitation" >
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"

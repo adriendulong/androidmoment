@@ -61,22 +61,21 @@
 	                       android:textSize="10sp"
                            android:id="@+id/autheur"
                            android:layout_alignParentLeft="true"/>
-
-                        <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textColor="@color/gris_texte"
-                                android:textSize="10sp"
-                                android:layout_centerInParent="true"
-                                android:id="@+id/date"
-                                />
-
                         <TextView android:layout_width="wrap_content"
 	                       android:layout_height="wrap_content"
 	                       android:textColor="@color/gris_texte"
 	                       android:textSize="10sp"
                            android:layout_alignParentRight="true"
                            android:id="@+id/heure"/>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/gris_texte"
+                            android:textSize="10sp"
+                            android:layout_toLeftOf="@id/heure"
+                            android:layout_marginRight="5dp"
+                            android:id="@+id/date"
+                            />
 	                </RelativeLayout>
                 
             </LinearLayout>

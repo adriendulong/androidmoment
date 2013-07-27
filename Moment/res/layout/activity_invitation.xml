@@ -4,7 +4,7 @@
     android:orientation="vertical">
     
     <RelativeLayout android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="55dp"
         android:background="@color/white"
         android:onClick="inviteFacebook">
         
@@ -68,7 +68,7 @@
     </RelativeLayout>
     
     <RelativeLayout android:layout_width="fill_parent"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:orientation="horizontal"
         android:background="@drawable/background">
         
@@ -77,8 +77,10 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="50dp"
+            android:singleLine="true"
             android:hint="Rechercher ou ajouter par mail/num de tel"
             android:textSize="12dp"
+            android:imeOptions="actionSearch"
             android:layout_alignParentBottom="true"
             android:layout_marginBottom="4dp"/>
         <ImageView android:layout_width="wrap_content"

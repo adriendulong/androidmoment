@@ -71,6 +71,7 @@ public class PhotosFragment extends Fragment {
     private View view;
 
     private Intent intent;
+    private GridView gridView;
 
     private final int CAMERA_PICTURE = 1;
     private final int GALLERY_PICTURE = 2;
@@ -124,7 +125,7 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        imageAdapter.notifyDataSetChanged();
+        if(this.momentID!=null) imageAdapter.notifyDataSetChanged();
         Log.e("PhotoFragment","RESUME");
     }
 
@@ -140,7 +141,7 @@ public class PhotosFragment extends Fragment {
         myAlertDialog.setTitle("Partager des Photos");
         myAlertDialog.setMessage("Prendre une photo ou importer des photos depuis la galerie");
 
-        myAlertDialog.setPositiveButton("Gallery", new DialogInterface.OnClickListener() {
+        myAlertDialog.setPositiveButton("Galerie", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
                 intent = new Intent(getActivity(), CustomGallery.class);
                 intent.setType("image/*");
@@ -225,6 +226,7 @@ public class PhotosFragment extends Fragment {
 
                 imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setId(0);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(10, 10, 10, 10);
                 imageView.setBackgroundColor(Color.WHITE);
@@ -248,6 +250,7 @@ public class PhotosFragment extends Fragment {
         private Notification notification;
         private Photo photo;
         private final String photo_uri;
+        private int position;
 
 
         public MultiUploadTask(String photo_uri){
@@ -279,9 +282,10 @@ public class PhotosFragment extends Fragment {
         protected void onPreExecute(){
             createNotification("FUCK","YEAH",false);
 
-                photo = new Photo();
-                photos.add(photo);
-                imageAdapter.notifyDataSetChanged();
+            photo = new Photo();
+            photos.add(photo);
+            position = photos.size()-1;
+            imageAdapter.notifyDataSetChanged();
         }
 
         @Override
@@ -329,7 +333,8 @@ public class PhotosFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        Picasso.with(context).load(photo.getUrlThumbnail()).resize(90,90).centerCrop();
+                        float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
+                        Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)gridView.getChildAt(position+1).findViewById(0));
                         imageAdapter.notifyDataSetChanged();
 
                         createNotification("YEAH", "FUCK", true);
@@ -345,7 +350,8 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result){
-            imageAdapter.notifyDataSetChanged();
+            //float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
+            //Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into((ImageView)gridView.getChildAt(position).findViewById(0));
         }
 
     }
@@ -405,7 +411,7 @@ public class PhotosFragment extends Fragment {
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);
-        GridView gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView = (GridView) view.findViewById(R.id.gridview);
         gridView.setAdapter(imageAdapter);
 
         gridView.setOnItemClickListener(new OnItemClickListener() {

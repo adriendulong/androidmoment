@@ -32,5 +32,18 @@
               android:layout_height="fill_parent"
               android:id="@+id/list_notifs"
               android:divider="@drawable/separation_point"/>
+    <LinearLayout android:layout_width="fill_parent"
+                  android:layout_height="fill_parent"
+                  android:orientation="horizontal"
+                  android:gravity="center">
+        <TextView android:layout_height="wrap_content"
+                  android:layout_width="300dp"
+                  android:text="@string/notifs_vide"
+                  android:textSize="12dp"
+                  android:id="@+id/default_notifs"
+                  android:gravity="center"/>
+     </LinearLayout>
+
+
 
 </LinearLayout>

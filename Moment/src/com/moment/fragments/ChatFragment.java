@@ -150,7 +150,7 @@ public class ChatFragment extends Fragment {
 
     }
 
-    private void messageRight(Chat chat, int index){
+    public void messageRight(Chat chat, int index){
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
@@ -200,12 +200,13 @@ public class ChatFragment extends Fragment {
             Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
 
         if (chatDroit != null) {
-            layoutChat.addView(chatDroit, index);
+            if(index!=-1)layoutChat.addView(chatDroit, index);
+            else layoutChat.addView(chatDroit);
         }
 
     }
 
-    private void messageLeft(Chat chat){
+    public void messageLeft(Chat chat){
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);

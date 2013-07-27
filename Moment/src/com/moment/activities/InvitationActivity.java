@@ -1,6 +1,7 @@
 package com.moment.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -11,7 +12,10 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -21,9 +25,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Session;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;
+import com.moment.models.Moment;
 import com.moment.models.User;
 
 import org.apache.http.entity.StringEntity;
@@ -157,6 +163,17 @@ public class InvitationActivity extends SherlockFragmentActivity {
             @Override
             public void afterTextChanged(Editable s) {
 
+            }
+        });
+        searchGuests.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    hideKeyboard();
+                    handled = true;
+                }
+                return handled;
             }
         });
 
@@ -308,6 +325,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
                     Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
                     intent.putExtra("fbids", fbids);
+                    intent.putExtra("momentId", idMoment);
                     startActivityForResult(intent, 0);
                 } else {
                     try {
@@ -330,6 +348,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     }
 
     public void inviteSMS() throws JSONException {
+        Moment moment = AppMoment.getInstance().user.getMomentById(idMoment);
 
         if(SMSUsers != null && SMSUsers.size()>0){
             String _messageNumber="";
@@ -339,14 +358,27 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 if(i<(SMSUsers.size()-1)) _messageNumber += ";";
             }
 
-            String messageText = "Hi , Just SMSed to say hello";
+            String messageText = "Je viens de t'inviter à "+moment.getName()+" sur Moment : <unique_url>. Rejoins nous pour partager les photos et organiser l'évènement. A bientôt, "+AppMoment.getInstance().user.getFirstName()+" "+AppMoment.getInstance().user.getLastName();
             Intent sendIntent = new Intent(Intent.ACTION_VIEW);
             sendIntent.setData(Uri.parse("sms:" + _messageNumber));
             sendIntent.putExtra("sms_body", messageText);
             startActivity(sendIntent);
-            finish();
-            overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+
         }
+        finish();
+        overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+    }
+
+
+    private void hideKeyboard()
+    {
+        InputMethodManager inputManager = (InputMethodManager)
+                getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(this.getCurrentFocus()!=null){
+            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
     }
 
 }

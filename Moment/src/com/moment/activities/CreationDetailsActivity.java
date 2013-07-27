@@ -1,12 +1,10 @@
 package com.moment.activities;
 
 import android.annotation.SuppressLint;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
+import android.app.*;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -51,6 +49,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -80,6 +79,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     private int POP_UP_CREA = 11;
 	private ProgressDialog dialog;
     private Boolean inModif = false;
+    private Button dateDebutEdit, heureDebutEdit,dateFinEdit,heureFinEdit;
 
 
 	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
@@ -107,6 +107,12 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             moment = new Moment();
             moment.setName(nomMoment);
         }
+
+        //Buttons
+        dateDebutEdit = (Button)findViewById(R.id.date_debut_button);
+        heureDebutEdit = (Button)findViewById(R.id.heure_debut_button);
+        dateFinEdit = (Button)findViewById(R.id.date_fin_button);
+        heureFinEdit = (Button)findViewById(R.id.heure_fin_button);
 
 
         // On instantie le fragment manager et on vient ajouter le premier fragment
@@ -138,6 +144,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             else{
                 menu.findItem(R.id.left_options_creation).setVisible(false);
                 menu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+                myMenu.findItem(R.id.right_options_creation).setEnabled(false);
             }
     	}
     	else if(step==1){
@@ -188,23 +195,46 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     if(validateFirst){
                         downTwo();
 
-                        if(validateSecond==1){
-                            myMenu.findItem(R.id.left_options_creation).setVisible(true);
-                            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
+                        //Second date after first one ?
+                        if(areDatesCorrect()){
+                            if(validateSecond==1){
+                                myMenu.findItem(R.id.left_options_creation).setVisible(true);
+                                myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
+                            }
+                            else{
+                                myMenu.findItem(R.id.left_options_creation).setVisible(true);
+                                myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
+                                myMenu.findItem(R.id.right_options_creation).setEnabled(false);
+                            }
+                            step = 1;
+                            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                            fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
+
+                            fragmentTransaction.replace(android.R.id.content, fragment2);
+                            fragmentTransaction.commit();
                         }
                         else{
-                            myMenu.findItem(R.id.left_options_creation).setVisible(true);
-                            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+                            // set title
+                            alertDialogBuilder.setTitle("Dates incorrectes");
+
+                            // set dialog message
+                            alertDialogBuilder
+                                    .setMessage("Vérifiez que la date de fin est supérieur à celle de début")
+                                    .setCancelable(false)
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            // if this button is clicked, just close
+                                            // the dialog box and do nothing
+                                            dialog.cancel();
+                                        }
+                                    });
+                            // create alert dialog
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            // show it
+                            alertDialog.show();
                         }
-
-                        step = 1;
-
-
-                        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
-
-                        fragmentTransaction.replace(android.R.id.content, fragment2);
-                        fragmentTransaction.commit();
                     }
             	}
             	else{
@@ -265,72 +295,11 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void downTwo() {
-       Log.d("Down", "DOWN OK");
-       GregorianCalendar calendarDebut;
-       GregorianCalendar calendarFin;
-
-
-       /**
-        * On enregistre les dates
-        */
-
-       Button dateDebutEdit = (Button)findViewById(R.id.date_debut_button);
-       Button heureDebutEdit = (Button)findViewById(R.id.heure_debut_button);
-       Button dateFinEdit = (Button)findViewById(R.id.date_fin_button);
-       Button heureFinEdit = (Button)findViewById(R.id.heure_fin_button);
-
-       //
-       // Date de début
-       //
-
-       int jourDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[0]);
-       int moisDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[1])-1;
-       int anneeDebut = Integer.parseInt(dateDebutEdit.getText().toString().split("/")[2]);
-
-
-
-       if (heureDebutEdit.getText().toString().split(":").length ==2){
-           int heureDebut = Integer.parseInt(heureDebutEdit.getText().toString().split(":")[0]);
-           int minuteDebut = Integer.parseInt(heureDebutEdit.getText().toString().split(":")[1]);
-           calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut, heureDebut, minuteDebut);
-       }
-       else{
-           calendarDebut = new GregorianCalendar(anneeDebut, moisDebut, jourDebut);
-       }
-
-       System.out.println(calendarDebut.toString());
-
 
        //On enregistre la date de d�but
-       moment.setDateDebut(calendarDebut.getTime());
-       System.out.println(moment.getDateDebut().toString());
-
-
-       //
-       // Date de fin
-       //
-
-       int jourFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[0]);
-       int moisFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[1])-1;
-       int anneeFin = Integer.parseInt(dateFinEdit.getText().toString().split("/")[2]);
-
-
-       if(heureFinEdit.getText().toString().split(":").length ==2){
-           int heureFin = Integer.parseInt(heureFinEdit.getText().toString().split(":")[0]);
-           int minuteFin = Integer.parseInt(heureFinEdit.getText().toString().split(":")[1]);
-           calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin, heureFin, minuteFin);
-       }
-        else{
-           calendarFin = new GregorianCalendar(anneeFin, moisFin, jourFin);
-       }
-
-       System.out.println(calendarFin.toString());
-
-
+       moment.setDateDebut(fragment.getStartDate());
        //On enregistre la date de fin
-       moment.setDateFin(calendarFin.getTime());
-
-       System.out.println(moment.getDateFin().toString());
+       moment.setDateFin(fragment.getEndDate());
 
 	 }
 
@@ -375,7 +344,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     public void dateDebut(View view) {
 
     	//On ouvre le date picker
-    	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button));
+    	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button), (Button)findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
 
 	}
@@ -481,12 +450,18 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	public static class DatePickerFragment extends DialogFragment
     implements DatePickerDialog.OnDateSetListener {
 
-    	Button dateEdit;
+    	Button dateEdit, otherDateEdit;
 
-    	public DatePickerFragment(Button dateEdit){
+    	public DatePickerFragment(Button dateEdit, Button otherDateEdit){
     		//if wichDebut = 0 ==> D�but else Fin
     		this.dateEdit = dateEdit;
+            this.otherDateEdit = otherDateEdit;
     	}
+
+        public DatePickerFragment(Button dateEdit){
+            //if wichDebut = 0 ==> D�but else Fin
+            this.dateEdit = dateEdit;
+        }
 
 		@Override
 		public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -514,17 +489,22 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
 		@Override
 		public void onDateSet(DatePicker view, int year, int month, int day) {
-			// Do something with the date chosen by the user
-			//updateTextDate(year, month, day);
-			this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
 
             if(this.dateEdit.getTag().equals("debutDate")){
                 Log.e("CREATION", "TAG DATE DEBUT");
+                this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
                 validateFirstDate = true;
+
+                if(this.otherDateEdit.getText().toString().split("/").length<2){
+                    GregorianCalendar selectedDate = new GregorianCalendar(year, month, day);
+                    selectedDate.add(GregorianCalendar.DAY_OF_MONTH, 1);
+                    this.otherDateEdit.setText(""+selectedDate.get(GregorianCalendar.DAY_OF_MONTH)+"/"+(selectedDate.get(GregorianCalendar.MONTH)+1)+"/"+selectedDate.get(GregorianCalendar.YEAR));
+                }
             }
             else{
                 Log.e("CREATION", "TAG DATE FIN");
                 validateSecondDate = true;
+                this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
             }
 
             validateFirstFields();
@@ -653,8 +633,13 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	if(validateFirstDate && validateSecondDate){
     		validateFirst = true;
     		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
-
+            myMenu.findItem(R.id.right_options_creation).setEnabled(true);
     	}
+        else{
+            validateFirst = false;
+            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown_desactivated);
+            myMenu.findItem(R.id.right_options_creation).setEnabled(false);
+        }
 
     }
 
@@ -898,6 +883,17 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         validateFirstDate = true;
         validateSecondDate = true;
         validateFirstFields();
+    }
+
+    /**
+     * Validate that the first date is superior to the second one
+     */
+
+    public boolean areDatesCorrect(){
+
+        if(fragment.getEndDate().after(fragment.getStartDate())) return true;
+        else return false;
+
     }
 
 
