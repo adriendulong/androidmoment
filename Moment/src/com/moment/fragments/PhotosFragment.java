@@ -335,7 +335,6 @@ public class PhotosFragment extends Fragment {
                         }
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                         Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)gridView.getChildAt(position+1).findViewById(0));
-                        imageAdapter.notifyDataSetChanged();
 
                         createNotification("YEAH", "FUCK", true);
                     }
