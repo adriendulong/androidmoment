@@ -280,7 +280,7 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPreExecute(){
-            createNotification("FUCK","YEAH",false);
+            createNotification("Upload", photos_uri.size() + "Photos", false);
 
             photo = new Photo();
             photos.add(photo);
@@ -339,12 +339,12 @@ public class PhotosFragment extends Fragment {
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                         Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)gridView.getChildAt(position+1).findViewById(0));
 
-                        createNotification("YEAH", "FUCK", true);
                     } catch (NullPointerException npe) {
                         Log.e("NPE", "");
                         npe.printStackTrace();
                     }
                 }
+
                 @Override
                 public void onFailure(Throwable e,JSONObject response){
                     e.printStackTrace();
@@ -359,6 +359,8 @@ public class PhotosFragment extends Fragment {
             if(photos_uri.size() > 0){
                 MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                 multiUploadTask.execute();
+            } else {
+                createNotification("Upload", "termine", true);
             }
         }
 
@@ -399,8 +401,8 @@ public class PhotosFragment extends Fragment {
                         if(!photos_files.isEmpty() && !photos_uri.isEmpty())
                         {
 
-                                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
-                                multiUploadTask.execute();
+                            MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                            multiUploadTask.execute();
 
                         }
 
