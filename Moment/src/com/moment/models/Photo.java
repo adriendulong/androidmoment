@@ -2,6 +2,7 @@ package com.moment.models;
 
 import android.graphics.Bitmap;
 
+import android.widget.ImageView;
 import com.moment.classes.PhotoListAdapter;
 
 import org.json.JSONException;
@@ -20,6 +21,16 @@ public class Photo {
 	private String urlThumbnail;
     private String urlUnique;
     private Date time;
+
+    public ImageView getGridImage() {
+        return gridImage;
+    }
+
+    public void setGridImage(ImageView gridImage) {
+        this.gridImage = gridImage;
+    }
+
+    private ImageView gridImage;
 
 	
 	public int getId() {
