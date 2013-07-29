@@ -280,7 +280,7 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPreExecute(){
-            createNotification("Upload", photos_uri.size() + "Photos", false);
+            createNotification("Upload", photos_uri.size() + " Photos", false);
 
             photo = new Photo();
             photos.add(photo);
