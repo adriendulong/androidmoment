@@ -51,8 +51,8 @@ import java.util.ArrayList;
 
 public class MomentInfosActivity extends SherlockFragmentActivity {
 
-	static final int PICK_CAMERA_COVER = 1;
-	static final int PICK_CAMERA_PHOTOS = 2;
+    static final int PICK_CAMERA_COVER = 1;
+    static final int PICK_CAMERA_PHOTOS = 2;
     static final int NEW_INVIT = 3;
     static final int LIST_INVIT = 4;
 
@@ -63,22 +63,22 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     //From push
     private int type_id, moment_id;
 
-	LayoutInflater inflater;
-	Boolean stateAcceptVolet = false;
-	
-	private MyPagerAdapter mPagerAdapter;
-	private ViewPager pager;
+    LayoutInflater inflater;
+    Boolean stateAcceptVolet = false;
+
+    private MyPagerAdapter mPagerAdapter;
+    private ViewPager pager;
     private Long momentID;
-	private int position = 1;
+    private int position = 1;
 
     private InfosFragment infosFr;
     private ChatFragment chatFr;
     private PhotosFragment photosFr;
 
-	Menu myMenu;
-	private GoogleMap mMap;
-	
-	ArrayList<Fragment> fragments;
+    Menu myMenu;
+    private GoogleMap mMap;
+
+    ArrayList<Fragment> fragments;
 
     //The Moment
     private Moment moment;
@@ -105,7 +105,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        String precedente = getIntent().getStringExtra("precedente");        
+        String precedente = getIntent().getStringExtra("precedente");
 
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
@@ -126,19 +126,19 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         fragments = new ArrayList<Fragment>();
 
-     	Bundle args = new Bundle();
+        Bundle args = new Bundle();
         infosFr = new InfosFragment();
         photosFr = new PhotosFragment();
         chatFr = new ChatFragment();
-     	fragments.add(photosFr);
-     	fragments.add(infosFr);
-   		fragments.add(chatFr);
+        fragments.add(photosFr);
+        fragments.add(infosFr);
+        fragments.add(chatFr);
 
-   		this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
-   		pager = (ViewPager) super.findViewById(R.id.viewpager);
-   		pager.setAdapter(this.mPagerAdapter);
+        this.mPagerAdapter = new MyPagerAdapter(getSupportFragmentManager());
+        pager = (ViewPager) super.findViewById(R.id.viewpager);
+        pager.setAdapter(this.mPagerAdapter);
 
-   		pager.setCurrentItem(position, false);
+        pager.setCurrentItem(position, false);
 
         pager.setOffscreenPageLimit(2);
 
@@ -146,22 +146,22 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         this.pager.setOnPageChangeListener(new OnPageChangeListener() {
 
-			@Override
-			public void onPageSelected(int arg0) {
-				System.out.println("Page SELECTIONNE :" + arg0);
+            @Override
+            public void onPageSelected(int arg0) {
+                System.out.println("Page SELECTIONNE :" + arg0);
                 updateMenuItem(arg0);
 
-			}
+            }
 
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-			}
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
 
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
 
-			}
-		});
+            }
+        });
 
         //If we come from the moment creation we go to the invits
         if (precedente.equals("creation")) callInvit(NEW_INVIT);
@@ -183,62 +183,91 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     @Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		myMenu = menu;
-		getSupportMenuInflater().inflate(R.menu.activity_moment_infos, menu);
+    public boolean onCreateOptionsMenu(Menu menu) {
+        myMenu = menu;
+        getSupportMenuInflater().inflate(R.menu.activity_moment_infos, menu);
         updateMenuItem(position);
-		return true;
-	}
+        return true;
+    }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
     }
 
- public class MyPagerAdapter extends FragmentStatePagerAdapter {
+    @Override
+    public void onBackPressed(){
 
-    	protected final String[] CONTENT = new String[] {"PHOTOS","INFOS","CHAT"};
+        if(photosFr.isAsyncRun() == true) {
 
-    	public MyPagerAdapter(FragmentManager fm) {
-    		super(fm);
-    	}
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder
+                    .setTitle("Attention")
+                    .setMessage("Vous risquez d'interrompre le partage de photos, voulez vous quitter?")
+                    .setCancelable(false)
+                    .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    })
+                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
 
-    	@Override
-    	public Fragment getItem(int position) {
-    		return fragments.get(position);
-    	}
-
-    	@Override
-    	public int getCount() {
-    		return fragments.size();
-    	}
-    	
-    	@Override
-        public CharSequence getPageTitle(int position) {
-          return CONTENT[position % CONTENT.length];
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        } else {
+            super.onBackPressed();
         }
- }
+    }
 
- @Override
- public boolean onOptionsItemSelected(MenuItem item) {
-     switch (item.getItemId()) {
-         case android.R.id.home:
-             NavUtils.navigateUpFromSameTask(this);
-             return true;
-         case R.id.tab_infos:
-         	pager.setCurrentItem(1);
-         	break;
-         
-         case R.id.tab_photo:
-        	pager.setCurrentItem(0);
-         	break;
-         
-         case R.id.tab_chat:
-        	pager.setCurrentItem(2);
-         	break;
-     }
-     return super.onOptionsItemSelected(item);
- }
+    public class MyPagerAdapter extends FragmentStatePagerAdapter {
+
+        protected final String[] CONTENT = new String[] {"PHOTOS","INFOS","CHAT"};
+
+        public MyPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return fragments.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return CONTENT[position % CONTENT.length];
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            case R.id.tab_infos:
+                pager.setCurrentItem(1);
+                break;
+
+            case R.id.tab_photo:
+                pager.setCurrentItem(0);
+                break;
+
+            case R.id.tab_chat:
+                pager.setCurrentItem(2);
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     /**
      * Function called when user click on the guests block
@@ -259,11 +288,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
 
     public void postMessage(View view){
-    	final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
-    	final String message = postMessage.getText().toString();
-    	RequestParams params = new RequestParams();
-    	params.put("message", message);
-    	
+        final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
+        final String message = postMessage.getText().toString();
+        RequestParams params = new RequestParams();
+        params.put("message", message);
+
         MomentApi.post("newchat/"+momentID, params, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
@@ -279,13 +308,13 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                 chat.setUser(AppMoment.getInstance().user);
                 AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
-			    AppMoment.getInstance().chatDao.insert(chat);
+                AppMoment.getInstance().chatDao.insert(chat);
 
                 chatFr.messageRight(chat, -1);
 
-		    	postMessage.setText("");
+                postMessage.setText("");
             }
-            
+
             public void onFailure(Throwable error, String content) {
                 System.out.println("FAILURE : "+content);
             }
@@ -318,7 +347,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void messageLeft(Chat chat){
 
-    	LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
+        LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
         PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)findViewById(R.id.scroll_chat);
 
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche,null);
@@ -338,8 +367,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         	}
 
         }), 200);*/
-        
-    	
+
+
     }
 
     public void editMessage(View view){
@@ -356,23 +385,23 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         }), 200);*/
 
     }
-    
-    
+
+
     public static class Exchanger {
-    	public static MapView mMapView;
+        public static MapView mMapView;
     }
-    
-    
-    
+
+
+
     /**
-	   * L'utilisateur clique sur la photo du moment afin d'en prendre un autre, on appelle alors la fonction concernee
-	   * @param view
-	   */
-	  
-	  public void changePhoto(View view){
-	    	InfosFragment infosFragment = (InfosFragment)fragments.get(1);
-            infosFragment.touchedPhoto();
-	    }
+     * L'utilisateur clique sur la photo du moment afin d'en prendre un autre, on appelle alors la fonction concernee
+     * @param view
+     */
+
+    public void changePhoto(View view){
+        InfosFragment infosFragment = (InfosFragment)fragments.get(1);
+        infosFragment.touchedPhoto();
+    }
 
 
     /**
@@ -692,7 +721,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         pager.setCurrentItem(0);
     }
 
-    
+
 
 }
 

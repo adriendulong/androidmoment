@@ -74,6 +74,8 @@ public class PhotosFragment extends Fragment {
     private Intent intent;
     private GridView gridView;
 
+    private boolean asyncRun = false;
+
     private final int CAMERA_PICTURE = 1;
     private final int GALLERY_PICTURE = 2;
 
@@ -193,6 +195,10 @@ public class PhotosFragment extends Fragment {
         }
     }
 
+    public boolean isAsyncRun() {
+        return asyncRun;
+    }
+
     public class ImageAdapter extends BaseAdapter {
 
         private final Context context;
@@ -291,7 +297,7 @@ public class PhotosFragment extends Fragment {
         @Override
         protected void onPreExecute(){
             createNotification("Upload", photos_uri.size() + " Photos", false);
-
+            asyncRun = true;
             photo = new Photo();
             photos.add(photo);
             position = photos.size()-1;
@@ -352,7 +358,8 @@ public class PhotosFragment extends Fragment {
 
                         if(photos_uri.size() == 0)
                         {
-                            createNotification("Upload", "termine", true);
+                            createNotification("Upload", "Termine", true);
+                            asyncRun = false;
                         }
 
                     } catch (NullPointerException npe) {
@@ -372,9 +379,13 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result){
-            if(photos_uri.size() > 0){
-                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
-                multiUploadTask.execute();
+            if(isAdded()){
+                if(photos_uri.size() > 0){
+                    MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                    multiUploadTask.execute();
+                }
+            } else {
+                createNotification("Upload annule", photos_uri.size() + " photos n'ont pas etees uploadees", true);
             }
         }
 
