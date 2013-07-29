@@ -140,21 +140,23 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
    		pager.setCurrentItem(position, false);
 
+        pager.setOffscreenPageLimit(2);
+
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        
+
         this.pager.setOnPageChangeListener(new OnPageChangeListener() {
-			
+
 			@Override
 			public void onPageSelected(int arg0) {
 				System.out.println("Page SELECTIONNE :" + arg0);
                 updateMenuItem(arg0);
-				
+
 			}
-			
+
 			@Override
 			public void onPageScrolled(int arg0, float arg1, int arg2) {
 			}
-			
+
 			@Override
 			public void onPageScrollStateChanged(int arg0) {
 
@@ -178,8 +180,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void onRestoreInstanceState(Bundle savedInstanceState){
         super.onRestoreInstanceState(savedInstanceState);
     }
-    
-    
+
+
     @Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		myMenu = menu;

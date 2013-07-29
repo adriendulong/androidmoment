@@ -347,6 +347,11 @@ public class PhotosFragment extends Fragment {
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                         Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into(photo.getGridImage());
 
+                        if(photos_uri.size() == 0)
+                        {
+                            createNotification("Upload", "termine", true);
+                        }
+
                     } catch (NullPointerException npe) {
                         Log.e("NPE", "");
                         npe.printStackTrace();
@@ -367,8 +372,6 @@ public class PhotosFragment extends Fragment {
             if(photos_uri.size() > 0){
                 MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                 multiUploadTask.execute();
-            } else {
-                createNotification("Upload", "termine", true);
             }
         }
 
