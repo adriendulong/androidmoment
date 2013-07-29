@@ -294,27 +294,28 @@ public class PhotosFragment extends Fragment {
             RequestParams requestParams = new RequestParams();
 
 
-                File file = new File(photo_uri);
+            File file = new File(photo_uri);
             Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
 
-                try {
-                    FileOutputStream stream = new FileOutputStream(file);
-                    bitmap = Images.resizeBitmap(bitmap, 1500);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                    stream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    requestParams.put("photo", file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
+            try {
+                FileOutputStream stream = new FileOutputStream(file);
+                bitmap = Images.resizeBitmap(bitmap, 900);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
+                stream.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try {
+                requestParams.put("photo", file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
 
-                MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
+            MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
 
+                    try {
                         try {
                             JSONObject json = response.getJSONObject("success");
 
@@ -333,24 +334,28 @@ public class PhotosFragment extends Fragment {
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                         Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)gridView.getChildAt(position+1).findViewById(0));
 
                         createNotification("YEAH", "FUCK", true);
+                    } catch (NullPointerException npe) {
+                        Log.e("NPE", "");
+                        npe.printStackTrace();
                     }
-                    @Override
-                    public void onFailure(Throwable e,JSONObject response){
-                        e.printStackTrace();
-                        System.out.println(response.toString());
-                    }
-                });
+                }
+                @Override
+                public void onFailure(Throwable e,JSONObject response){
+                    e.printStackTrace();
+                    System.out.println(response.toString());
+                }
+            });
             return null;
         }
 
         @Override
         protected void onPostExecute(Void result){
-            //float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-            //Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into((ImageView)gridView.getChildAt(position).findViewById(0));
+            Log.d("UPLOAD","OK");
         }
 
     }
