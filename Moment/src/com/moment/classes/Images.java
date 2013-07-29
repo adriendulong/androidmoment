@@ -83,7 +83,7 @@ public class Images {
 		int height = bitmap.getHeight();
 		float ratio;
 
-		if(width > height){
+		if(width < height){
 			ratio = Math.abs((float)width / (float)maxSize);
 		}
 
