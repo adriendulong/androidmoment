@@ -226,7 +226,6 @@ public class PhotosFragment extends Fragment {
 
                 imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setId(0);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(10, 10, 10, 10);
                 imageView.setBackgroundColor(Color.WHITE);
@@ -237,7 +236,10 @@ public class PhotosFragment extends Fragment {
             }
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
-            else { Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView); }
+            else {
+                imageView.setTag(photos.get(position-1).getId());
+                Picasso.with(context).load(photos.get(position -1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+            }
             return imageView;
         }
     }
@@ -337,9 +339,11 @@ public class PhotosFragment extends Fragment {
                         }
 
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-                        Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)gridView.getChildAt(position+1).findViewById(0));
+                        Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into((ImageView)imageAdapter.getView(position+1, null, gridView));
+                        gridView.smoothScrollToPosition(position+1);
 
                         createNotification("YEAH", "FUCK", true);
+                        Log.v("UPLOAD", "Photo "+photos.get(position).getId()+" finished");
                     } catch (NullPointerException npe) {
                         Log.e("NPE", "");
                         npe.printStackTrace();
