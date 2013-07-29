@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -92,7 +93,9 @@ public class PhotosFragment extends Fragment {
                     File tempFile = new File(s);
                     try {
                         FileInputStream fi = new FileInputStream(tempFile);
-                        photos_files.add(BitmapFactory.decodeStream(fi)) ;
+                        final BitmapFactory.Options options = new BitmapFactory.Options();
+                        options.inJustDecodeBounds = true;
+                        photos_files.add(BitmapFactory.decodeStream(fi, new Rect(0,0,0,0), options)) ;
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -345,7 +348,7 @@ public class PhotosFragment extends Fragment {
                         }
 
                         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-                        Picasso.with(context).load(photo.getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().into(photo.getGridImage());
+                        Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
 
                         if(photos_uri.size() == 0)
                         {
