@@ -285,6 +285,7 @@ public class PhotosFragment extends Fragment {
             photo = new Photo();
             photos.add(photo);
             position = photos.size()-1;
+            photos_uri.remove(0);
             imageAdapter.notifyDataSetChanged();
         }
 
@@ -355,7 +356,10 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Void result){
-            Log.d("UPLOAD","OK");
+            if(photos_uri.size() > 0){
+                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                multiUploadTask.execute();
+            }
         }
 
     }
@@ -394,11 +398,10 @@ public class PhotosFragment extends Fragment {
 
                         if(!photos_files.isEmpty() && !photos_uri.isEmpty())
                         {
-                            for(String s: photos_uri){
-                                MultiUploadTask multiUploadTask = new MultiUploadTask(s);
+
+                                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                                 multiUploadTask.execute();
-                            }
-                            photos_uri.clear();
+
                         }
 
                     } catch (JSONException e) {
@@ -406,12 +409,6 @@ public class PhotosFragment extends Fragment {
                     }
                 }
             });
-        } else if (photos != null && !photos.isEmpty() && !photos_files.isEmpty() && !photos_uri.isEmpty()) {
-            for(String s: photos_uri){
-                MultiUploadTask multiUploadTask = new MultiUploadTask(s);
-                multiUploadTask.execute();
-            }
-            photos_uri.clear();
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);
