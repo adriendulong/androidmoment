@@ -29,6 +29,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription_2);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
     @Override
@@ -51,29 +52,60 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         EditText phoneEdit = (EditText)findViewById(R.id.phone_num);
         String phone = phoneEdit.getText().toString();
 
-        RequestParams params = new RequestParams();
+        if(phone.length()>0){
+            RequestParams params = new RequestParams();
 
-        if(isPhoneNumber(phone))
-        {
-            params.put("phone", phone);
-        } else {
-            editPhoneAlert();
+            if(isPhoneNumber(phone))
+            {
+                params.put("phone", phone);
+                MomentApi.post("user", params, new JsonHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            AppMoment.getInstance().user.setNumTel(response.getString("phone"));
+                            AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+
+                Intent intent = new Intent(getApplication(), TimelineActivity.class);
+                startActivity(intent);
+            } else {
+                editPhoneAlert();
+            }
+        }
+        else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivityStep2.this);
+            alertDialogBuilder.setTitle("Pas de numéro");
+            alertDialogBuilder
+                    .setMessage("Si vous ne renseignez pas votre numéro de téléphone, il est possible que vous manquiez des invitations à des évènements. Votre numéro sera seulement utilisé pour vous permettre de recevoir toutes vos invitations.")
+                    .setCancelable(false)
+                    .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.dismiss();
+                            Intent returnIntent = new Intent();
+                            setResult(RESULT_OK, returnIntent);
+                        }
+                    })
+                    .setNegativeButton("Tant pis !", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.dismiss();
+                            Intent returnIntent = new Intent();
+                            setResult(RESULT_OK, returnIntent);
+                            Intent intent = new Intent(getApplication(), TimelineActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         }
 
-        MomentApi.post("user", params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                try {
-                    AppMoment.getInstance().user.setNumTel(response.getString("phone"));
-                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
-        Intent intent = new Intent(getApplication(), TimelineActivity.class);
-        startActivity(intent);
     }
 
     public static boolean isPhoneNumber(String phone){

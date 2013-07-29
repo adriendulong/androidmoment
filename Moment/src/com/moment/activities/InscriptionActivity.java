@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.ComponentName;
 import android.content.Context;
@@ -22,6 +21,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.View;
@@ -142,8 +142,8 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Facebook")
-               .setTitle("Facebook");
+        builder.setMessage("Voulez vous pré remplir vos informations  à partir de Facebook ?")
+               .setTitle("Importation des informations");
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -239,59 +239,57 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         String mdp = mdpEdit.getText().toString();
         String bdate = birthdate.getText().toString();
 
-
-        java.util.Date d = null;
-        SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy");
-        try {
-            d = sdf.parse(bdate);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        String str = String.valueOf(d.getTime());
-
-        RequestParams params = new RequestParams();
-        params.put("firstname", prenom);
-        params.put("lastname", nom);
-        params.put("password", mdp);
-
-        if(isEmailAdress(email))
-        {
-            params.put("email", email);
-        } else {
-            editEmailAlert();
-        }
-
-        //params.put("birth_date", str);
-
-        params.put("sex", gender);
-
-        if (regid.length() != 0) params.put("notif_id", regid);
-
-        params.put("os", "1");
-        params.put("os_version", android.os.Build.VERSION.RELEASE);
-        params.put("model", CommonUtilities.getDeviceName());
-        params.put("device_id", AppMoment.getInstance().tel_id);
-
-        if(pictureOut != null) {
-            try {
-                params.put("photo", pictureOut);
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        } else {
-
-            File image = getApplicationContext().getFileStreamPath("profile_picture");
-            if (image != null){
+        if((nom.length()>0)&&(prenom.length()>0)&&(email.length()>0)&&(mdp.length()>0)){
+            if(isEmailAdress(email)){
+                java.util.Date d = null;
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 try {
-                    params.put("photo", image);
-                } catch(FileNotFoundException e) { e.printStackTrace(); }
-            }
-        }
+                    d = sdf.parse(bdate);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
 
-        MomentApi.initialize(getApplicationContext());
-        dialog = ProgressDialog.show(this, null, "Inscription");
+                RequestParams params = new RequestParams();
+                params.put("firstname", prenom);
+                params.put("lastname", nom);
+                params.put("password", mdp);
+                params.put("email", email);
+
+                //Birth Date
+                if(d!=null){
+                    String birth_date = String.valueOf(d.getTime());
+                    params.put("birth_date", ""+d.getTime()/1000);
+                }
+
+                if((gender!=null)&&(gender.equals("M")||gender.equals("F"))) params.put("sex", gender);
+
+                if (regid.length() != 0) params.put("notif_id", regid);
+
+                params.put("os", "1");
+                params.put("os_version", android.os.Build.VERSION.RELEASE);
+                params.put("model", CommonUtilities.getDeviceName());
+                params.put("device_id", AppMoment.getInstance().tel_id);
+
+                if(pictureOut != null) {
+                    try {
+                        params.put("photo", pictureOut);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+
+                } else {
+
+                    File image = getApplicationContext().getFileStreamPath("profile_picture");
+                    if (image != null){
+                        try {
+                            Log.v("FILE", ""+image.getTotalSpace());
+                            params.put("photo", image);
+                        } catch(FileNotFoundException e) { e.printStackTrace(); }
+                    }
+                }
+
+                MomentApi.initialize(getApplicationContext());
+                dialog = ProgressDialog.show(this, null, "Inscription");
 
                 MomentApi.post("register", params, new JsonHttpResponseHandler() {
 
@@ -312,33 +310,31 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         AppMoment.getInstance().user = new User();
                         AppMoment.getInstance().user.setId(id);
                         AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
+                        
+                        //We also save in shared prefs
+                        SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putLong("userID", id);
+                        editor.commit();
 
                         MomentApi.get("user", null, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {
 
                                 System.out.print("Inscription Step 2 OK");
+                                AppMoment.getInstance().user.setUserFromJson(response);
 
-                                try {
-                                    String firstname = response.getString("firstname");
-                                    AppMoment.getInstance().user.setFirstName(firstname);
+                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
 
-                                    String lastname = response.getString("lastname");
-                                    AppMoment.getInstance().user.setLastName(lastname);
-
-                                    if(response.has("profile_picture_url")){
-                                        String profile_picture_url = response.getString("profile_picture_url");
-                                        AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
-                                    }
-
-                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
-
-                                    dialog.dismiss();
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                                dialog.dismiss();
                                 Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
                                 startActivity(intent);
+                            }
+
+                            @Override
+                            public void onFailure(Throwable e, JSONObject errorResponse) {
+                                dialog.dismiss();
+                                Log.e("CONNECTION", "PROBLEME USER");
                             }
                         });
                     }
@@ -347,11 +343,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                     @Override
                     public void onFailure(Throwable e, JSONObject errorResponse) {
                         System.out.println(errorResponse.toString());
-
+                        dialog.dismiss();
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-
-                        alertDialogBuilder.setTitle("Compte créé");
-
+                        alertDialogBuilder.setTitle("Problème ");
                         alertDialogBuilder
                                 .setMessage(errorResponse.toString())
                                 .setCancelable(false)
@@ -363,13 +357,53 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                                 });
 
                         AlertDialog alertDialog = alertDialogBuilder.create();
-
                         alertDialog.show();
+
+
 
                         AppMoment.getInstance().user = null;
                     }
                 });
+
             }
+            else{
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
+                alertDialogBuilder.setTitle("Email invalide");
+                alertDialogBuilder
+                        .setMessage("Veuillez fournir une email valide")
+                        .setCancelable(false)
+                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog,int id) {
+                                dialog.cancel();
+                                emailEdit.requestFocus();
+                            }
+                        });
+                AlertDialog alertDialog = alertDialogBuilder.create();
+                alertDialog.show();
+            }
+
+        }
+        //Missing mandatory parameters
+        else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
+            alertDialogBuilder.setTitle("Informations manquantes");
+            alertDialogBuilder
+                    .setMessage("Veuillez remplir tous les champs obligatoires : Nom, Prénom, Email et Mot de passe")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog,int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        }
+
+
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -388,7 +422,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
     public void showDatePickerDialog(View v) {
         DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(this.getFragmentManager(), "datePicker");
+        newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
     public void selectImage(View view){
@@ -437,7 +471,8 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+        if (Session.getActiveSession()!=null) Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+
 
         if(resultCode == RESULT_OK)
         {
@@ -490,10 +525,14 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
     public void setMale(View view){
         gender = "M";
+        male.setBackgroundColor(getResources().getColor(R.color.orange));
+        female.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
     public void setFemale(View view){
         gender = "F";
+        female.setBackgroundColor(getResources().getColor(R.color.orange));
+        male.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
     public static boolean isEmailAdress(String email){
@@ -709,7 +748,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            birthdate.setText(""+ year + "-" + (month + 1) + "-" + day);
+            birthdate.setText(day+"/"+(month+1)+"/"+year);
         }
     }
 }

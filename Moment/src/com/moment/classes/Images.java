@@ -60,7 +60,7 @@ public class Images {
 		try {
 			FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
 
-			image.compress(Bitmap.CompressFormat.JPEG, compression, fos);
+			image.compress(Bitmap.CompressFormat.PNG, compression, fos);
 			fos.close();
 	
 			return true;
