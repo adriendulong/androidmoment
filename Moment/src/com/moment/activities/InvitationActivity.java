@@ -364,8 +364,9 @@ public class InvitationActivity extends SherlockFragmentActivity {
             sendIntent.putExtra("sms_body", messageText);
             startActivity(sendIntent);
 
+            finish();
         }
-        finish();
+
         overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
     }
 
