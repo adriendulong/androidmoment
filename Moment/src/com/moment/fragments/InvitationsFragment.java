@@ -47,12 +47,12 @@ import java.util.List;
 public class InvitationsFragment extends Fragment {
 
     public static final String POSITION = "Position";
-    private ListView listView;
-    private ArrayList<User> users;
+    public ListView listView;
+    public ArrayList<User> users;
     private ArrayList<User> showUsers;
 
     private int position;
-    private InvitationsAdapter adapter;
+    public InvitationsAdapter adapter;
 
     public InvitationsFragment(){
 
@@ -306,75 +306,7 @@ public class InvitationsFragment extends Fragment {
      * Lorsqu'on arrive dans facebook onglet
      */
 
-    public void facebook(){
-        try {
-            openActiveSession(getActivity(), true, fbStatusCallback, Arrays.asList(
-                    new String[]{"email"}), null);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Session.getActiveSession().onActivityResult(getActivity(), requestCode, resultCode, data);
-    }
-
-    private Session openActiveSession(Activity activity, boolean allowLoginUI,
-                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(this).setCallback(callback).
-                setDefaultAudience(SessionDefaultAudience.FRIENDS);
-        Session session = null;
-        if (session == null) {
-            if (savedInstanceState != null) {
-                session = Session.restoreSession(getActivity(), null, fbStatusCallback, savedInstanceState);
-            }
-            if (session == null) {
-                session = new Session(getActivity());
-            }
-            Session.setActiveSession(session);
-            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
-                session.openForRead(openRequest);
-                return session;
-            }
-        }
-        return null;
-    }
-
-    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-                Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
-                    public void onCompleted(List<GraphUser> friends, Response response) {
-                        if (response != null) {
-                            try {
-
-                                JSONArray d = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-                                Log.e("FB", d.toString());
-                                adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
-                                listView.setAdapter(adapter);
-                                for (int i = 0; i < d.length(); i++) {
-                                    JSONObject friend = d.getJSONObject(i);
-
-                                    User user = new User();
-                                    user.setFirstName(friend.getString("name"));
-                                    user.setFacebookId(friend.getLong("id"));
-                                    user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
-                                    users.add(user);
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Log.d("", "Exception e");
-                            }
-
-                        }
-                    }
-                });
-            }
-        }
-    };
 
     /**
      * Load async des contacts

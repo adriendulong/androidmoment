@@ -1,5 +1,6 @@
 package com.moment.activities;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,10 +24,16 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Request;
+import com.facebook.Response;
 import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionState;
+import com.facebook.model.GraphUser;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;
 import com.moment.models.Moment;
@@ -39,6 +46,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class InvitationActivity extends SherlockFragmentActivity {
 
@@ -119,7 +128,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
                     if(frFb==null){
                         frFb = mInvitationCollectionPagerAdapter.getItem(0);
-                        frFb.facebook();
+                        facebook();
                     }
 
                 }
@@ -253,12 +262,78 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
         try {
             inviteSMS();
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
+    public void facebook(){
+        try {
+            openActiveSession(this, true, fbStatusCallback, Arrays.asList(
+                    new String[]{"email"}), null);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Session openActiveSession(Activity activity, boolean allowLoginUI,
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+        Session.OpenRequest openRequest = new Session.OpenRequest(this).setCallback(callback).
+                setDefaultAudience(SessionDefaultAudience.FRIENDS);
+        Session session = null;
+        if (session == null) {
+            if (savedInstanceState != null) {
+                session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
+            }
+            if (session == null) {
+                session = new Session(this);
+            }
+            Session.setActiveSession(session);
+            if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
+                session.openForRead(openRequest);
+                return session;
+            }
+        }
+        return null;
+    }
+
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMyFriendsRequestAsync(session, new Request.GraphUserListCallback() {
+                    public void onCompleted(List<GraphUser> friends, Response response) {
+                        if (response != null) {
+                            try {
+
+                                JSONArray d = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
+                                Log.e("FB", d.toString());
+                                frFb.adapter = new InvitationsAdapter(getApplicationContext(), R.layout.invitations_cell, frFb.users);
+                                frFb.listView.setAdapter(frFb.adapter);
+                                for (int i = 0; i < d.length(); i++) {
+                                    JSONObject friend = d.getJSONObject(i);
+
+                                    User user = new User();
+                                    user.setFirstName(friend.getString("name"));
+                                    user.setFacebookId(friend.getLong("id"));
+                                    user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
+                                    frFb.users.add(user);
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.d("", "Exception e");
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
 
     //Modifier le label du nombre d'invites
     public static void modifyNbInvites(){
