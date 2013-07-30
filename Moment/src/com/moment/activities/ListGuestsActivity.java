@@ -78,6 +78,7 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager_guests);
         mViewPager.setAdapter(mInvitationCollectionPagerAdapter);
         mViewPager.setCurrentItem(1);
+        mViewPager.setOffscreenPageLimit(2);
 
         //Customize the tab strip
         tabStrip = (PagerTabStrip)findViewById(R.id.pager_tab_strip_guests);

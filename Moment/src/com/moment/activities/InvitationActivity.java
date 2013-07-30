@@ -100,6 +100,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mInvitationCollectionPagerAdapter);
         mViewPager.setCurrentItem(1);
+        mViewPager.setOffscreenPageLimit(2);
 
 
         /**

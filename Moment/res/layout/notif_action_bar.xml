@@ -3,7 +3,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="48dp"
                 android:layout_height="fill_parent"
-                android:layout_gravity="right" >
+                android:layout_gravity="right"
+                android:onClick="notifications"
+                android:clickable="true">
 
     <!-- Menu Item Image -->
     <ImageView
@@ -11,8 +13,7 @@
         android:layout_height="35dp"
         android:clickable="true"
         android:layout_centerInParent="true"
-        android:background="@color/orange"
-        android:onClick="notifications"/>
+        android:background="@color/orange"/>
 
     <!-- Badge Count -->
     <TextView
@@ -28,5 +29,9 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         style="@android:style/Widget.ProgressBar.Small"/>
+    <ImageButton android:layout_width="fill_parent"
+                 android:layout_height="fill_parent"
+                 android:background="@android:color/transparent"
+                 android:onClick="notifications"/>
 
 </RelativeLayout>

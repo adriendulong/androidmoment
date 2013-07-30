@@ -182,17 +182,17 @@
                        android:layout_marginBottom="5dp"/>
             <RelativeLayout android:id="@+id/mapHost"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp">
-
+                android:layout_marginBottom="5dp"
+                android:onClick="detailMap">
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:background="@drawable/bloc_lieu" />
-
+                <!--
 				 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
 				     xmlns:map="http://schemas.android.com/apk/res-auto"
 				     android:id="@+id/map"
@@ -206,6 +206,15 @@
 					  map:uiTiltGestures="false"
 					  map:uiZoomControls="false"
 					  map:uiZoomGestures="false"/>
+					  -->
+                <WebView android:layout_width="match_parent"
+                         android:layout_height="60dp"
+                         android:id="@+id/map_web"
+                         android:layout_margin="5px"/>
+                <ImageButton android:layout_width="fill_parent"
+                             android:layout_height="fill_parent"
+                             android:background="@android:color/transparent"
+                             android:onClick="detailMap"/>
                 <TextView android:id="@+id/infos_moment_adresse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -378,13 +387,25 @@
                     android:background="@drawable/bloc_phba"
                     android:layout_marginTop="2dp"
                     android:layout_marginLeft="2dp"/>
-                <GridView android:layout_width="fill_parent"
-                          android:layout_height="70dp"
-                          android:gravity="center_vertical"/>
+                <GridView android:id="@+id/grid_preview_photos"
+                            android:layout_width="fill_parent"
+                          android:layout_height="45dp"
+                          android:gravity="center"
+                          android:layout_centerVertical="true"
+                          android:columnWidth="45dp"
+                          android:numColumns="auto_fit"
+                          android:verticalSpacing="10dp"
+                          android:horizontalSpacing="10dp"
+                          android:stretchMode="columnWidth"
+                          android:layout_marginRight="10dp"
+                          android:layout_marginLeft="10dp"/>
                 <ImageView android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:background="@drawable/ribbon"/>
-               
+                <ImageButton android:layout_width="fill_parent"
+                             android:layout_height="70dp"
+                             android:background="@android:color/transparent"
+                             android:onClick="goPhotos"/>
             </RelativeLayout>
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"

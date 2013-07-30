@@ -1,17 +1,24 @@
 package com.moment.fragments;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
 import android.widget.*;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -33,16 +40,14 @@ import com.moment.classes.PositionOverlay;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 
+import com.moment.models.Photo;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class InfosFragment extends Fragment {
 
@@ -68,6 +73,11 @@ public class InfosFragment extends Fragment {
     private ImageView blocRSVP;
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton, addGuests;
+    private GridView gridPreviewPhotos;
+    private ArrayList<Photo> photos;
+    private ImageAdapter imageAdapter;
+    private View view;
+    private WebView mapWeb;
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -86,7 +96,10 @@ public class InfosFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_infos, container, false);
+        view = inflater.inflate(R.layout.fragment_infos, container, false);
+
+        //Init
+        photos = new ArrayList<Photo>();
 
         if (view != null) {
             titreText = (TextView) view.findViewById(R.id.titre_moment);
@@ -115,6 +128,9 @@ public class InfosFragment extends Fragment {
             owner_picture = (ImageView) view.findViewById(R.id.photo_owner);
             firstname = (TextView) view.findViewById(R.id.firstname_owner);
             lastname = (TextView) view.findViewById(R.id.lastname_owner);
+
+            gridPreviewPhotos = (GridView)view.findViewById(R.id.grid_preview_photos);
+            mapWeb = (WebView)view.findViewById(R.id.map_web);
         }
 
         if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
@@ -148,6 +164,7 @@ public class InfosFragment extends Fragment {
         }
     }
 
+    /*
     private void setUpMapIfNeeded() {
         if (mMap == null) {
             mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -186,6 +203,7 @@ public class InfosFragment extends Fragment {
             }
         }
     }
+    */
 
     public void maybeRsvp(){
         System.out.println("MAYBE");
@@ -348,13 +366,133 @@ public class InfosFragment extends Fragment {
             modifLayout.setVisibility(View.INVISIBLE);
         }
 
+        imageAdapter = new ImageAdapter(view.getContext(), photos);
+        gridPreviewPhotos.setAdapter(imageAdapter);
+
         //Map
-        setUpMapIfNeeded();
+        //setUpMapIfNeeded();
+        loadMap();
     }
 
     private Boolean canInvite(User user){
         int PUBLIC = 2;
         return moment.getPrivacy() == PUBLIC || moment.getIsOpenInvit() || user.getId() == moment.getUserId();
+    }
+
+
+    /**
+     * Adapter for the grid view
+     * Grid view which contains the previews of the photos
+     */
+
+    public class ImageAdapter extends BaseAdapter {
+
+        private final Context context;
+        private ArrayList<Photo> photos;
+
+        public ImageAdapter(Context context, ArrayList<Photo> photos) {
+            this.context = context;
+            this.photos = photos;
+        }
+
+        @Override
+        public int getCount() {
+            return photos.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return null;
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return 0;
+        }
+
+        @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+        @Override
+        public View  getView(int position, View convertView, ViewGroup parent) {
+
+            ImageView imageView;
+            float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
+            float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+
+            if(convertView == null) {
+                imageView = new ImageView(context);
+
+                imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
+                imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                imageView.setCropToPadding(true);
+                imageView.setPadding(5, 5, 5, 5);
+                imageView.setBackground(getResources().getDrawable(R.drawable.bg));
+            }
+
+            else {
+                imageView = (ImageView) convertView;
+            }
+
+            Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+
+            return imageView;
+        }
+    }
+
+
+    /**
+     * Function to update the photos
+     */
+
+    public void updatePhotos(ArrayList<Photo> photosNew){
+
+        for(int i=0;i<numberOfPhotos();i++){
+            if(photosNew.size()>i) photos.add(photosNew.get(i));
+        }
+        Log.v("INFOSFRAGMENT", "Nombre de photos : "+numberOfPhotos());
+        gridPreviewPhotos.setFocusable(false);
+        imageAdapter.notifyDataSetChanged();
+    }
+
+    private int numberOfPhotos(){
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();  // deprecated
+
+        float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+
+        return Math.round(width / pxImage);
+    }
+
+    private void loadMap(){
+        double lat;
+        double lon;
+        Geocoder geocoder = new Geocoder(getActivity());
+
+        try {
+            List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
+
+            if (addresses.size() > 0) {
+
+
+
+                Address x = addresses.get(0);
+                lat = x.getLatitude();
+                lon = x.getLongitude();
+
+                Display display = getActivity().getWindowManager().getDefaultDisplay();
+                int width = display.getWidth();
+                float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+                float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
+                int realWidth =  Math.round((float)width / density);
+
+                String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/pin-s-star-stroked+ff793d("+lon+","+lat+")/"+lon+","+lat+",8/"+realWidth+"x"+60+".png";
+                Log.v("INFOSFRAGMENT", mapdBoxUrl);
+                mapWeb.loadUrl(mapdBoxUrl);
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

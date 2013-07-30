@@ -252,11 +252,11 @@ public class PhotosFragment extends Fragment {
             }
             return imageView;
         }
-
-        public void updateView(int position){
-
-        }
     }
+
+    /**
+     * Async Task to upload photos
+     */
 
     private class MultiUploadTask extends AsyncTask<Void, Void, Void>
     {
@@ -422,6 +422,9 @@ public class PhotosFragment extends Fragment {
                             AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
                             imageAdapter.notifyDataSetChanged();
                         }
+
+                        //We update it in the infos view also
+                        ((MomentInfosActivity)getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
                         if(!photos_files.isEmpty() && !photos_uri.isEmpty())
                         {

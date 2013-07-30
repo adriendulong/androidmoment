@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -41,6 +42,7 @@ import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
+import com.moment.models.Photo;
 import com.moment.models.User;
 
 import org.json.JSONArray;
@@ -719,6 +721,26 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void goPhotos(View view){
         pager.setCurrentItem(0);
+    }
+
+    public void updateInfosPhotos(ArrayList<Photo> photos){
+        infosFr.updatePhotos(photos);
+    }
+
+
+    /**
+     * Open the direction in google map
+     * @param view
+     */
+    public void detailMap(View view){
+        String label = moment.getAdresse();
+        String uriBegin = "geo:" + 0 + "," + 0;
+        String query =  moment.getAdresse();
+        String encodedQuery = Uri.encode(query);
+        String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
+        Uri uri = Uri.parse(uriString);
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
+        startActivity(intent);
     }
 
 
