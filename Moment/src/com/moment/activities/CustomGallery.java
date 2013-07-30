@@ -87,6 +87,7 @@ public class CustomGallery extends SherlockActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                selectedPictures.clear();
                 finish();
 
             case R.id.validate:
@@ -100,6 +101,12 @@ public class CustomGallery extends SherlockActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        selectedPictures.clear();
+        finish();
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -152,13 +159,7 @@ public class CustomGallery extends SherlockActivity {
             holder.imageview.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
                     if(holder.checkbox.isChecked() == true){
-                        for(String s : selectedPictures)
-                        {
-                            if (s.equals(arrPath[holder.imageview.getId()]))
-                            {
-                                selectedPictures.remove(s);
-                            }
-                        }
+                        selectedPictures.remove(arrPath[holder.imageview.getId()]);
                         holder.checkbox.setChecked(false);
                         v.startAnimation(fadeIn);
                     } else {
@@ -174,6 +175,7 @@ public class CustomGallery extends SherlockActivity {
             return convertView;
         }
     }
+
     class ViewHolder {
         ImageView imageview;
         CheckBox checkbox;
