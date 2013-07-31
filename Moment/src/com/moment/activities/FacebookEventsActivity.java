@@ -1,11 +1,12 @@
 package com.moment.activities;
 
-import android.app.ProgressDialog;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.ContextThemeWrapper;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -13,6 +14,7 @@ import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -34,6 +36,9 @@ public class FacebookEventsActivity extends SherlockActivity {
     private Session session;
     private JSONArray events;
     private JSONObject eventOwner;
+    private AlertDialog alertDialog;
+    private int cursor;
+    private int fail = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,7 +49,7 @@ public class FacebookEventsActivity extends SherlockActivity {
 
         try {
             events = new JSONArray(getIntent().getStringExtra("events"));
-            Toast.makeText(this, "Evenements Facebook " + events.length(), Toast.LENGTH_LONG).show();
+            cursor = events.length();
             for(int i = 0; i < events.length(); i++)
             {
                 try {
@@ -177,9 +182,26 @@ public class FacebookEventsActivity extends SherlockActivity {
                 Moment moment = new Moment();
                 try {
                     moment.setMomentFromJson(response);
+                    cursor --;
+                    if(cursor == 0)
+                    {
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FacebookEventsActivity.this);
+                        alertDialogBuilder
+                                .setTitle("Evenement Facebook")
+                                .setMessage((events.length() - fail) + " Evenements importes, " + fail + " evenements n'ont pas etes importes")
+                                .setCancelable(false)
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
-                    Intent intent = new Intent(getApplicationContext(), TimelineActivity.class);
-                    startActivity(intent);
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        Intent intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                                        startActivity(intent);
+                                        alertDialog.dismiss();
+                                    }
+                                });
+                        alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -187,6 +209,8 @@ public class FacebookEventsActivity extends SherlockActivity {
 
             @Override
             public void onFailure(Throwable e, JSONObject errorResponse) {
+                cursor --;
+                fail ++;
                 Log.e("Failure",errorResponse.toString());
             }
         });
