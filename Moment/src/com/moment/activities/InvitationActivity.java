@@ -1,8 +1,10 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -199,14 +201,69 @@ public class InvitationActivity extends SherlockFragmentActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed(){
+
+        if(invitesUser.size()>0) {
+
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder
+                    .setTitle("Attention")
+                    .setMessage("Vous avez des invitations non envoyées, voulez vous les envoyer ?")
+                    .setCancelable(false)
+                    .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            finish();
+                            overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+                        }
+                    })
+                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            invite();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+        } else {
+            super.onBackPressed();
+        }
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 //NavUtils.navigateUpFromSameTask(this);
-                finish();
-                overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+                if(invitesUser.size()>0){
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+                    alertDialogBuilder
+                            .setTitle("Attention")
+                            .setMessage("Vous avez des invitations non envoyées, voulez vous les envoyer ?")
+                            .setCancelable(false)
+                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                    overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+                                }
+                            })
+                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    invite();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+                }
+                else{
+                    finish();
+                    overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+                }
+
                 break;
             case R.id.invitation_contacts:
                 mViewPager.setCurrentItem(1);
@@ -345,82 +402,105 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     //On envoit l'invitation au serveur pour tout ces users
 
+    public void invite()  {
+
+        try{
+
+            JSONArray users = new JSONArray();
+            for(int i=0;i<invitesUser.size();i++){
+                users.put(invitesUser.get(i).getUserToJSON());
+            }
+
+            JSONObject object = new JSONObject();
+            object.put("users", users);
+
+            System.out.println(object.toString());
+
+            StringEntity se = null;
+            try {
+                se = new StringEntity(object.toString());
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+            //On lance la progress dialog
+            final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
+            se.setContentType("application/json");
+
+            MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(String response) {
+                    System.out.println(response);
+                    dialog.dismiss();
+
+                    ArrayList<User> FBUsers = new ArrayList<User>();
+                    SMSUsers = new ArrayList<User>();
+
+                    for(User user:invitesUser){
+
+                        if(user.getId()==null && user.getNumTel() != null){
+                            SMSUsers.add(user);
+                        }
+
+                    }
+
+                    for(User user:invitesUser){
+                        if(user.getId()==null && user.getFacebookId() != null){
+                            FBUsers.add(user);
+                        }
+                    }
+
+                    if(FBUsers.size()>0){
+                        ArrayList<String> fbids = new ArrayList<String>();
+                        for(User usr: FBUsers){
+                            fbids.add(usr.getFacebookId().toString());
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
+                        intent.putExtra("fbids", fbids);
+                        intent.putExtra("momentId", idMoment);
+                        startActivityForResult(intent, 0);
+                    } else {
+                        try {
+                            inviteSMS();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                }
+
+                public void onFailure(Throwable error, String content) {
+                    // By default, call the deprecated onFailure(Throwable) for compatibility
+                    System.out.println(content);
+                    dialog.dismiss();
+                }
+            });
+        }catch(JSONException e){
+            System.out.println(e);
+        }
+
+    }
+
     public void inviteFacebook(View view) throws JSONException{
+        if(invitesUser.size()==0){
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            alertDialogBuilder
+                    .setTitle(getResources().getString(R.string.titre_pop_up_no_invite))
+                    .setMessage(getResources().getString(R.string.pop_up_no_invite))
+                    .setCancelable(false)
+                    .setPositiveButton(getResources().getString(R.string.ok), new DialogInterface.OnClickListener() {
 
-
-        JSONArray users = new JSONArray();
-        for(int i=0;i<invitesUser.size();i++){
-            users.put(invitesUser.get(i).getUserToJSON());
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
         }
-
-        JSONObject object = new JSONObject();
-        object.put("users", users);
-
-        System.out.println(object.toString());
-
-        StringEntity se = null;
-        try {
-            se = new StringEntity(object.toString());
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        //On lance la progress dialog
-        final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
-        se.setContentType("application/json");
-
-        MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(String response) {
-                System.out.println(response);
-                dialog.dismiss();
-
-                ArrayList<User> FBUsers = new ArrayList<User>();
-                SMSUsers = new ArrayList<User>();
-
-                for(User user:invitesUser){
-
-                    if(user.getId()==null && user.getNumTel() != null){
-                        SMSUsers.add(user);
-                    }
-
-                }
-
-                for(User user:invitesUser){
-                    if(user.getId()==null && user.getFacebookId() != null){
-                        FBUsers.add(user);
-                    }
-                }
-
-                if(FBUsers.size()>0){
-                    ArrayList<String> fbids = new ArrayList<String>();
-                    for(User usr: FBUsers){
-                        fbids.add(usr.getFacebookId().toString());
-                    }
-
-                    Intent intent = new Intent(getApplicationContext(), FacebookAppRequestActivity.class);
-                    intent.putExtra("fbids", fbids);
-                    intent.putExtra("momentId", idMoment);
-                    startActivityForResult(intent, 0);
-                } else {
-                    try {
-                        inviteSMS();
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-            }
-
-            public void onFailure(Throwable error, String content) {
-                // By default, call the deprecated onFailure(Throwable) for compatibility
-                System.out.println(content);
-                dialog.dismiss();
-            }
-        });
-
-
+        else {invite();}
     }
 
     public void inviteSMS() throws JSONException {

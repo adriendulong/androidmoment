@@ -56,6 +56,7 @@ public class ChatFragment extends Fragment {
 
     private int nextPage;
     private final Transformation roundTrans = new RoundTransformation();
+    private TextView defaultTextChat;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class ChatFragment extends Fragment {
         if (view != null) {
             layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
             scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
+            defaultTextChat = (TextView)view.findViewById(R.id.default_text_chat);
         }
 
         scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
@@ -151,6 +153,8 @@ public class ChatFragment extends Fragment {
     }
 
     public void messageRight(Chat chat, int index){
+
+        defaultTextChat.setVisibility(View.GONE);
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
@@ -495,6 +499,8 @@ public class ChatFragment extends Fragment {
                         chats = response.getJSONArray("chats");
 
                         ArrayList<Chat> tempChats = new ArrayList<Chat>();
+
+                        if(chats.length()>0) defaultTextChat.setVisibility(View.GONE);
 
                         for(int i=0;i<chats.length();i++){
 

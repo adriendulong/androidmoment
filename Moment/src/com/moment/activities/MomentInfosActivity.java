@@ -19,6 +19,7 @@ import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -150,7 +151,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
             @Override
             public void onPageSelected(int arg0) {
-                System.out.println("Page SELECTIONNE :" + arg0);
+                Log.e("PAGE", ""+arg0);
                 updateMenuItem(arg0);
 
             }
@@ -414,6 +415,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void updateMenuItem(int position){
 
         if(position == 1){
+            hideKeyboard();
             System.out.println("INFOS");
             myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
             myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_down);
@@ -421,6 +423,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         }
         //Facebook
         else if (position == 0){
+            hideKeyboard();
             System.out.println("PHOTOS");
             myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_down);
             myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
@@ -741,6 +744,62 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         Uri uri = Uri.parse(uriString);
         Intent intent = new Intent(android.content.Intent.ACTION_VIEW, uri);
         startActivity(intent);
+    }
+
+    private void hideKeyboard()
+    {
+        InputMethodManager inputManager = (InputMethodManager)
+                getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(this.getCurrentFocus()!=null){
+            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
+    }
+
+    public void delete(View view){
+
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder
+                .setTitle(getResources().getString(R.string.title_pop_up_delete))
+                .setMessage(getResources().getString(R.string.pop_up_delete))
+                .setCancelable(false)
+                .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        final ProgressDialog progressDialog = ProgressDialog.show(MomentInfosActivity.this, null, "Suppression en cours");
+
+                        if(moment.getUserId()==AppMoment.getInstance().user.getId()){
+                            MomentApi.get("delmoment/"+moment.getId(), null, new JsonHttpResponseHandler() {
+
+                                @Override
+                                public void onSuccess(JSONObject response) {
+                                    progressDialog.dismiss();
+                                    Intent timelineIntent = new Intent(MomentInfosActivity.this, TimelineActivity.class);
+                                    startActivity(timelineIntent);
+
+                                }
+
+                                @Override
+                                public void onFailure(Throwable error, String content) {
+                                    System.out.println(content);
+                                    progressDialog.dismiss();
+                                    Toast.makeText(getApplicationContext(), getResources().getString(R.string.error_delete), Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
+
     }
 
 

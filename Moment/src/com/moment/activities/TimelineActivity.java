@@ -93,7 +93,6 @@ public class TimelineActivity extends SlidingActivity {
         todayBtn = (ImageView)findViewById(R.id.today_btn);
 
         myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
-        myMoments.setBackgroundResource(R.drawable.bg_section);
         profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
         settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
         //missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
@@ -111,45 +110,23 @@ public class TimelineActivity extends SlidingActivity {
             @Override
             public void onClick(View v) {
                 if(v.getId()==myMoments.getId()){
-                    myMoments.setBackgroundResource(R.drawable.bg_section);
                     toggle();
 
                 }
                 else if(v.getId()==profile.getId()){
-                    profile.setBackgroundResource(R.drawable.bg_section);
                     Intent intent = new Intent(getApplication(), EditProfilActivity.class);
                     startActivity(intent);
                 }
                 else if(v.getId()==settings.getId()){
-                    settings.setBackgroundResource(R.drawable.bg_section);
                     Intent intent = new Intent(getApplication(), SettingsActivity.class);
                     startActivity(intent);
                 }
             }
         };
 
-        View.OnTouchListener touchListener = new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if(v.getId()==myMoments.getId()){
-                    myMoments.setBackgroundResource(R.drawable.bg_section);
-                }
-                else if(v.getId()==profile.getId()){
-                    profile.setBackgroundResource(R.drawable.bg_section);
-                }
-                else if(v.getId()==settings.getId()){
-                    settings.setBackgroundResource(R.drawable.bg_section);
-                }
-                return false;
-            }
-        };
-
         myMoments.setOnClickListener(listener);
-        myMoments.setOnTouchListener(touchListener);
         profile.setOnClickListener(listener);
-        profile.setOnTouchListener(touchListener);
         settings.setOnClickListener(listener);
-        settings.setOnTouchListener(touchListener);
 
         notifications = new ArrayList<Notification>();
 
@@ -206,6 +183,9 @@ public class TimelineActivity extends SlidingActivity {
                     @Override
                     public void onFailure(Throwable error, String content) {
                         Log.e("TIMELINE", content);
+                        dialog.dismiss();
+                        Toast.makeText(getApplicationContext(),  getResources().getString(R.string.echec_dl_moments), Toast.LENGTH_LONG).show();
+
                     }
 
                 });

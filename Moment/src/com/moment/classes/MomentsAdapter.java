@@ -73,7 +73,7 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
             holder.nameMoment = (TextView)row.findViewById(R.id.moment_name);
             holder.dateMoment = (TextView)row.findViewById(R.id.moment_date);
             holder.imageRoundedButton = (RelativeLayout)row.findViewById(R.id.cell_full);
-            holder.deleteMoment = (RelativeLayout)row.findViewById(R.id.delete_moment);
+            //holder.deleteMoment = (RelativeLayout)row.findViewById(R.id.delete_moment);
 
 
 
@@ -88,7 +88,7 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
         Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.big_photo).into(holder.coverRound);
         holder.nameMoment.setText(moment.getName());
         holder.imageRoundedButton.setTag(moment.getId());
-        holder.deleteMoment.setTag(moment.getId());
+        //holder.deleteMoment.setTag(moment.getId());
 
         //Print date in right format
         Locale locale = Locale.getDefault();
@@ -96,8 +96,10 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
         holder.dateMoment.setText(dt.format(moment.getDateDebut()));
 
         //Do we show delete button
+        /*
         if(moment.getUserId()!= AppMoment.getInstance().user.getId()) holder.deleteMoment.setVisibility(View.INVISIBLE);
         else holder.deleteMoment.setVisibility(View.VISIBLE);
+        */
 
 
         return row;

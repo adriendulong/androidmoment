@@ -67,7 +67,7 @@ public class InfosFragment extends Fragment {
     private int stateAnwser;
     private Moment moment;
     //All view elements
-    private TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname;
+    private TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, heureDebutText, heureFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname, textRSVP;
     private ImageView image_cover, owner_picture;
     private RelativeLayout modifLayout;
     private ImageView blocRSVP;
@@ -78,6 +78,7 @@ public class InfosFragment extends Fragment {
     private ImageAdapter imageAdapter;
     private View view;
     private WebView mapWeb;
+    private Button delMoment;
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -114,6 +115,8 @@ public class InfosFragment extends Fragment {
 
             dateDebutText = (TextView) view.findViewById(R.id.infos_moment_date_debut);
             dateFinText = (TextView) view.findViewById(R.id.infos_moment_date_fin);
+            heureDebutText = (TextView)view.findViewById(R.id.infos_moment_heure_debut);
+            heureFinText = (TextView)view.findViewById(R.id.infos_moment_heure_fin);
 
             guests_number = (TextView) view.findViewById(R.id.guests_number);
             guests_coming = (TextView) view.findViewById(R.id.guests_coming);
@@ -121,7 +124,9 @@ public class InfosFragment extends Fragment {
             modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
 
             blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
+            textRSVP = (TextView)view.findViewById(R.id.text_rsvp);
 
+            delMoment = (Button)view.findViewById(R.id.del_moment);
 
 
             image_cover = (ImageView) view.findViewById(R.id.photo_moment);
@@ -259,6 +264,7 @@ public class InfosFragment extends Fragment {
             maybeButton.setImageResource(R.drawable.picto_maybe);
             notGoigButton.setSelected(false);
             notGoigButton.setImageResource(R.drawable.picto_no);
+            textRSVP.setText(getResources().getString(R.string.rsvp_coming));
         }
         else if (moment.getState()==NOT_COMING){
             notGoigButton.setSelected(true);
@@ -267,6 +273,7 @@ public class InfosFragment extends Fragment {
             maybeButton.setImageResource(R.drawable.picto_maybe);
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
+            textRSVP.setText(getResources().getString(R.string.rsvp_not_coming));
         }
         else if (moment.getState()==MAYBE){
             maybeButton.setSelected(true);
@@ -275,6 +282,11 @@ public class InfosFragment extends Fragment {
             notGoigButton.setImageResource(R.drawable.picto_no);
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
+            textRSVP.setText(getResources().getString(R.string.rsvp_maybe));
+        }
+        else if(moment.getState()==UNKOWN){
+            Toast.makeText(getActivity(), "Première visite sur le moment", Toast.LENGTH_SHORT).show();
+            maybeRsvp();
         }
 
     }
@@ -334,6 +346,8 @@ public class InfosFragment extends Fragment {
 
         dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
         dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
+        heureDebutText.setText(""+dateDebutCalendar.get(Calendar.HOUR)+"H"+dateDebutCalendar.get(Calendar.MINUTE));
+        heureFinText.setText(""+dateFinCalendar.get(Calendar.HOUR)+"H"+dateFinCalendar.get(Calendar.MINUTE));
 
         //Cover
         Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
@@ -364,6 +378,9 @@ public class InfosFragment extends Fragment {
 
         if(AppMoment.getInstance().user.getId()!=moment.getUserId()){
             modifLayout.setVisibility(View.INVISIBLE);
+        }
+        else{
+            delMoment.setVisibility(View.VISIBLE);
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);

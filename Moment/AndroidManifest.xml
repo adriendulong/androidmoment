@@ -222,6 +222,7 @@
             android:screenOrientation="portrait"
             android:name=".activities.EditProfilActivity"
             android:parentActivityName="com.moment.TimelineActivity"
+            android:windowSoftInputMode="stateHidden"
             android:label="ProfilActivity">
     </activity>
 

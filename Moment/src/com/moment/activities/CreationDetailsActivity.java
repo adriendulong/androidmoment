@@ -61,10 +61,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 	//Step = 0 premiere etape, step = 1 deuxieme etape
 	private int step = -1;
 	FragmentTransaction fragmentTransaction;
-	CreationStep2Fragment fragment2;
-	CreationStep1Fragment fragment;
-	static TextView dateFin;
-	ImageButton dateDebut;
+	private CreationStep2Fragment fragment2;
+	private CreationStep1Fragment fragment;
 	private Moment moment;
 	private static Menu myMenu;
 	private static Boolean validateFirst = false;
@@ -630,7 +628,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
     public static void validateFirstFields(){
 
-    	if(validateFirstDate && validateSecondDate){
+    	if(validateFirstDate){
     		validateFirst = true;
     		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
             myMenu.findItem(R.id.right_options_creation).setEnabled(true);

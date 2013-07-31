@@ -23,6 +23,7 @@
     <color name="gris_chat">#e9e8e8</color>
     <color name="white">#ffffff</color>
     <color name="white_transparent">#60ffffff</color>
+    <color name="red">#ce0e0e</color>
 
     <string name="import_facebook">IMPORTER DEPUIS FACEBOOK</string>
     <string name="alert_nom_creation_moment">Veuillez rentrer un nom afin de créer un moment</string>
@@ -146,6 +147,10 @@
     <string name="rsvp_coming">Je serai présent au Moment</string>
     <string name="rsvp_not_coming">Je ne serai pas présent au Moment</string>
     <string name="rsvp_maybe">Je ne sais pas si je serai présent au Moment</string>
+    <string name="delete_moment">Supprimer ce Moment</string>
+    <string name="error_delete">Erreur lors de la suppression du Moment</string>
+    <string name="title_pop_up_delete">Suupression du Moment</string>
+    <string name="pop_up_delete">Etes vous sur de vouloir supprimer ce Moment ? Cette action est irreversible</string>
 
     <!-- Volet -->
     <string name="my_moments_volet">Mes Moments</string>
@@ -177,5 +182,23 @@
     <!-- Notifs & Invites -->
     <string name="notifs_vide">Aucune notification pour le moment :( \n\n Des vacances, un voyage, une soirée ? Pensez à créer un moment pour l\'organiser et partager toutes les photos avec vos amis</string>
     <string name="invits_vide">Aucune invitation pour l\'instant.</string>
+
+    <!-- Invitation -->
+    <string name="titre_pop_up_no_invite">Aucune personne selectionnée</string>
+    <string name="pop_up_no_invite">Veuillez selectionner des personnes dans vos contacts afin de les inviter à ce Moment</string>
+
+    <!-- Timeline -->
+    <string name="echec_dl_moments">Echec du téléchargement des Moments</string>
+
+    <!-- Général -->
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
+    <string name="ok">Ok</string>
+
+    <!-- Chat -->
+    <string name="default_text_chat">Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce chat est fait pour ça !</string>
+
+    <!-- Photo -->
+    <string name="default_button_photos">Ajoutez des photos !</string>
 
 </resources>

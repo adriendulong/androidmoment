@@ -3,7 +3,15 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:background="@drawable/background">
-
+    <TextView android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:text="@string/default_text_chat"
+              android:layout_centerInParent="true"
+              android:textSize="14dp"
+              android:textColor="@color/gris_texte"
+              android:id="@+id/default_text_chat"
+              android:gravity="center"
+              android:layout_margin="20dp"/>
     <com.handmark.pulltorefresh.library.PullToRefreshScrollView
             android:id="@+id/scroll_chat"
             android:layout_width="fill_parent"
@@ -26,18 +34,28 @@
         android:orientation="horizontal"
         android:background="@color/gris_chat"
         android:weightSum="10"
-        android:gravity="bottom"
+        android:gravity="center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp">
         <EditText android:id="@+id/edit_chat_post_message"
             android:onClick="editMessage"
             android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:layout_weight="8"
             android:textSize="12sp"
             android:layout_marginBottom="5dp"
             android:hint="VOTRE MESSAGE"
             android:inputType="textMultiLine"/>
+        <Button android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:text="Envoyer"
+                android:layout_weight="2"
+                android:layout_marginLeft="3dp"
+                android:textColor="@color/white"
+                android:textSize="12dp"
+                android:background="@color/orange"
+                android:onClick="postMessage"/>
+        <!--
         <RelativeLayout android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="2"
@@ -50,5 +68,6 @@
                 android:onClick="postMessage"
                 android:clickable="true"/>
         </RelativeLayout>
+        -->
      </LinearLayout>
 </RelativeLayout>

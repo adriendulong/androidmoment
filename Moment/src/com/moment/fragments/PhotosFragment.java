@@ -24,12 +24,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.GridView;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -73,6 +69,7 @@ public class PhotosFragment extends Fragment {
 
     private Intent intent;
     private GridView gridView;
+    private Button defaultButton;
 
     private boolean asyncRun = false;
 
@@ -141,7 +138,7 @@ public class PhotosFragment extends Fragment {
         Log.e("PhotoFragment","DESTROY");
     }
 
-    private void startDialog() {
+    public void startDialog() {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getActivity());
         myAlertDialog.setTitle("Partager des Photos");
         myAlertDialog.setMessage("Prendre une photo ou importer des photos depuis la galerie");
@@ -304,6 +301,7 @@ public class PhotosFragment extends Fragment {
             photos_uri.remove(0);
             imageAdapter.notifyDataSetChanged();
             gridView.smoothScrollToPosition(position+1);
+            gridView.setVisibility(View.VISIBLE);
         }
 
         @Override
@@ -417,6 +415,21 @@ public class PhotosFragment extends Fragment {
                 public void onSuccess(JSONObject response) {
                     try {
                         JSONArray jsonPhotos = response.getJSONArray("photos");
+
+                        if(jsonPhotos.length()==0){
+                            defaultButton = (Button)view.findViewById(R.id.default_button_photos);
+                            defaultButton.setVisibility(View.VISIBLE);
+                            defaultButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startDialog();
+                                }
+                            });
+                        }
+                        else{
+                            gridView = (GridView) view.findViewById(R.id.gridview);
+                            gridView.setVisibility(View.VISIBLE);
+                        }
 
                         for (int i = 0; i < jsonPhotos.length(); i++) {
                             Photo photo = new Photo();

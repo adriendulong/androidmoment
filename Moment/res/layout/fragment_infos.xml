@@ -7,8 +7,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
         <RelativeLayout android:layout_width="fill_parent"
-            android:layout_height="180dp"
-            android:onClick="changePhoto">
+            android:layout_height="180dp">
             <ImageView android:id="@+id/photo_moment"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -162,7 +161,8 @@
                         android:layout_marginBottom="5dp"/>
             <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:layout_marginTop="0dp">
                 <TextView android:id="@+id/infos_moment_description"
                     android:layout_width="fill_parent"
@@ -183,8 +183,8 @@
             <RelativeLayout android:id="@+id/mapHost"
                 android:layout_width="fill_parent"
                 android:layout_height="100dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:onClick="detailMap">
@@ -233,8 +233,8 @@
                        android:layout_marginBottom="5dp"/>
              <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="10dp"
-                android:paddingRight="2dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
                  <ImageButton android:layout_width="wrap_content"
@@ -282,7 +282,7 @@
                         android:textSize="14sp"
                         android:textColor="@color/gris_texte"
                         android:paddingBottom="3dp"
-                        android:layout_marginLeft="50dp"
+                        android:layout_marginLeft="30dp"
                         android:layout_marginRight="5dp"/>
                      <ImageView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -294,7 +294,7 @@
                         android:textSize="14sp"
                         android:textColor="@color/gris_texte"
                         android:paddingBottom="3dp"
-                        android:layout_marginLeft="30dp"
+                        android:layout_marginLeft="20dp"
                         android:layout_marginRight="5dp"/>
                      <ImageView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -308,8 +308,8 @@
                        android:layout_marginBottom="5dp"/>
             <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
                 <ImageView android:layout_width="fill_parent"
@@ -377,8 +377,8 @@
                        android:layout_marginBottom="5dp"/>
             <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="20dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp"
                 android:onClick="goPhotos">
@@ -412,6 +412,16 @@
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
                        android:layout_marginBottom="5dp"/>
+            <Button android:layout_width="fill_parent"
+                    android:layout_height="40dp"
+                    android:background="@color/red"
+                    android:layout_margin="10dp"
+                    android:text="@string/delete_moment"
+                    android:textSize="18dp"
+                    android:textColor="@android:color/white"
+                    android:onClick="delete"
+                    android:id="@+id/del_moment"
+                    android:visibility="gone"/>
         </LinearLayout>
         
     </LinearLayout>

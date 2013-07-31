@@ -321,7 +321,6 @@ public class InvitationsFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            Toast.makeText(getActivity().getApplicationContext(), "D�but du traitement asynchrone", Toast.LENGTH_LONG).show();
             dialog = ProgressDialog.show(getActivity(), null, "Chargements des contacts");
 
         }
@@ -346,7 +345,6 @@ public class InvitationsFragment extends Fragment {
         protected void onPostExecute(Void result) {
             adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
-            Toast.makeText(getActivity().getApplicationContext(), "Le traitement asynchrone est termin�", Toast.LENGTH_LONG).show();
             dialog.dismiss();
         }
     }

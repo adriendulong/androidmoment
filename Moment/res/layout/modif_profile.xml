@@ -37,14 +37,14 @@
                           android:gravity="center">
                 <EditText android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
-                          android:textSize="10dp"
+                          android:textSize="14dp"
                           android:hint="Adrien"
                           android:id="@+id/modif_prenom"
                           android:editable="true"
                           android:enabled="true"/>
                 <EditText android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
-                          android:textSize="10dp"
+                          android:textSize="14dp"
                           android:hint="Dulong"
                           android:id="@+id/modif_nom"
                           android:editable="true"
@@ -65,7 +65,7 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="adrien.dulong@gmail.com"
                     android:id="@+id/email"
                     android:editable="false"
@@ -82,11 +82,13 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="+33678901234"
                     android:id="@+id/phone"
                     android:editable="true"
                     android:enabled="true"
+                    android:inputType="phone"
+                    android:singleLine="true"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
         </LinearLayout>
@@ -99,11 +101,12 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="Adresse"
                     android:id="@+id/adress"
                     android:editable="true"
                     android:enabled="true"
+                    android:singleLine="true"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
         </LinearLayout>
@@ -152,9 +155,10 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="Email Secondaire"
                     android:id="@+id/secondEmail"
+                    android:singleLine="true"
                     android:editable="true"
                     android:enabled="true"
                     android:layout_marginLeft="10dp"
@@ -169,11 +173,13 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="50dp"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="Téléphone Secondaire"
                     android:id="@+id/secondPhone"
+                    android:singleLine="true"
                     android:editable="true"
                     android:enabled="true"
+                    android:inputType="phone"
                     android:layout_marginLeft="10dp"
                     android:layout_marginRight="10dp"/>
         </LinearLayout>
@@ -247,7 +253,7 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="Ancien mot de passe"
                     android:id="@+id/editText8"
                     android:editable="true"
@@ -264,7 +270,7 @@
             <EditText
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:textSize="10dp"
+                    android:textSize="14dp"
                     android:hint="Nouveau mot de passe"
                     android:id="@+id/editText9"
                     android:editable="true"
