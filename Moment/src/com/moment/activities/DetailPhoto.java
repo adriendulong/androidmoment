@@ -27,6 +27,7 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
@@ -433,5 +434,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {}
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
+    }
 
 }

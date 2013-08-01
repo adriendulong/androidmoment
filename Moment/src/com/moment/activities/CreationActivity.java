@@ -26,6 +26,7 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.CommonUtilities;
@@ -77,6 +78,18 @@ public class CreationActivity extends SherlockActivity {
 
         fontNumans = Typeface.createFromAsset(getAssets(),
                 "fonts/Numans-Regular.otf");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 
     private Session openActiveSession(Activity activity, boolean allowLoginUI,
