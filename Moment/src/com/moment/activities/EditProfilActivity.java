@@ -3,13 +3,20 @@ package com.moment.activities;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -30,23 +37,35 @@ import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.moment.classes.DatabaseHelper;
+import com.moment.classes.RoundTransformation;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
+import com.moment.models.User;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class EditProfilActivity extends SherlockActivity implements View.OnClickListener {
 
+    private static final int GALLERY_PICTURE = 1;
+    private static final int CAMERA_PICTURE = 0;
+    private static final int YOUR_SELECT_PICTURE_REQUEST_CODE = 2;
     private EditText modif_prenom;
     private EditText modif_nom;
     private EditText phone;
+    private EditText adress;
     private EditText secondPhone;
     private EditText secondEmail;
     private EditText description;
@@ -56,6 +75,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     private String facebookId;
     private Session session;
     private AlertDialog alertDialog;
+    private final Transformation roundTrans = new RoundTransformation();
+    private Uri outputFileUri;
+    private Intent intent;
+    private File file;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -71,12 +94,17 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         ImageButton facebook = (ImageButton) findViewById(R.id.edit_profil_fb);
 
         profil_picture = (ImageView) findViewById(R.id.profil_picture_edit);
+        float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+        Picasso.with(this).load(AppMoment.getInstance().user.getPictureProfileUrl()).resize((int) pxBitmap, (int) pxBitmap).transform(roundTrans).into(profil_picture);
 
         modif_prenom = (EditText) findViewById(R.id.modif_prenom);
         modif_prenom.setText(AppMoment.getInstance().user.getFirstName());
 
         modif_nom = (EditText) findViewById(R.id.modif_nom);
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
+
+        adress = (EditText) findViewById(R.id.adress);
+        adress.setText(AppMoment.getInstance().user.getAddress());
 
         EditText email = (EditText) findViewById(R.id.email);
         email.setText(AppMoment.getInstance().user.getEmail());
@@ -101,33 +129,59 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
 
                 RequestParams requestParams = new RequestParams();
-                if(modif_prenom.getText() != modif_prenom.getHint() && modif_prenom.getText() != null)
-                    requestParams.put("firstname",   modif_prenom.getText().toString());
-                if(modif_nom.getText() != modif_nom.getHint() && modif_nom.getText() != null)
+                if(!modif_prenom.getText().equals(modif_prenom.getHint()) && !modif_prenom.getText().equals(null))
+                {
+                    requestParams.put("firstname", modif_prenom.getText().toString());
+                    AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
+                }
+                if(!modif_nom.getText().equals(modif_nom.getHint()) && !modif_nom.getText().equals(null))
+                {
                     requestParams.put("lastname",    modif_nom.getText().toString());
-                if(phone.getText() != phone.getHint() && phone.getText() != null)
+                    AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
+                }
+                if(!adress.getText().equals(adress.getHint()) && !adress.getText().equals(null))
+                {
+                    requestParams.put("phone",       adress.getText().toString());
+                    AppMoment.getInstance().user.setAddress(adress.getText().toString());
+                }
+                if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
+                {
                     requestParams.put("phone",       phone.getText().toString());
-                if(secondPhone.getText() != secondPhone.getHint() && secondPhone.getText() != null)
+                    AppMoment.getInstance().user.setNumTel(phone.getText().toString());
+                }
+                if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
+                {
                     requestParams.put("secondPhone", secondPhone.getText().toString());
-                if(secondEmail.getText() != secondEmail.getHint() && secondEmail.getText() != null)
+                    AppMoment.getInstance().user.setSecondNumTel(secondPhone.getText().toString());
+                }
+                if(!secondEmail.getText().equals(modif_nom.getHint()) && !secondEmail.getText().equals(null))
+                {
                     requestParams.put("secondEmail", secondEmail.getText().toString());
-                if(description.getText() != description.getHint() && description.getText() != null)
+                    AppMoment.getInstance().user.setSecondEmail(secondEmail.getText().toString());
+                }
+                if(!description.getText().equals(modif_nom.getHint()) && !description.getText().equals(null))
+                {
                     requestParams.put("description", description.getText().toString());
+                    AppMoment.getInstance().user.setDescription(description.getText().toString());
+                }
                 if(facebookId != null)
+                {
                     requestParams.put("facebookId", facebookId);
-                if(mImageCaptureUri != null) {
-                    File photo = new File(mImageCaptureUri.getPath());
+                    AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
+                }
+
+                File image = getApplicationContext().getFileStreamPath("profile_picture");
+                if (image != null){
                     try {
-                        requestParams.put("photo", photo);
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                        Log.v("FILE", ""+image.getTotalSpace());
+                        requestParams.put("photo", image);
+                    } catch(FileNotFoundException e) { e.printStackTrace(); }
                 }
 
                 MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        AppMoment.getInstance().user.setUserFromJson(response);
+
                         AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                         progressDialog.cancel();
                     }
@@ -141,6 +195,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 });
             }
         });
+
 
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,12 +241,14 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                         if (response != null) {
                             try {
                                 facebookId = user.getId();
+                                AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
                                 RequestParams params = new RequestParams();
                                 params.put("facebookId", facebookId);
                                 MomentApi.post("user", params, new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(JSONObject response) {
                                         Log.d("User mod", response.toString());
+                                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                                         progressDialog.cancel();
                                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EditProfilActivity.this);
                                         alertDialogBuilder
@@ -237,26 +294,98 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     }
 
     public void touchedPhoto(View view){
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mImageCaptureUri = null;
-        takePictureIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT,
-                mImageCaptureUri);
-        startActivityForResult(takePictureIntent, 0);
+        openImageIntent();
+    }
+
+    private void openImageIntent() {
+
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
+        System.out.println(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
+        root.mkdirs();
+        final String fname = "profile_picture.jpg";
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
+
+        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
+
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
+
+        startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == 0) {
-            Bundle extras = data.getExtras();
-            Bitmap mImageBitmap;
-            if (extras != null) {
-                mImageBitmap = (Bitmap) extras.get("data");
-                profil_picture.setImageBitmap(Images.getRoundedCornerBitmap(mImageBitmap));
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if (Session.getActiveSession()!=null) Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+
+
+        if(resultCode == RESULT_OK)
+        {
+            if(requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE)
+            {
+                final boolean isCamera;
+                if(data == null)
+                {
+                    isCamera = true;
+                }
+                else
+                {
+                    final String action = data.getAction();
+                    if(action == null)
+                    {
+                        isCamera = false;
+                    }
+                    else
+                    {
+                        isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                    }
+                }
+
+                Uri selectedImageUri;
+                if(isCamera)
+                {
+                    selectedImageUri = outputFileUri;
+                }
+                else
+                {
+                    selectedImageUri = data == null ? null : data.getData();
+                }
+
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
+                    Picasso.with(this).load(outputFileUri).resize((int) pxBitmap, (int) pxBitmap).transform(roundTrans).into(profil_picture);
+                    bitmap = Images.resizeBitmap(bitmap, 300);
+                    Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "profile_picture", 100);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                super.onActivityResult(requestCode, resultCode, data);
+                Session.getActiveSession()
+                        .onActivityResult(this, requestCode, resultCode, data);
             }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-            Session.getActiveSession()
-                    .onActivityResult(this, requestCode, resultCode, data);
         }
     }
 

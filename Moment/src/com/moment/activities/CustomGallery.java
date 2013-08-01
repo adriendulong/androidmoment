@@ -47,6 +47,7 @@ public class CustomGallery extends SherlockActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         savedInstanceState = getIntent().getExtras();
+
         momentID = savedInstanceState.getLong("momentID");
 
         final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
@@ -92,13 +93,21 @@ public class CustomGallery extends SherlockActivity {
                 finish();
 
             case R.id.validate:
-                Intent intent = new Intent(this, MomentInfosActivity.class);
-                intent.putExtra("precedente", "timeline");
-                intent.putExtra("position", 0);
-                intent.putExtra("id", momentID);
-                intent.putExtra("photos", selectedPictures);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if(momentID == null) {
+                    Intent intent = new Intent(this, EditProfilActivity.class);
+                    intent.putExtra("photos", selectedPictures);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(this, MomentInfosActivity.class);
+                    intent.putExtra("precedente", "timeline");
+                    intent.putExtra("position", 0);
+                    intent.putExtra("id", momentID);
+                    intent.putExtra("photos", selectedPictures);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

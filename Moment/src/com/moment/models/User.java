@@ -59,6 +59,7 @@ public class User implements Parcelable {
     // KEEP FIELDS - put your custom fields here
     Bitmap photoThumbnail;
     Bitmap photoOriginal;
+    String address;
     // KEEP FIELDS END
 
     public User() {
@@ -285,6 +286,14 @@ public class User implements Parcelable {
 
     // KEEP METHODS - put your custom methods here
 
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
 
     @Override
     public String toString() {
