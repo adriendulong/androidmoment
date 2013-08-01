@@ -188,7 +188,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FacebookEventsActivity.this);
                         alertDialogBuilder
                                 .setTitle("Evenement Facebook")
-                                .setMessage((events.length() - fail) + " Evenements importes, " + fail + " evenements n'ont pas etes importes")
+                                .setMessage((events.length() - fail) + " Evenements importes")
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 

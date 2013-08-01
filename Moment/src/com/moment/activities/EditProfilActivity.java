@@ -1,7 +1,9 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -52,6 +54,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     private ProgressDialog progressDialog;
     private String facebookId;
     private Session session;
+    private AlertDialog alertDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -141,6 +144,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", "Recuperation des informations");
                 openActiveSession(EditProfilActivity.this, true, fbStatusCallback, Arrays.asList(
                         new String[]{"email"}), new Bundle());
             }
@@ -181,6 +185,29 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                         if (response != null) {
                             try {
                                 facebookId = user.getId();
+                                RequestParams params = new RequestParams();
+                                params.put("facebookId", facebookId);
+                                MomentApi.post("user", params, new JsonHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(JSONObject response) {
+                                        Log.d("User mod", response.toString());
+                                        progressDialog.cancel();
+                                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EditProfilActivity.this);
+                                        alertDialogBuilder
+                                                .setTitle("Compte Facebook")
+                                                .setMessage("Compte Facebook Lié")
+                                                .setCancelable(false)
+                                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        alertDialog.dismiss();
+                                                    }
+                                                });
+                                        alertDialog = alertDialogBuilder.create();
+                                        alertDialog.show();
+                                    }
+                                });
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.d("", "Exception e");
