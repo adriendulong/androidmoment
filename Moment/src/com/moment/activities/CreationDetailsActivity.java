@@ -250,44 +250,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
-    /**
-     * Gere le passage de la step 1 � la step2
-     * @param view
-     */
-
-    public void down(View view) {
-	       Log.d("Down", "DOWN OK");
-
-	       //On r�cup�re tous les �l�ments rentr�s
-	       EditText nomLieu = (EditText)findViewById(R.id.edit_lieu);
-	       //EditText numeroAdresse = (EditText)findViewById(R.id.edit_adresse_numero_rue);
-	       //EditText adresseCodePostal = (EditText)findViewById(R.id.edit_adresse_code_postale);
-	       EditText adresse = (EditText)findViewById(R.id.edit_adresse);
-	       EditText adresseInfoLieu = (EditText)findViewById(R.id.edit_info_lieu);
-	       EditText adresseInfoTransport = (EditText)findViewById(R.id.edit_adresse_info_transport);
-
-	       //Adresse adressTemp = new Adresse(numeroAdresse.getText().toString(), Integer.parseInt(adresseCodePostal.getText().toString()), adresseVille.getText().toString());
-
-	       moment.setPlaceInformations(adresseInfoLieu.getText().toString());
-	       moment.setInfoTransport(adresseInfoTransport.getText().toString());
-	       moment.setAdresse(adresse.getText().toString());
-	       //moment.setTitre(nomLieu.getText().toString());
-
-
-
-
-	       FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-	       fragmentTransaction.setCustomAnimations(R.anim.custom_in,R.anim.custom_out);
-
-	       fragmentTransaction.replace(android.R.id.content, fragment2);
-	       fragmentTransaction.commit();
-
-	    }
-
-
-
-
     /**
      * GEre le passage � la 2eme etape
      */

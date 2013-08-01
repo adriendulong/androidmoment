@@ -12,7 +12,7 @@
         android:paddingLeft="20dp"
         android:paddingRight="20dp"
         android:layout_weight="9">
-        <TextView
+        <com.moment.customfont.MomentTextView
             android:id="@+id/text_creation_moment"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/separation_point"
                 android:layout_weight="6"/>
-            <TextView android:text="OU"
+            <com.moment.customfont.MomentTextView android:text="OU"
                 android:textSize="10dp"
                 android:layout_width="0dp"
                 android:layout_height="fill_parent"
@@ -79,7 +79,7 @@
         android:paddingRight="30dp"
         android:layout_height="0dp"
         android:layout_weight="9">
-        <Button
+        <com.moment.customfont.MomentButton
             android:id="@+id/button_facebook"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"

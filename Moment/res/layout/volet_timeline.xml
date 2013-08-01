@@ -20,7 +20,7 @@
                        android:src="@drawable/picto_bulle"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
-            <TextView android:layout_width="wrap_content"
+            <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentLeft="true"
                       android:layout_centerVertical="true"
@@ -73,7 +73,7 @@
                        android:src="@drawable/picto_profil"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
-            <TextView android:layout_width="wrap_content"
+            <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentLeft="true"
                       android:layout_centerVertical="true"
@@ -99,7 +99,7 @@
                        android:src="@drawable/picto_param"
                        android:layout_centerVertical="true"
                        android:layout_marginLeft="5dp"/>
-            <TextView android:layout_width="wrap_content"
+            <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentLeft="true"
                       android:layout_centerVertical="true"

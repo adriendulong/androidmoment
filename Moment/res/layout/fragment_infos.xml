@@ -41,19 +41,19 @@
                           android:layout_alignParentLeft="true"
                           android:layout_marginLeft="80dp"
                           android:layout_marginBottom="20dp">
-                <TextView android:layout_width="wrap_content"
+                <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:text="par"
                           android:textColor="@color/white"
                         android:textSize="12dp"/>
-                <TextView android:id="@+id/firstname_owner"
+                <com.moment.customfont.MomentTextView android:id="@+id/firstname_owner"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:text=""
                           android:textColor="@color/white"
                           android:layout_marginLeft="4dp"
                           android:textSize="12dp"/>
-                <TextView android:id="@+id/lastname_owner"
+                <com.moment.customfont.MomentTextView android:id="@+id/lastname_owner"
                           android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:text=""
@@ -95,14 +95,14 @@
                 android:paddingLeft="5dp"
                 android:paddingTop="5dp"
                 android:paddingBottom="3dp">
-                <TextView android:id="@+id/fl_titre_moment"
+                <com.moment.customfont.MomentTextView android:id="@+id/fl_titre_moment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textSize="20sp"
                     android:text="B"
                     android:textColor="@color/orange"/>
 
-                <TextView
+                <com.moment.customfont.MomentTextView
                     android:id="@+id/titre_moment"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -141,7 +141,7 @@
                                  android:src="@drawable/picto_no"
                                  android:background="@drawable/rsvp_right"/>
                 </LinearLayout>
-                <TextView   android:id="@+id/text_rsvp"
+                <com.moment.customfont.MomentTextView   android:id="@+id/text_rsvp"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bar_rsvp"
@@ -164,7 +164,7 @@
                 android:paddingLeft="20dp"
                 android:paddingRight="20dp"
                 android:layout_marginTop="0dp">
-                <TextView android:id="@+id/infos_moment_description"
+                <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_description"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minHeight="50dp"
@@ -215,7 +215,7 @@
                              android:layout_height="fill_parent"
                              android:background="@android:color/transparent"
                              android:onClick="detailMap"/>
-                <TextView android:id="@+id/infos_moment_adresse"
+                <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_adresse"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/gris_texte"
@@ -259,7 +259,7 @@
                     <ImageView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/picto_invite"/>
-                    <TextView android:id="@+id/guests_number"
+                    <com.moment.customfont.MomentTextView android:id="@+id/guests_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="12"
@@ -267,7 +267,7 @@
                         android:textColor="@color/gris_texte"
                         android:paddingBottom="3dp"
                         android:layout_marginLeft="3dp"/>
-                     <TextView android:layout_width="wrap_content"
+                     <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/infos_moment_invites"
                         android:textSize="10sp"
@@ -275,7 +275,7 @@
                         android:paddingBottom="3dp"
                         android:layout_marginLeft="5dp"
                         android:textAllCaps="true"/>
-                     <TextView android:id="@+id/guests_not_coming"
+                     <com.moment.customfont.MomentTextView android:id="@+id/guests_not_coming"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="3"
@@ -287,7 +287,7 @@
                      <ImageView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:src="@drawable/picto_no"/>
-                     <TextView android:id="@+id/guests_coming"
+                     <com.moment.customfont.MomentTextView android:id="@+id/guests_coming"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="9"
@@ -331,14 +331,14 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:paddingBottom="4dp">
-                        <TextView android:id="@+id/infos_moment_date_debut"
+                        <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_date_debut"
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:text="Mercredi 22 Juillet"
 	                        android:textSize="10sp"
 	                        android:textColor="@color/gris_texte"
 	                        android:textAllCaps="true"/>
-                        <TextView android:id="@+id/infos_moment_heure_debut"
+                        <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_heure_debut"
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:text="20H00"
@@ -353,14 +353,14 @@
                         android:layout_centerVertical="true"
                         android:paddingBottom="4dp"
                         android:gravity="right">
-                        <TextView android:id="@+id/infos_moment_date_fin"
+                        <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_date_fin"
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:text="Mercredi 22 Juillet"
 	                        android:textSize="10sp"
 	                        android:textColor="@color/gris_texte"
 	                        android:textAllCaps="true"/>
-                        <TextView android:id="@+id/infos_moment_heure_fin"
+                        <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_heure_fin"
 	                        android:layout_width="wrap_content"
 	                        android:layout_height="wrap_content"
 	                        android:text="23H00"
@@ -412,7 +412,7 @@
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
                        android:layout_marginBottom="5dp"/>
-            <Button android:layout_width="fill_parent"
+            <com.moment.customfont.MomentButton android:layout_width="fill_parent"
                     android:layout_height="40dp"
                     android:background="@color/red"
                     android:layout_margin="10dp"

@@ -23,7 +23,7 @@
                   android:layout_centerHorizontal="true"
                   android:layout_below="@+id/cell_full"
                   android:layout_marginTop="5dp">
-        <TextView android:layout_width="wrap_content"
+        <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="14dp"
                   android:textColor="@android:color/white"
@@ -33,7 +33,7 @@
                   android:maxLength="100"
                   android:ellipsize="end"
                   android:singleLine="true"/>
-        <TextView android:layout_width="wrap_content"
+        <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="12dp"
                   android:textColor="@android:color/white"

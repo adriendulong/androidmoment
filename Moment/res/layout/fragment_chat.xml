@@ -46,7 +46,7 @@
             android:layout_marginBottom="5dp"
             android:hint="VOTRE MESSAGE"
             android:inputType="textMultiLine"/>
-        <Button android:layout_width="0dp"
+        <com.moment.customfont.MomentButton android:layout_width="0dp"
                 android:layout_height="40dp"
                 android:text="Envoyer"
                 android:layout_weight="2"

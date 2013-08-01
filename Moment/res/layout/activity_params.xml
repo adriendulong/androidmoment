@@ -15,7 +15,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="Follow us !"
@@ -53,7 +53,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/linearLayout">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Made with love in Paris &amp; Bordeaux"
@@ -88,7 +88,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="20dp">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Notifications"
@@ -112,7 +112,7 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="0.6">
 
-                <TextView
+                <com.moment.customfont.MomentTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_invitation"
@@ -174,7 +174,7 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="0.6">
 
-                <TextView
+                <com.moment.customfont.MomentTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_publication"
@@ -235,7 +235,7 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="0.6">
 
-                <TextView
+                <com.moment.customfont.MomentTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_message"
@@ -296,7 +296,7 @@
                     android:layout_height="fill_parent"
                     android:layout_weight="0.6">
 
-                <TextView
+                <com.moment.customfont.MomentTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/param_modif"
@@ -351,7 +351,7 @@
                 android:id="@+id/linearLayout8"
                 android:layout_margin="20dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_tuto"
@@ -367,7 +367,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="20dp">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="Profil"
@@ -385,7 +385,7 @@
                 android:id="@+id/linearLayout10"
                 android:layout_margin="10dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_profil"
@@ -401,7 +401,7 @@
                 android:id="@+id/linearLayout11"
                 android:layout_margin="10dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_logout"
@@ -418,7 +418,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="20dp">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="A propos"
@@ -434,7 +434,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/linearLayout13">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/param_version"
@@ -453,7 +453,7 @@
                 android:id="@+id/linearLayout14"
                 android:layout_margin="10dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_cgu"
@@ -469,7 +469,7 @@
                 android:id="@+id/linearLayout15"
                 android:layout_margin="10dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_contact"
@@ -485,7 +485,7 @@
                 android:layout_gravity="left"
                 android:layout_marginLeft="20dp">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:text="@string/param_feedback"
@@ -503,7 +503,7 @@
                 android:id="@+id/linearLayout17"
                 android:layout_margin="10dp">
 
-            <Button
+            <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_feedback"

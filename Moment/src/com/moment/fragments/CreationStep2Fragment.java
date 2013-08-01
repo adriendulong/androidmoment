@@ -117,23 +117,7 @@ public class CreationStep2Fragment extends Fragment {
 		
 		return view;
 	}
-	
-	
-	
-	
-	/**
-	 * Fonction qui permet de recup�rer la date de d�but stocker dans le text view
-	 * @return dateDebut
-	 */
-	
-	public String getDateDebut(){
-		
-		TextView dateDebut = (TextView)getView().findViewById(R.id.spinner_date_debut);
-		
-		return dateDebut.toString();
-		
-	}
-	
+
 
 
 }

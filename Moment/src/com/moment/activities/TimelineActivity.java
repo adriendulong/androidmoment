@@ -287,105 +287,9 @@ public class TimelineActivity extends SlidingActivity {
         // etc.
     }
 
-    /*
-    public void tap(View view){
-        if(view.getId()==actuelMomentSelect){
-            intentMoment = new Intent(this, MomentInfosActivity.class);
-            intentMoment.putExtra("precedente", "timeline");
-            intentMoment.putExtra("position", 1);
-            intentMoment.putExtra("id", actuelMomentSelect);
-            startActivity(intentMoment);
-        }
-        else{
-            if(actuelMomentSelect!=-1) {
-                LinearLayout momentsLayout = (LinearLayout)findViewById(R.id.timeline_moments);
-                View v = momentsLayout.findViewById(CommonUtilities.longToInt(actuelMomentSelect));
-                reduireMoment(v);
-            }
-            actuelMomentSelect = Long.valueOf(view.getId());
-            grandirMoment(view);
-        }
 
-        //intentMoment = new Intent(this, MomentInfosActivity.class);
-        //startActivity(intentMoment);
-    }
-    */
-
-    /**
-     * Fonction appel�e quand le bouton "Moments" est selectionn�
-     * @param view
-     */
-
-    public void moments(View view){
-        Log.d("TESTTTT", "premier bouton volet");
-    }
-
-
-    /**
-     * Fonction appel�e quand le bouton profil est selectionn�
-     * Lance la vue profil
-     * @param view
-     */
-
-    public void profil(View view){
-        Intent intent = new Intent(this, ProfilActivity.class);
-        startActivity(intent);
-    }
-
-
-    /**
-     * Fonction appel�e quand le bouton param�tres est selectionn�e
-     * Lance la vue param�tre
-     * @param view
-     */
-
-    public void parametres(View view){
-
-    }
-
-
-
-    /**
-     * Fonction qui g�re l'ajout d'un moment � la timeline
-     * @param id
-     * @param nom
-     */
 
     /*
-    public void ajoutMoment(Moment moment){
-
-        LinearLayout momentsLayout = (LinearLayout)findViewById(R.id.timeline_moments);
-        RelativeLayout momentLayout = (RelativeLayout) inflater.inflate(R.layout.moment, null);
-        momentLayout.setId(CommonUtilities.longToInt(moment.getId()));
-        TextView nomMoment = (TextView)momentLayout.findViewById(R.id.nom_moment);
-        nomMoment.setText(moment.getName());
-
-        if(AppMoment.getInstance().checkInternet() == true){
-            if(moment.getUrlCover()!= null){
-                final ImageView imageMoment = (ImageView)momentLayout.findViewById(R.id.image_moment);
-                moment.printCover(imageMoment, true);
-            }
-        }
-
-        else {
-            // TODO Check cache
-            final ImageView imageMoment = (ImageView)momentLayout.findViewById(R.id.image_moment);
-        }
-
-        momentsLayout.addView(momentLayout);
-
-        Resources r = getResources();
-        float pxRatio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
-        momentLayout.getLayoutParams().height = (int)(110*pxRatio);
-        momentLayout.getLayoutParams().width = (int)(110*pxRatio);
-
-        LinearLayout.LayoutParams params = (LinearLayout.LayoutParams)momentLayout.getLayoutParams();
-        params.setMargins(0, 10, 0, 50);
-    }*/
-
-
-
-
     public void grandirMoment(View view){
 
         Resources r = getResources();
@@ -411,52 +315,7 @@ public class TimelineActivity extends SlidingActivity {
         anim.setInterpolator(new AccelerateInterpolator());
         view.startAnimation(anim);
     }
-
-    /**
-     * L'utilisateur a touch� le bouton qui permet d'acc�der directement aux Photos
-     * @param view
-     */
-
-    public void tapDirectPhotos(View view){
-
-        intentMoment = new Intent(this, MomentInfosActivity.class);
-        intentMoment.putExtra("precedente", "timeline");
-        intentMoment.putExtra("position", 0);
-        intentMoment.putExtra("id", actuelMomentSelect);
-        startActivity(intentMoment);
-    }
-
-
-
-    /**
-     * L'utilisateur a touch� le bouton qui permet d'acc�der directement aux Infos
-     * @param view
-     */
-
-    public void tapDirectInfos(View view){
-
-        intentMoment = new Intent(this, MomentInfosActivity.class);
-        intentMoment.putExtra("precedente", "timeline");
-        intentMoment.putExtra("position", 1);
-        intentMoment.putExtra("id", actuelMomentSelect);
-        startActivity(intentMoment);
-    }
-
-
-    /**
-     * L'utilisateur a touch� le bouton qui permet d'acc�der directement aux Chat
-     * @param view
-     */
-
-    public void tapDirectChat(View view){
-
-        intentMoment = new Intent(this, MomentInfosActivity.class);
-        intentMoment.putExtra("precedente", "timeline");
-        intentMoment.putExtra("position", 2);
-        intentMoment.putExtra("id", actuelMomentSelect);
-        startActivity(intentMoment);
-    }
-
+    */
 
     public void notifications(View view){
         Log.e("NOTIFS", "HERE NOTIFS");

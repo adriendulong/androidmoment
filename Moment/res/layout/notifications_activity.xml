@@ -10,13 +10,13 @@
                   android:background="@drawable/background"
                   android:orientation="horizontal"
                   android:weightSum="2">
-        <Button android:layout_width="0dp"
+        <com.moment.customfont.MomentButton android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:background="@drawable/background"
                 android:text="Notifications"
                 android:layout_weight="1"
                 android:onClick="notifications"/>
-        <Button android:layout_width="0dp"
+        <com.moment.customfont.MomentButton android:layout_width="0dp"
                 android:layout_height="fill_parent"
                 android:background="@drawable/background"
                 android:text="Invitations"
@@ -36,7 +36,7 @@
                   android:layout_height="fill_parent"
                   android:orientation="horizontal"
                   android:gravity="center">
-        <TextView android:layout_height="wrap_content"
+        <com.moment.customfont.MomentTextView android:layout_height="wrap_content"
                   android:layout_width="300dp"
                   android:text="@string/notifs_vide"
                   android:textSize="12dp"

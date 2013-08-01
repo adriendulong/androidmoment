@@ -28,13 +28,13 @@
         <RelativeLayout android:layout_width="fill_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
-            <TextView android:id="@+id/title_moment_notif"
+            <com.moment.customfont.MomentTextView android:id="@+id/title_moment_notif"
                       android:text="test"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentLeft="true"
                       android:textColor="@color/gris_texte"/>
-            <TextView android:id="@+id/date_moment_notif"
+            <com.moment.customfont.MomentTextView android:id="@+id/date_moment_notif"
                       android:text="test"
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
@@ -51,7 +51,7 @@
                 <ImageView android:layout_width="18dp"
                            android:layout_height="18dp"
                            android:src="@drawable/picto_volet_invit"/>
-                <TextView android:layout_width="wrap_content"
+                <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textColor="@color/gris_texte"
                           android:textSize="12dp"
@@ -67,7 +67,7 @@
                 <ImageView android:layout_width="18dp"
                            android:layout_height="18dp"
                            android:src="@drawable/picto_time"/>
-                <TextView android:layout_width="wrap_content"
+                <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
                           android:textColor="@color/gris_texte"
                           android:textSize="12dp"

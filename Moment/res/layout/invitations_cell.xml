@@ -39,14 +39,14 @@
 		            android:layout_height="wrap_content"
 		            android:orientation="horizontal">
 		            
-		            <TextView android:id="@+id/firstname_invitations"
+		            <com.moment.customfont.MomentTextView android:id="@+id/firstname_invitations"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
 		                android:text="Adrien"
                         android:textAllCaps="true"/>
-		            <TextView android:id="@+id/lastname_invitations" 
+		            <com.moment.customfont.MomentTextView android:id="@+id/lastname_invitations"
 		                android:layout_marginLeft="5dp"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
@@ -60,17 +60,17 @@
 		            android:layout_height="wrap_content"
 		            android:orientation="horizontal">
 		            
-		            <TextView android:layout_width="wrap_content"
+		            <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
 		                android:text=""/>
-		            <TextView android:layout_width="wrap_content"
+		            <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"
 		                android:textColor="@color/gris_texte"
 		                android:text=""/>
-		            <TextView android:layout_marginLeft="5dp"
+		            <com.moment.customfont.MomentTextView android:layout_marginLeft="5dp"
 		                android:layout_width="wrap_content"
 		                android:layout_height="fill_parent"
 		                android:textSize="12dp"

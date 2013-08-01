@@ -78,12 +78,12 @@
                     android:orientation="horizontal"
                     android:layout_centerInParent="true"
                     android:paddingBottom="3dp">
-                    <TextView android:layout_width="wrap_content"
+                    <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/fl_log_in_inscription"
                         android:textSize="14sp"
                         android:textColor="@color/orange"/> 
-                    <TextView android:layout_width="wrap_content"
+                    <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/log_in_inscription"
                         android:textSize="10sp"

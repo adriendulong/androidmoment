@@ -31,7 +31,7 @@
                       android:layout_weight="18"
                       android:padding="20dp">
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:text="Beaucoup d'invitations arrivent par SMS, indique ton numéro de téléphone pour n'en louper aucune:"
@@ -41,7 +41,7 @@
                     android:layout_marginBottom="50dp"
                     android:gravity="center"/>
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:text="Avec ton numéro de téléphone, tes amis pourront t'inviter grâce à leur carnet d'adresses."
@@ -52,7 +52,7 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"/>
 
-            <EditText android:layout_width="fill_parent"
+            <com.moment.customfont.MomentTextView android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/phone_num"
                       android:hint="Numéro de téléphone"
