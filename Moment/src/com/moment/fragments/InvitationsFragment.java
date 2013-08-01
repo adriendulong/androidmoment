@@ -27,6 +27,7 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -97,6 +98,7 @@ public class InvitationsFragment extends Fragment {
         System.out.println(""+position);
         if(savedInstanceState==null){
             if (position == 1){
+                EasyTracker.getTracker().sendView("/ContactsInvite");
                 System.out.println("CCCOOONNNTTTACCCCTTSS");
                 users = new ArrayList<User>();
                 ContactLoader asyncContact = new ContactLoader();
@@ -105,10 +107,12 @@ public class InvitationsFragment extends Fragment {
 
             }
             else if (position == 0){
+                EasyTracker.getTracker().sendView("/FacebookInvite");
                 users = new ArrayList<User>();
                 //facebook();
             }
             else {
+                EasyTracker.getTracker().sendView("/FavorisInvite");
                 users = new ArrayList<User>();
                 Log.v("INVIT", "création fragment Favoris");
 

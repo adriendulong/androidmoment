@@ -9,4 +9,23 @@
 
     <!--Enable automatic exception tracking-->
     <bool name="ga_reportUncaughtExceptions">true</bool>
+
+    <!-- The screen names that will appear in your reporting -->
+    <string name="com.moment.activities.CreationActivity">CreationMoment</string>
+    <string name="com.moment.activities.CreationActivity">CreationMomentDetail(Activity)</string>
+    <string name="com.moment.activities.CreationPopUp">CreationMomentPopUp</string>
+    <string name="com.moment.activities.CustomGallery">CustomGallery</string>
+    <string name="com.moment.activities.DetailPhoto">DetailPhoto</string>
+    <string name="com.moment.activities.EditProfilActivity">EditProfil</string>
+    <string name="com.moment.activities.InscriptionActivity">InscriptionStep1</string>
+    <string name="com.moment.activities.InscriptionActivityStep2">InscriptionStep2</string>
+    <string name="com.moment.activities.InvitationActivity">Invitation</string>
+    <string name="com.moment.activities.ListGuestsActivity">ListGuests</string>
+    <string name="com.moment.activities.MomentActivity">MomentFirstScreen</string>
+    <string name="com.moment.activities.MomentInfosActivity">MomentInfosPhotosChat(Activity)</string>
+    <string name="com.moment.activities.NotificationsActivity">Notifications</string>
+    <string name="com.moment.activities.PlacePickerActivity">PlacePicker</string>
+    <string name="com.moment.activities.SettingsActivity">Settings</string>
+    <string name="com.moment.activities.TimelineActivity">Timeline</string>
+
 </resources>

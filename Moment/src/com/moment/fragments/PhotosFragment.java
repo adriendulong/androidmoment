@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -155,6 +156,7 @@ public class PhotosFragment extends Fragment {
 
         myAlertDialog.setPositiveButton("Galerie", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Pick from Gallery", null);
                 intent = new Intent(getActivity(), CustomGallery.class);
                 intent.setType("image/*");
                 intent.putExtra("return-data", true);
@@ -165,6 +167,7 @@ public class PhotosFragment extends Fragment {
 
         myAlertDialog.setNegativeButton("Camera", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Pick from Camera", null);
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
                 File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/");
@@ -432,6 +435,7 @@ public class PhotosFragment extends Fragment {
                             defaultButton.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
+                                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo First", null);
                                     startDialog();
                                 }
                             });
@@ -474,8 +478,10 @@ public class PhotosFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
                 if (position == 0) {
+                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo", null);
                     startDialog();
                 } else {
+                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Open Detail Photo", null);
                     Intent intent = new Intent(getActivity(), DetailPhoto.class);
                     if (photos.get(position - 1).getUrlOriginal() == null) {
                         intent.putExtra("position", (0));

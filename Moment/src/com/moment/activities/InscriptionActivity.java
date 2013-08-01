@@ -363,6 +363,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
 
                         AppMoment.getInstance().user = null;
+                        MomentApi.myCookieStore.clear();
                     }
                 });
 

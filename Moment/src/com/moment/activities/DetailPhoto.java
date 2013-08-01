@@ -152,6 +152,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         downloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Download", null);
+
                 File dir = new File(Environment.getExternalStorageDirectory() + "/Pictures/Moment/");
                 if (!dir.exists()) {
                     dir.mkdirs();
@@ -186,6 +188,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         trashButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Remove", null);
+
                 if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
                         || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
                 {
@@ -240,6 +244,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         facebookButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Facebook", null);
                 try {
                     openActiveSession(_this, true, fbStatusCallback, Arrays.asList(
                             "publish_actions"), bundle);
@@ -255,6 +260,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         twitterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Twitter", null);
                 Toast.makeText(getApplication(), "On va twitter" , Toast.LENGTH_LONG).show();
             }
         });
@@ -324,6 +330,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Photo", "button_press", "Like", null);
                 MomentApi.get("like/" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getId(), null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {

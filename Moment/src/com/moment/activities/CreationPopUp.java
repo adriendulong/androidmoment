@@ -76,6 +76,7 @@ public class CreationPopUp extends Activity {
      */
 
     public void clickPrivate(View view){
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Choose Private", null);
 
         //We see if the moment is already private or not
         if(privacy!=PRIVATE_MOMENT){
@@ -111,6 +112,7 @@ public class CreationPopUp extends Activity {
      */
 
     public void clickVisible(View view){
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Choose Visible", null);
 
         //We see if the moment is already private or not
         if(privacy!=VISIBLE_MOMENT){
@@ -147,6 +149,7 @@ public class CreationPopUp extends Activity {
      */
 
     public void clickPublic(View view){
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Choose Public", null);
 
         //We see if the moment is already private or not
         if(privacy!=PUBLIC_MOMENT){
@@ -182,6 +185,7 @@ public class CreationPopUp extends Activity {
      */
 
     public void invitChange(View view){
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Change isOpenInvit", null);
         // Is the toggle on?
         boolean on = ((ToggleButton) view).isChecked();
 
@@ -201,7 +205,7 @@ public class CreationPopUp extends Activity {
      */
 
     public void inivitFriends(View view){
-
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Go to Invite Friends", null);
 
         //We build the request parameters
         RequestParams params = new RequestParams();
