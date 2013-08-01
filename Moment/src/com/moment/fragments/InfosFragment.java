@@ -21,6 +21,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.*;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -79,6 +81,8 @@ public class InfosFragment extends Fragment {
     private View view;
     private WebView mapWeb;
     private Button delMoment;
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -93,6 +97,18 @@ public class InfosFragment extends Fragment {
         itemizedoverlay.addOverlay(overlayitem);
         mapOverlays.add(itemizedoverlay);
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get the GoogleAnalytics singleton. Note that the SDK uses
+        // the application context to avoid leaking the current context.
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+
+        // Use the GoogleAnalytics singleton to get a Tracker.
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
     }
 
     @Override
@@ -510,6 +526,14 @@ public class InfosFragment extends Fragment {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // Send a screen view when the Activity is displayed to the user.
+        mGaTracker.sendView("/InfosFragment");
     }
 
 

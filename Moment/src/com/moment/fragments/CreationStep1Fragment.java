@@ -11,6 +11,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CreationDetailsActivity;
@@ -25,6 +27,8 @@ public class CreationStep1Fragment extends Fragment {
 	private Moment moment;
     private Button dateDebut, dateFin, heureDebut, heureFin;
 
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
 	
 	
 	@Override
@@ -32,6 +36,9 @@ public class CreationStep1Fragment extends Fragment {
 		super.onCreate(savedInstanceState);
 		Log.e("Test", "hello");
 		this.moment = ((CreationDetailsActivity)getActivity()).getMoment();
+
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
 
 	}
 
@@ -135,6 +142,12 @@ public class CreationStep1Fragment extends Fragment {
 
 
         return new Date(calendarFin.getTimeInMillis());
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        mGaTracker.sendView("/CreationStep1Fragment");
     }
 
 

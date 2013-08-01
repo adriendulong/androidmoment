@@ -36,6 +36,7 @@ public class AppMoment extends Application {
 	public static final String APP_FB_ID = "445031162214877";
 	public static final String[] PERMS_FB = new String[] { "user_events", "read_friendlists", "user_about_me", "friends_about_me" };
     public static final String PREFS_NAME = "MomentPrefs";
+    public static final String GOOGLE_ANALYTICS = "UA-36147731-2";
 	public String tel_id;
 
     public DaoMaster.DevOpenHelper helper;

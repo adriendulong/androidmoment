@@ -32,6 +32,7 @@ import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -536,6 +537,18 @@ public class InvitationActivity extends SherlockFragmentActivity {
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 
 }

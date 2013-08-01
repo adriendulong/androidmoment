@@ -11,6 +11,7 @@ import android.widget.*;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -91,6 +92,7 @@ public class NotificationsActivity extends SherlockActivity {
     @Override
     public void onStart(){
         super.onStart();
+        EasyTracker.getInstance().activityStart(this);
 
         if(notifications.size()==0){
             //Init list
@@ -245,5 +247,11 @@ public class NotificationsActivity extends SherlockActivity {
             notifsListView.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 }

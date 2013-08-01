@@ -12,6 +12,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;
@@ -20,6 +23,9 @@ public class CreationStep2Fragment extends Fragment {
 	
 	private Moment moment;
 	private CreationDetailsActivity activity;
+
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -27,6 +33,9 @@ public class CreationStep2Fragment extends Fragment {
 		Log.e("Test", "hello2");
 		activity = ((CreationDetailsActivity)getActivity());
 		this.moment = activity.getMoment();
+
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
 		
 	}
 
@@ -118,6 +127,11 @@ public class CreationStep2Fragment extends Fragment {
 		return view;
 	}
 
+    @Override
+    public void onStart(){
+        super.onStart();
+        mGaTracker.sendView("/CreationStep2Fragment");
+    }
 
 
 }

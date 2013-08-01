@@ -30,6 +30,7 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.maps.MapView;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
@@ -800,6 +801,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         alertDialog.show();
 
 
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 
 

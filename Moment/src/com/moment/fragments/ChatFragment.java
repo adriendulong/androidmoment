@@ -15,6 +15,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -58,6 +60,21 @@ public class ChatFragment extends Fragment {
     private final Transformation roundTrans = new RoundTransformation();
     private TextView defaultTextChat;
 
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get the GoogleAnalytics singleton. Note that the SDK uses
+        // the application context to avoid leaking the current context.
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+
+        // Use the GoogleAnalytics singleton to get a Tracker.
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -88,6 +105,8 @@ public class ChatFragment extends Fragment {
             this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
             initChat();
         }
+
+        mGaTracker.sendView("/ChatFragment");
     }
 
     @Override

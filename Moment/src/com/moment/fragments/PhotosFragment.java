@@ -27,6 +27,8 @@ import android.view.ViewGroup;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
@@ -76,6 +78,9 @@ public class PhotosFragment extends Fragment {
     private final int CAMERA_PICTURE = 1;
     private final int GALLERY_PICTURE = 2;
 
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,6 +106,9 @@ public class PhotosFragment extends Fragment {
                 }
             }
         }
+
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
     }
 
     @Override
@@ -116,6 +124,8 @@ public class PhotosFragment extends Fragment {
             this.momentID = ((MomentInfosActivity)getActivity()).getMomentId();
             initPhoto();
         }
+
+        mGaTracker.sendView("/PhotosFragment");
     }
 
     @Override

@@ -9,6 +9,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
+import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.models.User;
@@ -23,8 +26,23 @@ public class GuestsFragment extends Fragment {
     private ArrayList<User> users;
     private InvitationsAdapter adapter;
 
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
+
     public GuestsFragment(int positionFragment){
         position = positionFragment;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get the GoogleAnalytics singleton. Note that the SDK uses
+        // the application context to avoid leaking the current context.
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+
+        // Use the GoogleAnalytics singleton to get a Tracker.
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
     }
 
     @Override
@@ -77,7 +95,7 @@ public class GuestsFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-
+        mGaTracker.sendView("/GuestsFragment");
     }
 
     /**

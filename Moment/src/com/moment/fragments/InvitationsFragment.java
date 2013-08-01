@@ -27,6 +27,8 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
+import com.google.analytics.tracking.android.GoogleAnalytics;
+import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -54,8 +56,23 @@ public class InvitationsFragment extends Fragment {
     private int position;
     public InvitationsAdapter adapter;
 
+    private Tracker mGaTracker;
+    private GoogleAnalytics mGaInstance;
+
     public InvitationsFragment(){
 
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // Get the GoogleAnalytics singleton. Note that the SDK uses
+        // the application context to avoid leaking the current context.
+        mGaInstance = GoogleAnalytics.getInstance(getActivity());
+
+        // Use the GoogleAnalytics singleton to get a Tracker.
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
     }
 
     @Override
@@ -135,6 +152,12 @@ public class InvitationsFragment extends Fragment {
 
 
         return rootView;
+    }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        mGaTracker.sendView("/InvitationsFragment");
     }
 
 	/*
