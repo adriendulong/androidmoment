@@ -68,6 +68,7 @@ public class Moment {
     private List<Chat> chats;
 
     // KEEP FIELDS - put your custom fields here
+    private String uniqueUrl;
     private ArrayList<Photo> photos;
     // KEEP FIELDS END
 
@@ -335,6 +336,15 @@ public class Moment {
 
     // KEEP METHODS - put your custom methods here
 
+
+    public String getUniqueUrl() {
+        return uniqueUrl;
+    }
+
+    public void setUniqueUrl(String uniqueUrl) {
+        this.uniqueUrl = uniqueUrl;
+    }
+
     @Override
     public String toString() {
         return "Moment{" +
@@ -407,6 +417,7 @@ public class Moment {
             if(moment.has("description")) this.description = moment.getString("description");
             if(moment.has("privacy")) this.privacy = moment.getInt("privacy");
             if(moment.has("isOpenInvit")) this.isOpenInvit = moment.getBoolean("isOpenInvit");
+            if(moment.has("unique_url")) this.uniqueUrl = moment.getString("unique_url");
 
             if (moment.has("owner")){
                 JSONObject owner = moment.getJSONObject("owner");

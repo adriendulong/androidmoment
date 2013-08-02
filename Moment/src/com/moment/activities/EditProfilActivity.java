@@ -37,6 +37,7 @@ import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+import com.moment.classes.CommonUtilities;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.RoundTransformation;
 import com.moment.AppMoment;
@@ -56,6 +57,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EditProfilActivity extends SherlockActivity implements View.OnClickListener {
 
@@ -125,74 +128,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
             @Override
             public void onClick(View v) {
-
-                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
-
-                RequestParams requestParams = new RequestParams();
-                if(!modif_prenom.getText().equals(modif_prenom.getHint()) && !modif_prenom.getText().equals(null))
-                {
-                    requestParams.put("firstname", modif_prenom.getText().toString());
-                    AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
-                }
-                if(!modif_nom.getText().equals(modif_nom.getHint()) && !modif_nom.getText().equals(null))
-                {
-                    requestParams.put("lastname",    modif_nom.getText().toString());
-                    AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
-                }
-                if(!adress.getText().equals(adress.getHint()) && !adress.getText().equals(null))
-                {
-                    requestParams.put("phone",       adress.getText().toString());
-                    AppMoment.getInstance().user.setAddress(adress.getText().toString());
-                }
-                if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
-                {
-                    requestParams.put("phone",       phone.getText().toString());
-                    AppMoment.getInstance().user.setNumTel(phone.getText().toString());
-                }
-                if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
-                {
-                    requestParams.put("secondPhone", secondPhone.getText().toString());
-                    AppMoment.getInstance().user.setSecondNumTel(secondPhone.getText().toString());
-                }
-                if(!secondEmail.getText().equals(modif_nom.getHint()) && !secondEmail.getText().equals(null))
-                {
-                    requestParams.put("secondEmail", secondEmail.getText().toString());
-                    AppMoment.getInstance().user.setSecondEmail(secondEmail.getText().toString());
-                }
-                if(!description.getText().equals(modif_nom.getHint()) && !description.getText().equals(null))
-                {
-                    requestParams.put("description", description.getText().toString());
-                    AppMoment.getInstance().user.setDescription(description.getText().toString());
-                }
-                if(facebookId != null)
-                {
-                    requestParams.put("facebookId", facebookId);
-                    AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
-                }
-
-                File image = getApplicationContext().getFileStreamPath("profile_picture");
-                if (image != null){
-                    try {
-                        Log.v("FILE", ""+image.getTotalSpace());
-                        requestParams.put("photo", image);
-                    } catch(FileNotFoundException e) { e.printStackTrace(); }
-                }
-
-                MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-
-                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
-                        progressDialog.cancel();
-                    }
-
-                    @Override
-                    public void onFailure(Throwable e, JSONObject response){
-                        e.printStackTrace();
-                        progressDialog.cancel();
-                        Toast.makeText(EditProfilActivity.this, "Une erreur s'est produite", Toast.LENGTH_LONG).show();
-                    }
-                });
+                valider();
             }
         });
 
@@ -203,6 +139,97 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", "Recuperation des informations");
                 openActiveSession(EditProfilActivity.this, true, fbStatusCallback, Arrays.asList(
                         new String[]{"email"}), new Bundle());
+            }
+        });
+    }
+
+    private void valider() {
+        progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
+
+        RequestParams requestParams = new RequestParams();
+        if(!modif_prenom.getText().equals(modif_prenom.getHint()) && !modif_prenom.getText().equals(null))
+        {
+            requestParams.put("firstname", modif_prenom.getText().toString());
+            AppMoment.getInstance().user.setFirstName(modif_prenom.getText().toString());
+        }
+        if(!modif_nom.getText().equals(modif_nom.getHint()) && !modif_nom.getText().equals(null))
+        {
+            requestParams.put("lastname",    modif_nom.getText().toString());
+            AppMoment.getInstance().user.setLastName(modif_nom.getText().toString());
+        }
+        if(!adress.getText().equals(adress.getHint()) && !adress.getText().equals(null))
+        {
+            requestParams.put("phone",       adress.getText().toString());
+            AppMoment.getInstance().user.setAddress(adress.getText().toString());
+        }
+        if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
+        {
+            if(isPhoneNumber(String.valueOf(phone.getText())))
+            {
+                if(CommonUtilities.isValidTel(phone.getText()))
+                    AppMoment.getInstance().user.setNumTel(phone.getText().toString());
+            } else {
+                Toast.makeText(EditProfilActivity.this, "Numero de telephone invalide", Toast.LENGTH_SHORT).show();
+                progressDialog.cancel();
+                return;
+            }
+        }
+        if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
+        {
+            if(CommonUtilities.isValidTel(secondPhone.getText()))
+            {
+                requestParams.put("phone",       secondPhone.getText().toString());
+                AppMoment.getInstance().user.setNumTel(secondPhone.getText().toString());
+            } else {
+                Toast.makeText(EditProfilActivity.this, "Second numero de telephone invalide", Toast.LENGTH_SHORT).show();
+                progressDialog.cancel();
+                return;
+            }
+        }
+        if(!secondEmail.getText().equals(modif_nom.getHint()) && !secondEmail.getText().equals(null))
+        {
+            if(isEmailAdress(String.valueOf(secondEmail.getText())))
+            {
+                requestParams.put("secondEmail", secondEmail.getText().toString());
+                AppMoment.getInstance().user.setSecondEmail(secondEmail.getText().toString());
+            } else {
+                Toast.makeText(EditProfilActivity.this, "Adresse email invalide", Toast.LENGTH_SHORT).show();
+                progressDialog.cancel();
+                return;
+            }
+        }
+        if(!description.getText().equals(modif_nom.getHint()) && !description.getText().equals(null))
+        {
+            requestParams.put("description", description.getText().toString());
+            AppMoment.getInstance().user.setDescription(description.getText().toString());
+        }
+        if(facebookId != null)
+        {
+            requestParams.put("facebookId", facebookId);
+            AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
+        }
+
+        File image = getApplicationContext().getFileStreamPath("profile_picture");
+        if (image != null){
+            try {
+                Log.v("FILE", ""+image.getTotalSpace());
+                requestParams.put("photo", image);
+            } catch(FileNotFoundException e) { e.printStackTrace(); }
+        }
+
+        MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(JSONObject response) {
+
+                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                progressDialog.cancel();
+            }
+
+            @Override
+            public void onFailure(Throwable e, JSONObject response){
+                e.printStackTrace();
+                progressDialog.cancel();
+                Toast.makeText(EditProfilActivity.this, "Une erreur s'est produite", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -280,6 +307,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        getSupportMenuInflater().inflate(R.menu.activity_custom_gallery, menu);
         return true;
     }
 
@@ -289,6 +317,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             case android.R.id.home:
                 finish();
                 return true;
+
+            case R.id.validate:
+                valider();
+                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -387,6 +419,18 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                         .onActivityResult(this, requestCode, resultCode, data);
             }
         }
+    }
+
+    public static boolean isEmailAdress(String email){
+        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
+        Matcher m = p.matcher(email.toUpperCase());
+        return m.matches();
+    }
+
+    public static boolean isPhoneNumber(String phone){
+        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
+        Matcher m = p.matcher(phone.toUpperCase());
+        return m.matches();
     }
 
     @Override

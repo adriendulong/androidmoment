@@ -232,7 +232,13 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     AlertDialog alertDialog = alertDialogBuilder.create();
                     alertDialog.show();
                 } else {
-                    Toast.makeText(getApplication(), "On va balancer" , Toast.LENGTH_LONG).show();
+                    Intent intent = new Intent(Intent.ACTION_SEND);
+                    intent.setType("message/rfc822");
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, "Signaler une photo");
+                    intent.putExtra(Intent.EXTRA_TEXT, photo.getUrlOriginal());
+
+                    startActivity(Intent.createChooser(intent, "Send Email"));
                 }
             }
         });

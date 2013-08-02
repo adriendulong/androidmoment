@@ -36,6 +36,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.CommonUtilities;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;
@@ -50,6 +51,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class InvitationActivity extends SherlockFragmentActivity {
@@ -64,6 +67,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     private EditText searchGuests;
     private ArrayList<User> SMSUsers;
     ArrayList<InvitationsFragment> frs;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +86,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
         //ON recupere l'id du moment que l'on vient de cr�er
         idMoment = getIntent().getLongExtra("id", -1);
-
 
         //Initi les fragments
         frs = new ArrayList<InvitationsFragment>();
@@ -133,6 +136,10 @@ public class InvitationActivity extends SherlockFragmentActivity {
                     if(frFb==null){
                         frFb = mInvitationCollectionPagerAdapter.getItem(0);
                         facebook();
+                        progressDialog = new ProgressDialog(InvitationActivity.this);
+                        progressDialog.setTitle("Facebook");
+                        progressDialog.setMessage("Importation des contacts");
+                        progressDialog.show();
                     }
 
                 }
@@ -382,6 +389,8 @@ public class InvitationActivity extends SherlockFragmentActivity {
                                     user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");
                                     frFb.users.add(user);
                                 }
+                                Collections.sort(frFb.users, new CustomComparator());
+                                progressDialog.cancel();
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.d("", "Exception e");
@@ -515,7 +524,15 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 if(i<(SMSUsers.size()-1)) _messageNumber += ";";
             }
 
-            String messageText = "Je viens de t'inviter à "+moment.getName()+" sur Moment : <unique_url>. Rejoins nous pour partager les photos et organiser l'évènement. A bientôt, "+AppMoment.getInstance().user.getFirstName()+" "+AppMoment.getInstance().user.getLastName();
+            String messageText =
+                    getResources().getString(R.string.text_sms_1)+" "
+                            + moment.getName()+" "
+                            + getResources().getString(R.string.text_sms_2)+"\n"
+                            + moment.getUniqueUrl()+"\n"
+                            + getResources().getString(R.string.text_sms_3)+" "
+                            + AppMoment.getInstance().user.getFirstName()+" "
+                            + AppMoment.getInstance().user.getLastName();
+
             Intent sendIntent = new Intent(Intent.ACTION_VIEW);
             sendIntent.setData(Uri.parse("sms:" + _messageNumber));
             sendIntent.putExtra("sms_body", messageText);
@@ -549,6 +566,13 @@ public class InvitationActivity extends SherlockFragmentActivity {
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this); // Add this method.
+    }
+
+    private class CustomComparator implements Comparator<User> {
+        @Override
+        public int compare(User lhs, User rhs) {
+            return lhs.getFirstName().compareTo(rhs.getFirstName());
+        }
     }
 
 }

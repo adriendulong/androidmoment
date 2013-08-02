@@ -201,4 +201,9 @@
     <!-- Photo -->
     <string name="default_button_photos">Ajoutez des photos !</string>
 
+    <!-- SMS -->
+    <string name="text_sms_1"> Je viens de t\'inviter à </string>
+    <string name="text_sms_2"> sur Moment: </string>
+    <string name="text_sms_3"> Rejoins nous pour partager les photos et organiser l\'évènement. A bientôt, </string>
+
 </resources>
