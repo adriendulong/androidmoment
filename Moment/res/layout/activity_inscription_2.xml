@@ -19,7 +19,7 @@
                      android:layout_height="fill_parent"
                      android:src="@drawable/flech_back"
                      android:background="@null"
-                     android:onClick="retour"
+                     android:visibility="invisible"
                      android:layout_weight="1"/>
         <LinearLayout android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
                     android:layout_marginBottom="10dp"
                     android:gravity="center"/>
 
-            <com.moment.customfont.MomentTextView android:layout_width="fill_parent"
+            <EditText android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
                       android:id="@+id/phone_num"
                       android:hint="Numéro de téléphone"

@@ -220,6 +220,7 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
                 overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
                 break;
             case R.id.add_guests:
+                EasyTracker.getTracker().sendEvent("ListGuests", "button_press", "Add Guests", null);
                 Intent i = new Intent(ListGuestsActivity.this, InvitationActivity.class);
                 i.putExtra("id", idMoment);
                 startActivityForResult(i, NEW_GUEST);

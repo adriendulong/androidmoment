@@ -279,7 +279,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void listInvit(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "List Guests", null);
         callInvit(LIST_INVIT);
+
     }
 
     /**
@@ -288,41 +290,53 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void addGuests(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Add Guests", null);
         callInvit(NEW_INVIT);
     }
 
-    public void postMessage(View view){
+    public void postMessage(final View view){
+        EasyTracker.getTracker().sendEvent("Chat", "button_press", "Post Message", null);
+
         final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
         final String message = postMessage.getText().toString();
-        RequestParams params = new RequestParams();
-        params.put("message", message);
+        if(message.length()>0){
+            //Disable button during post
+            view.setEnabled(false);
 
-        MomentApi.post("newchat/"+momentID, params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
+            RequestParams params = new RequestParams();
+            params.put("message", message);
 
-                Chat chat = new Chat();
-                try {
-                    chat.chatFromJSON(response.getJSONObject("chat"));
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            MomentApi.post("newchat/"+momentID, params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    view.setEnabled(true);
+
+                    Chat chat = new Chat();
+                    try {
+                        chat.chatFromJSON(response.getJSONObject("chat"));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    chat.__setDaoSession(AppMoment.getInstance().daoSession);
+                    chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
+                    chat.setUser(AppMoment.getInstance().user);
+                    AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
+                    AppMoment.getInstance().chatDao.insert(chat);
+
+                    chatFr.messageRight(chat, -1);
+
+                    postMessage.setText("");
                 }
 
-                chat.__setDaoSession(AppMoment.getInstance().daoSession);
-                chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
-                chat.setUser(AppMoment.getInstance().user);
-                AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
-                AppMoment.getInstance().chatDao.insert(chat);
+                public void onFailure(Throwable error, String content) {
+                    view.setEnabled(true);
+                    Toast.makeText(getApplicationContext(), "Problème dans l'envoi du message", Toast.LENGTH_SHORT).show();
+                    System.out.println("FAILURE : "+content);
+                }
+            });
+        }
 
-                chatFr.messageRight(chat, -1);
-
-                postMessage.setText("");
-            }
-
-            public void onFailure(Throwable error, String content) {
-                System.out.println("FAILURE : "+content);
-            }
-        });
     }
 
     public void messageRight(Chat chat){
@@ -393,18 +407,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public static class Exchanger {
         public static MapView mMapView;
-    }
-
-
-
-    /**
-     * L'utilisateur clique sur la photo du moment afin d'en prendre un autre, on appelle alors la fonction concernee
-     * @param view
-     */
-
-    public void changePhoto(View view){
-        InfosFragment infosFragment = (InfosFragment)fragments.get(1);
-        infosFragment.touchedPhoto();
     }
 
 
@@ -500,6 +502,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void notRsvp(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Not Going", null);
         infosFr.notRsvp();
     }
 
@@ -509,6 +512,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void maybeRsvp(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Maybe Goiing", null);
         infosFr.maybeRsvp();
     }
 
@@ -518,6 +522,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void goingRsvp(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Going", null);
         infosFr.goingRsvp();
     }
 
@@ -715,6 +720,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      */
 
     public void modifyMoment(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Modify Moment", null);
         Intent modifyIntent = new Intent(this, CreationDetailsActivity.class);
         modifyIntent.putExtra("nomMoment", moment.getName());
         modifyIntent.putExtra("moment_id", moment.getId());
@@ -724,6 +730,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     public void goPhotos(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Go Photos View", null);
         pager.setCurrentItem(0);
     }
 
@@ -737,6 +744,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
      * @param view
      */
     public void detailMap(View view){
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Detail Map", null);
         String label = moment.getAdresse();
         String uriBegin = "geo:" + 0 + "," + 0;
         String query =  moment.getAdresse();
@@ -759,7 +767,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
 
     public void delete(View view){
-
+        EasyTracker.getTracker().sendEvent("Infos", "button_press", "Delete Moment", null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder
                 .setTitle(getResources().getString(R.string.title_pop_up_delete))

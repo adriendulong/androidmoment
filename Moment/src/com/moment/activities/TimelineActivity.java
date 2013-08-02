@@ -111,14 +111,17 @@ public class TimelineActivity extends SlidingActivity {
             @Override
             public void onClick(View v) {
                 if(v.getId()==myMoments.getId()){
+                    EasyTracker.getTracker().sendEvent("Volet", "button_press", "Timeline", null);
                     toggle();
 
                 }
                 else if(v.getId()==profile.getId()){
+                    EasyTracker.getTracker().sendEvent("Volet", "button_press", "Profil", null);
                     Intent intent = new Intent(getApplication(), EditProfilActivity.class);
                     startActivity(intent);
                 }
                 else if(v.getId()==settings.getId()){
+                    EasyTracker.getTracker().sendEvent("Volet", "button_press", "Settings", null);
                     Intent intent = new Intent(getApplication(), SettingsActivity.class);
                     startActivity(intent);
                 }
@@ -326,6 +329,7 @@ public class TimelineActivity extends SlidingActivity {
     */
 
     public void notifications(View view){
+        EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Notifications", null);
         Log.e("NOTIFS", "HERE NOTIFS");
         Intent notifs = new Intent(this, NotificationsActivity.class);
         startActivity(notifs);
@@ -376,6 +380,7 @@ public class TimelineActivity extends SlidingActivity {
 
 
     public void selectedMoment(View view){
+        EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Select Moment", null);
         Log.v("TIMELINE", ""+view.getTag());
 
         intentMoment = new Intent(this, MomentInfosActivity.class);
@@ -386,6 +391,7 @@ public class TimelineActivity extends SlidingActivity {
 
     }
 
+    /*
     public void deleteMoment(View view){
         final Long momentId = (Long)view.getTag();
         final Moment momentToDel = AppMoment.getInstance().user.getMomentById(momentId);
@@ -437,6 +443,7 @@ public class TimelineActivity extends SlidingActivity {
         alertDialog.show();
 
     }
+    */
 
 
     public void goToToday(Boolean smooth){
@@ -478,6 +485,7 @@ public class TimelineActivity extends SlidingActivity {
     }
 
     public void today(View view){
+        EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Go Today", null);
         goToToday(true);
     }
 
@@ -525,6 +533,7 @@ public class TimelineActivity extends SlidingActivity {
             //We load futur moments
             if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                 if(!allFutur){
+                    EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load futur Moments", null);
                     Log.d(TAG, "LOAD FUTUR MOMENTS");
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     String date = df.format(moments.get(moments.size()-1).getDateDebut());
@@ -577,6 +586,7 @@ public class TimelineActivity extends SlidingActivity {
             //We load old moments
             else if (!loading && (firstVisibleItem) <= 3) {
                 if(!allPast){
+                    EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load Old Moments", null);
                     Log.d(TAG, "Load PAST MOMENTS");
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     String date = df.format(moments.get(0).getDateDebut());

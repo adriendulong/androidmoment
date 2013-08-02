@@ -213,7 +213,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     public void onBackPressed(){
 
         if(invitesUser.size()>0) {
-
+            EasyTracker.getTracker().sendEvent("Invite", "state", "Back without invite", null);
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder
                     .setTitle("Attention")
@@ -246,6 +246,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
             case android.R.id.home:
                 //NavUtils.navigateUpFromSameTask(this);
                 if(invitesUser.size()>0){
+                    EasyTracker.getTracker().sendEvent("Invite", "state", "Back without invite", null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                     alertDialogBuilder
                             .setTitle("Attention")
@@ -494,6 +495,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     }
 
     public void inviteFacebook(View view) throws JSONException{
+        EasyTracker.getTracker().sendEvent("Invite", "button_press", "Invite people button", null);
         if(invitesUser.size()==0){
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder

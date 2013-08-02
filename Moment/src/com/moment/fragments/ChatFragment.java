@@ -15,6 +15,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
@@ -92,6 +93,7 @@ public class ChatFragment extends Fragment {
 
             @Override
             public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
+                EasyTracker.getTracker().sendEvent("Chat", "scroll_refresh", "Load old chats", null);
                 new GetDataTask().execute();
             }
         });
@@ -146,7 +148,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month];
+        String monthString = new DateFormatSymbols().getMonths()[month-1];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 
@@ -203,7 +205,7 @@ public class ChatFragment extends Fragment {
         cal.setTime(chat.getDate());
         int day = cal.get(Calendar.DAY_OF_MONTH);
         int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month];
+        String monthString = new DateFormatSymbols().getMonths()[month-1];
         int hh = cal.get(Calendar.HOUR_OF_DAY);
         int mm = cal.get(Calendar.MINUTE);
 

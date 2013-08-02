@@ -164,7 +164,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             case R.id.left_options_creation:
             	if(step==0) return true;
             	else{
-
+                    EasyTracker.getTracker().sendEvent("Create", "button_press", "Back Step one", null);
             		//On enregistre les champs
             		upOne();
 
@@ -192,6 +192,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             case R.id.right_options_creation:
             	if(step==0 || step == -1){
                     if(validateFirst){
+                        EasyTracker.getTracker().sendEvent("PhoCreateto", "button_press", "Go Step 2", null);
                         downTwo();
 
                         //Second date after first one ?
@@ -237,6 +238,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     }
             	}
             	else{
+                    EasyTracker.getTracker().sendEvent("Create", "button_press", "Create Moment", null);
             		System.out.println("VALIDERRRR");
             		try {
 						creerMoment();
@@ -315,7 +317,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void dateDebut(View view) {
-
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify Beginning Date", null);
     	//On ouvre le date picker
     	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button), (Button)findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -328,7 +330,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void heureDebut(View view) {
-
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify Beginning Hour", null);
     	//On ouvre le time picker
     	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_debut_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -342,7 +344,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void dateFin(View view) {
-
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify End Date", null);
     	//On ouvre le date picker
     	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
@@ -354,7 +356,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void heureFin(View view) {
-
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify End Hour", null);
     	//On ouvre le time picker
     	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_fin_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -645,6 +647,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void changePhoto(View view){
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Add Photo", null);
     	openImageIntent();
     }
 
@@ -654,6 +657,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
      */
 
     public void choosePlace(View view) {
+        EasyTracker.getTracker().sendEvent("Create", "button_press", "Choose Place", null);
         Intent intent = new Intent(this, PlacePickerActivity.class);
         startActivityForResult(intent, PLACE_CHOOSE);
     }

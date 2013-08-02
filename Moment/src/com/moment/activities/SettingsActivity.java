@@ -53,6 +53,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "Go FB Fan Page", null);
                 Intent intent;
                 try {
                     getApplication().getPackageManager().getPackageInfo("com.facebook.katana", 0);
@@ -70,6 +71,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         twitter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "Go Twitter Page", null);
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/appmoment"));
                 startActivity(intent);
             }
@@ -80,6 +82,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         coeur.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "Love", null);
                 cpt ++;
                 if(cpt == 6){
                     cpt = 0;
@@ -94,6 +97,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         contact.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "Contact Moment", null);
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("message/rfc822");
                 intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
@@ -109,6 +113,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         feedback.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "Feedback", null);
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("message/rfc822");
                 intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
@@ -124,6 +129,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         cgu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EasyTracker.getTracker().sendEvent("Settings", "button_press", "CGU", null);
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.appmoment.fr/cgu"));
                 startActivity(intent);
             }
@@ -168,6 +174,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
      */
 
     public void disconnect(View view){
+        EasyTracker.getTracker().sendEvent("Settings", "button_press", "Disconnect", null);
         AppMoment.getInstance().disconnect();
 
         MomentApi.get("logout/" + AppMoment.getInstance().tel_id, null, new JsonHttpResponseHandler() {
@@ -258,6 +265,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
      */
 
     public void modifParamsPush(final View viewPush){
+        EasyTracker.getTracker().sendEvent("Settings", "button_press", "Update Push Params", null);
 
         if(viewPush.isSelected()) viewPush.setSelected(false);
         else viewPush.setSelected(true);
@@ -280,6 +288,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
     }
 
     public void modifParamsMail(final View viewPush){
+        EasyTracker.getTracker().sendEvent("Settings", "button_press", "Update Mail Params", null);
 
         if(viewPush.isSelected()) viewPush.setSelected(false);
         else viewPush.setSelected(true);
