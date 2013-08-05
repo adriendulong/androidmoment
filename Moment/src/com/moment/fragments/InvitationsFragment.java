@@ -14,11 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.facebook.Request;
 import com.facebook.Response;
@@ -56,6 +53,8 @@ public class InvitationsFragment extends Fragment {
 
     private int position;
     public InvitationsAdapter adapter;
+
+    private TextView noFav;
 
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
@@ -113,6 +112,7 @@ public class InvitationsFragment extends Fragment {
             }
             else {
                 EasyTracker.getTracker().sendView("/FavorisInvite");
+                noFav = (TextView)rootView.findViewById(R.id.no_favorites);
                 users = new ArrayList<User>();
                 Log.v("INVIT", "création fragment Favoris");
 
@@ -123,14 +123,25 @@ public class InvitationsFragment extends Fragment {
 
                             JSONArray favorisUsers = response.getJSONArray("favoris");
 
-                            for(int i=0;i<favorisUsers.length();i++){
-                                User tempUser = new User();
-                                tempUser.setUserFromJson(favorisUsers.getJSONObject(i));
-                                users.add(tempUser);
+                            if(favorisUsers.length()==0){
+                                noFav.setVisibility(View.VISIBLE);
+                                listView.setVisibility(View.GONE);
+                            }
+                            else{
+                                noFav.setVisibility(View.GONE);
+                                listView.setVisibility(View.VISIBLE);
+
+                                for(int i=0;i<favorisUsers.length();i++){
+                                    User tempUser = new User();
+                                    tempUser.setUserFromJson(favorisUsers.getJSONObject(i));
+                                    users.add(tempUser);
+                                }
+
+                                adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
+                                listView.setAdapter(adapter);
                             }
 
-                            adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
-                            listView.setAdapter(adapter);
+
 
 
                         } catch (JSONException e) {

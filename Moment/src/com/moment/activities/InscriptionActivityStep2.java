@@ -5,9 +5,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 
+import android.widget.TextView;
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -27,11 +30,26 @@ import java.util.regex.Pattern;
 
 public class InscriptionActivityStep2 extends SherlockActivity {
 
+    private EditText phoneEdit;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inscription_2);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        phoneEdit = (EditText)findViewById(R.id.phone_num);
+        phoneEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    inscription(v);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
     }
 
     @Override

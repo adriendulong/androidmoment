@@ -61,6 +61,7 @@ public class TimelineActivity extends SlidingActivity {
     private RelativeLayout myMoments, profile, settings;
     private ListView notifsListView;
     private ArrayList<Notification> notifications;
+    private ArrayList<Notification> invitations;
     private TextView totalNotifText;
     private ProgressBar notifProgress;
     private int totalNotifs, nbNotifs, nbInvit;
@@ -133,6 +134,7 @@ public class TimelineActivity extends SlidingActivity {
         settings.setOnClickListener(listener);
 
         notifications = new ArrayList<Notification>();
+        invitations = new ArrayList<Notification>();
 
         notifsListView = (ListView)sm.getRootView().findViewById(R.id.list_notifs);
 
@@ -366,6 +368,34 @@ public class TimelineActivity extends SlidingActivity {
                     AppMoment.getInstance().user.setNotifications(notifications);
 
 
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable error, String content) {
+                System.out.println(content);
+            }
+        });
+
+
+        MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
+
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    JSONArray notifsObject = response.getJSONArray("invitations");
+
+                    for (int i = 0; i < notifsObject.length(); i++) {
+
+                        Notification notif = new Notification();
+                        notif.setFromJson(notifsObject.getJSONObject(i));
+                        invitations.add(notif);
+                    }
+
+                    AppMoment.getInstance().user.setInvitations(invitations);
+                    Log.e("NB INVITATIONS", ""+AppMoment.getInstance().user.getInvitations().size());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

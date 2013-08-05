@@ -500,27 +500,29 @@ public class InfosFragment extends Fragment {
         double lon;
         Geocoder geocoder = new Geocoder(getActivity());
 
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        int width = display.getWidth();
+        float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+        float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
+        int realWidth =  Math.round((float)width / density);
+
         try {
             List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
 
             if (addresses.size() > 0) {
-
-
-
                 Address x = addresses.get(0);
                 lat = x.getLatitude();
                 lon = x.getLongitude();
 
-                Display display = getActivity().getWindowManager().getDefaultDisplay();
-                int width = display.getWidth();
-                float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
-                float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
-                int realWidth =  Math.round((float)width / density);
+
 
                 String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/pin-s-star-stroked+ff793d("+lon+","+lat+")/"+lon+","+lat+",8/"+realWidth+"x"+60+".png";
-                Log.v("INFOSFRAGMENT", mapdBoxUrl);
                 mapWeb.loadUrl(mapdBoxUrl);
 
+            }
+            else{
+                String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/0,0,1/"+realWidth+"x"+60+".png";
+                mapWeb.loadUrl(mapdBoxUrl);
             }
         } catch (IOException e) {
             e.printStackTrace();

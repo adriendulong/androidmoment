@@ -186,6 +186,7 @@
     <!-- Invitation -->
     <string name="titre_pop_up_no_invite">Aucune personne selectionnée</string>
     <string name="pop_up_no_invite">Veuillez selectionner des personnes dans vos contacts afin de les inviter à ce Moment</string>
+    <string name="no_favorites">Aucun contact dans favoris pour le moment. Au bout de quelques évènements, vous verrez automatiquement apparaitre les personnes qui vous sont proches</string>
 
     <!-- Timeline -->
     <string name="echec_dl_moments">Echec du téléchargement des Moments</string>

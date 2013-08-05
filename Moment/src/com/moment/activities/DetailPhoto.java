@@ -240,7 +240,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     intent.setType("message/rfc822");
                     intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
                     intent.putExtra(Intent.EXTRA_SUBJECT, "Signaler une photo");
-                    intent.putExtra(Intent.EXTRA_TEXT, photo.getUrlOriginal());
+                    intent.putExtra(Intent.EXTRA_TEXT, "Bonjour, \n\nJe souhaiterais faire enlever cette photo car :\n\n\n\nURL de la photo : "+photo.getUrlUnique());
 
                     startActivity(Intent.createChooser(intent, "Send Email"));
                 }
