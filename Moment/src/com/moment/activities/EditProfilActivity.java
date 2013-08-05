@@ -164,10 +164,13 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
         {
-            if(CommonUtilities.isValidTel(String.valueOf(phone.getText())))
+            String phoneStr = String.valueOf(phone.getText()).replaceAll("[^\\d+]", "");
+
+            if(CommonUtilities.isValidTel(phoneStr))
             {
-                requestParams.put("phone", phone.getText().toString());
-                AppMoment.getInstance().user.setNumTel(phone.getText().toString());
+                requestParams.put("phone", phoneStr);
+                phone.setText(phoneStr);
+                AppMoment.getInstance().user.setNumTel(phoneStr);
             } else {
                 Toast.makeText(EditProfilActivity.this, "Numero de telephone invalide", Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
@@ -176,10 +179,12 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
         {
-            if(CommonUtilities.isValidTel(String.valueOf(secondPhone.getText())))
+            String phoneStr = String.valueOf(phone.getText()).replaceAll("[^\\d+]", "");
+            if(CommonUtilities.isValidTel(phoneStr))
             {
-                requestParams.put("phone",       secondPhone.getText().toString());
-                AppMoment.getInstance().user.setSecondNumTel(secondPhone.getText().toString());
+                requestParams.put("phone",       phoneStr);
+                secondPhone.setText(phoneStr);
+                AppMoment.getInstance().user.setSecondNumTel(phoneStr);
             } else {
                 Toast.makeText(EditProfilActivity.this, "Second numero de telephone invalide", Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
