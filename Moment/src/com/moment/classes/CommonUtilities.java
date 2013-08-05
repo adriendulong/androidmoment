@@ -73,6 +73,7 @@ public final class CommonUtilities {
     }
 
     public final static boolean isValidTel(String target) {
+        target = target.replaceAll("[^\\d+]", "");
         if( target.length() == 10 || target.length() == 12)
         {
             if(target.subSequence(0,3).equals("+33") && target.length() == 12)
