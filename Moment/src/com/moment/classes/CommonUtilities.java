@@ -8,6 +8,8 @@ import android.os.Build;
 import android.util.Patterns;
 import android.view.View;
 
+import java.text.ParseException;
+
 public final class CommonUtilities {
 
     static final String SERVER_URL = null;
@@ -70,21 +72,30 @@ public final class CommonUtilities {
         }
     }
 
-    public final static boolean isValidTel(CharSequence target) {
-        if (target == null) {
-            return false;
+    public final static boolean isValidTel(String target) {
+        if( target.length() == 10 || target.length() == 12)
+        {
+            if(target.subSequence(0,3).equals("+33") && target.length() == 12)
+            {
+                try {
+                    Integer.parseInt(target.substring(3));
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            } else if( (target.subSequence(0,2).equals("06") || target.subSequence(0,2).equals("07")) && target.length() == 10)
+            {
+                try {
+                    Integer.parseInt(target);
+                    return true;
+                } catch (Exception e) {
+                    return false;
+                }
+            } else {
+                return false;
+            }
         } else {
-            String number = target.toString();
-            if(number.matches("\\d{10}")) return true;
-            else if (number.startsWith("+")){
-                if(number.substring(1).matches("\\d{11}")) return true;
-                else return false;
-            }
-            else if((number.startsWith("0033"))){
-                if(number.substring(4).matches("\\d{9}")) return true;
-                else return false;
-            }
-            else return false;
+            return false;
         }
     }
 

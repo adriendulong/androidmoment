@@ -16,6 +16,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.CommonUtilities;
 import com.moment.classes.MomentApi;
 
 import org.json.JSONException;
@@ -56,7 +57,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         if(phone.length()>0){
             RequestParams params = new RequestParams();
 
-            if(isPhoneNumber(phone))
+            if(CommonUtilities.isValidTel(phone))
             {
                 params.put("phone", phone);
                 MomentApi.post("user", params, new JsonHttpResponseHandler() {

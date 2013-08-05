@@ -164,10 +164,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
         {
-            if(isPhoneNumber(String.valueOf(phone.getText())))
+            if(CommonUtilities.isValidTel(String.valueOf(phone.getText())))
             {
-                if(CommonUtilities.isValidTel(phone.getText()))
-                    AppMoment.getInstance().user.setNumTel(phone.getText().toString());
+                requestParams.put("phone", phone.getText().toString());
+                AppMoment.getInstance().user.setNumTel(phone.getText().toString());
             } else {
                 Toast.makeText(EditProfilActivity.this, "Numero de telephone invalide", Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
@@ -176,10 +176,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
         {
-            if(CommonUtilities.isValidTel(secondPhone.getText()))
+            if(CommonUtilities.isValidTel(String.valueOf(secondPhone.getText())))
             {
                 requestParams.put("phone",       secondPhone.getText().toString());
-                AppMoment.getInstance().user.setNumTel(secondPhone.getText().toString());
+                AppMoment.getInstance().user.setSecondNumTel(secondPhone.getText().toString());
             } else {
                 Toast.makeText(EditProfilActivity.this, "Second numero de telephone invalide", Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
