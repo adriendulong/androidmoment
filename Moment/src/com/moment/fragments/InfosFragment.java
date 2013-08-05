@@ -1,6 +1,7 @@
 package com.moment.fragments;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,6 +22,15 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.*;
 
+import com.facebook.FacebookRequestError;
+import com.facebook.HttpMethod;
+import com.facebook.Request;
+import com.facebook.Response;
+import com.facebook.Session;
+import com.facebook.SessionDefaultAudience;
+import com.facebook.SessionState;
+import com.facebook.model.GraphObject;
+import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -37,6 +47,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
 import com.moment.activities.MomentInfosActivity.Exchanger;
+import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
 import com.moment.classes.RoundTransformation;
@@ -46,6 +57,9 @@ import com.moment.models.Photo;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -83,6 +97,9 @@ public class InfosFragment extends Fragment {
     private Button delMoment;
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
+
+    private static final int REAUTH_ACTIVITY_CODE = 100;
+    private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 
     public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
@@ -182,49 +199,58 @@ public class InfosFragment extends Fragment {
                 mImageBitmap = (Bitmap) extras.get("data");
                 modifyPhotoMoment(mImageBitmap);
             }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+            Session.getActiveSession().onActivityResult(getActivity(), requestCode, resultCode, data);
         }
     }
 
-    /*
-    private void setUpMapIfNeeded() {
-        if (mMap == null) {
-            mMap = ((SupportMapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
-            if (mMap != null) {
-                double lat;
-                double lon;
-                Geocoder geocoder = new Geocoder(getActivity());
-
-                try {
-                    List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
-
-                    if (addresses.size() > 0) {
-
-
-
-                        Address x = addresses.get(0);
-                        lat = x.getLatitude();
-                        lon = x.getLongitude();
-
-                        final LatLng ADRESS = new LatLng(lat,lon);
-
-                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ADRESS, 15));
-
-                        CameraPosition cameraPosition = new CameraPosition.Builder()
-                                .target(ADRESS)      // Sets the center of the map to Mountain View
-                                .zoom(10)                   // Sets the zoom
-                                .tilt(30)                   // Sets the tilt of the camera to 30 degrees
-                                .build();
-
-                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
+    public void facebook(){
+        Session.openActiveSession(getActivity(),true, new Session.StatusCallback() {
+            @Override
+            public void call(Session session, SessionState state, Exception exception) {
+                if(session.isOpened()){
+                    List<String> permissions = session.getPermissions();
+                    if (!permissions.containsAll(PERMISSIONS)) {
+                        requestPublishPermissions(session);
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
+                    postEvent();
                 }
             }
+        });
+    }
+
+
+    void requestPublishPermissions(Session session) {
+        if (session != null) {
+            Session.NewPermissionsRequest newPermissionsRequest = new Session.NewPermissionsRequest(this, PERMISSIONS)
+                    .setDefaultAudience(SessionDefaultAudience.FRIENDS)
+                    .setRequestCode(REAUTH_ACTIVITY_CODE);
+            session.requestNewPublishPermissions(newPermissionsRequest);
         }
     }
-    */
+
+    private void postEvent() {
+        Bundle fbParams = new Bundle();
+        fbParams.putString("evenement", moment.getUniqueUrl());
+        Request postScoreRequest = new Request(Session.getActiveSession(),
+                "me/appmoment:participe",
+                fbParams,
+                HttpMethod.POST,
+                new Request.Callback() {
+
+                    @Override
+                    public void onCompleted(Response response) {
+                        FacebookRequestError error = response.getError();
+                        if (error != null) {
+                            Log.e("FAIL", error.toString());
+                        } else {
+                            Log.i("WIN", response.toString());
+                        }
+                    }
+                });
+        Request.executeBatchAsync(postScoreRequest);
+    }
 
     public void maybeRsvp(){
         System.out.println("MAYBE");
@@ -249,6 +275,7 @@ public class InfosFragment extends Fragment {
             if(stateAnwser!=COMING){
                 stateAnwser = COMING;
                 moment.setState(COMING);
+                facebook();
                 updateRSVPBloc();
                 updateStateServer(oldState, COMING);
             }
