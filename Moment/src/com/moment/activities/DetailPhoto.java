@@ -1,6 +1,7 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -28,6 +29,7 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.handmark.pulltorefresh.library.internal.Utils;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
@@ -436,6 +438,12 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         assert dialogText.getText() != null;
         message = dialogText.getText().toString();
         params.putString("message", message);
+    }
+
+    private void fullScreen(View v){
+        final Intent i = new Intent(this, PhotoDetailActivity.class);
+        i.putExtra("moment", momentID);
+        startActivity(i);
     }
 
     @Override

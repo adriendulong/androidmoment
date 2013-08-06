@@ -331,10 +331,18 @@ public class InvitationActivity extends SherlockFragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
-        try {
-            inviteSMS();
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if(data.getBooleanExtra("result", false) == true)
+        {
+            if(SMSUsers != null && !SMSUsers.isEmpty())
+            {
+                try {
+                    inviteSMS();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                finish();
+            }
         }
     }
 
@@ -521,7 +529,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
         if(SMSUsers != null && SMSUsers.size()>0){
             String _messageNumber="";
             for(int i=0;i<SMSUsers.size();i++){
-                assert SMSUsers.get(i).getNumTel().matches("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
+                assert CommonUtilities.isValidTel(SMSUsers.get(i).getNumTel());
                 _messageNumber += SMSUsers.get(i).getNumTel();
                 if(i<(SMSUsers.size()-1)) _messageNumber += ";";
             }
