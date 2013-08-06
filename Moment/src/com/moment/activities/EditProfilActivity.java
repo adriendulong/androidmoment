@@ -162,7 +162,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             requestParams.put("phone",       adress.getText().toString());
             AppMoment.getInstance().user.setAddress(adress.getText().toString());
         }
-        if(!phone.getText().equals(modif_nom.getHint()) && !phone.getText().equals(null))
+        if(!phone.getText().toString().equals(modif_nom.getHint()) && !phone.getText().toString().equals(""))
         {
             String phoneStr = String.valueOf(phone.getText()).replaceAll("[^\\d+]", "");
 
@@ -177,12 +177,12 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 return;
             }
         }
-        if(!secondPhone.getText().equals(modif_nom.getHint()) && !secondPhone.getText().equals(null))
+        if(!secondPhone.getText().toString().equals(secondPhone.getHint().toString()) && !secondPhone.getText().toString().equals(""))
         {
-            String phoneStr = String.valueOf(phone.getText()).replaceAll("[^\\d+]", "");
+            String phoneStr = String.valueOf(secondPhone.getText()).replaceAll("[^\\d+]", "");
             if(CommonUtilities.isValidTel(phoneStr))
             {
-                requestParams.put("phone",       phoneStr);
+                requestParams.put("secondPhone", phoneStr);
                 secondPhone.setText(phoneStr);
                 AppMoment.getInstance().user.setSecondNumTel(phoneStr);
             } else {
@@ -191,7 +191,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 return;
             }
         }
-        if(!secondEmail.getText().equals(modif_nom.getHint()) && !secondEmail.getText().equals(null))
+        if(!secondEmail.getText().toString().equals(modif_nom.getHint().toString()) && !secondEmail.getText().toString().equals(""))
         {
             if(isEmailAdress(String.valueOf(secondEmail.getText())))
             {
