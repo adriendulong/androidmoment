@@ -136,7 +136,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         facebook.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", "Recuperation des informations");
                 openActiveSession(EditProfilActivity.this, true, fbStatusCallback, Arrays.asList(
                         new String[]{"email"}), new Bundle());
             }
@@ -246,7 +245,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 SSO_WITH_FALLBACK).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
 
-//        session = null;
 
         if (session == null) {
             Log.d("", "" + savedInstanceState);
@@ -268,6 +266,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
+                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", "Recuperation des informations");
                 Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
                     public void onCompleted(GraphUser user, Response response) {
                         if (response != null) {
@@ -429,12 +428,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     public static boolean isEmailAdress(String email){
         Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
         Matcher m = p.matcher(email.toUpperCase());
-        return m.matches();
-    }
-
-    public static boolean isPhoneNumber(String phone){
-        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
-        Matcher m = p.matcher(phone.toUpperCase());
         return m.matches();
     }
 

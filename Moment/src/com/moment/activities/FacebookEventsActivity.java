@@ -18,6 +18,7 @@ import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.FbEvent;
 import com.moment.models.Moment;
@@ -182,6 +183,11 @@ public class FacebookEventsActivity extends SherlockActivity {
                 Moment moment = new Moment();
                 try {
                     moment.setMomentFromJson(response);
+                    if(DatabaseHelper.getMomentByIdFromDataBase(moment.getId()) != null)
+                    {
+                        fail++;
+                    }
+
                     cursor --;
                     if(cursor == 0)
                     {
