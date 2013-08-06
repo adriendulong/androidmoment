@@ -162,10 +162,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             requestParams.put("phone",       adress.getText().toString());
             AppMoment.getInstance().user.setAddress(adress.getText().toString());
         }
+
         if(!phone.getText().toString().equals(modif_nom.getHint()) && !phone.getText().toString().equals(""))
         {
-            String phoneStr = String.valueOf(phone.getText()).replaceAll("[^\\d+]", "");
-
+            String phoneStr = phone.getText().toString();
             if(CommonUtilities.isValidTel(phoneStr))
             {
                 requestParams.put("phone", phoneStr);
@@ -179,7 +179,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if(!secondPhone.getText().toString().equals(secondPhone.getHint().toString()) && !secondPhone.getText().toString().equals(""))
         {
-            String phoneStr = String.valueOf(secondPhone.getText()).replaceAll("[^\\d+]", "");
+            String phoneStr = secondPhone.getText().toString();
             if(CommonUtilities.isValidTel(phoneStr))
             {
                 requestParams.put("secondPhone", phoneStr);
