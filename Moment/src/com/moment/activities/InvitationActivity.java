@@ -439,7 +439,6 @@ public class InvitationActivity extends SherlockFragmentActivity {
             try {
                 se = new StringEntity(object.toString());
             } catch (UnsupportedEncodingException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
 
@@ -548,6 +547,8 @@ public class InvitationActivity extends SherlockFragmentActivity {
             sendIntent.putExtra("sms_body", messageText);
             startActivity(sendIntent);
 
+            finish();
+        } else {
             finish();
         }
 
