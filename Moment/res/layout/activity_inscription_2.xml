@@ -39,7 +39,8 @@
                     android:layout_alignTop="@+id/imageView"
                     android:layout_centerHorizontal="true"
                     android:layout_marginBottom="50dp"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:textColor="@color/blanc"/>
 
             <com.moment.customfont.MomentTextView
                     android:layout_width="fill_parent"
@@ -50,7 +51,8 @@
                     android:layout_centerHorizontal="true"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    android:gravity="center"/>
+                    android:gravity="center"
+                    android:textColor="@color/blanc"/>
 
             <EditText android:layout_width="fill_parent"
                       android:layout_height="wrap_content"
@@ -60,7 +62,9 @@
                       android:singleLine="true"
                       android:inputType="phone"
                       android:imeOptions="actionDone"
-                      android:layout_marginTop="30dp"/>
+                      android:layout_marginTop="30dp"
+                      android:textColorHint="@color/blanc"
+                      android:textColor="@color/blanc"/>
 
         </LinearLayout>
         <ImageButton android:layout_width="40dp"
