@@ -30,7 +30,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
@@ -45,16 +44,29 @@ import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -247,11 +259,7 @@ public class PhotosFragment extends Fragment {
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(10, 10, 10, 10);
-                try {
-                    Picasso.with(context).load(Color.WHITE).into(imageView);
-                } catch (OutOfMemoryError outOfMemoryError) {
-                    outOfMemoryError.printStackTrace();
-                }
+                imageView.setBackgroundColor(getResources().getColor(R.color.white));
             }
 
             else {
@@ -277,7 +285,7 @@ public class PhotosFragment extends Fragment {
      * Async Task to upload photos
      */
 
-    private class MultiUploadTask extends AsyncTask<Void, Void, Void>
+    private class MultiUploadTask extends AsyncTask<Void, Void, String>
     {
         private final Context context;
         private final int notificationId = 1;
@@ -327,9 +335,7 @@ public class PhotosFragment extends Fragment {
         }
 
         @Override
-        protected Void doInBackground(Void... params) {
-
-            RequestParams requestParams = new RequestParams();
+        protected String doInBackground(Void... params) {
 
 
             File file = new File(photo_uri);
@@ -338,70 +344,72 @@ public class PhotosFragment extends Fragment {
             if(bitmap != null) {
 
                 try {
-                    FileOutputStream stream = new FileOutputStream(file);
+                    HttpClient httpClient = new DefaultHttpClient();
+                    HttpContext localContext = new BasicHttpContext();
+                    localContext.setAttribute(ClientContext.COOKIE_STORE, MomentApi.myCookieStore);
+                    HttpPost httpPost = new HttpPost(MomentApi.BASE_URL + "addphoto/" + momentID);
+                    MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
                     bitmap = Images.resizeBitmap(bitmap, 900);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, stream);
-                    stream.close();
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
+                    byte[] data = bos.toByteArray();
+                    entity.addPart("photo", new ByteArrayBody(data,"photo.png"));
+                    httpPost.setEntity(entity);
+                    HttpResponse response = httpClient.execute(httpPost, localContext);
+                    //BufferedReader reader = new BufferedReader( new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+
+                    String sResponse = EntityUtils.toString(response.getEntity());
+                    return sResponse;
                 } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                try {
-                    requestParams.put("photo", file);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
+                    Log.e(e.getClass().getName(), e.getMessage(), e);
+                    return null;
                 }
 
-                MomentApi.post("addphoto/" + momentID, requestParams, new JsonHttpResponseHandler() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
-
-                        try {
-                            try {
-                                JSONObject json = response.getJSONObject("success");
-
-                                photo.setId(json.getInt("id"));
-
-                                photo.setNbLike(json.getInt("nb_like"));
-                                photo.setUrlOriginal(json.getString("url_original"));
-                                photo.setUrlThumbnail(json.getString("url_thumbnail"));
-                                photo.setUrlUnique(json.getString("unique_url"));
-                                Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
-
-                                photo.setTime(timestamp);
-                                User user = new User();
-                                user.setUserFromJson(json.getJSONObject("taken_by"));
-                                photo.setUser(user);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-
-                            float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-                            Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
-
-                            if(photos_uri.size() == 0)
-                            {
-                                createNotification("Upload", "Termine", true);
-                                asyncRun = false;
-                            }
-
-                        } catch (NullPointerException npe) {
-                            Log.e("NPE", "");
-                            npe.printStackTrace();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Throwable e,JSONObject response){
-                        e.printStackTrace();
-                        System.out.println(response.toString());
-                    }
-                });
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result){
+        protected void onPostExecute(String result){
+
+            Log.e("RESULT", result.toString());
+
+            try {
+                try {
+                    JSONObject jsresult = new JSONObject(result);
+                    JSONObject json = jsresult.getJSONObject("success");
+
+                    photo.setId(json.getInt("id"));
+
+                    photo.setNbLike(json.getInt("nb_like"));
+                    photo.setUrlOriginal(json.getString("url_original"));
+                    photo.setUrlThumbnail(json.getString("url_thumbnail"));
+                    photo.setUrlUnique(json.getString("unique_url"));
+                    Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
+
+                    photo.setTime(timestamp);
+                    User user = new User();
+                    user.setUserFromJson(json.getJSONObject("taken_by"));
+                    photo.setUser(user);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
+                Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
+
+                if(photos_uri.size() == 0)
+                {
+                    createNotification("Upload", "Termine", true);
+                    asyncRun = false;
+                }
+
+            } catch (NullPointerException npe) {
+                Log.e("NPE", "");
+                npe.printStackTrace();
+            }
+
             if(isAdded()){
                 if(photos_uri.size() > 0){
                     MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
