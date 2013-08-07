@@ -32,14 +32,24 @@
                   android:id="@+id/moment_name"
                   android:maxLength="100"
                   android:ellipsize="end"
-                  android:singleLine="true"/>
+                  android:singleLine="true"
+                  android:shadowColor="@color/gris_texte"
+                  android:shadowDx="2"
+                  android:shadowDy="2"
+                  android:gravity="center"
+                  android:shadowRadius="0.01"/>
         <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
                   android:textSize="12dp"
                   android:textColor="@android:color/white"
                   android:text="Coucou"
                   android:layout_gravity="center_horizontal"
-                  android:id="@+id/moment_date"/>
+                  android:id="@+id/moment_date"
+                  android:shadowColor="@color/gris_texte"
+                  android:shadowDx="2"
+                  android:shadowDy="2"
+                  android:gravity="center"
+                  android:shadowRadius="0.01"/>
     </LinearLayout>
     <!--
     <RelativeLayout android:layout_width="wrap_content"

@@ -190,6 +190,10 @@
 
     <!-- Timeline -->
     <string name="echec_dl_moments">Echec du téléchargement des Moments</string>
+    <string name="past">Passé</string>
+    <string name="present">Présent</string>
+    <string name="futur">Futur</string>
+    <string name="moment_dl">Téléchargement des Moments</string>
 
     <!-- Général -->
     <string name="yes">Oui</string>

@@ -91,7 +91,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Button modif = (Button) findViewById(R.id.modif);
+        //Button modif = (Button) findViewById(R.id.modif);
         Button valider = (Button) findViewById(R.id.btn_valider);
 
         ImageButton facebook = (ImageButton) findViewById(R.id.edit_profil_fb);

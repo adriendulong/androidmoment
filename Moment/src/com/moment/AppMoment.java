@@ -129,6 +129,8 @@ public class AppMoment extends Application {
                 }
             }
         }
+
+        MomentApi.initialize(getApplicationContext());
     }
 
     public void disconnect(){

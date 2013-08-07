@@ -97,16 +97,22 @@ public class ChatFragment extends Fragment {
                 new GetDataTask().execute();
             }
         });
+
+        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
+            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+            Log.d("CHAT", "INIT");
+            initChat();
+
+        }
+
         return view;
     }
+
 
     @Override
     public void onStart(){
         super.onStart();
-        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
-            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
-            initChat();
-        }
+
 
         mGaTracker.sendView("/ChatFragment");
     }
@@ -232,6 +238,7 @@ public class ChatFragment extends Fragment {
     }
 
     public void messageLeft(Chat chat){
+        defaultTextChat.setVisibility(View.GONE);
 
         LinearLayout layoutChat = (LinearLayout)view.findViewById(R.id.chat_message_layout);
         LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);

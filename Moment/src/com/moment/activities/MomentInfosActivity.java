@@ -114,9 +114,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
         if(precedente.equals("push")||precedente.equals("notifs")){
-            Log.d("MOMENTINFOS", "TYPE INIT : "+getIntent().getIntExtra("type_id", -1));
+            Log.d("MOMENTINFOS", "TYPE INIT : "+getIntent().getLongExtra("type_id", -1));
             type_id = getIntent().getIntExtra("type_id", -1);
-            moment_id = getIntent().getIntExtra("moment_id", -1);
             momentID = getIntent().getLongExtra("moment_id", 1);
 
             if (type_id == PHOTO_PUSH) position = 0;
@@ -171,7 +170,13 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
         //We get moment informations
-        getMoment();
+        if(AppMoment.getInstance().user == null ) AppMoment.getInstance().getUser();
+        if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
+            moment = AppMoment.getInstance().user.getMomentById(momentID);
+        }else{
+            getMoment();
+        }
+
     }
 
 
@@ -645,7 +650,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                         AppMoment.getInstance().user.getMomentById(momentID).addChat(tempChat);
                                         AppMoment.getInstance().chatDao.insert(tempChat);
 
-                                        messageLeft(tempChat);
+                                        chatFr.messageLeft(tempChat);
 
                                         if(pager.getCurrentItem()==1) pager.setCurrentItem(2);
 
@@ -686,8 +691,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         }
                     }
                     else if(type_notifs==PHOTO_PUSH){
-                        Log.v("PUSSH", "Ceci est un chat");
-                        photo_id = jsonMessage.getInt("photo_id");
+                        Log.v("PUSSH", "Ceci est un photo");
                         //If we are on the chat, we print it
                         if(pager.getCurrentItem()==0||pager.getCurrentItem()==1){
                             Log.v("PUSSH", "On est dans le chat");

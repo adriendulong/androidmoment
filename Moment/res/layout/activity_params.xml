@@ -350,13 +350,14 @@
                 android:gravity="center"
                 android:id="@+id/linearLayout8"
                 android:layout_margin="20dp">
-
+            <!--
             <com.moment.customfont.MomentButton
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_tuto"
                     android:id="@+id/button"
                     android:background="@drawable/btn_params"/>
+                    -->
         </LinearLayout>
 
         <LinearLayout
@@ -389,6 +390,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="30dp"
                     android:text="@string/param_profil"
+                    android:onClick="modifProfile"
                     android:id="@+id/button2"
                     android:background="@drawable/btn_params"/>
         </LinearLayout>

@@ -419,80 +419,90 @@ public class PhotosFragment extends Fragment {
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
+
         if(photos == null || photos.isEmpty())
         {
             photos = moment.getPhotos();
 
-            MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+            gridView = (GridView) view.findViewById(R.id.gridview);
+            gridView.setAdapter(imageAdapter);
 
-                public void onSuccess(JSONObject response) {
-                    try {
-                        JSONArray jsonPhotos = response.getJSONArray("photos");
-
-                        if(jsonPhotos.length()==0){
-                            defaultButton = (Button)view.findViewById(R.id.default_button_photos);
-                            defaultButton.setVisibility(View.VISIBLE);
-                            defaultButton.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View view) {
-                                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo First", null);
-                                    startDialog();
-                                }
-                            });
+            gridView.setOnItemClickListener(new OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                    if (position == 0) {
+                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo", null);
+                        startDialog();
+                    } else {
+                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Open Detail Photo", null);
+                        Intent intent = new Intent(getActivity(), DetailPhoto.class);
+                        if (photos.get(position - 1).getUrlOriginal() == null) {
+                            intent.putExtra("position", (0));
+                        } else {
+                            intent.putExtra("position", (position - 1));
                         }
-                        else{
-                            gridView = (GridView) view.findViewById(R.id.gridview);
-                            gridView.setVisibility(View.VISIBLE);
-                        }
-
-                        for (int i = 0; i < jsonPhotos.length(); i++) {
-                            Photo photo = new Photo();
-                            photo.photoFromJSON(jsonPhotos.getJSONObject(i));
-                            AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                            imageAdapter.notifyDataSetChanged();
-                        }
-
-                        //We update it in the infos view also
-                        ((MomentInfosActivity)getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
-
-                        if(!photos_files.isEmpty() && !photos_uri.isEmpty())
-                        {
-
-                            MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
-                            multiUploadTask.execute();
-
-                        }
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        intent.putExtra("momentID", momentID);
+                        startActivity(intent);
                     }
                 }
             });
+
+            if(AppMoment.getInstance().checkInternet()){
+                MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
+
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            JSONArray jsonPhotos = response.getJSONArray("photos");
+
+                            if(jsonPhotos.length()==0){
+                                defaultButton = (Button)view.findViewById(R.id.default_button_photos);
+                                defaultButton.setVisibility(View.VISIBLE);
+                                defaultButton.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo First", null);
+                                        startDialog();
+                                    }
+                                });
+                            }
+                            else{
+                                gridView = (GridView) view.findViewById(R.id.gridview);
+                                gridView.setVisibility(View.VISIBLE);
+                            }
+
+                            for (int i = 0; i < jsonPhotos.length(); i++) {
+                                Photo photo = new Photo();
+                                photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                                AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+                                imageAdapter.notifyDataSetChanged();
+                            }
+
+                            //We update it in the infos view also
+                            ((MomentInfosActivity)getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
+
+                            if(!photos_files.isEmpty() && !photos_uri.isEmpty())
+                            {
+
+                                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                                multiUploadTask.execute();
+
+                            }
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            else{
+                //photos = AppMoment.getInstance().user.getMomentById(momentID).getPhotos();
+                imageAdapter.notifyDataSetChanged();
+            }
+
         }
 
-        imageAdapter = new ImageAdapter(view.getContext(), photos);
-        gridView = (GridView) view.findViewById(R.id.gridview);
-        gridView.setAdapter(imageAdapter);
 
-        gridView.setOnItemClickListener(new OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                if (position == 0) {
-                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo", null);
-                    startDialog();
-                } else {
-                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Open Detail Photo", null);
-                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                    if (photos.get(position - 1).getUrlOriginal() == null) {
-                        intent.putExtra("position", (0));
-                    } else {
-                        intent.putExtra("position", (position - 1));
-                    }
-                    intent.putExtra("momentID", momentID);
-                    startActivity(intent);
-                }
-            }
-        });
 
     }
 }

@@ -16,6 +16,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Calendar;
+
 /**
  * Created by adriendulong on 05/07/13.
  */
@@ -25,8 +27,6 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
     private int PHOTO_PUSH = 2;
     private int INVIT_PUSH = 0;
 
-    private Intent destIntent;
-
     static final String TAG = "GCMDemo";
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
@@ -35,6 +35,7 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
     private String title, message;
     private int type_id;
     private Long moment_id;
+    private Intent destIntent;
 
     public void onReceive(Context context, Intent intent) {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
@@ -72,7 +73,16 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
 
         if(message!=""){
 
-            if(type_id==CHAT_PUSH){
+            if(type_id==INVIT_PUSH){
+                Log.v(TAG, "INVITATION PUSH");
+                destIntent = new Intent(ctx, MomentInfosActivity.class);
+                destIntent.putExtra("type_id", type_id);
+                destIntent.putExtra("moment_id", moment_id);
+                destIntent.putExtra("message", message);
+                destIntent.putExtra("precedente", "push");
+                Log.v(TAG, message);
+            }
+            else if(type_id==CHAT_PUSH){
                 Log.v(TAG, "PUSH CHAT");
                 destIntent = new Intent(ctx, MomentInfosActivity.class);
                 destIntent.putExtra("type_id", type_id);
@@ -88,19 +98,15 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
                 destIntent.putExtra("moment_id", moment_id);
                 destIntent.putExtra("message", message);
                 destIntent.putExtra("precedente", "push");
-            }
-            else if(type_id==INVIT_PUSH){
-                Log.v(TAG, "INVITATION PUSH");
-                destIntent = new Intent(ctx, TimelineActivity.class);
-                destIntent.putExtra("type_id", type_id);
-                destIntent.putExtra("moment_id", moment_id);
-                destIntent.putExtra("message", message);
-                destIntent.putExtra("precedente", "push");
-                Log.v(TAG, message);
+                Log.v(TAG, "PHOTO PUSH : "+destIntent.getIntExtra("type_id", 0));
             }
 
-            PendingIntent contentIntent = PendingIntent.getActivity(ctx, 0,
-                    destIntent, 0);
+
+            mNotificationManager = (NotificationManager)
+                    ctx.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            PendingIntent contentIntent = PendingIntent.getActivity(ctx, Calendar.getInstance().get(Calendar.MILLISECOND),
+                    destIntent, android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
 
             NotificationCompat.Builder mBuilder =
                     new NotificationCompat.Builder(ctx)
@@ -108,10 +114,14 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
                             .setContentTitle(title)
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(message))
-                            .setContentText(message);
+                            .setContentText(message)
+                            .setAutoCancel(true);
 
             mBuilder.setContentIntent(contentIntent);
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+            mNotificationManager.notify(Calendar.getInstance().get(Calendar.MILLISECOND), mBuilder.build());
+
+
+
 
         }
     }

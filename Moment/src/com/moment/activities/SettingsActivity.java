@@ -309,4 +309,9 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         });
 
     }
+
+    public void modifProfile(View view){
+        Intent intentProfile = new Intent(SettingsActivity.this, EditProfilActivity.class);
+        startActivity(intentProfile);
+    }
 }

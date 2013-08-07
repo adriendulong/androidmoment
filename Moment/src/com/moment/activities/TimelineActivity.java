@@ -145,13 +145,14 @@ public class TimelineActivity extends SlidingActivity {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                     for (Moment moment : momentList){
                         AppMoment.getInstance().user.getMoments().add(moment);
-                        //ajoutMoment(moment);
+                        moments.add(moment);
                     }
+                    goToToday(false);
                 }
             }
 
             else {
-                dialog = ProgressDialog.show(this, null, "Téléchargement des Moments");
+                dialog = ProgressDialog.show(this, null, getResources().getString(R.string.moment_dl));
 
                 MomentApi.initialize(getApplicationContext());
                 MomentApi.get("moments", null, new JsonHttpResponseHandler() {
@@ -191,6 +192,16 @@ public class TimelineActivity extends SlidingActivity {
                         Log.e("TIMELINE", content);
                         dialog.dismiss();
                         Toast.makeText(getApplicationContext(),  getResources().getString(R.string.echec_dl_moments), Toast.LENGTH_LONG).show();
+                        if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                            List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                            for (Moment moment : momentList){
+                                AppMoment.getInstance().user.getMoments().add(moment);
+                                moments.add(moment);
+                            }
+                            goToToday(false);
+                        }
+
+
 
                     }
 

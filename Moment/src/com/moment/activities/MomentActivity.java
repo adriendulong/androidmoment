@@ -1,8 +1,10 @@
 package com.moment.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -18,11 +20,7 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 
 import com.google.analytics.tracking.android.EasyTracker;
@@ -37,6 +35,7 @@ import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
 import com.moment.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -70,6 +69,7 @@ public class MomentActivity extends Activity {
     private Context context;
     private String regid;
     private ProgressDialog dialog;
+    private boolean isSuccess = false;
 
 
     @Override
@@ -297,6 +297,139 @@ public class MomentActivity extends Activity {
         String email = ((EditText)findViewById(R.id.email_login)).getText().toString();
         String password = ((EditText)findViewById(R.id.password_login)).getText().toString();
 
+        if((email.length()>0)&&(password.length()>0)){
+            //On cr�� notre futur User
+            AppMoment.getInstance().user = new User();
+            AppMoment.getInstance().user.setEmail(email);
+
+            RequestParams params = new RequestParams();
+            params.put("email", email);
+            params.put("password", password);
+            if (!regid.equals("")) params.put("notif_id", regid);
+            params.put("os", "1");
+            params.put("os_version", android.os.Build.VERSION.RELEASE);
+            params.put("model", CommonUtilities.getDeviceName());
+            params.put("device_id", AppMoment.getInstance().tel_id);
+            //params.put("lang", Locale.getDefault().getDisplayLanguage());
+
+            MomentApi.initialize(getApplicationContext());
+
+            dialog = ProgressDialog.show(this, null, "Connexion");
+            MomentApi.post("login", params, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    isSuccess = true;
+                    Long id = null;
+                    try {
+                        id = Long.parseLong(response.getString("id"));
+                        AppMoment.getInstance().user.setId(id);
+
+                        SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putLong("userID", id);
+                        editor.commit();
+
+                        MomentApi.get("user", null, new JsonHttpResponseHandler() {
+
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                try {
+                                    String firstname = response.getString("firstname");
+                                    AppMoment.getInstance().user.setFirstName(firstname);
+
+                                    String lastname = response.getString("lastname");
+                                    AppMoment.getInstance().user.setLastName(lastname);
+
+                                    if (response.has("profile_picture_url")){
+                                        String profile_picture_url = response.getString("profile_picture_url");
+                                        AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
+                                    }
+
+                                    dialog.dismiss();
+
+                                    Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                                    startActivity(intent);
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(id);
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    dialog.dismiss();
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MomentActivity.this);
+                    // set title
+                    alertDialogBuilder.setTitle("Connexion impossible");
+                    // set dialog message
+                    alertDialogBuilder
+                            .setMessage("Mauvais email/mot de passe.")
+                            .setCancelable(false)
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.dismiss();
+                                }
+                            });
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+                    alertDialog.show();
+
+                    AppMoment.getInstance().user = null;
+                    MomentApi.myCookieStore.clear();
+
+                }
+
+                public void onFinish() {
+                    Log.e("Connect", "Problem ?");
+                    //We didnt pass by failure and success, it is a failure of login
+                    if(!isSuccess){
+                        dialog.dismiss();
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MomentActivity.this);
+                        // set title
+                        alertDialogBuilder.setTitle("Connexion impossible");
+                        // set dialog message
+                        alertDialogBuilder
+                                .setMessage("Mauvais email/mot de passe.")
+                                .setCancelable(false)
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+                        alertDialog.show();
+
+                        AppMoment.getInstance().user = null;
+                        MomentApi.myCookieStore.clear();
+                    }
+                }
+
+            });
+        }
+        else{
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+            // set title
+            alertDialogBuilder.setTitle("Données incorrectes");
+            // set dialog message
+            alertDialogBuilder
+                    .setMessage("Veuillez renseigner votre email et votre mot de passe")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.dismiss();
+                        }
+                    });
+            AlertDialog alertDialog = alertDialogBuilder.create();
+            alertDialog.show();
+
+        }
+
         //GCMRegistrar.checkDevice(this);
         //GCMRegistrar.checkManifest(this);
 
@@ -304,75 +437,7 @@ public class MomentActivity extends Activity {
         //if (regId.equals(""))
             //GCMRegistrar.register(this, CommonUtilities.SENDER_ID);
 
-        //On cr�� notre futur User
-        AppMoment.getInstance().user = new User();
-        AppMoment.getInstance().user.setEmail(email);
 
-        RequestParams params = new RequestParams();
-        params.put("email", email);
-        params.put("password", password);
-        if (!regid.equals("")) params.put("notif_id", regid);
-        params.put("os", "1");
-        params.put("os_version", android.os.Build.VERSION.RELEASE);
-        params.put("model", CommonUtilities.getDeviceName());
-        params.put("device_id", AppMoment.getInstance().tel_id);
-        //params.put("lang", Locale.getDefault().getDisplayLanguage());
-
-        MomentApi.initialize(getApplicationContext());
-
-        dialog = ProgressDialog.show(this, null, "Connexion");
-        MomentApi.post("login", params, new JsonHttpResponseHandler() {
-            @Override
-            public void onSuccess(JSONObject response) {
-            Long id = null;
-                try {
-                    id = Long.parseLong(response.getString("id"));
-                    AppMoment.getInstance().user.setId(id);
-
-                    SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.putLong("userID", id);
-                    editor.commit();
-
-                    MomentApi.get("user", null, new JsonHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(JSONObject response) {
-                            try {
-                                String firstname = response.getString("firstname");
-                                AppMoment.getInstance().user.setFirstName(firstname);
-
-                                String lastname = response.getString("lastname");
-                                AppMoment.getInstance().user.setLastName(lastname);
-
-                                if (response.has("profile_picture_url")){
-                                    String profile_picture_url = response.getString("profile_picture_url");
-                                    AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
-                                }
-
-                                dialog.dismiss();
-
-                                Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
-                                startActivity(intent);
-
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                System.out.println(id);
-            }
-
-            public void onFailure(Throwable error, String content) {
-                // By default, call the deprecated onFailure(Throwable) for compatibility
-                Log.e("HTTP", content);
-                dialog.dismiss();
-            }
-
-        });
     }
 
 

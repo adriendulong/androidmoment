@@ -85,7 +85,7 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
             holder = (MomentHolder)row.getTag();
         }
 
-        Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.big_photo).into(holder.coverRound);
+        Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.picto_photo_vide).into(holder.coverRound);
         holder.nameMoment.setText(moment.getName());
         holder.imageRoundedButton.setTag(moment.getId());
         //holder.deleteMoment.setTag(moment.getId());

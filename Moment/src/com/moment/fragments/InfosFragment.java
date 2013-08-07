@@ -431,7 +431,10 @@ public class InfosFragment extends Fragment {
 
         //Map
         //setUpMapIfNeeded();
-        loadMap();
+        if(AppMoment.getInstance().checkInternet()){
+            loadMap();
+        }
+
     }
 
     private Boolean canInvite(User user){
