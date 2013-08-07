@@ -206,17 +206,25 @@ public class TimelineActivity extends SlidingActivity {
                     }
 
                 });
+
+                getNotifications();
             }
         }
         //After crash
         else{
+
             Log.e("TIMELINE", "LOSTTTTTT");
             SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
             Long savedUserID = sharedPreferences.getLong("userID", -1);
             AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedInstanceState.getLong("userID"));
             Log.e("TIMELINE", "User id : "+savedInstanceState.getLong("userID"));
 
-            dialog = ProgressDialog.show(this, null, "Téléchargement des Moments");
+            if(AppMoment.getInstance().user==null){
+                Intent intent = new Intent(TimelineActivity.this, MomentActivity.class);
+                startActivity(intent);
+            }
+
+            dialog = ProgressDialog.show(this, null, getResources().getString(R.string.moment_dl));
 
             MomentApi.initialize(getApplicationContext());
             MomentApi.get("moments", null, new JsonHttpResponseHandler() {
@@ -258,15 +266,12 @@ public class TimelineActivity extends SlidingActivity {
                 }
 
             });
-
-
         }
     }
 
     @Override
     public void onStart(){
         super.onStart();
-        getNotifications();
         EasyTracker.getInstance().activityStart(this);
     }
 

@@ -13,7 +13,7 @@
                     android:onClick="selectedMoment">
         <ImageView android:layout_height="105dp"
                    android:layout_width="105dp"
-                   android:background="@drawable/big_photo"
+                   android:background="@drawable/picto_photo_vide"
                    android:id="@+id/cover_moment_timeline"
                    android:layout_centerInParent="true"/>
     </RelativeLayout>

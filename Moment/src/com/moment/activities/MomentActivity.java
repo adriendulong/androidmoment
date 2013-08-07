@@ -11,6 +11,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -33,6 +34,7 @@ import com.moment.classes.CommonUtilities;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
+import com.moment.models.Notification;
 import com.moment.models.User;
 
 import org.json.JSONArray;
@@ -70,6 +72,7 @@ public class MomentActivity extends Activity {
     private String regid;
     private ProgressDialog dialog;
     private boolean isSuccess = false;
+    private TextView forgotPass;
 
 
     @Override
@@ -78,6 +81,8 @@ public class MomentActivity extends Activity {
         setContentView(R.layout.activity_moment);
 
         fontNumans = Typeface.createFromAsset(getAssets(), "fonts/Numans-Regular.otf");
+
+        forgotPass = (TextView)findViewById(R.id.forgot_pass);
 
         MomentApi.initialize(getApplicationContext());
 
@@ -221,6 +226,7 @@ public class MomentActivity extends Activity {
                 connection_finale.setVisibility(View.VISIBLE);
                 RelativeLayout connection_layout = (RelativeLayout)findViewById(R.id.connection_relative);
                 connection_layout.setVisibility(View.INVISIBLE);
+                forgotPass.setVisibility(View.VISIBLE);
             }
         });
         layout_buttons.startAnimation(animation);
@@ -240,6 +246,7 @@ public class MomentActivity extends Activity {
          edit_email.setVisibility(View.INVISIBLE);
          EditText edit_password = (EditText)findViewById(R.id.password_login);
          edit_password.setVisibility(View.INVISIBLE);
+        forgotPass.setVisibility(View.GONE);
          
          
          LinearLayout layout_buttons = (LinearLayout)findViewById(R.id.layout_button_login);
@@ -584,5 +591,49 @@ public class MomentActivity extends Activity {
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this); // Add this method.
+    }
+
+
+    public void forgotPass(View view){
+        final EditText ed = new EditText(context);
+        ed.setTextColor(getResources().getColor(android.R.color.black));
+        ed.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        AlertDialog.Builder monDialogue = new AlertDialog.Builder(MomentActivity.this);
+        monDialogue.setTitle("Mot de passe oublié");
+        monDialogue.setMessage("Veuillez rentrer votre email afin de vous envoyer votre nouveau mot de passe.");
+        monDialogue.setView(ed);
+        //Bouton du dialogue
+        monDialogue.setPositiveButton("Envoyer", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                if(CommonUtilities.isValidEmail(ed.getText())){
+                    dialog.dismiss();
+                    MomentApi.get("lostpass/"+ed.getText().toString(), null, new JsonHttpResponseHandler() {
+
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            Toast.makeText(getApplicationContext(), "Email envoyé avec votre nouveau mot de passe", Toast.LENGTH_LONG).show();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            Toast.makeText(getApplicationContext(), "Erreur", Toast.LENGTH_LONG).show();
+
+                        }
+                    });
+                }
+                else{
+                    Toast.makeText(getApplicationContext(), "Email invalide", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        monDialogue.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+
+            }
+        });
+
+        monDialogue.show();
     }
 }
