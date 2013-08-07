@@ -34,6 +34,7 @@ public class MomentApi {
   public static void post(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
 	  System.out.println(getAbsoluteUrl(url));
 	  System.out.println(params);
+      client.setTimeout(20*1000);
       client.post(getAbsoluteUrl(url), params, responseHandler);
   }
   

@@ -440,12 +440,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         params.putString("message", message);
     }
 
-    private void fullScreen(View v){
-        final Intent i = new Intent(this, PhotoDetailActivity.class);
-        i.putExtra("moment", momentID);
-        startActivity(i);
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

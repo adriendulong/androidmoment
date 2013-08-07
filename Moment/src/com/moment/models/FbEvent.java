@@ -171,7 +171,7 @@ public class FbEvent {
         momentPrams.put("owner_facebookId", this.owner_facebookId);
         momentPrams.put("owner_firstname", this.owner_firstname);
         momentPrams.put("owner_picture_url", this.getOwner_picture_url());
-        momentPrams.put("state", "0");
+        momentPrams.put("state", this.getState());
 
         if(this.address != null)
         {

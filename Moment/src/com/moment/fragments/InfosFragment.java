@@ -488,15 +488,22 @@ public class InfosFragment extends Fragment {
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(5, 5, 5, 5);
-                imageView.setBackground(getResources().getDrawable(R.drawable.bg));
+                try {
+                    imageView.setBackground(getResources().getDrawable(R.drawable.bg));
+                } catch (OutOfMemoryError outOfMemoryError) {
+                    outOfMemoryError.printStackTrace();
+                }
             }
 
             else {
                 imageView = (ImageView) convertView;
             }
 
-            Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-
+            try {
+                Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+            } catch (OutOfMemoryError outOfMemoryError) {
+                outOfMemoryError.printStackTrace();
+            }
             return imageView;
         }
     }

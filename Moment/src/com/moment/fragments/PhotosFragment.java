@@ -30,6 +30,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
+import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
@@ -39,6 +40,7 @@ import com.moment.activities.DetailPhoto;
 import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
+import com.moment.classes.RecyclingImageView;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
@@ -107,7 +109,6 @@ public class PhotosFragment extends Fragment {
                 }
             }
         }
-
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
         mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
     }
@@ -241,13 +242,16 @@ public class PhotosFragment extends Fragment {
             float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
 
             if(convertView == null) {
-                imageView = new ImageView(context);
-
+                imageView = new RecyclingImageView(context);
                 imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(10, 10, 10, 10);
-                imageView.setBackgroundColor(Color.WHITE);
+                try {
+                    Picasso.with(context).load(Color.WHITE).into(imageView);
+                } catch (OutOfMemoryError outOfMemoryError) {
+                    outOfMemoryError.printStackTrace();
+                }
             }
 
             else {
@@ -255,10 +259,15 @@ public class PhotosFragment extends Fragment {
             }
 
             if(position==0) { imageView.setImageResource(R.drawable.plus);}
+
             else {
-                imageView.setTag(photos.get(position-1).getId());
-                Picasso.with(context).load(photos.get(position-1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-                photos.get(position-1).setGridImage(imageView);
+                try {
+                    imageView.setTag(photos.get(position-1).getId());
+                    Picasso.with(context).load(photos.get(position-1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                    photos.get(position-1).setGridImage(imageView);
+                } catch (OutOfMemoryError outOfMemoryError) {
+                    outOfMemoryError.printStackTrace();
+                }
             }
             return imageView;
         }
