@@ -44,10 +44,13 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.Images;
 import com.moment.classes.MomentApi;
+import com.moment.models.Notification;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -71,8 +74,8 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     private EditText adress;
     private EditText secondPhone;
     private EditText secondEmail;
-    private EditText description;
-    private ImageView profil_picture;
+    private EditText description, oldPass, newPass;
+    private ImageButton profil_picture;
     private Uri mImageCaptureUri;
     private ProgressDialog progressDialog;
     private String facebookId;
@@ -96,7 +99,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
         ImageButton facebook = (ImageButton) findViewById(R.id.edit_profil_fb);
 
-        profil_picture = (ImageView) findViewById(R.id.profil_picture_edit);
+        profil_picture = (ImageButton) findViewById(R.id.profil_picture_edit);
         float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
         Picasso.with(this).load(AppMoment.getInstance().user.getPictureProfileUrl()).resize((int) pxBitmap, (int) pxBitmap).transform(roundTrans).into(profil_picture);
 
@@ -124,6 +127,9 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         description = (EditText) findViewById(R.id.description);
         description.setText(AppMoment.getInstance().user.getDescription());
 
+        oldPass = (EditText)findViewById(R.id.old_pass);
+        newPass = (EditText)findViewById(R.id.new_pass);
+
         valider.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -143,7 +149,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     }
 
     private void valider() {
-        progressDialog = ProgressDialog.show(EditProfilActivity.this, "Informations utilisateur", "Mise à jour");
+        progressDialog = ProgressDialog.show(EditProfilActivity.this, getResources().getString(R.string.modif_pop_up_title), getResources().getString(R.string.modif_pop_up_body));
 
         RequestParams requestParams = new RequestParams();
         if(!modif_prenom.getText().equals(modif_prenom.getHint()) && !modif_prenom.getText().equals(null))
@@ -236,6 +242,24 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 Toast.makeText(EditProfilActivity.this, "Une erreur s'est produite", Toast.LENGTH_LONG).show();
             }
         });
+
+        if((oldPass.getText().length()>0)&&(newPass.getText().length()>0)){
+            MomentApi.get("changepassword/"+newPass.getText().toString()+"/"+oldPass.getText().toString(), null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    Toast.makeText(getApplicationContext(),getResources().getString(R.string.modif_pass_good), Toast.LENGTH_LONG).show();
+                    oldPass.setText("");
+                    newPass.setText("");
+                }
+
+                @Override
+                public void onFailure(Throwable error, String content) {
+                    System.out.println(content);
+                    Toast.makeText(getApplicationContext(),getResources().getString(R.string.modif_pass_failed), Toast.LENGTH_LONG).show();
+                }
+            });
+        }
     }
 
     private Session openActiveSession(Activity activity, boolean allowLoginUI,
@@ -407,9 +431,8 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
-                    float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 80, getResources().getDisplayMetrics());
-                    Picasso.with(this).load(outputFileUri).resize((int) pxBitmap, (int) pxBitmap).transform(roundTrans).into(profil_picture);
                     bitmap = Images.resizeBitmap(bitmap, 300);
+                    profil_picture.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
                     Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "profile_picture", 100);
 
                 } catch (FileNotFoundException e) {

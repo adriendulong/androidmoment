@@ -178,6 +178,10 @@
 
     <!-- Modif Profil -->
     <string name="modif_cover">Modifier la cover</string>
+    <string name="modif_pass_good">Mot de passe modifié</string>
+    <string name="modif_pass_failed">Echec de la modification du mot de passe</string>
+    <string name="modif_pop_up_title">Informations utilisateur</string>
+    <string name="modif_pop_up_body">Modification en cours</string>
 
     <!-- Notifs & Invites -->
     <string name="notifs_vide">Aucune notification pour le moment :( \n\n Des vacances, un voyage, une soirée ? Pensez à créer un moment pour l\'organiser et partager toutes les photos avec vos amis</string>

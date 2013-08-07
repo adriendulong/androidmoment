@@ -20,15 +20,15 @@
                       android:paddingTop="7dp"
                       android:layout_weight="1">
             <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:textColor="@color/gris_texte"
-                      android:textSize="14sp"
-                      android:id="@+id/prenom"/>
+                                                  android:layout_height="wrap_content"
+                                                  android:textColor="@color/gris_texte"
+                                                  android:textSize="14sp"
+                                                  android:id="@+id/prenom"/>
             <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:textColor="@color/gris_texte"
-                      android:textSize="14sp"
-                      android:id="@+id/nom"/>
+                                                  android:layout_height="wrap_content"
+                                                  android:textColor="@color/gris_texte"
+                                                  android:textSize="14sp"
+                                                  android:id="@+id/nom"/>
         </LinearLayout>
         <LinearLayout android:layout_width="0dp"
                       android:layout_height="wrap_content"
@@ -38,15 +38,15 @@
                       android:paddingRight="15dp"
                       android:orientation="horizontal">
             <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:textColor="@color/gris_texte"
-                      android:textSize="14sp"
-                      android:id="@+id/jour"/>
+                                                  android:layout_height="wrap_content"
+                                                  android:textColor="@color/gris_texte"
+                                                  android:textSize="14sp"
+                                                  android:id="@+id/jour"/>
             <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:textColor="@color/gris_texte"
-                      android:textSize="14sp"
-                      android:id="@+id/mois"/>
+                                                  android:layout_height="wrap_content"
+                                                  android:textColor="@color/gris_texte"
+                                                  android:textSize="14sp"
+                                                  android:id="@+id/mois"/>
         </LinearLayout>
 
     </LinearLayout>
@@ -70,15 +70,16 @@
                   android:layout_centerHorizontal="true"
                   android:orientation="horizontal"
                   android:background="@drawable/top_photo"
-                  android:paddingTop="40dp"
+                  android:gravity="center"
+                  android:paddingTop="37dp"
                   android:paddingLeft="10dp"
                   android:paddingRight="10dp"
                   android:weightSum="5">
 
         <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
             <ImageButton android:layout_width="wrap_content"
                          android:layout_height="wrap_content"
                          android:src="@drawable/coeur"
@@ -114,6 +115,7 @@
 
         <RelativeLayout android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_weight="1">
             <ImageButton android:layout_width="wrap_content"
                          android:layout_height="wrap_content"
@@ -127,12 +129,12 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
             <ImageButton
-                    android:id="@+id/trash"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/trash"
-                    android:background="@drawable/trash"
-                    android:layout_centerHorizontal="true"/>
+                android:id="@+id/trash"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/trash"
+                android:background="@drawable/trash"
+                android:layout_centerHorizontal="true"/>
         </RelativeLayout>
 
     </LinearLayout>
@@ -144,12 +146,12 @@
                android:layout_centerInParent="true"/>
 
     <ImageView
-            android:id="@+id/photo_moment_detail"
-            android:layout_width="280dp"
-            android:layout_height="280dp"
-            android:scaleType="centerCrop"
-            android:layout_centerInParent="true"
-            android:src="@drawable/photo_photo" />
+        android:id="@+id/photo_moment_detail"
+        android:layout_width="280dp"
+        android:layout_height="280dp"
+        android:scaleType="centerCrop"
+        android:layout_centerInParent="true"
+        android:src="@drawable/photo_photo" />
 
     <ImageButton android:id="@+id/previous"
                  android:layout_width="wrap_content"
@@ -170,38 +172,38 @@
                  android:layout_marginLeft="-30dp"/>
 
     <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/petit_coeur"
-            android:src="@drawable/petit_coeur"
-            android:background="@drawable/petit_coeur"
-            android:layout_alignTop="@+id/top_photo"
-            android:layout_alignRight="@+id/top_photo"
-            android:layout_marginRight="10dp"
-            android:layout_alignParentEnd="false"
-            android:layout_marginTop="-5dp"
-            android:visibility="invisible"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/petit_coeur"
+        android:src="@drawable/petit_coeur"
+        android:background="@drawable/petit_coeur"
+        android:layout_alignTop="@+id/top_photo"
+        android:layout_alignRight="@+id/top_photo"
+        android:layout_marginRight="10dp"
+        android:layout_alignParentEnd="false"
+        android:layout_marginTop="-5dp"
+        android:visibility="invisible"/>
 
     <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_alignBottom="@+id/petit_coeur"
-            android:layout_toLeftOf="@+id/petit_coeur"
-            android:visibility="visible"
-            android:editable="false"
-            android:clickable="false"
-            android:background="@null"
-            android:layout_marginBottom="2dp"
-            android:layout_alignParentStart="false"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:layout_alignBottom="@+id/petit_coeur"
+        android:layout_toLeftOf="@+id/petit_coeur"
+        android:visibility="visible"
+        android:editable="false"
+        android:clickable="false"
+        android:background="@null"
+        android:layout_marginBottom="2dp"
+        android:layout_alignParentStart="false"/>
 
     <ProgressBar
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/progressBar"
-            android:layout_centerVertical="true"
-            android:layout_centerHorizontal="true"
-            android:visibility="invisible"/>
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressBar"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
