@@ -181,7 +181,8 @@ public class CreationActivity extends SherlockActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                Intent intent = new Intent(this, TimelineActivity.class);
+                startActivity(intent);
                 return true;
         }
         return super.onOptionsItemSelected(item);
