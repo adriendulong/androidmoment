@@ -82,6 +82,10 @@
     <string name="detail_par">\AR</string>
     <string name="title_activity_detail_photo">DetailPhoto</string>
     <string name="title_activity_profil">ProfilActivity</string>
+    <string name="save_photo">Photo enregistrée</string>
+    <string name="delete_photos_title">Suppression Photo</string>
+    <string name="delete_photos_body">Voulez vous vraiment supprimer cette photo ? Cette action est irreversible !</string>
+    <string name="fail_delete_photo">Echec de la suppresion de la photo</string>
 
     <!-- Profil -->
     <string name="btn_amis">AMIS</string>
@@ -122,6 +126,16 @@
 
     <!-- Ecran de recherche de lieu -->
     <string name="custome_loc">Votre localisation</string>
+
+    <!-- Creation -->
+    <string name="dialog_import_fb">Récupération des évènements Facebook</string>
+
+    <!-- Création Détail -->
+    <string name="incorrect_date_title">Dates Incorrectes</string>
+    <string name="incorrect_date_body">Vérifiez que la date de fin est supérieure à celle de début</string>
+    <string name="creation_progress">Création du Moment en cours</string>
+    <string name="modification_progress">Modification du Moment en cours</string>
+    <string name="select_source">Choisir la source</string>
 
 
     <!-- Pop Up de création de Moment -->

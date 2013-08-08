@@ -55,7 +55,7 @@ public class CreationActivity extends SherlockActivity {
         bundle = savedInstanceState;
 
         dialog = new ProgressDialog(this);
-        dialog.setMessage("Recuperation des evenements Facebook");
+        dialog.setMessage(getResources().getString(R.string.dialog_import_fb));
 
         CommonUtilities.disableHardwareRendering(getWindow().getDecorView());
         

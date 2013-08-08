@@ -213,8 +213,6 @@ public class CreationPopUp extends Activity {
         if(isInvit) params.put("isOpenInvit", "1");
         else params.put("isOpenInvit", "0");
 
-        Log.d("SEND","Prep to send : privacy = " + privacy + " isOpen = " + isInvit.toString());
-
         //We send the informations to the server
         MomentApi.post("moment/"+momentId, params , new JsonHttpResponseHandler() {
             @Override
@@ -224,9 +222,6 @@ public class CreationPopUp extends Activity {
                 AppMoment.getInstance().user.getMomentById(momentId).setPrivacy(privacy);
                 AppMoment.getInstance().user.getMomentById(momentId).setIsOpenInvit(isInvit);
 
-                System.out.println(AppMoment.getInstance().user.getMomentById(momentId).getPrivacy());
-
-                Log.d("SEND","OKKKKK");
 
                 Intent intent = new Intent();
                 intent.putExtra("privacy", privacy);

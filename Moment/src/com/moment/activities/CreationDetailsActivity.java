@@ -217,11 +217,11 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
                             // set title
-                            alertDialogBuilder.setTitle("Dates incorrectes");
+                            alertDialogBuilder.setTitle(getResources().getString(R.string.incorrect_date_title));
 
                             // set dialog message
                             alertDialogBuilder
-                                    .setMessage("Vérifiez que la date de fin est supérieur à celle de début")
+                                    .setMessage(getResources().getString(R.string.incorrect_date_body))
                                     .setCancelable(false)
                                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
@@ -239,7 +239,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             	}
             	else{
                     EasyTracker.getTracker().sendEvent("Create", "button_press", "Create Moment", null);
-            		System.out.println("VALIDERRRR");
             		try {
 						creerMoment();
 					} catch (JSONException e) {
@@ -466,7 +465,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 
             if(this.dateEdit.getTag().equals("debutDate")){
-                Log.e("CREATION", "TAG DATE DEBUT");
                 this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
                 validateFirstDate = true;
 
@@ -477,7 +475,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 }
             }
             else{
-                Log.e("CREATION", "TAG DATE FIN");
                 validateSecondDate = true;
                 this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
             }
@@ -502,8 +499,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
     	//EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
 
-
-    	Log.d("Description", descriptionEdit.getText().toString());
     	moment.setDescription(descriptionEdit.getText().toString());
     	moment.setAdresse(adressButton.getText().toString());
     	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
@@ -512,7 +507,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
 
         if(!inModif){
-            dialog = ProgressDialog.show(this, null, "Création en cours");
+            dialog = ProgressDialog.show(this, null, getResources().getString(R.string.creation_progress));
             MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
@@ -542,7 +537,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             });
         }
         else{
-            dialog = ProgressDialog.show(this, null, "Modification en cours");
+            dialog = ProgressDialog.show(this, null, getResources().getString(R.string.modification_progress));
             MomentApi.post("moment/"+moment.getId(), moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
@@ -674,7 +669,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
     	// Determine Uri of camera image to save.
     	final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
-    	System.out.println(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
     	root.mkdirs();
     	final String fname = "photo_moment.png";
     	final File sdImageMainDirectory = new File(root, fname);
@@ -701,7 +695,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     	    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
     	    // Chooser of filesystem options.
-    	    final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+    	    final Intent chooserIntent = Intent.createChooser(galleryIntent, getResources().getString(R.string.select_source));
 
     	    // Add the camera options.
     	    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
@@ -831,7 +825,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             }
             if(requestCode == PLACE_CHOOSE){
 
-                System.out.println("PLACES RESULT PAS ENCORE REPONSE");
 
                 if(data.getExtras().containsKey("place_label")){
                     Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);

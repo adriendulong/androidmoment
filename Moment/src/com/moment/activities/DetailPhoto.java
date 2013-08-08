@@ -183,7 +183,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                                 + Environment.getExternalStorageDirectory()
                                 + "/Pictures/Moment/")));
 
-                Toast.makeText(getApplicationContext(), "Photo enregistrée", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.save_photo), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -197,15 +197,15 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
                     alertDialogBuilder
-                            .setTitle("Suppression Photo")
-                            .setMessage("Voulez vous vraiment supprimer cette photo ? Cette action est irreversible !")
+                            .setTitle(getResources().getString(R.string.delete_photos_title))
+                            .setMessage(getResources().getString(R.string.delete_photos_body))
                             .setCancelable(false)
-                            .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                            .setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                 }
                             })
-                            .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                            .setPositiveButton(getResources().getString(R.string.yes), new DialogInterface.OnClickListener() {
 
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
@@ -230,7 +230,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
                                         @Override
                                         public void onFailure(Throwable e, String response) {
-                                            Log.e(response, "Alors what ?");
+                                            Toast.makeText(getApplication(), getResources().getString(R.string.fail_delete_photo) , Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }

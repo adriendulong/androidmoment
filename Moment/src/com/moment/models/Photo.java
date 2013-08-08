@@ -3,7 +3,6 @@ package com.moment.models;
 import android.graphics.Bitmap;
 
 import android.widget.ImageView;
-import com.moment.classes.PhotoListAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -104,11 +103,6 @@ public class Photo {
     public void setTime(Date time) {
         this.time = time;
     }
-
-
-    public PhotoListAdapter getAdapter(PhotoListAdapter pa){
-		return pa;
-	}
 	
 	public void photoFromJSON(JSONObject photoObject){
 		try {
