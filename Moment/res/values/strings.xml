@@ -125,7 +125,7 @@
     <string name="dev_app_id">539966336039230</string>
 
     <!-- Import Facebook Events-->
-    <string name="pop_up_end_import_fb">evènements importés</string>
+    <string name="pop_up_end_import_fb"> evènements importés </string>
 
     <!-- Ecran de recherche de lieu -->
     <string name="custome_loc">Votre localisation</string>
@@ -200,7 +200,7 @@
     <string name="modif_pop_up_title">Informations utilisateur</string>
     <string name="modif_pop_up_body">Modification en cours</string>
     <string name="invalid_mail">Adresse email invalide</string>
-    <string name="error_modif_profil">Une erreur s'est produite</string>
+    <string name="error_modif_profil">Une erreur s\'est produite</string>
     <string name="link_fb">Compte Facebook lié</string>
 
     <!-- Notifs & Invites -->
@@ -232,21 +232,47 @@
 
     <!-- Photo -->
     <string name="default_button_photos">Ajoutez des photos !</string>
+    <string name="partage_photo_facebook_titre">Partage Facebook</string>
+    <string name="partage_photo_facebook_text1">Photo prise lors de l\'évènement </string>
+    <string name="partage_photo_facebook_text2"> #appmoment</string>
 
     <!-- SMS -->
     <string name="text_sms_1"> Je viens de t\'inviter à </string>
     <string name="text_sms_2"> sur Moment: </string>
     <string name="text_sms_3"> Rejoins nous pour partager les photos et organiser l\'évènement. A bientôt, </string>
 
+    <!-- RSVP -->
+    <string name="rsvp_title"> Bonne nouvelle! </string>
+    <string name="rsvp_text"> Souhaites-tu informer tes amis Facebook de ta présence à cet évènement ?</string>
+
     <!-- Inscription -->
     <string name="pop_up_facebook_fill_body">Voulez vous pré remplir les informations de votre compte à partir de Facebook ?</string>
     <string name="pop_up_facebook_fill_title">Voulez vous pré remplir les informations de votre compte à partir de Facebook ?</string>
-    <string name="title_problem_inscription">Problème lors de l'incription</string>
+    <string name="title_problem_inscription">Problème lors de l\'incription</string>
     <string name="title_problem_inscription_body">Il est possible que cette adresse mail soit déjà utilisée, veuillez essayer avec une autre adresse mail.</string>
     <string name="missing_infos_title">Informations manquantes</string>
     <string name="missing_infos_body">Veuillez remplir tous les champs obligatoires : Nom, Prénom, Email et Mot de passe</string>
     <string name="invalid_email_inscription_title">Email invalide</string>
     <string name="invalid_email_inscription_body">Veuillez fournir une adresse mail valide</string>
+    <string name="phone_incorrect">Numéro de téléphone incorrect</string>
+    <string name="corriger_phone">Corriger le numéro</string>
+    <string name="alert_phone_null">Si vous ne renseignez pas votre numéro de téléphone, il est
+        possible que vous manquiez des invitations à des évènements. Votre numéro sera seulement
+        utilisé pour vous permettre de recevoir toutes vos invitations.
+    </string>
+    <string name="phone_null">Pas de numéro</string>
+    <string name="tant_pis">Tant pis !</string>
+    <string name="mailto">mailto:hello@appmoment.fr</string>
+    <string name="signaler_photo">Signaler une photo</string>
+    <string name="signaler_photo_text">Bonjour,
+
+        Je souhaiterais faire enlever cette photo car :
+
+
+        URL de la photo :
+    </string>
+    <string name="envoyer">Envoyer</string>
+    <string name="annuler">Annuler</string>
 
 
 </resources>

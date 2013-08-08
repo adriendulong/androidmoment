@@ -9,8 +9,8 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -24,9 +24,6 @@ import com.moment.classes.MomentApi;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class InscriptionActivityStep2 extends SherlockActivity {
 
@@ -98,9 +95,9 @@ public class InscriptionActivityStep2 extends SherlockActivity {
         }
         else{
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivityStep2.this);
-            alertDialogBuilder.setTitle("Pas de numéro");
+            alertDialogBuilder.setTitle(getString(R.string.phone_null));
             alertDialogBuilder
-                    .setMessage("Si vous ne renseignez pas votre numéro de téléphone, il est possible que vous manquiez des invitations à des évènements. Votre numéro sera seulement utilisé pour vous permettre de recevoir toutes vos invitations.")
+                    .setMessage(getString(R.string.alert_phone_null))
                     .setCancelable(false)
                     .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                         @Override
@@ -110,7 +107,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
                             setResult(RESULT_OK, returnIntent);
                         }
                     })
-                    .setNegativeButton("Tant pis !", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.tant_pis), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog,int id) {
                             dialog.dismiss();
@@ -128,19 +125,13 @@ public class InscriptionActivityStep2 extends SherlockActivity {
 
     }
 
-    public static boolean isPhoneNumber(String phone){
-        Pattern p = Pattern.compile("(0|0033|\\\\+33)[1-9]((([0-9]{2}){4})|((\\\\s[0-9]{2}){4})|((-[0-9]{2}){4}))");
-        Matcher m = p.matcher(phone.toUpperCase());
-        return m.matches();
-    }
-
     public void editPhoneAlert(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivityStep2.this);
 
-        alertDialogBuilder.setTitle("Numéro de téléphone incorrect");
+        alertDialogBuilder.setTitle(getString(R.string.phone_incorrect));
 
         alertDialogBuilder
-                .setMessage("Corriger le numéro")
+                .setMessage(getString(R.string.corriger_phone))
                 .setCancelable(false)
                 .setPositiveButton("OK",new DialogInterface.OnClickListener() {
                     @Override

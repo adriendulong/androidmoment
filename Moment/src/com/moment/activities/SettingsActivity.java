@@ -17,7 +17,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
-import org.apache.http.cookie.Cookie;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;

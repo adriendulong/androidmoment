@@ -7,14 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-
 import android.widget.TextView;
+
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -83,13 +82,13 @@ public class CreationActivity extends SherlockActivity {
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
     private Session openActiveSession(Activity activity, boolean allowLoginUI,
@@ -99,10 +98,7 @@ public class CreationActivity extends SherlockActivity {
                 SSO_WITH_FALLBACK).setCallback(callback).
                 setDefaultAudience(SessionDefaultAudience.FRIENDS);
 
-//        session = null;
-
         if (session == null) {
-            Log.d("", "" + savedInstanceState);
             if (savedInstanceState != null) {
                 session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
             }
@@ -129,7 +125,6 @@ public class CreationActivity extends SherlockActivity {
                                 getUserEvents();
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Log.d("", "Exception e");
                             }
 
                         }
@@ -159,7 +154,6 @@ public class CreationActivity extends SherlockActivity {
 
                     @Override
                     public void onCompleted(Response response) {
-                        Log.d("RESPONSE", response.toString());
                         JSONArray events = null;
                         try {
                             events = response.getGraphObject().getInnerJSONObject().getJSONArray("data");

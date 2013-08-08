@@ -1,9 +1,7 @@
 package com.moment.activities;
 
 import android.app.Activity;
-import android.app.ActivityOptions;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,11 +9,11 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -29,7 +27,6 @@ import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.handmark.pulltorefresh.library.internal.Utils;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
@@ -50,6 +47,16 @@ import java.util.List;
 
 public class DetailPhoto extends Activity implements View.OnClickListener {
 
+    private final Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
+                    @Override
+                    public void onCompleted(Response response) {}
+                });
+            }
+        }
+    };
     private int position;
     private Long momentID;
     private Photo photo;
@@ -64,6 +71,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private float pxBitmap;
     private ImageView imageView;
     private DetailPhoto _this = this;
+    private EditText editText;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,28 +85,26 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         position = getIntent().getIntExtra("position", 0);
         momentID = getIntent().getLongExtra("momentID", 0);
-        maxIndex = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1;
+        maxIndex = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size() - 1;
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-
-        //Size of the crop depending on the screen resolution
         pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
-        Picasso.with(this).load(photo.getUrlOriginal()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+        Picasso.with(this).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
 
-        final ImageButton closeButton    = (ImageButton) findViewById(R.id.close);
+        final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
-        final ImageButton nextButton     = (ImageButton) findViewById(R.id.next);
-        final ImageButton likeButton     = (ImageButton) findViewById(R.id.coeur);
-        final ImageButton petitCoeur     = (ImageButton) findViewById(R.id.petit_coeur);
-        final ImageButton trashButton    = (ImageButton) findViewById(R.id.trash);
+        final ImageButton nextButton = (ImageButton) findViewById(R.id.next);
+        final ImageButton likeButton = (ImageButton) findViewById(R.id.coeur);
+        final ImageButton petitCoeur = (ImageButton) findViewById(R.id.petit_coeur);
+        final ImageButton trashButton = (ImageButton) findViewById(R.id.trash);
         final ImageButton downloadButton = (ImageButton) findViewById(R.id.download);
         final ImageButton facebookButton = (ImageButton) findViewById(R.id.fb_share);
-        final ImageButton twitterButton  = (ImageButton) findViewById(R.id.twitter);
-        final EditText    nbPetitCoeur   = (EditText)    findViewById(R.id.editText);
-        final TextView    prenom         = (TextView)    findViewById(R.id.prenom);
-        final TextView    nom            = (TextView)    findViewById(R.id.nom);
-        final TextView    jour           = (TextView)    findViewById(R.id.jour);
-        final TextView    mois           = (TextView)    findViewById(R.id.mois);
+        final ImageButton twitterButton = (ImageButton) findViewById(R.id.twitter);
+        final EditText nbPetitCoeur = (EditText) findViewById(R.id.editText);
+        final TextView prenom = (TextView) findViewById(R.id.prenom);
+        final TextView nom = (TextView) findViewById(R.id.nom);
+        final TextView jour = (TextView) findViewById(R.id.jour);
+        final TextView mois = (TextView) findViewById(R.id.mois);
 
         closeButton.setClickable(true);
         closeButton.setOnClickListener(new View.OnClickListener() {
@@ -111,41 +117,37 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         prenom.setText(photo.getUser().getFirstName().toUpperCase());
         nom.setText(" " + photo.getUser().getLastName().toUpperCase());
 
-        if(photo.getTime()!=null){
+        if (photo.getTime() != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(photo.getTime());
             int dateJour = cal.get(Calendar.DAY_OF_MONTH);
             int dateMois = cal.get(Calendar.MONTH) + 1;
-            int hh       = cal.get(Calendar.HOUR_OF_DAY);
-            int mm       = cal.get(Calendar.MINUTE);
-            jour.setText(dateJour+"/"+dateMois+" ");
-            mois.setText(hh+":"+mm);
+            int hh = cal.get(Calendar.HOUR_OF_DAY);
+            int mm = cal.get(Calendar.MINUTE);
+            jour.setText(dateJour + "/" + dateMois + " ");
+            mois.setText(hh + ":" + mm);
         }
 
         nbPetitCoeur.setClickable(false);
         nbPetitCoeur.setEnabled(false);
 
-        if(photo.getNbLike() > 0)
-        {
+        if (photo.getNbLike() > 0) {
             petitCoeur.setVisibility(ImageButton.VISIBLE);
             nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));
             nbPetitCoeur.setText("" + photo.getNbLike());
             nbPetitCoeur.setVisibility(EditText.VISIBLE);
         }
 
-        if(position == maxIndex)
-        {
+        if (position == maxIndex) {
             nextButton.setVisibility(View.INVISIBLE);
         }
 
-        if(position == 0)
-        {
+        if (position == 0) {
             previousButton.setVisibility(View.INVISIBLE);
         }
 
-        if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
-        {
+        if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
+                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
             trashButton.setImageResource(R.drawable.trash);
         } else {
             trashButton.setImageResource(R.drawable.btn_report);
@@ -192,9 +194,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Remove", null);
 
-                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
-                {
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
                     alertDialogBuilder
                             .setTitle(getResources().getString(R.string.delete_photos_title))
@@ -230,7 +231,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
                                         @Override
                                         public void onFailure(Throwable e, String response) {
-                                            Toast.makeText(getApplication(), getResources().getString(R.string.fail_delete_photo) , Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplication(), getResources().getString(R.string.fail_delete_photo), Toast.LENGTH_LONG).show();
                                         }
                                     });
                                 }
@@ -240,9 +241,9 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 } else {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.setType("message/rfc822");
-                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"mailto:hello@appmoment.fr"});
-                    intent.putExtra(Intent.EXTRA_SUBJECT, "Signaler une photo");
-                    intent.putExtra(Intent.EXTRA_TEXT, "Bonjour, \n\nJe souhaiterais faire enlever cette photo car :\n\n\n\nURL de la photo : "+photo.getUrlUnique());
+                    intent.putExtra(Intent.EXTRA_EMAIL, new String[]{getString(R.string.mailto)});
+                    intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.signaler_photo));
+                    intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.signaler_photo_text) + photo.getUrlUnique());
 
                     startActivity(Intent.createChooser(intent, "Send Email"));
                 }
@@ -256,8 +257,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 try {
                     openActiveSession(_this, true, fbStatusCallback, Arrays.asList(
                             "publish_actions"), bundle);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 bitmap = photo.getBitmapOriginal();
@@ -269,7 +269,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             @Override
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Twitter", null);
-                Toast.makeText(getApplication(), "On va twitter" , Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplication(), "On va twitter", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -278,14 +278,25 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position++;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-                if(position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){v.setVisibility(View.INVISIBLE);}
-                if(position > 0){previousButton.setVisibility(View.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); nbPetitCoeur.setVisibility(EditText.GONE);}
-                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
-                {
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                if (position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size() - 1) {
+                    v.setVisibility(View.INVISIBLE);
+                }
+                if (position > 0) {
+                    previousButton.setVisibility(View.VISIBLE);
+                }
+                if (AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0) {
+                    petitCoeur.setVisibility(ImageButton.VISIBLE);
+                    nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));
+                    nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike());
+                    nbPetitCoeur.setVisibility(EditText.VISIBLE);
+                }
+                if (AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0) {
+                    petitCoeur.setVisibility(ImageButton.GONE);
+                    nbPetitCoeur.setVisibility(EditText.GONE);
+                }
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
@@ -297,10 +308,10 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 cal.setTime(photo.getTime());
                 int dateJour = cal.get(Calendar.DAY_OF_MONTH);
                 int dateMois = cal.get(Calendar.MONTH) + 1;
-                int hh       = cal.get(Calendar.HOUR_OF_DAY);
-                int mm       = cal.get(Calendar.MINUTE);
-                jour.setText(dateJour+"/"+dateMois+" ");
-                mois.setText(hh+":"+mm);
+                int hh = cal.get(Calendar.HOUR_OF_DAY);
+                int mm = cal.get(Calendar.MINUTE);
+                jour.setText(dateJour + "/" + dateMois + " ");
+                mois.setText(hh + ":" + mm);
             }
         });
 
@@ -309,14 +320,25 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position--;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-                if(position == 0){v.setVisibility(View.INVISIBLE);}
-                if(position < AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size()-1){nextButton.setVisibility(View.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0){petitCoeur.setVisibility(ImageButton.VISIBLE); nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF")); nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike()); nbPetitCoeur.setVisibility(EditText.VISIBLE);}
-                if(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0){petitCoeur.setVisibility(ImageButton.GONE); nbPetitCoeur.setVisibility(EditText.GONE);}
-                if(AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId())
-                {
+                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                if (position == 0) {
+                    v.setVisibility(View.INVISIBLE);
+                }
+                if (position < AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size() - 1) {
+                    nextButton.setVisibility(View.VISIBLE);
+                }
+                if (AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() > 0) {
+                    petitCoeur.setVisibility(ImageButton.VISIBLE);
+                    nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));
+                    nbPetitCoeur.setText("" + AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike());
+                    nbPetitCoeur.setVisibility(EditText.VISIBLE);
+                }
+                if (AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getNbLike() == 0) {
+                    petitCoeur.setVisibility(ImageButton.GONE);
+                    nbPetitCoeur.setVisibility(EditText.GONE);
+                }
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
@@ -328,10 +350,10 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 cal.setTime(photo.getTime());
                 int dateJour = cal.get(Calendar.DAY_OF_MONTH);
                 int dateMois = cal.get(Calendar.MONTH) + 1;
-                int hh       = cal.get(Calendar.HOUR_OF_DAY);
-                int mm       = cal.get(Calendar.MINUTE);
-                jour.setText(dateJour+"/"+dateMois+" ");
-                mois.setText(hh+":"+mm);
+                int hh = cal.get(Calendar.HOUR_OF_DAY);
+                int mm = cal.get(Calendar.MINUTE);
+                jour.setText(dateJour + "/" + dateMois + " ");
+                mois.setText(hh + ":" + mm);
             }
         });
 
@@ -345,15 +367,12 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                         try {
                             int nbLike = response.getInt("nb_likes");
                             AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).setNbLike(nbLike);
-                            if(nbLike > 0)
-                            {
+                            if (nbLike > 0) {
                                 nbPetitCoeur.setText("" + nbLike);
                                 nbPetitCoeur.setTextColor(Color.parseColor("#FFFFFF"));
                                 petitCoeur.setVisibility(ImageButton.VISIBLE);
                                 nbPetitCoeur.setVisibility(EditText.VISIBLE);
-                            }
-                            else
-                            {
+                            } else {
                                 petitCoeur.setVisibility(ImageButton.GONE);
                                 nbPetitCoeur.setVisibility(EditText.GONE);
                             }
@@ -390,20 +409,6 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         return null;
     }
 
-    private final Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-                Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
-                    @Override
-                    public void onCompleted(Response response) {
-                        Log.d("Upload", response.toString());
-                    }
-
-                });
-            }
-        }
-    };
-
     private void sharePicture() {
         request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
             @Override
@@ -414,29 +419,40 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         params = request.getParameters();
 
-        final Dialog dialog = new Dialog(this);
-        View view = getLayoutInflater().inflate(R.layout.custom_dialog, null);
-        dialog.setContentView(view);
+        editText = new EditText(this);
+        editText.setTextColor(getResources().getColor(android.R.color.black));
+        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        editText.setSingleLine(false);
+        editText.setText(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
+                + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
+                + " " + photo.getUrlUnique() + "\n"
+                + getResources().getString(R.string.partage_photo_facebook_text2));
 
-        assert view != null;
-        dialogText = (EditText) view.findViewById(R.id.custom_dialog_text);
-        Button dialogBtn = (Button) view.findViewById(R.id.custom_dialog_button);
-        message = "Photo prise lors de l'évènement " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " " + photo.getUrlUnique() + " " + "#appmoment";
-        dialogText.setText(message);
-        dialogBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
+        alertDialog.setTitle(getResources().getString(R.string.partage_photo_facebook_titre));
+
+        alertDialog.setView(editText);
+        alertDialog.setPositiveButton(getString(R.string.envoyer), new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
                 setFacebookComment();
                 Request.executeBatchAsync(request);
                 dialog.cancel();
             }
         });
-        dialog.show();
+
+        alertDialog.setNegativeButton(getString(R.string.annuler), new DialogInterface.OnClickListener() {
+
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        alertDialog.show();
     }
 
     private void setFacebookComment() {
-        assert dialogText.getText() != null;
-        message = dialogText.getText().toString();
+        assert editText.getText() != null;
+        message = editText.getText().toString();
         params.putString("message", message);
     }
 
@@ -448,18 +464,19 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     }
 
     @Override
-    public void onClick(View v) {}
+    public void onClick(View v) {
+    }
 
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
 }

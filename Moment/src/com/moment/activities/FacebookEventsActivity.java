@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.ContextThemeWrapper;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -14,7 +13,6 @@ import com.facebook.HttpMethod;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
-import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
@@ -80,7 +78,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
 
         if(event.has("owner")) {
-            if(event.getJSONObject("owner").getString("id").equals(AppMoment.getInstance().user.getFacebookId()))
+            if(event.getJSONObject("owner").getString("id").equals(String.valueOf(AppMoment.getInstance().user.getFacebookId())))
             {
                 fbEvent.setState("0");
             } else {
@@ -93,6 +91,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("rsvp_status") && fbEvent.getState() == null) {
             if(event.getString("rsvp_status").equals("attending")) { fbEvent.setState("2"); }
             if(event.getString("rsvp_status").equals("maybe")) { fbEvent.setState("5"); }
+            if(event.getString("rsvp_status").equals("unsure")) { fbEvent.setState("5"); }
             if(event.getString("rsvp_status").equals("not answer")) { fbEvent.setState("4"); }
         }
 
@@ -124,7 +123,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                 fbEvent.setEndDate(end_date);
                 fbEvent.setEndTime(end_time);
             } else {
-                fbEvent.setEndDate(event.getString("end_time"));
+                fbEvent.setEndDate(event.getString("end_date"));
             }
         } else {
             if(event.getString("is_date_only").equals("false"))
@@ -140,7 +139,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                 String year = String.valueOf(dt.getYear());
                 String month = String.valueOf(dt.getMonthOfYear());
                 String day = String.valueOf(dt.getDayOfMonth() + 1);
-                fbEvent.setEndTime(year + "-" + month + "-" +day);
+                fbEvent.setEndDate(year + "-" + month + "-" +day);
             }
         }
 
@@ -217,6 +216,12 @@ public class FacebookEventsActivity extends SherlockActivity {
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 cursor --;
                 fail ++;
+
+                if(cursor == 0)
+                {
+                    Intent intent = new Intent(getApplicationContext(), TimelineActivity.class);
+                    startActivity(intent);
+                }
             }
         });
     }

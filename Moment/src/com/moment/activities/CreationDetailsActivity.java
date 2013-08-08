@@ -1,7 +1,11 @@
 package com.moment.activities;
 
 import android.annotation.SuppressLint;
-import android.app.*;
+import android.app.AlertDialog;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.app.TimePickerDialog;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,9 +29,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -50,7 +52,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -59,30 +60,27 @@ import java.util.List;
 @SuppressLint("ValidFragment")
 public class CreationDetailsActivity extends SherlockFragmentActivity {
 
-	//Step = 0 premiere etape, step = 1 deuxieme etape
-	private int step = -1;
-	FragmentTransaction fragmentTransaction;
-	private CreationStep2Fragment fragment2;
-	private CreationStep1Fragment fragment;
-	private Moment moment;
-	private static Menu myMenu;
-	private static Boolean validateFirst = false;
-	private static int validateSecond = 0;
-	public static int validateDescription = 0;
-	public static int validateAdress = 0;
-	public static int validateInfosLieu = 0;
+    private int step = -1;
+    FragmentTransaction fragmentTransaction;
+    private CreationStep2Fragment fragment2;
+    private CreationStep1Fragment fragment;
+    private Moment moment;
+    private static Menu myMenu;
+    private static Boolean validateFirst = false;
+    private static int validateSecond = 0;
+    public static int validateDescription = 0;
+    public static int validateAdress = 0;
+    public static int validateInfosLieu = 0;
     private static Boolean validateFirstDate = false, validateSecondDate = false;
-	private Uri outputFileUri;
-	private int YOUR_SELECT_PICTURE_REQUEST_CODE = 1;
+    private Uri outputFileUri;
+    private int YOUR_SELECT_PICTURE_REQUEST_CODE = 1;
     private int PLACE_CHOOSE = 10;
     private int POP_UP_CREA = 11;
-	private ProgressDialog dialog;
+    private ProgressDialog dialog;
     private Boolean inModif = false;
     private Button dateDebutEdit, heureDebutEdit,dateFinEdit,heureFinEdit;
 
-
-	//Permet de savoir quel picker est entrain d'etre choisi (0 pour debut, 1 pour fin)
-	static int pickerChosen = 2;
+    static int pickerChosen = 2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -91,7 +89,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         String nomMoment = getIntent().getStringExtra("nomMoment");
-        Log.d("Nom Moment", nomMoment);
         if(getIntent().hasExtra("moment_id")){
             moment = AppMoment.getInstance().user.getMomentById(getIntent().getLongExtra("moment_id", 0));
             inModif = true;
@@ -101,24 +98,20 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             validateAdress = 1;
         }
 
-        //On cree l'objet Moment qui servira pendant toute la creation
         if(moment==null){
             moment = new Moment();
             moment.setName(nomMoment);
         }
 
-        //Buttons
         dateDebutEdit = (Button)findViewById(R.id.date_debut_button);
         heureDebutEdit = (Button)findViewById(R.id.heure_debut_button);
         dateFinEdit = (Button)findViewById(R.id.date_fin_button);
         heureFinEdit = (Button)findViewById(R.id.heure_fin_button);
 
-
-        // On instantie le fragment manager et on vient ajouter le premier fragment
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-      	fragment = new CreationStep1Fragment();
-      	fragment2 = new CreationStep2Fragment();
+        fragment = new CreationStep1Fragment();
+        fragment2 = new CreationStep2Fragment();
 
         fragmentTransaction.add(android.R.id.content, fragment);
         fragmentTransaction.commit();
@@ -134,7 +127,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-    	if(step==0){
+        if(step==0){
             if(inModif){
                 myMenu.findItem(R.id.left_options_creation).setVisible(false);
                 myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
@@ -145,14 +138,14 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 menu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
                 myMenu.findItem(R.id.right_options_creation).setEnabled(false);
             }
-    	}
-    	else if(step==1){
-    		menu.findItem(R.id.left_options_creation).setVisible(true);
-    		menu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
-    	}
+        }
+        else if(step==1){
+            menu.findItem(R.id.left_options_creation).setVisible(true);
+            menu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
+        }
 
 
-    	return super.onPrepareOptionsMenu(menu);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -162,40 +155,34 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.left_options_creation:
-            	if(step==0) return true;
-            	else{
+                if(step==0) return true;
+                else{
                     EasyTracker.getTracker().sendEvent("Create", "button_press", "Back Step one", null);
-            		//On enregistre les champs
-            		upOne();
 
-            		hideKeyboard();
+                    upOne();
+                    hideKeyboard();
 
-            		step = 0;
+                    step = 0;
 
-            		//supportInvalidateOptionsMenu();
+                    myMenu.findItem(R.id.left_options_creation).setVisible(false);
+                    myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+                    myMenu.findItem(R.id.right_options_creation).setEnabled(true);
 
-            		myMenu.findItem(R.id.left_options_creation).setVisible(false);
-            		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
-            		myMenu.findItem(R.id.right_options_creation).setEnabled(true);
+                    FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                    fragmentTransaction.setCustomAnimations(R.anim.custom_in_inverse,R.anim.custom_out_inverse);
 
-
-
-            		FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                	fragmentTransaction.setCustomAnimations(R.anim.custom_in_inverse,R.anim.custom_out_inverse);
-
-            	    fragmentTransaction.replace(android.R.id.content, fragment);
-            	    fragmentTransaction.commit();
+                    fragmentTransaction.replace(android.R.id.content, fragment);
+                    fragmentTransaction.commit();
 
                 }
-            	return true;
+                return true;
 
             case R.id.right_options_creation:
-            	if(step==0 || step == -1){
+                if(step==0 || step == -1){
                     if(validateFirst){
                         EasyTracker.getTracker().sendEvent("PhoCreateto", "button_press", "Go Step 2", null);
                         downTwo();
 
-                        //Second date after first one ?
                         if(areDatesCorrect()){
                             if(validateSecond==1){
                                 myMenu.findItem(R.id.left_options_creation).setVisible(true);
@@ -216,38 +203,30 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                         else{
                             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
-                            // set title
                             alertDialogBuilder.setTitle(getResources().getString(R.string.incorrect_date_title));
 
-                            // set dialog message
                             alertDialogBuilder
                                     .setMessage(getResources().getString(R.string.incorrect_date_body))
                                     .setCancelable(false)
                                     .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int id) {
-                                            // if this button is clicked, just close
-                                            // the dialog box and do nothing
                                             dialog.cancel();
                                         }
                                     });
-                            // create alert dialog
                             AlertDialog alertDialog = alertDialogBuilder.create();
-                            // show it
                             alertDialog.show();
                         }
                     }
-            	}
-            	else{
+                }
+                else{
                     EasyTracker.getTracker().sendEvent("Create", "button_press", "Create Moment", null);
-            		try {
-						creerMoment();
-					} catch (JSONException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-            	}
-            	return true;
-
+                    try {
+                        creerMoment();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -255,214 +234,138 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
-    /**
-     * GEre le passage � la 2eme etape
-     */
-
     public void downTwo() {
-
-       //On enregistre la date de d�but
-       moment.setDateDebut(fragment.getStartDate());
-       //On enregistre la date de fin
-       moment.setDateFin(fragment.getEndDate());
-
-	 }
-
-
-    /**
-     * Gere le retour � la step 1
-     */
+        moment.setDateDebut(fragment.getStartDate());
+        moment.setDateFin(fragment.getEndDate());
+    }
 
     public void upOne(){
 
-    	EditText description = (EditText)findViewById(R.id.creation_moment_description);
-    	if(description.getText()!=null){
-    		this.moment.setDescription(description.getText().toString());
-    	}
+        EditText description = (EditText)findViewById(R.id.creation_moment_description);
+        if(description.getText()!=null){
+            this.moment.setDescription(description.getText().toString());
+        }
 
-    	Button adresse = (Button)findViewById(R.id.creation_moment_adresse);
-    	if(adresse.getText()!=null){
-    		this.moment.setAdresse(adresse.getText().toString());
-    	}
+        Button adresse = (Button)findViewById(R.id.creation_moment_adresse);
+        if(adresse.getText()!=null){
+            this.moment.setAdresse(adresse.getText().toString());
+        }
 
-    	EditText infosLieu = (EditText)findViewById(R.id.creation_moment_infos_lieu);
-    	if(infosLieu.getText()!=null){
-    		this.moment.setPlaceInformations(infosLieu.getText().toString());
-    	}
+        EditText infosLieu = (EditText)findViewById(R.id.creation_moment_infos_lieu);
+        if(infosLieu.getText()!=null){
+            this.moment.setPlaceInformations(infosLieu.getText().toString());
+        }
 
         myMenu.findItem(R.id.left_options_creation).setVisible(false);
         myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
         myMenu.findItem(R.id.right_options_creation).setEnabled(true);
-    	
-    	/*EditText hashtag = (EditText)findViewById(R.id.creation_moment_hashtag);
-    	if(hashtag.getText()!=null){
-    		this.moment.setHashtag(hashtag.getText().toString());
-    	}*/
 
     }
 
-    /**
-     * Gere le date picker pour choisir la date de d�but
-     * @param view
-     */
-
     public void dateDebut(View view) {
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify Beginning Date", null);
-    	//On ouvre le date picker
-    	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button), (Button)findViewById(R.id.date_fin_button));
+        DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_debut_button), (Button)findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
-
-	}
-
-    /**
-     * Gere le time picker pour l'heure de d�but
-     * @param view
-     */
+    }
 
     public void heureDebut(View view) {
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify Beginning Hour", null);
-    	//On ouvre le time picker
-    	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_debut_button));
+        DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_debut_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
-
-
-	}
-
-    /**
-     * Gere le date picker pour choisir la date de fin
-     * @param view
-     */
+    }
 
     public void dateFin(View view) {
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify End Date", null);
-    	//On ouvre le date picker
-    	DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_fin_button));
+        DialogFragment newFragment = new DatePickerFragment((Button)view.findViewById(R.id.date_fin_button));
         newFragment.show(getSupportFragmentManager(), "datePicker");
-	}
-
-    /**
-     * Gere le time picker pour l'heure de fin
-     * @param view
-     */
+    }
 
     public void heureFin(View view) {
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Modify End Hour", null);
-    	//On ouvre le time picker
-    	DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_fin_button));
+        DialogFragment newFragment = new TimePickerFragment((Button)view.findViewById(R.id.heure_fin_button));
         newFragment.show(getSupportFragmentManager(), "timePicker");
-
-	}
-
-
-
-    /**
-     * TimePicker Fragment : g�re l'ouverture d'une boite de dialogue pour choisir la date
-     * @author adriendulong
-     *
-     */
+    }
 
     @SuppressLint("ValidFragment")
-	public static class TimePickerFragment extends DialogFragment
-	    implements TimePickerDialog.OnTimeSetListener {
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
 
-    	Button heureEdit;
+        Button heureEdit;
 
-    	public TimePickerFragment(Button heureEdit){
-    		//if wichDebut = 0 ==> D�but else Fin
-    		this.heureEdit = heureEdit;
-    	}
+        public TimePickerFragment(Button heureEdit){
+            this.heureEdit = heureEdit;
+        }
 
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			int hour, minute;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int hour, minute;
 
-			if(this.heureEdit.getText().toString().split(":").length!=2){
-				// Use the current time as the default values for the picker
-				final Calendar c = Calendar.getInstance();
-				hour = c.get(Calendar.HOUR_OF_DAY);
-				minute = c.get(Calendar.MINUTE);
-			}
-			else{
-				hour = Integer.parseInt(this.heureEdit.getText().toString().split(":")[0]);
-				minute = Integer.parseInt(this.heureEdit.getText().toString().split(":")[1]);
-			}
+            if(this.heureEdit.getText().toString().split(":").length!=2){
+                final Calendar c = Calendar.getInstance();
+                hour = c.get(Calendar.HOUR_OF_DAY);
+                minute = c.get(Calendar.MINUTE);
+            }
+            else{
+                hour = Integer.parseInt(this.heureEdit.getText().toString().split(":")[0]);
+                minute = Integer.parseInt(this.heureEdit.getText().toString().split(":")[1]);
+            }
 
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
 
-			// Create a new instance of TimePickerDialog and return it
-			return new TimePickerDialog(getActivity(), this, hour, minute,
-			DateFormat.is24HourFormat(getActivity()));
-		}
-
-		@Override
-		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-			// Do something with the time chosen by the user
-
-				if(minute>9) this.heureEdit.setText(""+hourOfDay+":"+minute);
-                else this.heureEdit.setText(""+hourOfDay+":0"+minute);
-
-
-			}
-		}
-
-
-    /**
-     * TimePicker Fragment : g�re l'ouverture d'une boite de dialogue pour choisir la date
-     * @author adriendulong
-     *
-     */
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            if(minute>9) this.heureEdit.setText(""+hourOfDay+":"+minute);
+            else this.heureEdit.setText(""+hourOfDay+":0"+minute);
+        }
+    }
 
     @SuppressLint("ValidFragment")
-	public static class DatePickerFragment extends DialogFragment
-    implements DatePickerDialog.OnDateSetListener {
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
 
-    	Button dateEdit, otherDateEdit;
+        Button dateEdit, otherDateEdit;
 
-    	public DatePickerFragment(Button dateEdit, Button otherDateEdit){
-    		//if wichDebut = 0 ==> D�but else Fin
-    		this.dateEdit = dateEdit;
+        public DatePickerFragment(Button dateEdit, Button otherDateEdit){
+            this.dateEdit = dateEdit;
             this.otherDateEdit = otherDateEdit;
-    	}
+        }
 
         public DatePickerFragment(Button dateEdit){
-            //if wichDebut = 0 ==> D�but else Fin
             this.dateEdit = dateEdit;
         }
 
-		@Override
-		public Dialog onCreateDialog(Bundle savedInstanceState) {
-			// Use the current date as the default date in the picker
-			int year, month, day;
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            int year, month, day;
 
-			if(this.dateEdit.getText().toString().split("/").length!=3){
-				final Calendar c = Calendar.getInstance();
-				year = c.get(Calendar.YEAR);
-				month = c.get(Calendar.MONTH);
-				day = c.get(Calendar.DAY_OF_MONTH);
-			}
-			else{
-				year = Integer.parseInt(this.dateEdit.getText().toString().split("/")[2]);
-				month = Integer.parseInt(this.dateEdit.getText().toString().split("/")[1]);
-				month -= 1;
-				day = Integer.parseInt(this.dateEdit.getText().toString().split("/")[0]);
-			}
+            if(this.dateEdit.getText().toString().split("/").length!=3){
+                final Calendar c = Calendar.getInstance();
+                year = c.get(Calendar.YEAR);
+                month = c.get(Calendar.MONTH);
+                day = c.get(Calendar.DAY_OF_MONTH);
+            } else {
+                year = Integer.parseInt(this.dateEdit.getText().toString().split("/")[2]);
+                month = Integer.parseInt(this.dateEdit.getText().toString().split("/")[1]);
+                month --;
+                day = Integer.parseInt(this.dateEdit.getText().toString().split("/")[0]);
+            }
 
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
 
-
-			// Create a new instance of DatePickerDialog and return it
-			return new DatePickerDialog(getActivity(), this, year, month, day);
-		}
-
-		@Override
-		public void onDateSet(DatePicker view, int year, int month, int day) {
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
 
             if(this.dateEdit.getTag().equals("debutDate")){
                 this.dateEdit.setText(""+day+"/"+(month+1)+"/"+year);
@@ -480,31 +383,18 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             }
 
             validateFirstFields();
-		}
-	}
-
-
-    /**
-     * Fonction appel�e quand on clique sur cr�ation d'un moment
-     * @throws JSONException
-     *
-     */
+        }
+    }
 
     public void creerMoment() throws JSONException {
 
+        EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
+        Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
+        EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
 
-
-    	EditText descriptionEdit = (EditText)findViewById(R.id.creation_moment_description);
-    	Button adressButton = (Button)findViewById(R.id.creation_moment_adresse);
-    	EditText infosLieuEdit = (EditText)findViewById(R.id.creation_moment_infos_lieu);
-    	//EditText hashtagEdit = (EditText)findViewById(R.id.creation_moment_hashtag);
-
-    	moment.setDescription(descriptionEdit.getText().toString());
-    	moment.setAdresse(adressButton.getText().toString());
-    	if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
-    	//if(hashtagEdit != null) moment.setHashtag(hashtagEdit.getText().toString());
-
-
+        moment.setDescription(descriptionEdit.getText().toString());
+        moment.setAdresse(adressButton.getText().toString());
+        if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
 
         if(!inModif){
             dialog = ProgressDialog.show(this, null, getResources().getString(R.string.creation_progress));
@@ -513,8 +403,6 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 public void onSuccess(JSONObject response) {
                     try {
                         dialog.dismiss();
-
-                        //We set the moment id and it to the user moments
                         moment.setMomentFromJson(response);
                         AppMoment.getInstance().user.addMoment(moment);
 
@@ -522,9 +410,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                         intent.putExtra("momentId", moment.getId());
                         startActivityForResult(intent, POP_UP_CREA);
 
-
                     } catch (JSONException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
                 }
@@ -560,51 +446,29 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 }
             });
         }
-
-
-
-
-
-
     }
-
-
-    /**
-     * Function that return the moment to the fracment
-     * @return Moment
-     */
 
     public Moment getMoment(){
-    	return this.moment;
+        return this.moment;
     }
-
-    /**
-     * Fonction pour cacher le clavier
-     */
 
     private void hideKeyboard()
     {
-    	InputMethodManager inputManager = (InputMethodManager)
-    			  getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-    	if(this.getCurrentFocus()!=null){
-    		inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
-    			    InputMethodManager.HIDE_NOT_ALWAYS);
-    	}
-
+        InputMethodManager inputManager = (InputMethodManager)
+                getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(this.getCurrentFocus()!=null){
+            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
-
-
-    /**
-     * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
-     */
     public static void validateFirstFields(){
 
-    	if(validateFirstDate){
-    		validateFirst = true;
-    		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
+        if(validateFirstDate){
+            validateFirst = true;
+            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
             myMenu.findItem(R.id.right_options_creation).setEnabled(true);
-    	}
+        }
         else{
             validateFirst = false;
             myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown_desactivated);
@@ -613,43 +477,24 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
     }
 
-
-    /**
-     * Valide que les champs obligatoires du deuxi�me ecran sont bien remplis
-     */
     public static void validateSecondFields(){
 
-
-    	if((validateDescription==1)&&(validateAdress==1)){
-    		validateSecond = 1;
-    		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
-    		myMenu.findItem(R.id.right_options_creation).setEnabled(true);
-    	}
-    	else{
-    		System.out.println("PAS ENCORE BON");
-    		validateSecond = 0;
-    		myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
-    		myMenu.findItem(R.id.right_options_creation).setEnabled(false);
-    	}
-
-
+        if((validateDescription==1)&&(validateAdress==1)){
+            validateSecond = 1;
+            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check);
+            myMenu.findItem(R.id.right_options_creation).setEnabled(true);
+        }
+        else{
+            validateSecond = 0;
+            myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.check_disabled);
+            myMenu.findItem(R.id.right_options_creation).setEnabled(false);
+        }
     }
-
-
-    /**
-     * L'utilisateur d�cide de changer la photo du moment
-     * @param view
-     */
 
     public void changePhoto(View view){
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Add Photo", null);
-    	openImageIntent();
+        openImageIntent();
     }
-
-
-    /**
-     * Fonction qui detecte clic sur bouton Lieu et envoie vers le choix du lieu
-     */
 
     public void choosePlace(View view) {
         EasyTracker.getTracker().sendEvent("Create", "button_press", "Choose Place", null);
@@ -657,51 +502,37 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         startActivityForResult(intent, PLACE_CHOOSE);
     }
 
-
-
-
-    /**
-     * Gestion prise photo
-     */
-
-
     private void openImageIntent() {
 
-    	// Determine Uri of camera image to save.
-    	final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
-    	root.mkdirs();
-    	final String fname = "photo_moment.png";
-    	final File sdImageMainDirectory = new File(root, fname);
-    	outputFileUri = Uri.fromFile(sdImageMainDirectory);
+        final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
+        root.mkdirs();
+        final String fname = "photo_moment.png";
+        final File sdImageMainDirectory = new File(root, fname);
+        outputFileUri = Uri.fromFile(sdImageMainDirectory);
 
+        final List<Intent> cameraIntents = new ArrayList<Intent>();
+        final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        final PackageManager packageManager = getPackageManager();
+        final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
 
-    	    // Camera.
-    	    final List<Intent> cameraIntents = new ArrayList<Intent>();
-    	    final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-    	    final PackageManager packageManager = getPackageManager();
-    	    final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-    	    for(ResolveInfo res : listCam) {
-    	        final String packageName = res.activityInfo.packageName;
-    	        final Intent intent = new Intent(captureIntent);
-    	        intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
-    	        intent.setPackage(packageName);
-    	        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
-    	        cameraIntents.add(intent);
-    	    }
+        for(ResolveInfo res : listCam) {
+            final String packageName = res.activityInfo.packageName;
+            final Intent intent = new Intent(captureIntent);
+            intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
+            intent.setPackage(packageName);
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+            cameraIntents.add(intent);
+        }
 
-    	    // Filesystem.
-    	    final Intent galleryIntent = new Intent();
-    	    galleryIntent.setType("image/*");
-    	    galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+        final Intent galleryIntent = new Intent();
+        galleryIntent.setType("image/*");
+        galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-    	    // Chooser of filesystem options.
-    	    final Intent chooserIntent = Intent.createChooser(galleryIntent, getResources().getString(R.string.select_source));
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, getResources().getString(R.string.select_source));
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
 
-    	    // Add the camera options.
-    	    chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
-
-    	    startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
-    	}
+        startActivityForResult(chooserIntent, YOUR_SELECT_PICTURE_REQUEST_CODE);
+    }
 
 
     @Override
@@ -742,85 +573,36 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 }
 
                 try {
-                	//On recupere l'image, on la sauvegarde dans l'internal storage et on l'efface de l'external
-					Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
 
-					Log.d("URI", selectedImageUri.toString() + " "+ selectedImageUri.getHost());
-					
-					
-					/*
-					Cursor c = getContentResolver().query(selectedImageUri, null, null, null, null); 
+                    bitmap = Images.resizeBitmap(bitmap, 1000);
+                    Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
 
-	                if (c.moveToFirst()) { 
-	                        do { 
-	                                int max = c.getColumnCount(); 
-	                                for (int i = 0; i < max; i++) { 
-	                                        String colName = c.getColumnName(i); 
-	                                        String value = c 
-	                                                        .getString(c.getColumnIndex(colName)); 
+                    AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
+                    this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
 
-	                                        if (colName != null){ 
-	                                                Log.d("columnName: ", colName); 
-	                                        } 
+                    ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
+                    moment_image.setImageBitmap(bitmap);
 
-	                                        if (value != null) { 
-	                                                Log.d("value", value); 
-	                                        } 
-	                                } 
-	                        } while (c.moveToNext()); 
-	                } 
-					
-	                String name = null;
-	                String path = null;
-					Cursor cursor = getContentResolver().query(selectedImageUri, null, null, null, null);
-				    if(cursor.moveToFirst()){;
-				       int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-				       name = cursor.getString(column_index);
-				    }
-				    
-				    path = File.separator + selectedImageUri.getHost() + selectedImageUri.getPath() + File.separator + name;
-				    Log.d("FINALE PATH !!!!", path);
-				  
-					*/
-
-
-					bitmap = Images.resizeBitmap(bitmap, 1000);
-					Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
-
-
-					AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
-					this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
-
-					ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
-					moment_image.setImageBitmap(bitmap);
-					//profile_picture = Images.resizeBitmap(bitmap, 600);
-					//Images.saveImageToInternalStorage(profile_picture, getApplicationContext(), "profile_picture", 100);
-
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
 
-            //Finish activity
             if(requestCode == POP_UP_CREA){
                 if(resultCode == RESULT_OK){
                     if(data.getExtras().containsKey("privacy")){
                         AppMoment.getInstance().user.getMomentById(moment.getId()).setPrivacy(data.getIntExtra("privacy", 0));
                         AppMoment.getInstance().user.getMomentById(moment.getId()).setIsOpenInvit(data.getBooleanExtra("isOpenInvit", false));
                     }
-
-                    //We go the invit part, we pass the id of the moment
                     Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
                     intent.putExtra("id", moment.getId());
                     intent.putExtra("precedente", "creation");
 
                     startActivity(intent);
                     finish();
-
                 }
             }
             if(requestCode == PLACE_CHOOSE){
@@ -836,18 +618,9 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     }
                     else CreationDetailsActivity.validateSecondFields();
                 }
-
-
-
             }
-
         }
-
     }
-
-    /**
-     * Can be called by the fragment if all the fields are already filled when the fragment is built
-     */
 
     public void validateFirstStep(){
         validateFirstDate = true;
@@ -855,16 +628,9 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         validateFirstFields();
     }
 
-    /**
-     * Validate that the first date is superior to the second one
-     */
-
     public boolean areDatesCorrect(){
-
         if(fragment.getEndDate().after(fragment.getStartDate())) return true;
         else return false;
-
     }
-
 
 }

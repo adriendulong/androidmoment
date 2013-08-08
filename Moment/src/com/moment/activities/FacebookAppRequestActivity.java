@@ -12,32 +12,28 @@ import com.moment.models.Moment;
 
 import java.util.ArrayList;
 
-/**
- * Created by swann on 23/07/13.
- */
 public class FacebookAppRequestActivity extends Activity {
     private Moment moment;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         ArrayList<String> fbids = intent.getStringArrayListExtra("fbids");
-        moment = AppMoment.getInstance().user.getMomentById(intent.getLongExtra("momentId",-1));
+        moment = AppMoment.getInstance().user.getMomentById(intent.getLongExtra("momentId", -1));
 
         String fbidlist = "";
-        for(String fbid: fbids)
-        {
+        for (String fbid : fbids) {
             fbidlist = fbidlist + fbid + ",";
         }
-        fbidlist = fbidlist.substring(0, fbidlist.length()-1);
+        fbidlist = fbidlist.substring(0, fbidlist.length() - 1);
         sendRequest(fbidlist);
     }
 
-    public void sendRequest(String facebookId){
+    public void sendRequest(String facebookId) {
         Bundle params = new Bundle();
         params.putString("title", "Send a Request");
-        params.putString("message", AppMoment.getInstance().user.getFirstName()+" "+AppMoment.getInstance().user.getLastName()+" vient de t'inviter à l'évènement : "+moment.getName()+" sur Moment");
+        params.putString("message", AppMoment.getInstance().user.getFirstName() + " " + AppMoment.getInstance().user.getLastName() + " vient de t'inviter à l'évènement : " + moment.getName() + " sur Moment");
         params.putString("to", facebookId);
 
         WebDialog requestsDialog = (
@@ -48,7 +44,7 @@ public class FacebookAppRequestActivity extends Activity {
                     public void onComplete(Bundle values, FacebookException error) {
                         Intent returnIntent = new Intent();
                         returnIntent.putExtra("result", true);
-                        setResult(RESULT_OK,returnIntent);
+                        setResult(RESULT_OK, returnIntent);
                         finish();
                     }
                 })

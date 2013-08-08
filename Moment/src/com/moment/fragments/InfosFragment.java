@@ -2,7 +2,9 @@ package com.moment.fragments;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -269,15 +271,33 @@ public class InfosFragment extends Fragment {
 
     public void goingRsvp(){
         System.out.println("Going");
-        int oldState = stateAnwser;
+        final int oldState = stateAnwser;
 
         if(moment.getState()!=OWNER){
             if(stateAnwser!=COMING){
-                stateAnwser = COMING;
-                moment.setState(COMING);
-                facebook();
-                updateRSVPBloc();
-                updateStateServer(oldState, COMING);
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                alertDialog.setTitle(getResources().getString(R.string.rsvp_title));
+                alertDialog.setMessage(getResources().getString(R.string.rsvp_text));
+                alertDialog.setPositiveButton("Envoyer", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        stateAnwser = COMING;
+                        moment.setState(COMING);
+                        facebook();
+                        updateRSVPBloc();
+                        updateStateServer(oldState, COMING);
+                        dialog.cancel();
+                    }
+                });
+
+                alertDialog.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                alertDialog.show();
             }
         }
 
@@ -362,10 +382,7 @@ public class InfosFragment extends Fragment {
     public void createFragment(Long momentId){
         this.momentId = momentId;
         moment = AppMoment.getInstance().user.getMomentById(momentId);
-
-        //We init only if we already built the view, otherwise the Start function will do it
         if(titreText!=null) initInfos();
-
     }
 
     /**

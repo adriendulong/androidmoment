@@ -34,7 +34,6 @@ public class CustomGallery extends SherlockActivity {
     private ArrayList<String> selectedPictures;
     private Long momentID;
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +49,7 @@ public class CustomGallery extends SherlockActivity {
 
         momentID = savedInstanceState.getLong("momentID");
 
-        final String[] columns = { MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID };
+        final String[] columns = {MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID};
         selectedPictures = new ArrayList<String>();
         final String orderBy = MediaStore.Images.Media._ID;
         Cursor imagecursor = managedQuery(
@@ -62,15 +61,14 @@ public class CustomGallery extends SherlockActivity {
         this.arrPath = new String[this.count];
         this.thumbnailsselection = new boolean[this.count];
 
-        for (int i = 0; i < this.count; i++)
-        {
+        for (int i = 0; i < this.count; i++) {
             imagecursor.moveToPosition(i);
             int id = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
             thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
                     getApplicationContext().getContentResolver(), id,
                     MediaStore.Images.Thumbnails.MINI_KIND, null);
-            arrPath[i]= imagecursor.getString(dataColumnIndex);
+            arrPath[i] = imagecursor.getString(dataColumnIndex);
         }
 
         GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
@@ -93,13 +91,12 @@ public class CustomGallery extends SherlockActivity {
                 finish();
 
             case R.id.validate:
-                if(momentID == null) {
+                if (momentID == null) {
                     Intent intent = new Intent(this, EditProfilActivity.class);
                     intent.putExtra("photos", selectedPictures);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     startActivity(intent);
-                }
-                else {
+                } else {
                     Intent intent = new Intent(this, MomentInfosActivity.class);
                     intent.putExtra("precedente", "timeline");
                     intent.putExtra("position", 0);
@@ -117,6 +114,18 @@ public class CustomGallery extends SherlockActivity {
     public void onBackPressed() {
         selectedPictures.clear();
         finish();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
     }
 
     public class ImageAdapter extends BaseAdapter {
@@ -143,11 +152,11 @@ public class CustomGallery extends SherlockActivity {
             final ViewHolder holder;
 
 
-            final AlphaAnimation fadeIn = new AlphaAnimation(0.5f , 1.0f ) ;
+            final AlphaAnimation fadeIn = new AlphaAnimation(0.5f, 1.0f);
             fadeIn.setDuration(325);
             fadeIn.setFillAfter(true);
 
-            final AlphaAnimation fadeOut = new AlphaAnimation( 1.0f , 0.5f ) ;
+            final AlphaAnimation fadeOut = new AlphaAnimation(1.0f, 0.5f);
             fadeOut.setDuration(325);
             fadeOut.setFillAfter(true);
 
@@ -159,8 +168,7 @@ public class CustomGallery extends SherlockActivity {
                 holder.checkbox = (CheckBox) convertView.findViewById(R.id.itemCheckBox);
                 holder.checkbox.setEnabled(false);
                 convertView.setTag(holder);
-            }
-            else {
+            } else {
                 holder = (ViewHolder) convertView.getTag();
             }
             holder.checkbox.setId(position);
@@ -168,7 +176,7 @@ public class CustomGallery extends SherlockActivity {
 
             holder.imageview.setOnClickListener(new View.OnClickListener() {
                 public void onClick(View v) {
-                    if(holder.checkbox.isChecked() == true){
+                    if (holder.checkbox.isChecked() == true) {
                         selectedPictures.remove(arrPath[holder.imageview.getId()]);
                         holder.checkbox.setChecked(false);
                         v.startAnimation(fadeIn);
@@ -190,17 +198,5 @@ public class CustomGallery extends SherlockActivity {
         ImageView imageview;
         CheckBox checkbox;
         int id;
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 }
