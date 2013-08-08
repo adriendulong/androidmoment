@@ -193,7 +193,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FacebookEventsActivity.this);
                         alertDialogBuilder
                                 .setTitle("Facebook")
-                                .setMessage((events.length() - fail) + getResources().getString(R.string.pop_up_end_import_fb))
+                                .setMessage((events.length() - fail) + " " + getResources().getString(R.string.pop_up_end_import_fb))
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
