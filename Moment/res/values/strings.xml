@@ -124,6 +124,9 @@
 	<string name="app_id">445031162214877</string>
     <string name="dev_app_id">539966336039230</string>
 
+    <!-- Import Facebook Events-->
+    <string name="pop_up_end_import_fb">evènements importés</string>
+
     <!-- Ecran de recherche de lieu -->
     <string name="custome_loc">Votre localisation</string>
 
@@ -196,6 +199,9 @@
     <string name="modif_pass_failed">Echec de la modification du mot de passe</string>
     <string name="modif_pop_up_title">Informations utilisateur</string>
     <string name="modif_pop_up_body">Modification en cours</string>
+    <string name="invalid_mail">Adresse email invalide</string>
+    <string name="error_modif_profil">Une erreur s'est produite</string>
+    <string name="link_fb">Compte Facebook lié</string>
 
     <!-- Notifs & Invites -->
     <string name="notifs_vide">Aucune notification pour le moment :( \n\n Des vacances, un voyage, une soirée ? Pensez à créer un moment pour l\'organiser et partager toutes les photos avec vos amis</string>
@@ -217,6 +223,9 @@
     <string name="yes">Oui</string>
     <string name="no">Non</string>
     <string name="ok">Ok</string>
+    <string name="invalid_phone">Numéro de téléphone invalide</string>
+    <string name="second_invalid_phone">Numéro de téléphone invalide</string>
+    <string name="get_informations">Récupération des informations</string>
 
     <!-- Chat -->
     <string name="default_text_chat">Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce chat est fait pour ça !</string>
@@ -228,5 +237,16 @@
     <string name="text_sms_1"> Je viens de t\'inviter à </string>
     <string name="text_sms_2"> sur Moment: </string>
     <string name="text_sms_3"> Rejoins nous pour partager les photos et organiser l\'évènement. A bientôt, </string>
+
+    <!-- Inscription -->
+    <string name="pop_up_facebook_fill_body">Voulez vous pré remplir les informations de votre compte à partir de Facebook ?</string>
+    <string name="pop_up_facebook_fill_title">Voulez vous pré remplir les informations de votre compte à partir de Facebook ?</string>
+    <string name="title_problem_inscription">Problème lors de l'incription</string>
+    <string name="title_problem_inscription_body">Il est possible que cette adresse mail soit déjà utilisée, veuillez essayer avec une autre adresse mail.</string>
+    <string name="missing_infos_title">Informations manquantes</string>
+    <string name="missing_infos_body">Veuillez remplir tous les champs obligatoires : Nom, Prénom, Email et Mot de passe</string>
+    <string name="invalid_email_inscription_title">Email invalide</string>
+    <string name="invalid_email_inscription_body">Veuillez fournir une adresse mail valide</string>
+
 
 </resources>

@@ -193,8 +193,8 @@ public class FacebookEventsActivity extends SherlockActivity {
                     {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FacebookEventsActivity.this);
                         alertDialogBuilder
-                                .setTitle("Evenement Facebook")
-                                .setMessage((events.length() - fail) + " Evenements importes")
+                                .setTitle("Facebook")
+                                .setMessage((events.length() - fail) + getResources().getString(R.string.pop_up_end_import_fb))
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -217,7 +217,6 @@ public class FacebookEventsActivity extends SherlockActivity {
             public void onFailure(Throwable e, JSONObject errorResponse) {
                 cursor --;
                 fail ++;
-                Log.e("Failure",errorResponse.toString());
             }
         });
     }

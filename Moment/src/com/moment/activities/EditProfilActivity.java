@@ -177,7 +177,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 phone.setText(phoneStr);
                 AppMoment.getInstance().user.setNumTel(phoneStr);
             } else {
-                Toast.makeText(EditProfilActivity.this, "Numero de telephone invalide", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfilActivity.this, getResources().getString(R.string.invalid_phone), Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
                 return;
             }
@@ -191,7 +191,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 secondPhone.setText(phoneStr);
                 AppMoment.getInstance().user.setSecondNumTel(phoneStr);
             } else {
-                Toast.makeText(EditProfilActivity.this, "Second numero de telephone invalide", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfilActivity.this, getResources().getString(R.string.second_invalid_phone), Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
                 return;
             }
@@ -203,7 +203,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                 requestParams.put("secondEmail", secondEmail.getText().toString());
                 AppMoment.getInstance().user.setSecondEmail(secondEmail.getText().toString());
             } else {
-                Toast.makeText(EditProfilActivity.this, "Adresse email invalide", Toast.LENGTH_SHORT).show();
+                Toast.makeText(EditProfilActivity.this, getResources().getString(R.string.invalid_mail), Toast.LENGTH_SHORT).show();
                 progressDialog.cancel();
                 return;
             }
@@ -222,7 +222,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         File image = getApplicationContext().getFileStreamPath("profile_picture");
         if (image != null){
             try {
-                Log.v("FILE", ""+image.getTotalSpace());
                 requestParams.put("photo", image);
             } catch(FileNotFoundException e) { e.printStackTrace(); }
         }
@@ -239,7 +238,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
             public void onFailure(Throwable e, JSONObject response){
                 e.printStackTrace();
                 progressDialog.cancel();
-                Toast.makeText(EditProfilActivity.this, "Une erreur s'est produite", Toast.LENGTH_LONG).show();
+                Toast.makeText(EditProfilActivity.this, getResources().getString(R.string.error_modif_profil), Toast.LENGTH_LONG).show();
             }
         });
 
@@ -271,7 +270,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
 
 
         if (session == null) {
-            Log.d("", "" + savedInstanceState);
             if (savedInstanceState != null) {
                 session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
             }
@@ -290,7 +288,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
-                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", "Recuperation des informations");
+                progressDialog = ProgressDialog.show(EditProfilActivity.this, "Facebook", getResources().getString(R.string.get_informations));
                 Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
                     public void onCompleted(GraphUser user, Response response) {
                         if (response != null) {
@@ -302,13 +300,12 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                                 MomentApi.post("user", params, new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(JSONObject response) {
-                                        Log.d("User mod", response.toString());
                                         AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                                         progressDialog.cancel();
                                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EditProfilActivity.this);
                                         alertDialogBuilder
-                                                .setTitle("Compte Facebook")
-                                                .setMessage("Compte Facebook Lié")
+                                                .setTitle("Facebook")
+                                                .setMessage(getResources().getString(R.string.link_fb))
                                                 .setCancelable(false)
                                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -323,7 +320,6 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                                 });
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                Log.d("", "Exception e");
                             }
 
                         }

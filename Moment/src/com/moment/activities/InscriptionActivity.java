@@ -143,15 +143,15 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         user_picture = (ImageButton)findViewById(R.id.profile_picture);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Voulez vous pré remplir vos informations  à partir de Facebook ?")
-               .setTitle("Importation des informations");
+        builder.setMessage(getResources().getString(R.string.pop_up_facebook_fill_body))
+               .setTitle(getResources().getString(R.string.pop_up_facebook_fill_title));
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 facebookConnect();
             }
         });
-        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 dialog.cancel();
             }
@@ -199,7 +199,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                             } catch(Exception e) {
                                 e.printStackTrace();
-                                Log.d("", "Exception e");
                             }
 
                         }
@@ -283,7 +282,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                     File image = getApplicationContext().getFileStreamPath("profile_picture");
                     if (image != null){
                         try {
-                            Log.v("FILE", ""+image.getTotalSpace());
                             params.put("photo", image);
                         } catch(FileNotFoundException e) { e.printStackTrace(); }
                     }
@@ -296,8 +294,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                     @Override
                     public void onSuccess(JSONObject response) {
-
-                        System.out.print("Inscription Step 1 OK");
 
                         Long id = Long.parseLong("-1");
 
@@ -321,8 +317,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         MomentApi.get("user", null, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject response) {
-
-                                System.out.print("Inscription Step 2 OK");
                                 AppMoment.getInstance().user.setUserFromJson(response);
 
                                 AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
@@ -346,11 +340,11 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         System.out.println(errorResponse.toString());
                         dialog.dismiss();
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-                        alertDialogBuilder.setTitle("Problème ");
+                        alertDialogBuilder.setTitle(getResources().getString(R.string.title_problem_inscription));
                         alertDialogBuilder
-                                .setMessage(errorResponse.toString())
+                                .setMessage(getResources().getString(R.string.title_problem_inscription))
                                 .setCancelable(false)
-                                .setPositiveButton("Mince !",new DialogInterface.OnClickListener() {
+                                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog,int id) {
                                         dialog.cancel();
@@ -370,9 +364,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
             }
             else{
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-                alertDialogBuilder.setTitle("Email invalide");
+                alertDialogBuilder.setTitle(getResources().getString(R.string.invalid_email_inscription_title));
                 alertDialogBuilder
-                        .setMessage("Veuillez fournir une email valide")
+                        .setMessage(getResources().getString(R.string.invalid_email_inscription_body))
                         .setCancelable(false)
                         .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
                             @Override
@@ -389,9 +383,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         //Missing mandatory parameters
         else{
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
-            alertDialogBuilder.setTitle("Informations manquantes");
+            alertDialogBuilder.setTitle(getResources().getString(R.string.missing_infos_title));
             alertDialogBuilder
-                    .setMessage("Veuillez remplir tous les champs obligatoires : Nom, Prénom, Email et Mot de passe")
+                    .setMessage(getResources().getString(R.string.missing_infos_body))
                     .setCancelable(false)
                     .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
                         @Override
@@ -439,7 +433,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private void openImageIntent() {
 
         final File root = new File(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
-        System.out.println(Environment.getExternalStorageDirectory() + File.separator + "Moment" + File.separator + "Images");
         root.mkdirs();
         final String fname = "profile_picture.jpg";
         final File sdImageMainDirectory = new File(root, fname);
@@ -462,7 +455,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         galleryIntent.setType("image/*");
         galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
 
-        final Intent chooserIntent = Intent.createChooser(galleryIntent, "Select Source");
+        final Intent chooserIntent = Intent.createChooser(galleryIntent, getResources().getString(R.string.select_source));
 
         chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, cameraIntents.toArray(new Parcelable[]{}));
 
@@ -722,14 +715,11 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private void setRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences(context);
         int appVersion = getAppVersion(context);
-        Log.v(TAG, "Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         long expirationTime = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
 
-        Log.v(TAG, "Setting registration expiry time to " +
-                new Timestamp(expirationTime));
         editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
         editor.commit();
     }
