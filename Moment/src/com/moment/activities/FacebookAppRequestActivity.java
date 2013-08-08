@@ -8,6 +8,7 @@ import com.facebook.FacebookException;
 import com.facebook.Session;
 import com.facebook.widget.WebDialog;
 import com.moment.AppMoment;
+import com.moment.R;
 import com.moment.models.Moment;
 
 import java.util.ArrayList;
@@ -32,8 +33,8 @@ public class FacebookAppRequestActivity extends Activity {
 
     public void sendRequest(String facebookId) {
         Bundle params = new Bundle();
-        params.putString("title", "Send a Request");
-        params.putString("message", AppMoment.getInstance().user.getFirstName() + " " + AppMoment.getInstance().user.getLastName() + " vient de t'inviter à l'évènement : " + moment.getName() + " sur Moment");
+        params.putString("title", getString(R.string.app_facebook_invit_title));
+        params.putString("message", AppMoment.getInstance().user.getFirstName() + " " + AppMoment.getInstance().user.getLastName() + getString(R.string.app_fb_text1) + moment.getName() + getString(R.string.app_fb_text2));
         params.putString("to", facebookId);
 
         WebDialog requestsDialog = (

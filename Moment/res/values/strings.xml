@@ -273,6 +273,40 @@
     </string>
     <string name="envoyer">Envoyer</string>
     <string name="annuler">Annuler</string>
+    <string name="app_facebook_invit_title">Invitation</string>
+    <string name="app_fb_text1">vient de t\'inviter à l\'évènement :</string>
+    <string name="app_fb_text2">sur Moment</string>
+    <string name="attention">Attention</string>
+    <string name="invitations_left">Vous avez des invitations non envoyées, voulez vous les envoyer
+        ?
+    </string>
+    <string name="invit_sent">Envoie des invitations</string>
+    <string name="upload_running">Vous risquez d\'interrompre le partage de photos, voulez vous
+        quitter?
+    </string>
+    <string name="non">Non</string>
+    <string name="oui">Oui</string>
+    <string name="erreur_envoi_meessage">Problème dans l\'envoi du message</string>
+    <string name="loading_info_moment">Chargement des informations du moment</string>
+    <string name="loading">Chargem@ent</string>
+    <string name="new_message">Nouveau message</string>
+    <string name="nouveaut_chat">Nouveau chat</string>
+    <string name="test_chat">Test</string>
+    <string name="consulter">Consulter</string>
+    <string name="cancel">Annuler</string>
+    <string name="new_photo">Nouvelle Photo</string>
+    <string name="suppressing">Suppression en cours</string>
+    <string name="error_connect">Problème de connexion lors de l\'envoie de votre réponse au
+        serveur. Veuillez ressayer plus tard.
+    </string>
+    <string name="update_answer">Réponse mise à jour</string>
+    <string name="probleme_chat">Problème chat</string>
+    <string name="premiere_visite">Première visite sur le moment</string>
+    <string name="partager_photos">Partager des Photos</string>
+    <string name="galerie">Prendre une photo ou importer des photos depuis la galerie</string>
+    <string name="termine">Terminé</string>
+    <string name="upload_annul">Upload annule</string>
+    <string name="upload_annul_2">photos n\'ont pas etees uploadées</string>
 
 
 </resources>

@@ -10,7 +10,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -24,14 +23,17 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CustomGallery;
@@ -60,13 +62,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -99,22 +98,21 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null) {
+        if (savedInstanceState == null) {
             savedInstanceState = getActivity().getIntent().getExtras();
             photos_files = new ArrayList<Bitmap>();
 
             assert savedInstanceState != null;
-            if(savedInstanceState.getStringArrayList("photos") != null)
-            {
+            if (savedInstanceState.getStringArrayList("photos") != null) {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
                 assert photos_uri != null;
-                for(String s : photos_uri) {
+                for (String s : photos_uri) {
                     File tempFile = new File(s);
                     try {
                         FileInputStream fi = new FileInputStream(tempFile);
                         final BitmapFactory.Options options = new BitmapFactory.Options();
                         options.inJustDecodeBounds = true;
-                        photos_files.add(BitmapFactory.decodeStream(fi, new Rect(0,0,0,0), options)) ;
+                        photos_files.add(BitmapFactory.decodeStream(fi, new Rect(0, 0, 0, 0), options));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -132,10 +130,10 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
-        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
-            this.momentID = ((MomentInfosActivity)getActivity()).getMomentId();
+        if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
+            this.momentID = ((MomentInfosActivity) getActivity()).getMomentId();
             initPhoto();
         }
 
@@ -143,29 +141,29 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
-    public void onPause(){
+    public void onPause() {
         super.onPause();
-        Log.e("PhotoFragment","PAUSE");
+        Log.e("PhotoFragment", "PAUSE");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(this.momentID!=null) imageAdapter.notifyDataSetChanged();
-        Log.e("PhotoFragment","RESUME");
+        if (this.momentID != null) imageAdapter.notifyDataSetChanged();
+        Log.e("PhotoFragment", "RESUME");
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         photos.clear();
-        Log.e("PhotoFragment","DESTROY");
+        Log.e("PhotoFragment", "DESTROY");
     }
 
     public void startDialog() {
         AlertDialog.Builder myAlertDialog = new AlertDialog.Builder(getActivity());
-        myAlertDialog.setTitle("Partager des Photos");
-        myAlertDialog.setMessage("Prendre une photo ou importer des photos depuis la galerie");
+        myAlertDialog.setTitle(getResources().getString(R.string.partager_photos));
+        myAlertDialog.setMessage(getResources().getString(R.string.galerie));
 
         myAlertDialog.setPositiveButton("Galerie", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface arg0, int arg1) {
@@ -205,12 +203,13 @@ public class PhotosFragment extends Fragment {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
-        if (requestCode == CAMERA_PICTURE && resultCode == Activity.RESULT_OK)
-        {
-            if(photos_uri == null) { photos_uri = new ArrayList<String>(); }
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAMERA_PICTURE && resultCode == Activity.RESULT_OK) {
+            if (photos_uri == null) {
+                photos_uri = new ArrayList<String>();
+            }
             photos_uri.add(outputFileUri.getPath());
-            for(String s: photos_uri){
+            for (String s : photos_uri) {
                 MultiUploadTask multiUploadTask = new MultiUploadTask(s);
                 multiUploadTask.execute();
             }
@@ -247,32 +246,30 @@ public class PhotosFragment extends Fragment {
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
-        public View  getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
             float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
             float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
 
-            if(convertView == null) {
+            if (convertView == null) {
                 imageView = new RecyclingImageView(context);
-                imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
+                imageView.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(10, 10, 10, 10);
                 imageView.setBackgroundColor(getResources().getColor(R.color.white));
-            }
-
-            else {
+            } else {
                 imageView = (ImageView) convertView;
             }
 
-            if(position==0) { imageView.setImageResource(R.drawable.plus);}
-
-            else {
+            if (position == 0) {
+                imageView.setImageResource(R.drawable.plus);
+            } else {
                 try {
-                    imageView.setTag(photos.get(position-1).getId());
-                    Picasso.with(context).load(photos.get(position-1).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-                    photos.get(position-1).setGridImage(imageView);
+                    imageView.setTag(photos.get(position - 1).getId());
+                    Picasso.with(context).load(photos.get(position - 1).getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                    photos.get(position - 1).setGridImage(imageView);
                 } catch (OutOfMemoryError outOfMemoryError) {
                     outOfMemoryError.printStackTrace();
                 }
@@ -285,8 +282,7 @@ public class PhotosFragment extends Fragment {
      * Async Task to upload photos
      */
 
-    private class MultiUploadTask extends AsyncTask<Void, Void, String>
-    {
+    private class MultiUploadTask extends AsyncTask<Void, Void, String> {
         private final Context context;
         private final int notificationId = 1;
         private final NotificationManager notificationManager;
@@ -296,7 +292,7 @@ public class PhotosFragment extends Fragment {
         private int position;
 
 
-        public MultiUploadTask(String photo_uri){
+        public MultiUploadTask(String photo_uri) {
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             this.photo_uri = photo_uri;
@@ -311,10 +307,10 @@ public class PhotosFragment extends Fragment {
                     .setContentTitle(contentTitle)
                     .setContentText(contentText);
 
-            if(!stop)
-                builder.setProgress(0,0,true);
+            if (!stop)
+                builder.setProgress(0, 0, true);
             else
-                builder.setProgress(0,0,false);
+                builder.setProgress(0, 0, false);
 
             notification = builder.getNotification();
 
@@ -322,15 +318,15 @@ public class PhotosFragment extends Fragment {
         }
 
         @Override
-        protected void onPreExecute(){
+        protected void onPreExecute() {
             createNotification("Upload", photos_uri.size() + " Photos", false);
             asyncRun = true;
             photo = new Photo();
             photos.add(photo);
-            position = photos.size()-1;
+            position = photos.size() - 1;
             photos_uri.remove(0);
             imageAdapter.notifyDataSetChanged();
-            gridView.smoothScrollToPosition(position+1);
+            gridView.smoothScrollToPosition(position + 1);
             gridView.setVisibility(View.VISIBLE);
         }
 
@@ -341,7 +337,7 @@ public class PhotosFragment extends Fragment {
             File file = new File(photo_uri);
             Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
 
-            if(bitmap != null) {
+            if (bitmap != null) {
 
                 try {
                     HttpClient httpClient = new DefaultHttpClient();
@@ -354,10 +350,9 @@ public class PhotosFragment extends Fragment {
                     bitmap = Images.resizeBitmap(bitmap, 900);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
                     byte[] data = bos.toByteArray();
-                    entity.addPart("photo", new ByteArrayBody(data,"photo.png"));
+                    entity.addPart("photo", new ByteArrayBody(data, "photo.png"));
                     httpPost.setEntity(entity);
                     HttpResponse response = httpClient.execute(httpPost, localContext);
-                    //BufferedReader reader = new BufferedReader( new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
 
                     String sResponse = EntityUtils.toString(response.getEntity());
                     return sResponse;
@@ -371,7 +366,7 @@ public class PhotosFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String result){
+        protected void onPostExecute(String result) {
 
             Log.e("RESULT", result.toString());
 
@@ -386,7 +381,7 @@ public class PhotosFragment extends Fragment {
                     photo.setUrlOriginal(json.getString("url_original"));
                     photo.setUrlThumbnail(json.getString("url_thumbnail"));
                     photo.setUrlUnique(json.getString("unique_url"));
-                    Date timestamp = new Date(Long.valueOf(json.getString("time"))*1000);
+                    Date timestamp = new Date(Long.valueOf(json.getString("time")) * 1000);
 
                     photo.setTime(timestamp);
                     User user = new User();
@@ -399,9 +394,8 @@ public class PhotosFragment extends Fragment {
                 float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                 Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
 
-                if(photos_uri.size() == 0)
-                {
-                    createNotification("Upload", "Termine", true);
+                if (photos_uri.size() == 0) {
+                    createNotification("Upload", context.getString(R.string.termine), true);
                     asyncRun = false;
                 }
 
@@ -410,35 +404,31 @@ public class PhotosFragment extends Fragment {
                 npe.printStackTrace();
             }
 
-            if(isAdded()){
-                if(photos_uri.size() > 0){
+            if (isAdded()) {
+                if (photos_uri.size() > 0) {
                     MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                     multiUploadTask.execute();
                 }
             } else {
-                createNotification("Upload annule", photos_uri.size() + " photos n'ont pas etees uploadees", true);
+                createNotification(context.getString(R.string.upload_annul), photos_uri.size() + context.getString(R.string.upload_annul_2), true);
             }
         }
 
     }
 
-    public void createFragment(Long momentId){
+    public void createFragment(Long momentId) {
         this.momentID = momentId;
         initPhoto();
     }
 
-    /**
-     * Function called to init the photo view when all the infos are ready
-     */
 
-    private void initPhoto(){
+    private void initPhoto() {
 
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
 
-        if(photos == null || photos.isEmpty())
-        {
+        if (photos == null || photos.isEmpty()) {
             photos = moment.getPhotos();
 
             imageAdapter = new ImageAdapter(view.getContext(), photos);
@@ -465,15 +455,15 @@ public class PhotosFragment extends Fragment {
                 }
             });
 
-            if(AppMoment.getInstance().checkInternet()){
+            if (AppMoment.getInstance().checkInternet()) {
                 MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
                     public void onSuccess(JSONObject response) {
                         try {
                             JSONArray jsonPhotos = response.getJSONArray("photos");
 
-                            if(jsonPhotos.length()==0){
-                                defaultButton = (Button)view.findViewById(R.id.default_button_photos);
+                            if (jsonPhotos.length() == 0) {
+                                defaultButton = (Button) view.findViewById(R.id.default_button_photos);
                                 defaultButton.setVisibility(View.VISIBLE);
                                 defaultButton.setOnClickListener(new View.OnClickListener() {
                                     @Override
@@ -482,8 +472,7 @@ public class PhotosFragment extends Fragment {
                                         startDialog();
                                     }
                                 });
-                            }
-                            else{
+                            } else {
                                 gridView = (GridView) view.findViewById(R.id.gridview);
                                 gridView.setVisibility(View.VISIBLE);
                             }
@@ -496,10 +485,9 @@ public class PhotosFragment extends Fragment {
                             }
 
                             //We update it in the infos view also
-                            ((MomentInfosActivity)getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
+                            ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
-                            if(!photos_files.isEmpty() && !photos_uri.isEmpty())
-                            {
+                            if (!photos_files.isEmpty() && !photos_uri.isEmpty()) {
 
                                 MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                                 multiUploadTask.execute();
@@ -511,14 +499,11 @@ public class PhotosFragment extends Fragment {
                         }
                     }
                 });
-            }
-            else{
-                //photos = AppMoment.getInstance().user.getMomentById(momentID).getPhotos();
+            } else {
                 imageAdapter.notifyDataSetChanged();
             }
 
         }
-
 
 
     }

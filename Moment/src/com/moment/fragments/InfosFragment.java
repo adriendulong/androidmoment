@@ -1,13 +1,11 @@
 package com.moment.fragments;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
@@ -22,7 +20,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
-import android.widget.*;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
@@ -31,16 +36,10 @@ import com.facebook.Response;
 import com.facebook.Session;
 import com.facebook.SessionDefaultAudience;
 import com.facebook.SessionState;
-import com.facebook.model.GraphObject;
-import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
@@ -49,23 +48,24 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
 import com.moment.activities.MomentInfosActivity.Exchanger;
-import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
-
 import com.moment.models.Photo;
 import com.moment.models.User;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.List;
+import java.util.Locale;
 
 public class InfosFragment extends Fragment {
 
@@ -78,7 +78,7 @@ public class InfosFragment extends Fragment {
     private final int ADMIN = 1;
     private final int UNKOWN = 4;
     private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
-    private final String[] jours = {"Dimanche", "Lundi", "Mardi","Mercredi", "Jeudi", "Vendredi", "Samedi"};
+    private final String[] jours = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
     private final Transformation roundTrans = new RoundTransformation();
     private GoogleMap mMap;
     private Long momentId;
@@ -103,10 +103,10 @@ public class InfosFragment extends Fragment {
     private static final int REAUTH_ACTIVITY_CODE = 100;
     private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
 
-    public static void navigateToLocation (double latitude, double longitude, MapView mv, Context context) {
-        GeoPoint p = new GeoPoint((int) latitude, (int) longitude); //new GeoPoint
+    public static void navigateToLocation(double latitude, double longitude, MapView mv, Context context) {
+        GeoPoint p = new GeoPoint((int) latitude, (int) longitude);
 
-        //Les Overlays
+
         List<Overlay> mapOverlays = Exchanger.mMapView.getOverlays();
         Drawable drawable = context.getResources().getDrawable(R.drawable.picto_o);
         PositionOverlay itemizedoverlay = new PositionOverlay(drawable, context);
@@ -122,11 +122,11 @@ public class InfosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the GoogleAnalytics singleton. Note that the SDK uses
-        // the application context to avoid leaking the current context.
+
+
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
 
-        // Use the GoogleAnalytics singleton to get a Tracker.
+
         mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
     }
 
@@ -134,7 +134,7 @@ public class InfosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_infos, container, false);
 
-        //Init
+
         photos = new ArrayList<Photo>();
 
         if (view != null) {
@@ -143,15 +143,15 @@ public class InfosFragment extends Fragment {
             flTitreText = (TextView) view.findViewById(R.id.fl_titre_moment);
             adresse = (TextView) view.findViewById(R.id.infos_moment_adresse);
 
-            maybeButton     = (ImageButton) view.findViewById(R.id.maybe_button);
-            goingButton     = (ImageButton) view.findViewById(R.id.going_button);
-            notGoigButton   = (ImageButton) view.findViewById(R.id.not_going_button);
+            maybeButton = (ImageButton) view.findViewById(R.id.maybe_button);
+            goingButton = (ImageButton) view.findViewById(R.id.going_button);
+            notGoigButton = (ImageButton) view.findViewById(R.id.not_going_button);
             addGuests = (ImageButton) view.findViewById(R.id.add_guests);
 
             dateDebutText = (TextView) view.findViewById(R.id.infos_moment_date_debut);
             dateFinText = (TextView) view.findViewById(R.id.infos_moment_date_fin);
-            heureDebutText = (TextView)view.findViewById(R.id.infos_moment_heure_debut);
-            heureFinText = (TextView)view.findViewById(R.id.infos_moment_heure_fin);
+            heureDebutText = (TextView) view.findViewById(R.id.infos_moment_heure_debut);
+            heureFinText = (TextView) view.findViewById(R.id.infos_moment_heure_fin);
 
             guests_number = (TextView) view.findViewById(R.id.guests_number);
             guests_coming = (TextView) view.findViewById(R.id.guests_coming);
@@ -159,9 +159,9 @@ public class InfosFragment extends Fragment {
             modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
 
             blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
-            textRSVP = (TextView)view.findViewById(R.id.text_rsvp);
+            textRSVP = (TextView) view.findViewById(R.id.text_rsvp);
 
-            delMoment = (Button)view.findViewById(R.id.del_moment);
+            delMoment = (Button) view.findViewById(R.id.del_moment);
 
 
             image_cover = (ImageView) view.findViewById(R.id.photo_moment);
@@ -169,12 +169,12 @@ public class InfosFragment extends Fragment {
             firstname = (TextView) view.findViewById(R.id.firstname_owner);
             lastname = (TextView) view.findViewById(R.id.lastname_owner);
 
-            gridPreviewPhotos = (GridView)view.findViewById(R.id.grid_preview_photos);
-            mapWeb = (WebView)view.findViewById(R.id.map_web);
+            gridPreviewPhotos = (GridView) view.findViewById(R.id.grid_preview_photos);
+            mapWeb = (WebView) view.findViewById(R.id.map_web);
         }
 
-        if(((MomentInfosActivity)getActivity()).getMomentId()!=null){
-            this.momentId = ((MomentInfosActivity)getActivity()).getMomentId();
+        if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
+            this.momentId = ((MomentInfosActivity) getActivity()).getMomentId();
             moment = AppMoment.getInstance().user.getMomentById(momentId);
             initInfos();
         }
@@ -183,11 +183,11 @@ public class InfosFragment extends Fragment {
     }
 
     private void modifyPhotoMoment(Bitmap photo) {
-        ImageView photoMoment = (ImageView)getActivity().findViewById(R.id.photo_moment);
+        ImageView photoMoment = (ImageView) getActivity().findViewById(R.id.photo_moment);
         photoMoment.setImageBitmap(photo);
     }
 
-    public void touchedPhoto(){
+    public void touchedPhoto() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(takePictureIntent, PICK_CAMERA_COVER);
     }
@@ -207,11 +207,11 @@ public class InfosFragment extends Fragment {
         }
     }
 
-    public void facebook(){
-        Session.openActiveSession(getActivity(),true, new Session.StatusCallback() {
+    public void facebook() {
+        Session.openActiveSession(getActivity(), true, new Session.StatusCallback() {
             @Override
             public void call(Session session, SessionState state, Exception exception) {
-                if(session.isOpened()){
+                if (session.isOpened()) {
                     List<String> permissions = session.getPermissions();
                     if (!permissions.containsAll(PERMISSIONS)) {
                         requestPublishPermissions(session);
@@ -254,12 +254,12 @@ public class InfosFragment extends Fragment {
         Request.executeBatchAsync(postScoreRequest);
     }
 
-    public void maybeRsvp(){
+    public void maybeRsvp() {
         System.out.println("MAYBE");
         int oldState = stateAnwser;
 
-        if(moment.getState()!=OWNER){
-            if(stateAnwser!=MAYBE){
+        if (moment.getState() != OWNER) {
+            if (stateAnwser != MAYBE) {
                 stateAnwser = MAYBE;
                 moment.setState(MAYBE);
                 updateRSVPBloc();
@@ -269,12 +269,12 @@ public class InfosFragment extends Fragment {
 
     }
 
-    public void goingRsvp(){
+    public void goingRsvp() {
         System.out.println("Going");
         final int oldState = stateAnwser;
 
-        if(moment.getState()!=OWNER){
-            if(stateAnwser!=COMING){
+        if (moment.getState() != OWNER) {
+            if (stateAnwser != COMING) {
 
                 AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
                 alertDialog.setTitle(getResources().getString(R.string.rsvp_title));
@@ -303,12 +303,12 @@ public class InfosFragment extends Fragment {
 
     }
 
-    public void notRsvp(){
+    public void notRsvp() {
         System.out.println("Not going");
         int oldState = stateAnwser;
 
-        if(moment.getState()!=OWNER){
-            if(stateAnwser!=NOT_COMING){
+        if (moment.getState() != OWNER) {
+            if (stateAnwser != NOT_COMING) {
                 stateAnwser = NOT_COMING;
                 moment.setState(NOT_COMING);
                 updateRSVPBloc();
@@ -318,9 +318,9 @@ public class InfosFragment extends Fragment {
 
     }
 
-    private void updateRSVPBloc(){
+    private void updateRSVPBloc() {
 
-        if((moment.getState()==COMING)||(moment.getState()==OWNER)){
+        if ((moment.getState() == COMING) || (moment.getState() == OWNER)) {
             goingButton.setSelected(true);
             goingButton.setImageResource(R.drawable.picto_yes_down);
             maybeButton.setSelected(false);
@@ -328,8 +328,7 @@ public class InfosFragment extends Fragment {
             notGoigButton.setSelected(false);
             notGoigButton.setImageResource(R.drawable.picto_no);
             textRSVP.setText(getResources().getString(R.string.rsvp_coming));
-        }
-        else if (moment.getState()==NOT_COMING){
+        } else if (moment.getState() == NOT_COMING) {
             notGoigButton.setSelected(true);
             notGoigButton.setImageResource(R.drawable.picto_no_down);
             maybeButton.setSelected(false);
@@ -337,8 +336,7 @@ public class InfosFragment extends Fragment {
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
             textRSVP.setText(getResources().getString(R.string.rsvp_not_coming));
-        }
-        else if (moment.getState()==MAYBE){
+        } else if (moment.getState() == MAYBE) {
             maybeButton.setSelected(true);
             maybeButton.setImageResource(R.drawable.picto_maybe_down);
             notGoigButton.setSelected(false);
@@ -346,26 +344,25 @@ public class InfosFragment extends Fragment {
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
             textRSVP.setText(getResources().getString(R.string.rsvp_maybe));
-        }
-        else if(moment.getState()==UNKOWN){
-            Toast.makeText(getActivity(), "Première visite sur le moment", Toast.LENGTH_SHORT).show();
+        } else if (moment.getState() == UNKOWN) {
+            Toast.makeText(getActivity(), getResources().getString(R.string.premiere_visite), Toast.LENGTH_SHORT).show();
             maybeRsvp();
         }
 
     }
 
-    private void updateStateServer(final int oldState, int newState){
+    private void updateStateServer(final int oldState, int newState) {
 
-        MomentApi.get("state/"+momentId+"/"+newState, null, new JsonHttpResponseHandler() {
+        MomentApi.get("state/" + momentId + "/" + newState, null, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(JSONObject response) {
-                Toast.makeText(getActivity(), "Réponse mise à jour", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.update_answer), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onFailure(Throwable error, String content) {
-                Toast.makeText(getActivity(), "Problème de connexion lors de l'envoie de votre réponse au serveur. Veuillez ressayer plus tard.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), getResources().getString(R.string.error_connect), Toast.LENGTH_SHORT).show();
                 stateAnwser = oldState;
                 moment.setState(oldState);
                 updateRSVPBloc();
@@ -375,95 +372,88 @@ public class InfosFragment extends Fragment {
 
     }
 
-    /**
-     * Function called when the activity got the Moment
-     */
 
-    public void createFragment(Long momentId){
+
+    public void createFragment(Long momentId) {
         this.momentId = momentId;
         moment = AppMoment.getInstance().user.getMomentById(momentId);
-        if(titreText!=null) initInfos();
+        if (titreText != null) initInfos();
     }
 
-    /**
-     * Function that takes care of building the infos fragment when we have the moment infos
-     */
 
-    private void initInfos(){
+
+    private void initInfos() {
         titreText.setText(moment.getName().substring(1));
-        flTitreText.setText(moment.getName().substring(0,1));
+        flTitreText.setText(moment.getName().substring(0, 1));
         descriptionText.setText(moment.getDescription());
         adresse.setText(moment.getAdresse());
 
-        //Update State
+
         updateRSVPBloc();
 
-        //Dates
+
         GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
         dateDebutCalendar.setTime(moment.getDateDebut());
         Calendar dateFinCalendar = Calendar.getInstance();
         dateFinCalendar.setTime(moment.getDateFin());
 
-        dateDebutText.setText(""+jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateDebutCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateDebutCalendar.get(Calendar.MONTH)]);
-        dateFinText.setText(""+jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK)-1]+" "+dateFinCalendar.get(Calendar.DAY_OF_MONTH)+" "+mois[dateFinCalendar.get(Calendar.MONTH)]);
-        heureDebutText.setText(""+dateDebutCalendar.get(Calendar.HOUR)+"H"+dateDebutCalendar.get(Calendar.MINUTE));
-        heureFinText.setText(""+dateFinCalendar.get(Calendar.HOUR)+"H"+dateFinCalendar.get(Calendar.MINUTE));
+        dateDebutText.setText("" + jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK) - 1] + " " + dateDebutCalendar.get(Calendar.DAY_OF_MONTH) + " " + mois[dateDebutCalendar.get(Calendar.MONTH)]);
+        dateFinText.setText("" + jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK) - 1] + " " + dateFinCalendar.get(Calendar.DAY_OF_MONTH) + " " + mois[dateFinCalendar.get(Calendar.MONTH)]);
+        heureDebutText.setText("" + dateDebutCalendar.get(Calendar.HOUR) + "H" + dateDebutCalendar.get(Calendar.MINUTE));
+        heureFinText.setText("" + dateFinCalendar.get(Calendar.HOUR) + "H" + dateFinCalendar.get(Calendar.MINUTE));
 
-        //Cover
+
         Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
 
-        //Owner
-        if(moment.getUser()!=null){
-            if(moment.getUser().getPictureProfileUrl()!=null) Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).transform(roundTrans).into(owner_picture);
+
+        if (moment.getUser() != null) {
+            if (moment.getUser().getPictureProfileUrl() != null)
+                Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).transform(roundTrans).into(owner_picture);
             firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
             lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
         }
 
-        //Guests
-        if(AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber()>0){
-            guests_number.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
-            guests_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
-            guests__not_coming.setText(""+AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
+
+        if (AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber() > 0) {
+            guests_number.setText("" + AppMoment.getInstance().user.getMomentById(momentId).getGuestNumber());
+            guests_coming.setText("" + AppMoment.getInstance().user.getMomentById(momentId).getGuestComing());
+            guests__not_coming.setText("" + AppMoment.getInstance().user.getMomentById(momentId).getGuestNotComing());
         }
 
-        //If it is not the owner we have to hide some stuff
-        if(!canInvite(AppMoment.getInstance().user)){
+
+        if (!canInvite(AppMoment.getInstance().user)) {
             addGuests.setVisibility(View.INVISIBLE);
-            RelativeLayout .LayoutParams params = (RelativeLayout.LayoutParams)blocRSVP.getLayoutParams();
+            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) blocRSVP.getLayoutParams();
             if (params != null) {
-                params.setMargins(0, 0, 5, 0); //substitute parameters for left, top, right, bottom
+                params.setMargins(0, 0, 5, 0);
             }
             blocRSVP.setLayoutParams(params);
         }
 
-        if(AppMoment.getInstance().user.getId()!=moment.getUserId()){
+        if (AppMoment.getInstance().user.getId() != moment.getUserId()) {
             modifLayout.setVisibility(View.INVISIBLE);
-        }
-        else{
+        } else {
             delMoment.setVisibility(View.VISIBLE);
         }
 
         imageAdapter = new ImageAdapter(view.getContext(), photos);
         gridPreviewPhotos.setAdapter(imageAdapter);
 
-        //Map
-        //setUpMapIfNeeded();
-        if(AppMoment.getInstance().checkInternet()){
+
+
+        if (AppMoment.getInstance().checkInternet()) {
             loadMap();
         }
 
     }
 
-    private Boolean canInvite(User user){
+    private Boolean canInvite(User user) {
         int PUBLIC = 2;
         return moment.getPrivacy() == PUBLIC || moment.getIsOpenInvit() || user.getId() == moment.getUserId();
     }
 
 
-    /**
-     * Adapter for the grid view
-     * Grid view which contains the previews of the photos
-     */
+
 
     public class ImageAdapter extends BaseAdapter {
 
@@ -492,16 +482,16 @@ public class InfosFragment extends Fragment {
 
         @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
         @Override
-        public View  getView(int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
             float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
             float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
 
-            if(convertView == null) {
+            if (convertView == null) {
                 imageView = new ImageView(context);
 
-                imageView.setLayoutParams(new GridView.LayoutParams((int)pxImage, (int)pxImage));
+                imageView.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
                 imageView.setPadding(5, 5, 5, 5);
@@ -510,14 +500,12 @@ public class InfosFragment extends Fragment {
                 } catch (OutOfMemoryError outOfMemoryError) {
                     outOfMemoryError.printStackTrace();
                 }
-            }
-
-            else {
+            } else {
                 imageView = (ImageView) convertView;
             }
 
             try {
-                Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int)pxBitmap,(int)pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();
             }
@@ -526,30 +514,28 @@ public class InfosFragment extends Fragment {
     }
 
 
-    /**
-     * Function to update the photos
-     */
 
-    public void updatePhotos(ArrayList<Photo> photosNew){
 
-        for(int i=0;i<numberOfPhotos();i++){
-            if(photosNew.size()>i) photos.add(photosNew.get(i));
+    public void updatePhotos(ArrayList<Photo> photosNew) {
+
+        for (int i = 0; i < numberOfPhotos(); i++) {
+            if (photosNew.size() > i) photos.add(photosNew.get(i));
         }
-        Log.v("INFOSFRAGMENT", "Nombre de photos : "+numberOfPhotos());
+        Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
         gridPreviewPhotos.setFocusable(false);
         imageAdapter.notifyDataSetChanged();
     }
 
-    private int numberOfPhotos(){
+    private int numberOfPhotos() {
         Display display = getActivity().getWindowManager().getDefaultDisplay();
-        int width = display.getWidth();  // deprecated
+        int width = display.getWidth();
 
         float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
 
         return Math.round(width / pxImage);
     }
 
-    private void loadMap(){
+    private void loadMap() {
         double lat;
         double lon;
         Geocoder geocoder = new Geocoder(getActivity());
@@ -558,10 +544,10 @@ public class InfosFragment extends Fragment {
         int width = display.getWidth();
         float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
         float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
-        int realWidth =  Math.round((float)width / density);
+        int realWidth = Math.round((float) width / density);
 
         try {
-            List<Address> addresses =  geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
+            List<Address> addresses = geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
 
             if (addresses.size() > 0) {
                 Address x = addresses.get(0);
@@ -569,12 +555,10 @@ public class InfosFragment extends Fragment {
                 lon = x.getLongitude();
 
 
-
-                String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/pin-s-star-stroked+ff793d("+lon+","+lat+")/"+lon+","+lat+",8/"+realWidth+"x"+60+".png";
+                String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/pin-s-star-stroked+ff793d(" + lon + "," + lat + ")/" + lon + "," + lat + ",8/" + realWidth + "x" + 60 + ".png";
                 mapWeb.loadUrl(mapdBoxUrl);
 
-            }
-            else{
+            } else {
                 String mapdBoxUrl = "http://a.tiles.mapbox.com/v3/appmoment.map-62jk3rrs/0,0,1/"+realWidth+"x"+60+".png";
                 mapWeb.loadUrl(mapdBoxUrl);
             }
@@ -588,12 +572,9 @@ public class InfosFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-        // Send a screen view when the Activity is displayed to the user.
+
         mGaTracker.sendView("/InfosFragment");
     }
-
-
-
 
 
 }

@@ -80,26 +80,25 @@ public class InvitationActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //On initialise la liste des user invit�s
         invitesUser = new ArrayList<User>();
         nb_invites = (TextView)findViewById(R.id.invites_selected);
 
-        //ON recupere l'id du moment que l'on vient de cr�er
+
         idMoment = getIntent().getLongExtra("id", -1);
 
-        //Initi les fragments
+
         frs = new ArrayList<InvitationsFragment>();
 
         for(int i=0; i<3; i++){
             InvitationsFragment fragment = new InvitationsFragment();
             Bundle args = new Bundle();
-            // Our object is just an integer :-P
+
             args.putInt(InvitationsFragment.POSITION, i);
             fragment.setArguments(args);
             frs.add(fragment);
         }
 
-        // Le page adapter qui va gerer le passage d'une page � l'autre
+
         mInvitationCollectionPagerAdapter =
                 new InvitationCollectionPagerAdapter(
                         getSupportFragmentManager());
@@ -117,16 +116,16 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
             @Override
             public void onPageSelected(int arg0) {
-                // TODO Auto-generated method stub
+
                 System.out.println("Page SELECTIONNE :" + arg0);
-                //Contacts
+
                 if(arg0 == 1){
                     System.out.println("CONTACTSS");
                     myMenu.findItem(R.id.invitation_facebook).setIcon(R.drawable.picto_fbup);
                     myMenu.findItem(R.id.invitation_contacts).setIcon(R.drawable.picto_phonedown);
                     myMenu.findItem(R.id.invitation_favoris).setIcon(R.drawable.picto_starup);
                 }
-                //Facebook
+
                 else if (arg0 == 0){
                     System.out.println("FBBBBBBBBB");
                     myMenu.findItem(R.id.invitation_facebook).setIcon(R.drawable.picto_fbdown);
@@ -143,7 +142,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                     }
 
                 }
-                //Favoris
+
                 else{
 
                     myMenu.findItem(R.id.invitation_facebook).setIcon(R.drawable.picto_fbup);
@@ -155,18 +154,18 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
+
 
             }
 
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
+
 
             }
         });
 
-        //Get the edit text to search
+
         searchGuests = (EditText)findViewById(R.id.search_guests);
         searchGuests.addTextChangedListener(new TextWatcher() {
             @Override
@@ -202,7 +201,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         myMenu = menu;
 
         getSupportMenuInflater().inflate(R.menu.activity_invitation, menu);
@@ -244,13 +243,13 @@ public class InvitationActivity extends SherlockFragmentActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                //NavUtils.navigateUpFromSameTask(this);
+
                 if(invitesUser.size()>0){
                     EasyTracker.getTracker().sendEvent("Invite", "state", "Back without invite", null);
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
                     alertDialogBuilder
-                            .setTitle("Attention")
-                            .setMessage("Vous avez des invitations non envoyées, voulez vous les envoyer ?")
+                            .setTitle(getString(R.string.attention))
+                            .setMessage(getString(R.string.invitations_left))
                             .setCancelable(false)
                             .setNegativeButton("Non", new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
@@ -294,8 +293,8 @@ public class InvitationActivity extends SherlockFragmentActivity {
 
 
 
-    // Since this is an object collection, use a FragmentStatePagerAdapter,
-    // and NOT a FragmentPagerAdapter.
+
+
     public class InvitationCollectionPagerAdapter extends
             FragmentStatePagerAdapter {
 
@@ -412,14 +411,14 @@ public class InvitationActivity extends SherlockFragmentActivity {
         }
     };
 
-    //Modifier le label du nombre d'invites
+
     public static void modifyNbInvites(){
 
         nb_invites.setText(invitesUser.size());
     }
 
 
-    //On envoit l'invitation au serveur pour tout ces users
+
 
     public void invite()  {
 
@@ -442,8 +441,8 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 e.printStackTrace();
             }
 
-            //On lance la progress dialog
-            final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, "Envoie des invitations");
+
+            final ProgressDialog dialog = ProgressDialog.show(InvitationActivity.this, null, getString(R.string.invit_sent));
             se.setContentType("application/json");
 
             MomentApi.postJSON(this, "newguests/"+idMoment, se, new AsyncHttpResponseHandler() {
@@ -490,7 +489,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 }
 
                 public void onFailure(Throwable error, String content) {
-                    // By default, call the deprecated onFailure(Throwable) for compatibility
+
                     System.out.println(content);
                     dialog.dismiss();
                 }
@@ -570,13 +569,13 @@ public class InvitationActivity extends SherlockFragmentActivity {
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
     private class CustomComparator implements Comparator<User> {

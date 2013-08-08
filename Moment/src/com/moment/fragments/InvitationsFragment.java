@@ -1,9 +1,7 @@
 package com.moment.fragments;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ContentResolver;
-import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -14,16 +12,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.facebook.Request;
-import com.facebook.Response;
-import com.facebook.Session;
-import com.facebook.SessionDefaultAudience;
-import com.facebook.SessionLoginBehavior;
-import com.facebook.SessionState;
-import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
@@ -41,8 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class InvitationsFragment extends Fragment {
 
@@ -59,32 +51,23 @@ public class InvitationsFragment extends Fragment {
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
 
-    public InvitationsFragment(){
+    public InvitationsFragment() {
 
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Get the GoogleAnalytics singleton. Note that the SDK uses
-        // the application context to avoid leaking the current context.
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
-
-        // Use the GoogleAnalytics singleton to get a Tracker.
         mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
-
-
         View rootView = inflater.inflate(
                 R.layout.activity_invitations_fragment, container, false);
-        listView = (ListView)rootView.findViewById(R.id.list_view_contacts);
+        listView = (ListView) rootView.findViewById(R.id.list_view_contacts);
 
         Myonclicklistneer myClickList = new Myonclicklistneer();
         listView.setOnItemClickListener(myClickList);
@@ -92,46 +75,38 @@ public class InvitationsFragment extends Fragment {
         Bundle args = getArguments();
         position = args.getInt(POSITION);
 
-        Log.v("INVIT", "création fragment");
-
-        System.out.println(""+position);
-        if(savedInstanceState==null){
-            if (position == 1){
+        System.out.println("" + position);
+        if (savedInstanceState == null) {
+            if (position == 1) {
                 EasyTracker.getTracker().sendView("/ContactsInvite");
-                System.out.println("CCCOOONNNTTTACCCCTTSS");
                 users = new ArrayList<User>();
                 ContactLoader asyncContact = new ContactLoader();
                 asyncContact.execute(true);
 
 
-            }
-            else if (position == 0){
+            } else if (position == 0) {
                 EasyTracker.getTracker().sendView("/FacebookInvite");
                 users = new ArrayList<User>();
-                //facebook();
-            }
-            else {
+            } else {
                 EasyTracker.getTracker().sendView("/FavorisInvite");
-                noFav = (TextView)rootView.findViewById(R.id.no_favorites);
+                noFav = (TextView) rootView.findViewById(R.id.no_favorites);
                 users = new ArrayList<User>();
-                Log.v("INVIT", "création fragment Favoris");
 
                 MomentApi.get("favoris", null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject response) {
-                        try{
+                        try {
 
                             JSONArray favorisUsers = response.getJSONArray("favoris");
 
-                            if(favorisUsers.length()==0){
+                            if (favorisUsers.length() == 0) {
                                 noFav.setVisibility(View.VISIBLE);
                                 listView.setVisibility(View.GONE);
-                            }
-                            else{
+                            } else {
                                 noFav.setVisibility(View.GONE);
                                 listView.setVisibility(View.VISIBLE);
 
-                                for(int i=0;i<favorisUsers.length();i++){
+                                for (int i = 0; i < favorisUsers.length(); i++) {
                                     User tempUser = new User();
                                     tempUser.setUserFromJson(favorisUsers.getJSONObject(i));
                                     users.add(tempUser);
@@ -142,25 +117,19 @@ public class InvitationsFragment extends Fragment {
                             }
 
 
-
-
                         } catch (JSONException e) {
-                            // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
                     }
 
                     public void onFailure(Throwable error, String content) {
-                        // By default, call the deprecated onFailure(Throwable) for compatibility
                         System.out.println(content);
                     }
                 });
 
             }
-        }
-        else{
+        } else {
             users = savedInstanceState.getParcelableArrayList("users");
-            Log.v("INVIT", "NB de users : "+users.size());
             adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
         }
@@ -170,109 +139,13 @@ public class InvitationsFragment extends Fragment {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         mGaTracker.sendView("/InvitationsFragment");
     }
 
-	/*
-	private void getContacts2(){
 
-			ContentResolver cr = getActivity().getContentResolver();
-			
-			Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, ContactsContract.Contacts.DISPLAY_NAME);
-
-	
-			while (cursor.moveToNext()) {
-				
-				String id = cursor.getString(cursor.getColumnIndex(BaseColumns._ID));
-                String name = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                
-                if(!name.contains("@")){
-                	
-                	System.out.println("Id : "+id+"  fname:"+ name);
-                    
-                    User user = new User();
-                    user.setFirstName(name);
-                    user.setIdCarnetAdresse(id);
-                    
-                    
-                    //Photo
-                    
-                    ImagesContactLoader imContact = new ImagesContactLoader();
-                    imContact.execute(user);
-                    
-
-                    if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    	
-                    	Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,ContactsContract.CommonDataKinds.Phone.CONTACT_ID+ " = ?", new String[] { id }, null);
-                    	
-                    	while (pCur.moveToNext()) {
-                            String phone = pCur.getString(pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            System.out.println("phone" + phone);
-                            if(user[0].getNumTel()==null){
-                            	user[0].setNumTel(phone);
-                            }
-                            else if(user[0].getSecondNumTel()==null) user[0].setSecondNumTel(phone);
-                            
-
-                        }
-                        pCur.close();
-                    	
-                    }
-
-                   
-                    
-                    
-                    //Il a des telephones
-                    
-                    
-                    //On rajoute le user � la liste
-                    users.add(user);
-                	
-                }
-                  
-			}
-
-			
-		}*/
-
-
-    /**
-     * Recuperer photos contacts
-     * @return
-     */
-	
-	/*
-	public InputStream openPhoto(long contactId) {
-	     Uri contactUri = ContentUris.withAppendedId(Contacts.CONTENT_URI, contactId);
-	     Uri photoUri = Uri.withAppendedPath(contactUri, Contacts.Photo.CONTENT_DIRECTORY);
-	     Cursor cursor = getActivity().getContentResolver().query(photoUri,
-	          new String[] {Contacts.Photo.PHOTO}, null, null, null);
-	     if (cursor == null) {
-	         return null;
-	     }
-	     try {
-	         if (cursor.moveToFirst()) {
-	             byte[] data = cursor.getBlob(0);
-	             if (data != null) {
-	                 return new ByteArrayInputStream(data);
-	             }
-	         }
-	     } catch (SQLException e) {
-	          Log.e("e", "sql exception in dbio_count", e);            
-	        } catch(Exception ex) {
-	          Log.e("e", "other exception in dbio_count", ex);
-	        } finally {
-	          if (cursor != null) {
-	        	  cursor.close();
-	          }
-	        }
-	     return null;
-	 }
-	 */
-
-    public void updateSearch(String search){
+    public void updateSearch(String search) {
 
         adapter.getFilter().filter(search);
 
@@ -282,7 +155,7 @@ public class InvitationsFragment extends Fragment {
      * Recupere tous les contacts et en cr�� des users
      */
 
-    public void readContacts(){
+    public void readContacts() {
 
         String[] projection =
                 {
@@ -293,7 +166,7 @@ public class InvitationsFragment extends Fragment {
                 " ASC";
 
         String where = ContactsContract.Contacts.IN_VISIBLE_GROUP + "= ? ";
-        String[] selectionArgs = new String[] { "1" };
+        String[] selectionArgs = new String[]{"1"};
 
         ContentResolver cr = getActivity().getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
@@ -308,16 +181,15 @@ public class InvitationsFragment extends Fragment {
                 String id = cur.getString(cur.getColumnIndex(Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
 
-                System.out.println("ID : "+id+"    NAME : "+name);
+                System.out.println("ID : " + id + "    NAME : " + name);
 
-                if(!name.contains("@")){
+                if (!name.contains("@")) {
                     userCur.setFirstName(name);
                     userCur.setIdCarnetAdresse(id);
 
                     users.add(userCur);
 
                 }
-
 
 
             }
@@ -327,8 +199,8 @@ public class InvitationsFragment extends Fragment {
 
         Integer[] positions = new Integer[users.size()];
 
-        int i=0;
-        for(User user : users){
+        int i = 0;
+        for (User user : users) {
             positions[i] = i;
             i++;
         }
@@ -345,15 +217,13 @@ public class InvitationsFragment extends Fragment {
      */
 
 
-
     /**
      * Load async des contacts
-     * @author adriendulong
      *
+     * @author adriendulong
      */
 
-    private class ContactLoader extends AsyncTask<Boolean, Integer, Void>
-    {
+    private class ContactLoader extends AsyncTask<Boolean, Integer, Void> {
         ProgressDialog dialog;
 
         @Override
@@ -364,7 +234,7 @@ public class InvitationsFragment extends Fragment {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values){
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             // Mise � jour de la ProgressBar
 
@@ -389,13 +259,12 @@ public class InvitationsFragment extends Fragment {
 
     /**
      * Load async des Images des contacts
-     * @author adriendulong
      *
+     * @author adriendulong
      */
 
 
-    private class ExtrasContactLoader extends AsyncTask<Integer, Integer, Boolean>
-    {
+    private class ExtrasContactLoader extends AsyncTask<Integer, Integer, Boolean> {
 
 
         @Override
@@ -406,7 +275,7 @@ public class InvitationsFragment extends Fragment {
         }
 
         @Override
-        protected void onProgressUpdate(Integer... values){
+        protected void onProgressUpdate(Integer... values) {
             super.onProgressUpdate(values);
             // Mise � jour de la ProgressBar
 
@@ -441,22 +310,21 @@ public class InvitationsFragment extends Fragment {
 
             ContentResolver cr = getActivity().getContentResolver();
 
-            for(Integer i : position){
+            for (Integer i : position) {
                 System.out.println("name : " + users.get(i).getFirstName() + ", ID : " + users.get(i).getIdCarnetAdresse());
 
                 // get the phone number
-                Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+                Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                         new String[]{users.get(i).getIdCarnetAdresse()}, null);
                 while (pCur.moveToNext()) {
                     String phone = pCur.getString(
                             pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                     System.out.println("phone" + phone);
 
-                    if(users.get(i).getNumTel()==null){
+                    if (users.get(i).getNumTel() == null) {
                         users.get(i).setNumTel(phone);
-                    }
-                    else if(users.get(i).getSecondNumTel()==null){
+                    } else if (users.get(i).getSecondNumTel() == null) {
                         users.get(i).setSecondNumTel(phone);
                         break;
                     }
@@ -480,10 +348,9 @@ public class InvitationsFragment extends Fragment {
                             emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 
                     System.out.println("Email " + email + " Email Type : " + emailType);
-                    if(users.get(i).getEmail()==null){
+                    if (users.get(i).getEmail() == null) {
                         users.get(i).setEmail(email);
-                    }
-                    else if(users.get(i).getSecondEmail()==null){
+                    } else if (users.get(i).getSecondEmail() == null) {
                         users.get(i).setSecondEmail(email);
                         break;
                     }
@@ -497,66 +364,68 @@ public class InvitationsFragment extends Fragment {
 
         @Override
         protected void onPostExecute(Boolean completed) {
-            if(completed) System.out.println("FINISHHHHHHH !!!!!!!!!!!!");
+            if (completed) System.out.println("FINISHHHHHHH !!!!!!!!!!!!");
 
         }
     }
-    
+
     //Listener list
-    class Myonclicklistneer implements OnItemClickListener
-    {
+    class Myonclicklistneer implements OnItemClickListener {
 
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int positionClick, long arg3) {
             boolean isValid = true;
 
-            if(users.get(positionClick).getEmail()!=null) Log.d("SAVE EEEEEEEE Email : ", users.get(positionClick).getEmail());
-            if(users.get(positionClick).getNumTel()!=null) Log.d("SAVE EEEEEEEE Tel : ", users.get(positionClick).getNumTel());
+            if (users.get(positionClick).getEmail() != null)
+                Log.d("SAVE EEEEEEEE Email : ", users.get(positionClick).getEmail());
+            if (users.get(positionClick).getNumTel() != null)
+                Log.d("SAVE EEEEEEEE Tel : ", users.get(positionClick).getNumTel());
 
-            if(!users.get(positionClick).getIsSelect()){
+            if (!users.get(positionClick).getIsSelect()) {
                 InvitationActivity.invitesUser.add(users.get(positionClick));
-                InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
+                InvitationActivity.nb_invites.setText("" + InvitationActivity.invitesUser.size());
 
                 //On va chercher les infos supp sur le user
-                if(position==1){
-                    if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getIdCarnetAdresse()!=null)
-                    {
-                        getExtrasInfos(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1));
-                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getEmail());
-                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail()!=null) Log.d("CONTACTS ", "Email : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getSecondEmail());
-                        if(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel()!=null) Log.d("CONTACTS", "Tel : "+InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1).getNumTel());
+                if (position == 1) {
+                    if (InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getIdCarnetAdresse() != null) {
+                        getExtrasInfos(InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1));
+                        if (InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getEmail() != null)
+                            Log.d("CONTACTS ", "Email : " + InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getEmail());
+                        if (InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getSecondEmail() != null)
+                            Log.d("CONTACTS ", "Email : " + InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getSecondEmail());
+                        if (InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getNumTel() != null)
+                            Log.d("CONTACTS", "Tel : " + InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1).getNumTel());
                     }
 
                 }
 
 
-                User tempUser = InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size()-1);
+                User tempUser = InvitationActivity.invitesUser.get(InvitationActivity.invitesUser.size() - 1);
                 //Not a good email
-                if(tempUser.getNumTel()!=null){
-                    if(!CommonUtilities.isValidTel(tempUser.getNumTel())){
+                if (tempUser.getNumTel() != null) {
+                    if (!CommonUtilities.isValidTel(tempUser.getNumTel())) {
                         CommonUtilities.popAlert("Information erronnée", "Numéro de téléphone invalide", "Ok", getActivity());
                         isValid = false;
                     }
                 }
-                if(tempUser.getEmail()!=null){
-                    if(!CommonUtilities.isValidEmail(tempUser.getEmail())){
+                if (tempUser.getEmail() != null) {
+                    if (!CommonUtilities.isValidEmail(tempUser.getEmail())) {
                         CommonUtilities.popAlert("Information erronnée", "Adresse email invalide", "Ok", getActivity());
                         isValid = false;
                     }
                 }
 
-                if(isValid){
+                if (isValid) {
                     View v = view.findViewById(R.id.bg_cell_invitations);
                     v.setBackgroundColor(getResources().getColor(R.color.orange));
                     users.get(positionClick).setIsSelect(true);
                 }
 
-            }
-            else{
-                RelativeLayout v = (RelativeLayout)view.findViewById(R.id.bg_cell_invitations);
+            } else {
+                RelativeLayout v = (RelativeLayout) view.findViewById(R.id.bg_cell_invitations);
                 v.setBackgroundResource(R.drawable.background);
                 InvitationActivity.invitesUser.remove(users.get(positionClick));
-                InvitationActivity.nb_invites.setText(""+InvitationActivity.invitesUser.size());
+                InvitationActivity.nb_invites.setText("" + InvitationActivity.invitesUser.size());
 
                 users.get(positionClick).setIsSelect(false);
             }
@@ -578,23 +447,22 @@ public class InvitationsFragment extends Fragment {
     }
 
 
-    private void getExtrasInfos(User user){
+    private void getExtrasInfos(User user) {
         ContentResolver cr = getActivity().getContentResolver();
         System.out.println("name : " + user.getFirstName() + ", ID : " + user.getIdCarnetAdresse());
 
         // get the phone number
-        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI,null,
-                ContactsContract.CommonDataKinds.Phone.CONTACT_ID +" = ?",
+        Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                 new String[]{user.getIdCarnetAdresse()}, null);
         while (pCur.moveToNext()) {
             String phone = pCur.getString(
                     pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
             System.out.println("phone" + phone);
 
-            if(user.getNumTel()==null){
+            if (user.getNumTel() == null) {
                 user.setNumTel(phone);
-            }
-            else if(user.getSecondNumTel()==null){
+            } else if (user.getSecondNumTel() == null) {
                 user.setSecondNumTel(phone);
                 break;
             }
@@ -618,17 +486,15 @@ public class InvitationsFragment extends Fragment {
                     emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.TYPE));
 
             System.out.println("Email " + email + " Email Type : " + emailType);
-            if(user.getEmail()==null){
+            if (user.getEmail() == null) {
                 user.setEmail(email);
-            }
-            else if(user.getSecondEmail()==null){
+            } else if (user.getSecondEmail() == null) {
                 user.setSecondEmail(email);
                 break;
             }
         }
         emailCur.close();
     }
-
 
 
 }

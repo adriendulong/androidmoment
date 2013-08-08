@@ -60,11 +60,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     static final int NEW_INVIT = 3;
     static final int LIST_INVIT = 4;
 
-    //PUSH TYPES
+
     private int CHAT_PUSH = 3;
     private int PHOTO_PUSH = 2;
 
-    //From push
+
     private int type_id, moment_id;
 
     LayoutInflater inflater;
@@ -84,16 +84,16 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     ArrayList<Fragment> fragments;
 
-    //The Moment
+
     private Moment moment;
 
-    //Progress Dialog when loading Moment infos
-    private ProgressDialog  mProgressDialog;
 
-    //Debug Tag
+    private ProgressDialog mProgressDialog;
+
+
     private String TAG = "InfosActivity";
 
-    //Receiver
+
     private BroadcastReceiver mReceiver;
 
     @Override
@@ -113,19 +113,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
-        if(precedente.equals("push")||precedente.equals("notifs")){
-            Log.d("MOMENTINFOS", "TYPE INIT : "+getIntent().getLongExtra("type_id", -1));
+        if (precedente.equals("push") || precedente.equals("notifs")) {
+            Log.d("MOMENTINFOS", "TYPE INIT : " + getIntent().getLongExtra("type_id", -1));
             type_id = getIntent().getIntExtra("type_id", -1);
             momentID = getIntent().getLongExtra("moment_id", 1);
 
             if (type_id == PHOTO_PUSH) position = 0;
-            else if(type_id == CHAT_PUSH) position = 2;
-            else position=1;
-        }
-        else momentID = getIntent().getLongExtra("id", 1);
+            else if (type_id == CHAT_PUSH) position = 2;
+            else position = 1;
+        } else momentID = getIntent().getLongExtra("id", 1);
 
-        Log.d("MOMENTINFOS", "Position : "+position);
-        Log.d("MOMENTINFOS", "TYPE : "+type_id);
+        Log.d("MOMENTINFOS", "Position : " + position);
+        Log.d("MOMENTINFOS", "TYPE : " + type_id);
 
         fragments = new ArrayList<Fragment>();
 
@@ -151,7 +150,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
             @Override
             public void onPageSelected(int arg0) {
-                Log.e("PAGE", ""+arg0);
+                Log.e("PAGE", "" + arg0);
                 updateMenuItem(arg0);
 
             }
@@ -166,14 +165,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             }
         });
 
-        //If we come from the moment creation we go to the invits
+
         if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
-        //We get moment informations
-        if(AppMoment.getInstance().user == null ) AppMoment.getInstance().getUser();
-        if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
+
+        if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
+        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
             moment = AppMoment.getInstance().user.getMomentById(momentID);
-        }else{
+        } else {
             getMoment();
         }
 
@@ -181,12 +180,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     @Override
-    public void onSaveInstanceState(Bundle savedInstanceState){
+    public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState){
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -200,26 +199,26 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
     }
 
     @Override
-    public void onBackPressed(){
+    public void onBackPressed() {
 
-        if(photosFr.isAsyncRun() == true) {
+        if (photosFr.isAsyncRun() == true) {
 
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder
-                    .setTitle("Attention")
-                    .setMessage("Vous risquez d'interrompre le partage de photos, voulez vous quitter?")
+                    .setTitle(getString(R.string.attention))
+                    .setMessage(getString(R.string.upload_running))
                     .setCancelable(false)
-                    .setNegativeButton("Non", new DialogInterface.OnClickListener() {
+                    .setNegativeButton(getString(R.string.non), new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     })
-                    .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
+                    .setPositiveButton(getString(R.string.oui), new DialogInterface.OnClickListener() {
 
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -235,7 +234,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {
 
-        protected final String[] CONTENT = new String[] {"PHOTOS","INFOS","CHAT"};
+        protected final String[] CONTENT = new String[]{"PHOTOS", "INFOS", "CHAT"};
 
         public MyPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -278,40 +277,32 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Function called when user click on the guests block
-     * @param view
-     */
 
-    public void listInvit(View view){
+    public void listInvit(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "List Guests", null);
         callInvit(LIST_INVIT);
 
     }
 
-    /**
-     * Function called when user click on plus next to the guests block
-     * @param view
-     */
 
-    public void addGuests(View view){
+    public void addGuests(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Add Guests", null);
         callInvit(NEW_INVIT);
     }
 
-    public void postMessage(final View view){
+    public void postMessage(final View view) {
         EasyTracker.getTracker().sendEvent("Chat", "button_press", "Post Message", null);
 
-        final EditText postMessage = (EditText)findViewById(R.id.edit_chat_post_message);
+        final EditText postMessage = (EditText) findViewById(R.id.edit_chat_post_message);
         final String message = postMessage.getText().toString();
-        if(message.length()>0){
-            //Disable button during post
+        if (message.length() > 0) {
+
             view.setEnabled(false);
 
             RequestParams params = new RequestParams();
             params.put("message", message);
 
-            MomentApi.post("newchat/"+momentID, params, new JsonHttpResponseHandler() {
+            MomentApi.post("newchat/" + momentID, params, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     view.setEnabled(true);
@@ -336,76 +327,48 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                 public void onFailure(Throwable error, String content) {
                     view.setEnabled(true);
-                    Toast.makeText(getApplicationContext(), "Problème dans l'envoi du message", Toast.LENGTH_SHORT).show();
-                    System.out.println("FAILURE : "+content);
+                    Toast.makeText(getApplicationContext(), getString(R.string.erreur_envoi_meessage), Toast.LENGTH_SHORT).show();
+                    System.out.println("FAILURE : " + content);
                 }
             });
         }
 
     }
 
-    public void messageRight(Chat chat){
-        LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)findViewById(R.id.scroll_chat);
+    public void messageRight(Chat chat) {
+        LinearLayout layoutChat = (LinearLayout) findViewById(R.id.chat_message_layout);
+        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView) findViewById(R.id.scroll_chat);
         LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        TextView message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
 
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        ImageView userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
         User usertemp = chat.getUser();
         usertemp.printProfilePicture(userImage, true);
 
         layoutChat.addView(chatDroit);
 
-        /*new Handler().postDelayed((new Runnable(){
 
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
-
-        }), 200);*/
     }
 
-    public void messageLeft(Chat chat){
+    public void messageLeft(Chat chat) {
 
-        LinearLayout layoutChat = (LinearLayout)findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView)findViewById(R.id.scroll_chat);
+        LinearLayout layoutChat = (LinearLayout) findViewById(R.id.chat_message_layout);
+        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView) findViewById(R.id.scroll_chat);
 
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche,null);
-        TextView message = (TextView)chatDroit.findViewById(R.id.chat_message_text);
+        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
+        TextView message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
         message.setText(chat.getMessage());
 
-        ImageView userImage = (ImageView)chatDroit.findViewById(R.id.photo_user);
+        ImageView userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
         chat.getUser().printProfilePicture(userImage, true);
         layoutChat.addView(chatDroit);
 
-/*        new Handler().postDelayed((new Runnable(){
-
-        	@Override
-			public void run(){
-        		ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-        		scrollChat.fullScroll(View.FOCUS_DOWN);
-        	}
-
-        }), 200);*/
-
 
     }
 
-    public void editMessage(View view){
+    public void editMessage(View view) {
 
-        //On scroll vers la bas
-        /*new Handler().postDelayed((new Runnable(){
-
-            @Override
-            public void run(){
-                ScrollView scrollChat = (ScrollView)findViewById(R.id.scroll_chat);
-                scrollChat.fullScroll(View.FOCUS_DOWN);
-            }
-
-        }), 200);*/
 
     }
 
@@ -415,22 +378,15 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
 
 
-    /**
-     * Fonciton which modify the menu item in the top bar depending on the position
-     * @param position
-     */
+    public void updateMenuItem(int position) {
 
-    public void updateMenuItem(int position){
-
-        if(position == 1){
+        if (position == 1) {
             hideKeyboard();
             System.out.println("INFOS");
             myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
             myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_down);
             myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
-        }
-        //Facebook
-        else if (position == 0){
+        } else if (position == 0) {
             hideKeyboard();
             System.out.println("PHOTOS");
             myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_down);
@@ -438,9 +394,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             myMenu.findItem(R.id.tab_chat).setIcon(R.drawable.picto_chat_up);
 
 
-        }
-        //Favoris
-        else{
+        } else {
             System.out.println("CHATS");
             myMenu.findItem(R.id.tab_photo).setIcon(R.drawable.picto_photo_up);
             myMenu.findItem(R.id.tab_infos).setIcon(R.drawable.picto_info_up);
@@ -449,36 +403,30 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     }
 
-    /**
-     * This function start the right activity depending on the request code
-     * @param request_code
-     */
 
-
-    public void callInvit(int request_code){
+    public void callInvit(int request_code) {
         Intent intent;
 
-        if(request_code==NEW_INVIT){
+        if (request_code == NEW_INVIT) {
             intent = new Intent(MomentInfosActivity.this, InvitationActivity.class);
             intent.putExtra("id", momentID);
 
-            if (android.os.Build.VERSION.SDK_INT >= 16){
+            if (android.os.Build.VERSION.SDK_INT >= 16) {
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
                 startActivityForResult(intent, request_code, bndlanimation);
-            } else{
+            } else {
                 startActivityForResult(intent, request_code);
             }
 
 
-        }
-        else if (request_code==LIST_INVIT){
+        } else if (request_code == LIST_INVIT) {
             intent = new Intent(MomentInfosActivity.this, ListGuestsActivity.class);
             intent.putExtra("id", momentID);
 
-            if (android.os.Build.VERSION.SDK_INT >= 16){
+            if (android.os.Build.VERSION.SDK_INT >= 16) {
                 Bundle bndlanimation = ActivityOptions.makeCustomAnimation(getApplicationContext(), R.anim.slide_in_left, R.anim.slide_out_left).toBundle();
                 startActivityForResult(intent, request_code, bndlanimation);
-            } else{
+            } else {
                 startActivityForResult(intent, request_code);
             }
         }
@@ -487,101 +435,72 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==NEW_INVIT){
+        if (requestCode == NEW_INVIT) {
             Log.d("FIN ACTIVITY", "NEW INVIT");
-        }
-        else if(requestCode==LIST_INVIT){
+        } else if (requestCode == LIST_INVIT) {
             Log.d("FIN ACTIVITY", "LIST");
         }
     }
 
 
-
-    /**
-     * Function called when the Not Going button is touched in the RSVP bloc
-     * @param view
-     */
-
-    public void notRsvp(View view){
+    public void notRsvp(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Not Going", null);
         infosFr.notRsvp();
     }
 
-    /**
-     * Function called when the Maybe button is touched in the RSVP bloc
-     * @param view
-     */
 
-    public void maybeRsvp(View view){
+    public void maybeRsvp(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Maybe Goiing", null);
         infosFr.maybeRsvp();
     }
 
-    /**
-     * Function called when the Going button is touched in the RSVP bloc
-     * @param view
-     */
 
-    public void goingRsvp(View view){
+    public void goingRsvp(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Going", null);
         infosFr.goingRsvp();
     }
 
 
-    /**
-     * This functions goal is to get the Moment informations
-     * <p>
-     *     It will first try on the local database, then to download it from the server
-     * </p>
-     * @param momentID
-     */
+    public void getMoment() {
 
-    public void getMoment(){
 
-        //If we have it in the local database
-        Log.d("MOMENTINFOS", "Moment id :"+momentID);
-        if(AppMoment.getInstance().user == null ) AppMoment.getInstance().getUser();
-        if(AppMoment.getInstance().user.getMomentById(momentID)!=null){
+        Log.d("MOMENTINFOS", "Moment id :" + momentID);
+        if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
+        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
             moment = AppMoment.getInstance().user.getMomentById(momentID);
-        }
-        //Otherwise we try to get it from the server
-        else {
-            mProgressDialog = ProgressDialog.show(this, "Chargement", "Chargement des informations du moment");
-            MomentApi.get("moment/"+momentID, null, new JsonHttpResponseHandler() {
+        } else {
+            mProgressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.loading_info_moment));
+            MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
 
                 @Override
                 public void onSuccess(JSONObject response) {
-                    Toast.makeText(getApplicationContext(), "Moment infos downloaded", Toast.LENGTH_SHORT).show();
                     Moment tempMoment = new Moment();
-                    try{
+                    try {
                         tempMoment.setMomentFromJson(response);
                         Log.v(TAG, tempMoment.getName());
                         moment = tempMoment;
 
-                        //We add it in the local database
+
                         AppMoment.getInstance().user.addMoment(tempMoment);
 
-                        //Chat fragment
-                        if(pager.getCurrentItem()==2){
-                            ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
-                        }
-                        else if(pager.getCurrentItem()==1){
-                            ((ChatFragment)mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
-                            ((PhotosFragment)mPagerAdapter.getItem(0)).createFragment(momentID);
-                        }
-                        else if(pager.getCurrentItem()==0){
-                            ((PhotosFragment)mPagerAdapter.getItem(0)).createFragment(momentID);
-                            ((InfosFragment)mPagerAdapter.getItem(1)).createFragment(momentID);
+
+                        if (pager.getCurrentItem() == 2) {
+                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                        } else if (pager.getCurrentItem() == 1) {
+                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                        } else if (pager.getCurrentItem() == 0) {
+                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
                         }
 
                         mProgressDialog.dismiss();
-                    }catch(JSONException e){
+                    } catch (JSONException e) {
                         Log.e(TAG, "JSON problems");
                     }
 
@@ -589,15 +508,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                 @Override
                 public void onFailure(Throwable error, String content) {
-                    Toast.makeText(getApplicationContext(), "Problem when getting moment infos", Toast.LENGTH_SHORT).show();
                     mProgressDialog.dismiss();
                 }
             });
         }
     }
 
-    public Long getMomentId(){
-        if(this.moment!=null) return this.momentID;
+    public Long getMomentId() {
+        if (this.moment != null) return this.momentID;
         else return null;
 
     }
@@ -609,41 +527,38 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         IntentFilter intentFilter = new IntentFilter(
                 "com.google.android.c2dm.intent.RECEIVE");
         mReceiver = new BroadcastReceiver() {
-            private int type_notifs, chat_id, photo_id;
+            private int type_notifs
+                    ,
+                    chat_id
+                    ,
+                    photo_id;
             private Long moment_id;
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                try{
+                try {
                     JSONArray array = new JSONArray(intent.getExtras().getString("data"));
                     JSONObject jsonMessage = array.getJSONObject(0);
                     moment_id = jsonMessage.getLong("moment_id");
                     type_notifs = jsonMessage.getInt("type_notif");
-                    Log.v("PUSSH", "LAAAA, moment_id :"+moment_id+"  type_notifs : "+type_notifs+" Notre moment id "+momentID);
 
-                    if(type_notifs==CHAT_PUSH){
-                        if(moment_id.equals(momentID)){
-                            Log.v("PUSSH", "Ceci est un chat");
+                    if (type_notifs == CHAT_PUSH) {
+                        if (moment_id.equals(momentID)) {
                             chat_id = jsonMessage.getInt("chat_id");
-                            //If we are on the chat, we print it
-                            if(pager.getCurrentItem()==2||pager.getCurrentItem()==1){
-                                Log.v("PUSSH", "On est dans le chat");
-                                MomentApi.get("chat/"+chat_id, null, new JsonHttpResponseHandler() {
+
+                            if (pager.getCurrentItem() == 2 || pager.getCurrentItem() == 1) {
+                                MomentApi.get("chat/" + chat_id, null, new JsonHttpResponseHandler() {
 
                                     @Override
                                     public void onSuccess(JSONObject response) {
-                                        Toast.makeText(getApplicationContext(), "Nouveau message", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.new_message), Toast.LENGTH_SHORT).show();
                                         Chat tempChat = new Chat();
-                                        try{
+                                        try {
                                             tempChat.chatFromJSON(response.getJSONObject("chat"));
-                                        }catch (JSONException e){
-                                            Log.e("JSON", "Probleme JSON");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
                                         }
 
-
-                                        Log.v("PUSSH", response.toString());
-
-                                        //We add it
                                         tempChat.__setDaoSession(AppMoment.getInstance().daoSession);
                                         tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                                         tempChat.setUser(tempChat.getUser());
@@ -652,25 +567,24 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                                         chatFr.messageLeft(tempChat);
 
-                                        if(pager.getCurrentItem()==1) pager.setCurrentItem(2);
+                                        if (pager.getCurrentItem() == 1) pager.setCurrentItem(2);
 
                                     }
 
                                     @Override
                                     public void onFailure(Throwable error, String content) {
-                                        Toast.makeText(getApplicationContext(), "Problème chat", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.probleme_chat), Toast.LENGTH_SHORT).show();
 
                                     }
                                 });
                             }
-                        }
-                        else{
+                        } else {
                             AlertDialog.Builder monDialogue = new AlertDialog.Builder(MomentInfosActivity.this);
-                            monDialogue.setTitle("Nouveau chat");
-                            monDialogue.setMessage("Test");
+                            monDialogue.setTitle(getString(R.string.nouveaut_chat));
+                            monDialogue.setMessage(getString(R.string.test_chat));
 
-                            //Bouton du dialogue
-                            monDialogue.setPositiveButton("Consulter", new DialogInterface.OnClickListener() {
+
+                            monDialogue.setPositiveButton(getString(R.string.consulter), new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
                                     Intent intentMoment = new Intent(MomentInfosActivity.this, MomentInfosActivity.class);
                                     intentMoment.putExtra("precedente", "notifs");
@@ -680,7 +594,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                                 }
                             });
-                            monDialogue.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                            monDialogue.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
 
                                 public void onClick(DialogInterface dialog, int which) {
 
@@ -689,41 +603,34 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                             monDialogue.show();
                         }
-                    }
-                    else if(type_notifs==PHOTO_PUSH){
-                        Log.v("PUSSH", "Ceci est un photo");
-                        //If we are on the chat, we print it
-                        if(pager.getCurrentItem()==0||pager.getCurrentItem()==1){
-                            Log.v("PUSSH", "On est dans le chat");
-                            Toast.makeText(getApplicationContext(), "Nouvelle Photo", Toast.LENGTH_SHORT).show();
+                    } else if (type_notifs == PHOTO_PUSH) {
+
+                        if (pager.getCurrentItem() == 0 || pager.getCurrentItem() == 1) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.new_photo), Toast.LENGTH_SHORT).show();
                         }
 
                     }
 
 
-                }catch(JSONException e){
-                    Log.e(TAG, "JSON Problem");
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
             }
         };
-        //registering our receiver
+
         this.registerReceiver(mReceiver, intentFilter);
     }
+
     @Override
     protected void onPause() {
-        // TODO Auto-generated method stub
+
         super.onPause();
-        //unregister our receiver
+
         this.unregisterReceiver(this.mReceiver);
     }
 
 
-    /**
-     * When we click on the pen to modify the event
-     * @param view
-     */
-
-    public void modifyMoment(View view){
+    public void modifyMoment(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Modify Moment", null);
         Intent modifyIntent = new Intent(this, CreationDetailsActivity.class);
         modifyIntent.putExtra("nomMoment", moment.getName());
@@ -732,26 +639,21 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     }
 
 
-
-    public void goPhotos(View view){
+    public void goPhotos(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Go Photos View", null);
         pager.setCurrentItem(0);
     }
 
-    public void updateInfosPhotos(ArrayList<Photo> photos){
+    public void updateInfosPhotos(ArrayList<Photo> photos) {
         infosFr.updatePhotos(photos);
     }
 
 
-    /**
-     * Open the direction in google map
-     * @param view
-     */
-    public void detailMap(View view){
+    public void detailMap(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Detail Map", null);
         String label = moment.getAdresse();
         String uriBegin = "geo:" + 0 + "," + 0;
-        String query =  moment.getAdresse();
+        String query = moment.getAdresse();
         String encodedQuery = Uri.encode(query);
         String uriString = uriBegin + "?q=" + encodedQuery + "&z=16";
         Uri uri = Uri.parse(uriString);
@@ -759,18 +661,17 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         startActivity(intent);
     }
 
-    private void hideKeyboard()
-    {
+    private void hideKeyboard() {
         InputMethodManager inputManager = (InputMethodManager)
                 getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-        if(this.getCurrentFocus()!=null){
+        if (this.getCurrentFocus() != null) {
             inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
         }
 
     }
 
-    public void delete(View view){
+    public void delete(View view) {
         EasyTracker.getTracker().sendEvent("Infos", "button_press", "Delete Moment", null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
         alertDialogBuilder
@@ -786,10 +687,10 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        final ProgressDialog progressDialog = ProgressDialog.show(MomentInfosActivity.this, null, "Suppression en cours");
+                        final ProgressDialog progressDialog = ProgressDialog.show(MomentInfosActivity.this, null, getString(R.string.suppressing));
 
-                        if(moment.getUserId()==AppMoment.getInstance().user.getId()){
-                            MomentApi.get("delmoment/"+moment.getId(), null, new JsonHttpResponseHandler() {
+                        if (moment.getUserId() == AppMoment.getInstance().user.getId()) {
+                            MomentApi.get("delmoment/" + moment.getId(), null, new JsonHttpResponseHandler() {
 
                                 @Override
                                 public void onSuccess(JSONObject response) {
@@ -818,15 +719,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     @Override
     public void onStart() {
         super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
+        EasyTracker.getInstance().activityStart(this);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
-
 
 
 }

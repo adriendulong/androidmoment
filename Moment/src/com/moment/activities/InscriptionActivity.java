@@ -72,28 +72,17 @@ import java.util.regex.Pattern;
 public class InscriptionActivity extends SherlockFragmentActivity {
 
     public static final String PROPERTY_REG_ID = "registration_id";
+    public static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
+    static final String TAG = "GCMDemo";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private static final String PROPERTY_ON_SERVER_EXPIRATION_TIME =
             "onServerExpirationTimeMs";
-    /**
-     * Default lifespan (7 days) of a reservation until it is considered expired.
-     */
-    public static final long REGISTRATION_EXPIRY_TIME_MS = 1000 * 3600 * 24 * 7;
+    private static Button birthdate;
 
-    /**
-     * Substitute you own sender ID here.
-     */
     String SENDER_ID = CommonUtilities.SENDER_ID;
-
-    /**
-     * Tag used on log messages.
-     */
-    static final String TAG = "GCMDemo";
-
     GoogleCloudMessaging gcm;
     Context context;
     private String regid;
-
     private Uri outputFileUri;
     private int YOUR_SELECT_PICTURE_REQUEST_CODE = 0;
     private Bitmap profile_picture;
@@ -103,14 +92,59 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private EditText nomEdit;
     private EditText prenomEdit;
     private EditText emailEdit;
-    private EditText mdpEdit ;
-    private static Button birthdate;
+    private EditText mdpEdit;
     private Button male;
     private Button female;
     private ImageButton user_picture;
     private String gender;
     private Bundle bundle;
     private ProgressDialog dialog;
+    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
+        public void call(Session session, SessionState state, Exception exception) {
+            if (state.isOpened()) {
+                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                    public void onCompleted(GraphUser user, Response response) {
+                        if (response != null) {
+                            try {
+
+                                prenomEdit.setText(user.getFirstName());
+                                nomEdit.setText(user.getLastName());
+
+                                emailEdit.setText(user.getProperty("email").toString());
+
+                                birthdate.setText(user.getBirthday());
+
+                                if (user.getProperty("gender").toString().equals("male")) {
+                                    setMale(male);
+                                } else {
+                                    setFemale(female);
+                                }
+
+                                ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
+                                profilePictureTask.execute();
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+                    }
+                });
+            }
+        }
+    };
+
+    private static int getAppVersion(Context context) {
+        try {
+            PackageInfo packageInfo = context.getPackageManager()
+                    .getPackageInfo(context.getPackageName(), 0);
+            Log.v(TAG, "" + packageInfo.versionCode);
+            return packageInfo.versionCode;
+        } catch (PackageManager.NameNotFoundException e) {
+            // should never happen
+            throw new RuntimeException("Could not get package name: " + e);
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,22 +162,22 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         if (regid.length() == 0) {
             registerBackground();
         }
-        Log.v(TAG, "REGID : "+regid);
+        Log.v(TAG, "REGID : " + regid);
         gcm = GoogleCloudMessaging.getInstance(this);
 
 
-        nomEdit = (EditText)findViewById(R.id.inscription_nom);
-        prenomEdit = (EditText)findViewById(R.id.inscription_prenom);
-        emailEdit = (EditText)findViewById(R.id.inscription_email);
-        mdpEdit = (EditText)findViewById(R.id.inscription_mdp);
+        nomEdit = (EditText) findViewById(R.id.inscription_nom);
+        prenomEdit = (EditText) findViewById(R.id.inscription_prenom);
+        emailEdit = (EditText) findViewById(R.id.inscription_email);
+        mdpEdit = (EditText) findViewById(R.id.inscription_mdp);
         birthdate = (Button) findViewById(R.id.birthdate);
         male = (Button) findViewById(R.id.btn_male);
         female = (Button) findViewById(R.id.btn_female);
-        user_picture = (ImageButton)findViewById(R.id.profile_picture);
+        user_picture = (ImageButton) findViewById(R.id.profile_picture);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getResources().getString(R.string.pop_up_facebook_fill_body))
-               .setTitle(getResources().getString(R.string.pop_up_facebook_fill_title));
+                .setTitle(getResources().getString(R.string.pop_up_facebook_fill_title));
 
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
@@ -162,53 +196,17 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
     }
 
-    public void facebookConnect(){
+    public void facebookConnect() {
         try {
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
-                    new String[] { "email",  "user_birthday"}), bundle);
-        }
-        catch (Exception e) {
+                    new String[]{"email", "user_birthday"}), bundle);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-                    public void onCompleted(GraphUser user, Response response) {
-                        if (response != null) {
-                            try{
-
-                                prenomEdit.setText(user.getFirstName());
-                                nomEdit.setText(user.getLastName());
-
-                                emailEdit.setText(user.getProperty("email").toString());
-
-                                birthdate.setText(user.getBirthday());
-
-                                if(user.getProperty("gender").toString().equals("male")) {
-                                    setMale(male);
-                                } else {
-                                    setFemale(female);
-                                }
-
-                                ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
-                                profilePictureTask.execute();
-
-                            } catch(Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-                    }
-                });
-            }
-        }
-    };
-
     private Session openActiveSession(Activity activity, boolean allowLoginUI,
-                                       Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
+                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
         Session.OpenRequest openRequest = new Session.OpenRequest(activity).
                 setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
                 SSO_WITH_FALLBACK).setCallback(callback).
@@ -238,8 +236,8 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         String mdp = mdpEdit.getText().toString();
         String bdate = birthdate.getText().toString();
 
-        if((nom.length()>0)&&(prenom.length()>0)&&(email.length()>0)&&(mdp.length()>0)){
-            if(isEmailAdress(email)){
+        if ((nom.length() > 0) && (prenom.length() > 0) && (email.length() > 0) && (mdp.length() > 0)) {
+            if (CommonUtilities.isValidEmail(email)) {
                 java.util.Date d = null;
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 try {
@@ -254,13 +252,13 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                 params.put("password", mdp);
                 params.put("email", email);
 
-                //Birth Date
-                if(d!=null){
+                if (d != null) {
                     String birth_date = String.valueOf(d.getTime());
-                    params.put("birth_date", ""+d.getTime()/1000);
+                    params.put("birth_date", "" + d.getTime() / 1000);
                 }
 
-                if((gender!=null)&&(gender.equals("M")||gender.equals("F"))) params.put("sex", gender);
+                if ((gender != null) && (gender.equals("M") || gender.equals("F")))
+                    params.put("sex", gender);
 
                 if (regid.length() != 0) params.put("notif_id", regid);
 
@@ -269,7 +267,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                 params.put("model", CommonUtilities.getDeviceName());
                 params.put("device_id", AppMoment.getInstance().tel_id);
 
-                if(pictureOut != null) {
+                if (pictureOut != null) {
                     try {
                         params.put("photo", pictureOut);
                     } catch (FileNotFoundException e) {
@@ -279,10 +277,12 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                 } else {
 
                     File image = getApplicationContext().getFileStreamPath("profile_picture");
-                    if (image != null){
+                    if (image != null) {
                         try {
                             params.put("photo", image);
-                        } catch(FileNotFoundException e) { e.printStackTrace(); }
+                        } catch (FileNotFoundException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
 
@@ -306,7 +306,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         AppMoment.getInstance().user = new User();
                         AppMoment.getInstance().user.setId(id);
                         AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
-                        
+
                         //We also save in shared prefs
                         SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -328,7 +328,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                             @Override
                             public void onFailure(Throwable e, JSONObject errorResponse) {
                                 dialog.dismiss();
-                                Log.e("CONNECTION", "PROBLEME USER");
                             }
                         });
                     }
@@ -343,9 +342,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         alertDialogBuilder
                                 .setMessage(getResources().getString(R.string.title_problem_inscription))
                                 .setCancelable(false)
-                                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
-                                    public void onClick(DialogInterface dialog,int id) {
+                                    public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
                                     }
                                 });
@@ -354,22 +353,20 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                         alertDialog.show();
 
 
-
                         AppMoment.getInstance().user = null;
                         MomentApi.myCookieStore.clear();
                     }
                 });
 
-            }
-            else{
+            } else {
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
                 alertDialogBuilder.setTitle(getResources().getString(R.string.invalid_email_inscription_title));
                 alertDialogBuilder
                         .setMessage(getResources().getString(R.string.invalid_email_inscription_body))
                         .setCancelable(false)
-                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                             @Override
-                            public void onClick(DialogInterface dialog,int id) {
+                            public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                                 emailEdit.requestFocus();
                             }
@@ -379,23 +376,22 @@ public class InscriptionActivity extends SherlockFragmentActivity {
             }
 
         }
-        //Missing mandatory parameters
-        else{
+
+        else {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
             alertDialogBuilder.setTitle(getResources().getString(R.string.missing_infos_title));
             alertDialogBuilder
                     .setMessage(getResources().getString(R.string.missing_infos_body))
                     .setCancelable(false)
-                    .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog,int id) {
+                        public void onClick(DialogInterface dialog, int id) {
                             dialog.cancel();
                         }
                     });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         }
-
 
 
     }
@@ -420,11 +416,11 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         newFragment.show(getSupportFragmentManager(), "datePicker");
     }
 
-    public void selectImage(View view){
+    public void selectImage(View view) {
         openImageIntent();
     }
 
-    public void retour(View view){
+    public void retour(View view) {
         Intent intent = new Intent(this, MomentActivity.class);
         startActivity(intent);
     }
@@ -441,7 +437,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         final Intent captureIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         final PackageManager packageManager = getPackageManager();
         final List<ResolveInfo> listCam = packageManager.queryIntentActivities(captureIntent, 0);
-        for(ResolveInfo res : listCam) {
+        for (ResolveInfo res : listCam) {
             final String packageName = res.activityInfo.packageName;
             final Intent intent = new Intent(captureIntent);
             intent.setComponent(new ComponentName(res.activityInfo.packageName, res.activityInfo.name));
@@ -465,45 +461,35 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         super.onActivityResult(requestCode, resultCode, data);
-        if (Session.getActiveSession()!=null) Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
+        if (Session.getActiveSession() != null)
+            Session.getActiveSession().onActivityResult(this, requestCode, resultCode, data);
 
 
-        if(resultCode == RESULT_OK)
-        {
-            if(requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE)
-            {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == YOUR_SELECT_PICTURE_REQUEST_CODE) {
                 final boolean isCamera;
-                if(data == null)
-                {
+                if (data == null) {
                     isCamera = true;
-                }
-                else
-                {
+                } else {
                     final String action = data.getAction();
-                    if(action == null)
-                    {
+                    if (action == null) {
                         isCamera = false;
-                    }
-                    else
-                    {
+                    } else {
                         isCamera = action.equals(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
                     }
                 }
 
                 Uri selectedImageUri;
-                if(isCamera)
-                {
+                if (isCamera) {
                     selectedImageUri = outputFileUri;
-                }
-                else
-                {
+                } else {
                     selectedImageUri = data == null ? null : data.getData();
                 }
 
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
 
-                    ImageButton profile_picture_button = (ImageButton)findViewById(R.id.profile_picture);
+                    ImageButton profile_picture_button = (ImageButton) findViewById(R.id.profile_picture);
                     profile_picture_button.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
                     profile_picture = Images.resizeBitmap(bitmap, 300);
                     Images.saveImageToInternalStorage(profile_picture, getApplicationContext(), "profile_picture", 100);
@@ -517,25 +503,19 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         }
     }
 
-    public void setMale(View view){
+    public void setMale(View view) {
         gender = "M";
         male.setBackgroundColor(getResources().getColor(R.color.orange));
         female.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
-    public void setFemale(View view){
+    public void setFemale(View view) {
         gender = "F";
         female.setBackgroundColor(getResources().getColor(R.color.orange));
         male.setBackgroundColor(getResources().getColor(R.color.white));
     }
 
-    public static boolean isEmailAdress(String email){
-        Pattern p = Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,4}$");
-        Matcher m = p.matcher(email.toUpperCase());
-        return m.matches();
-    }
-
-    public void editEmailAlert(){
+    public void editEmailAlert() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
 
         alertDialogBuilder.setTitle("Adresse mail incorrect");
@@ -543,15 +523,109 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         alertDialogBuilder
                 .setMessage("Corriger")
                 .setCancelable(false)
-                .setPositiveButton("OK",new DialogInterface.OnClickListener() {
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog,int id) {
+                    public void onClick(DialogInterface dialog, int id) {
 
                     }
                 });
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        if (registrationId.length() == 0) {
+            Log.v(TAG, "Registration not found.");
+            return "";
+        }
+        // check if app was updated; if so, it must clear registration id to
+        // avoid a race condition if GCM sends a message
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion || isRegistrationExpired()) {
+            Log.v(TAG, "App version changed or registration expired.");
+            return "";
+        }
+        return registrationId;
+    }
+
+    private SharedPreferences getGCMPreferences(Context context) {
+        return getSharedPreferences(MomentActivity.class.getSimpleName(),
+                Context.MODE_PRIVATE);
+    }
+
+    private boolean isRegistrationExpired() {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        long expirationTime =
+                prefs.getLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, -1);
+        return System.currentTimeMillis() > expirationTime;
+    }
+
+    private void registerBackground() {
+
+        Thread thread = new Thread(new Runnable() {
+            public void run() {
+                String msg = "";
+                try {
+                    if (gcm == null) {
+                        gcm = GoogleCloudMessaging.getInstance(context);
+                    }
+                    regid = gcm.register(SENDER_ID);
+                    msg = "Device registered, registration id=" + regid;
+
+                    setRegistrationId(context, regid);
+                } catch (IOException ex) {
+                    msg = "Error :" + ex.getMessage();
+                }
+                Log.v(TAG, msg);
+            }
+        }
+        );
+        thread.start();
+    }
+
+    private void setRegistrationId(Context context, String regId) {
+        final SharedPreferences prefs = getGCMPreferences(context);
+        int appVersion = getAppVersion(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        long expirationTime = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
+
+        editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
+        editor.commit();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this); // Add this method.
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this); // Add this method.
+    }
+
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            birthdate.setText(day + "/" + (month + 1) + "/" + year);
+        }
     }
 
     private class ProfilePictureTask extends AsyncTask<Void, Void, Bitmap> {
@@ -566,7 +640,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         protected Bitmap doInBackground(Void... params) {
 
             try {
-                user_pic = new URL("http://graph.facebook.com/"+user.getId()+"/picture?width=200&height=200");
+                user_pic = new URL("http://graph.facebook.com/" + user.getId() + "/picture?width=200&height=200");
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             }
@@ -586,172 +660,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         }
 
         @Override
-        protected void onPostExecute(Bitmap bitmap){
-            if(bitmap != null)
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null)
                 user_picture.setImageBitmap(Images.getRoundedCornerBitmap(bitmap));
         }
-    }
-
-
-    /**
-     * GCM Functions
-     */
-
-    /**
-     * Gets the current registration id for application on GCM service.
-     * <p>
-     * If result is empty, the registration has failed.
-     *
-     * @return registration id, or empty string if the registration is not
-     *         complete.
-     */
-    private String getRegistrationId(Context context) {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
-        if (registrationId.length() == 0) {
-            Log.v(TAG, "Registration not found.");
-            return "";
-        }
-        // check if app was updated; if so, it must clear registration id to
-        // avoid a race condition if GCM sends a message
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion || isRegistrationExpired()) {
-            Log.v(TAG, "App version changed or registration expired.");
-            return "";
-        }
-        return registrationId;
-    }
-
-
-    /**
-     * @return Application's {@code SharedPreferences}.
-     */
-    private SharedPreferences getGCMPreferences(Context context) {
-        return getSharedPreferences(MomentActivity.class.getSimpleName(),
-                Context.MODE_PRIVATE);
-    }
-
-    /**
-     * @return Application's version code from the {@code PackageManager}.
-     */
-    private static int getAppVersion(Context context) {
-        try {
-            PackageInfo packageInfo = context.getPackageManager()
-                    .getPackageInfo(context.getPackageName(), 0);
-            Log.v(TAG, ""+packageInfo.versionCode);
-            return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
-        }
-    }
-
-    /**
-     * Checks if the registration has expired.
-     *
-     * <p>To avoid the scenario where the device sends the registration to the
-     * server but the server loses it, the app developer may choose to re-register
-     * after REGISTRATION_EXPIRY_TIME_MS.
-     *
-     * @return true if the registration has expired.
-     */
-    private boolean isRegistrationExpired() {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        // checks if the information is not stale
-        long expirationTime =
-                prefs.getLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, -1);
-        return System.currentTimeMillis() > expirationTime;
-    }
-
-    /**
-     * Registers the application with GCM servers asynchronously.
-     * <p>
-     * Stores the registration id, app versionCode, and expiration time in the
-     * application's shared preferences.
-     */
-    private void registerBackground() {
-
-        Thread thread = new Thread(new Runnable()
-        {
-            public void run()
-            {
-                String msg = "";
-                try {
-                    if (gcm == null) {
-                        gcm = GoogleCloudMessaging.getInstance(context);
-                    }
-                    regid = gcm.register(SENDER_ID);
-                    msg = "Device registered, registration id=" + regid;
-
-                    // You should send the registration ID to your server over HTTP,
-                    // so it can use GCM/HTTP or CCS to send messages to your app.
-
-                    // For this demo: we don't need to send it because the device
-                    // will send upstream messages to a server that echo back the message
-                    // using the 'from' address in the message.
-
-                    // Save the regid - no need to register again.
-                    //TODO : Send the new regiid to the server (build the request on the server)
-                    setRegistrationId(context, regid);
-                } catch (IOException ex) {
-                    msg = "Error :" + ex.getMessage();
-                }
-                Log.v(TAG, msg);
-            }
-        }
-        );
-        thread.start();
-    }
-
-    /**
-     * Stores the registration id, app versionCode, and expiration time in the
-     * application's {@code SharedPreferences}.
-     *
-     * @param context application's context.
-     * @param regId registration id
-     */
-    private void setRegistrationId(Context context, String regId) {
-        final SharedPreferences prefs = getGCMPreferences(context);
-        int appVersion = getAppVersion(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        long expirationTime = System.currentTimeMillis() + REGISTRATION_EXPIRY_TIME_MS;
-
-        editor.putLong(PROPERTY_ON_SERVER_EXPIRATION_TIME, expirationTime);
-        editor.commit();
-    }
-
-    public static class DatePickerFragment extends DialogFragment
-            implements DatePickerDialog.OnDateSetListener {
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            // Use the current date as the default date in the picker
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
-
-            // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
-        }
-
-        public void onDateSet(DatePicker view, int year, int month, int day) {
-            birthdate.setText(day+"/"+(month+1)+"/"+year);
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 }

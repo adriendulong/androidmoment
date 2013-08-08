@@ -73,8 +73,6 @@ public class TimelineActivity extends SlidingActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Log.v("TIMELINE", "CRETAE");
-
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
@@ -87,17 +85,15 @@ public class TimelineActivity extends SlidingActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        todayBtn = (ImageView)findViewById(R.id.today_btn);
+        todayBtn = (ImageView) findViewById(R.id.today_btn);
 
-        myMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.my_moments_button);
-        profile = (RelativeLayout)sm.getRootView().findViewById(R.id.profile_button_volet);
-        settings = (RelativeLayout)sm.getRootView().findViewById(R.id.settings_button_volet);
-        //missingMoments = (RelativeLayout)sm.getRootView().findViewById(R.id.missing_button_volet);
+        myMoments = (RelativeLayout) sm.getRootView().findViewById(R.id.my_moments_button);
+        profile = (RelativeLayout) sm.getRootView().findViewById(R.id.profile_button_volet);
+        settings = (RelativeLayout) sm.getRootView().findViewById(R.id.settings_button_volet);
         todayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.btn_today);
 
         moments = new ArrayList<Moment>();
-        //ListView
-        momentsList = (ListView)findViewById(R.id.list_moments);
+        momentsList = (ListView) findViewById(R.id.list_moments);
         momentsList.setSelector(android.R.color.transparent);
         adapter = new MomentsAdapter(this, R.layout.timeline_moment, moments);
         momentsList.setAdapter(adapter);
@@ -106,17 +102,15 @@ public class TimelineActivity extends SlidingActivity {
         View.OnClickListener listener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(v.getId()==myMoments.getId()){
+                if (v.getId() == myMoments.getId()) {
                     EasyTracker.getTracker().sendEvent("Volet", "button_press", "Timeline", null);
                     toggle();
 
-                }
-                else if(v.getId()==profile.getId()){
+                } else if (v.getId() == profile.getId()) {
                     EasyTracker.getTracker().sendEvent("Volet", "button_press", "Profil", null);
                     Intent intent = new Intent(getApplication(), EditProfilActivity.class);
                     startActivity(intent);
-                }
-                else if(v.getId()==settings.getId()){
+                } else if (v.getId() == settings.getId()) {
                     EasyTracker.getTracker().sendEvent("Volet", "button_press", "Settings", null);
                     Intent intent = new Intent(getApplication(), SettingsActivity.class);
                     startActivity(intent);
@@ -131,22 +125,20 @@ public class TimelineActivity extends SlidingActivity {
         notifications = new ArrayList<Notification>();
         invitations = new ArrayList<Notification>();
 
-        notifsListView = (ListView)sm.getRootView().findViewById(R.id.list_notifs);
+        notifsListView = (ListView) sm.getRootView().findViewById(R.id.list_notifs);
 
-        if(savedInstanceState == null){
+        if (savedInstanceState == null) {
 
-            if(AppMoment.getInstance().checkInternet() == false){
-                if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+            if (AppMoment.getInstance().checkInternet() == false) {
+                if (!DatabaseHelper.getMomentsFromDataBase().isEmpty()) {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
-                    for (Moment moment : momentList){
+                    for (Moment moment : momentList) {
                         AppMoment.getInstance().user.getMoments().add(moment);
                         moments.add(moment);
                     }
                     goToToday(false);
                 }
-            }
-
-            else {
+            } else {
                 dialog = ProgressDialog.show(this, null, getResources().getString(R.string.moment_dl));
 
                 MomentApi.initialize(getApplicationContext());
@@ -167,7 +159,7 @@ public class TimelineActivity extends SlidingActivity {
                                 AppMoment.getInstance().user.addMoment(momentTemp);
                                 moments.add(momentTemp);
 
-                                if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
                                     DatabaseHelper.addMoment(momentTemp);
                                 }
                             }
@@ -186,16 +178,15 @@ public class TimelineActivity extends SlidingActivity {
                     public void onFailure(Throwable error, String content) {
                         Log.e("TIMELINE", content);
                         dialog.dismiss();
-                        Toast.makeText(getApplicationContext(),  getResources().getString(R.string.echec_dl_moments), Toast.LENGTH_LONG).show();
-                        if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+                        Toast.makeText(getApplicationContext(), getResources().getString(R.string.echec_dl_moments), Toast.LENGTH_LONG).show();
+                        if (!DatabaseHelper.getMomentsFromDataBase().isEmpty()) {
                             List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
-                            for (Moment moment : momentList){
+                            for (Moment moment : momentList) {
                                 AppMoment.getInstance().user.getMoments().add(moment);
                                 moments.add(moment);
                             }
                             goToToday(false);
                         }
-
 
 
                     }
@@ -205,16 +196,16 @@ public class TimelineActivity extends SlidingActivity {
                 getNotifications();
             }
         }
-        //After crash
-        else{
+
+        else {
 
             Log.e("TIMELINE", "LOSTTTTTT");
             SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
             Long savedUserID = sharedPreferences.getLong("userID", -1);
             AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedInstanceState.getLong("userID"));
-            Log.e("TIMELINE", "User id : "+savedInstanceState.getLong("userID"));
+            Log.e("TIMELINE", "User id : " + savedInstanceState.getLong("userID"));
 
-            if(AppMoment.getInstance().user==null){
+            if (AppMoment.getInstance().user == null) {
                 Intent intent = new Intent(TimelineActivity.this, MomentActivity.class);
                 startActivity(intent);
             }
@@ -240,7 +231,7 @@ public class TimelineActivity extends SlidingActivity {
                             AppMoment.getInstance().user.addMoment(momentTemp);
                             moments.add(momentTemp);
 
-                            if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                            if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
                                 DatabaseHelper.addMoment(momentTemp);
                             }
                         }
@@ -265,7 +256,7 @@ public class TimelineActivity extends SlidingActivity {
     }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         EasyTracker.getInstance().activityStart(this);
     }
@@ -273,7 +264,7 @@ public class TimelineActivity extends SlidingActivity {
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
     @Override
@@ -282,12 +273,12 @@ public class TimelineActivity extends SlidingActivity {
 
         RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.badge).getActionView();
         totalNotifText = (TextView) badgeLayout.findViewById(R.id.actionbar_notifcation_textview);
-        notifProgress = (ProgressBar)badgeLayout.findViewById(R.id.progress_notifs);
+        notifProgress = (ProgressBar) badgeLayout.findViewById(R.id.progress_notifs);
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 toggle();
@@ -304,52 +295,17 @@ public class TimelineActivity extends SlidingActivity {
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        // Save UI state changes to the savedInstanceState.
-        // This bundle will be passed to onCreate if the process is
-        // killed and restarted.
         savedInstanceState.putLong("userID", AppMoment.getInstance().user.getId());
-        // etc.
     }
 
-
-
-    /*
-    public void grandirMoment(View view){
-
-        Resources r = getResources();
-        float ratio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
-
-        TimelineAnimation anim = new TimelineAnimation(view, ratio, false);
-        anim.setDuration(400);
-        //anim.setFillAfter(true);
-        anim.setInterpolator(new AccelerateInterpolator());
-        view.startAnimation(anim);
-
-    }
-
-
-    public void reduireMoment(View view){
-
-        Resources r = getResources();
-        float ratio = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 1, r.getDisplayMetrics());
-
-        TimelineAnimation anim = new TimelineAnimation(view, ratio, true);
-        anim.setDuration(400);
-        anim.setFillAfter(true);
-        anim.setInterpolator(new AccelerateInterpolator());
-        view.startAnimation(anim);
-    }
-    */
-
-    public void notifications(View view){
+    public void notifications(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Notifications", null);
         Log.e("NOTIFS", "HERE NOTIFS");
         Intent notifs = new Intent(this, NotificationsActivity.class);
         startActivity(notifs);
     }
 
-
-    public void getNotifications(){
+    public void getNotifications() {
 
 
         MomentApi.get("notifications", null, new JsonHttpResponseHandler() {
@@ -358,26 +314,24 @@ public class TimelineActivity extends SlidingActivity {
             public void onSuccess(JSONObject response) {
                 try {
                     totalNotifs = response.getInt("total_notifs");
-                    totalNotifText.setText(""+totalNotifs);
+                    totalNotifText.setText("" + totalNotifs);
                     totalNotifText.setVisibility(View.VISIBLE);
                     notifProgress.setVisibility(View.INVISIBLE);
 
                     JSONArray notifsObject = response.getJSONArray("notifications");
 
-                    for(int i=0;i<notifsObject.length();i++){
+                    for (int i = 0; i < notifsObject.length(); i++) {
                         Notification notif = new Notification();
                         Log.e("EX", notifsObject.getJSONObject(i).toString());
                         notif.setFromJson(notifsObject.getJSONObject(i));
 
-                        //On prend que les notifs de photos ou chats (pas celle de followers)
-                        if(notif.getTypeNotif()==2||notif.getTypeNotif()==3){
+                        if (notif.getTypeNotif() == 2 || notif.getTypeNotif() == 3) {
                             notifications.add(notif);
                         }
 
                     }
 
                     AppMoment.getInstance().user.setNotifications(notifications);
-
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -406,7 +360,7 @@ public class TimelineActivity extends SlidingActivity {
                     }
 
                     AppMoment.getInstance().user.setInvitations(invitations);
-                    Log.e("NB INVITATIONS", ""+AppMoment.getInstance().user.getInvitations().size());
+                    Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -419,75 +373,19 @@ public class TimelineActivity extends SlidingActivity {
         });
     }
 
-
-    public void selectedMoment(View view){
+    public void selectedMoment(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Select Moment", null);
-        Log.v("TIMELINE", ""+view.getTag());
+        Log.v("TIMELINE", "" + view.getTag());
 
         intentMoment = new Intent(this, MomentInfosActivity.class);
         intentMoment.putExtra("precedente", "timeline");
         intentMoment.putExtra("position", 1);
-        intentMoment.putExtra("id", (Long)view.getTag());
+        intentMoment.putExtra("id", (Long) view.getTag());
         startActivity(intentMoment);
 
     }
 
-    /*
-    public void deleteMoment(View view){
-        final Long momentId = (Long)view.getTag();
-        final Moment momentToDel = AppMoment.getInstance().user.getMomentById(momentId);
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        // set title
-        alertDialogBuilder.setTitle("Suppresion Moment");
-        // set dialog message
-        alertDialogBuilder
-                .setMessage("Voulez vous vraiment supprimer ce Moment ? Cette action est irreversible !")
-                .setCancelable(false)
-                .setNegativeButton("Non", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // if this button is clicked, just close
-                        // the dialog box and do nothing
-                        dialog.cancel();
-                    }
-                })
-                .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        final ProgressDialog progressDialog = ProgressDialog.show(TimelineActivity.this, null, "Suppression en cours");
-
-                        if(momentToDel.getUserId()==AppMoment.getInstance().user.getId()){
-                            MomentApi.get("delmoment/"+momentId, null, new JsonHttpResponseHandler() {
-
-                                @Override
-                                public void onSuccess(JSONObject response) {
-                                    for(int i=0;i<moments.size();i++){
-                                        if(moments.get(i).getId().equals(momentToDel.getId())) moments.remove(i);
-                                    }
-                                    if(AppMoment.getInstance().user.getMoments().remove(momentToDel)) Log.v("TIMELINE", "REMOVED INSTANCE");
-                                    //TODO : REMOVE en base
-                                    adapter.notifyDataSetChanged();
-
-                                    progressDialog.dismiss();
-
-                                }
-
-                                @Override
-                                public void onFailure(Throwable error, String content) {
-                                    System.out.println(content);
-                                    progressDialog.dismiss();
-                                }
-                            });
-                        }
-                    }
-                });
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-
-    }
-    */
-
-
-    public void goToToday(Boolean smooth){
+    public void goToToday(Boolean smooth) {
 
         Display display = getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
@@ -497,24 +395,19 @@ public class TimelineActivity extends SlidingActivity {
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 70, r.getDisplayMetrics());
 
 
-        if(smooth){
-            if(android.os.Build.VERSION.SDK_INT > 10) momentsList.smoothScrollToPositionFromTop(getNearestDate(), (height/2)-(int)px);
-            else momentsList.setSelectionFromTop(getNearestDate(), height/2);
-        }
-        else momentsList.setSelectionFromTop(getNearestDate(), height/2);
+        if (smooth) {
+            if (android.os.Build.VERSION.SDK_INT > 10)
+                momentsList.smoothScrollToPositionFromTop(getNearestDate(), (height / 2) - (int) px);
+            else momentsList.setSelectionFromTop(getNearestDate(), height / 2);
+        } else momentsList.setSelectionFromTop(getNearestDate(), height / 2);
     }
-
-    /**
-     * Find the Moment which is the closest from today
-     * @return
-     */
 
     public int getNearestDate() {
         Date currentDate = new Date();
         long minDiff = -1, currentTime = currentDate.getTime();
         Date minDate = null;
-        int positionDate=-1;
-        for(int i=0;i<moments.size();i++){
+        int positionDate = -1;
+        for (int i = 0; i < moments.size(); i++) {
             long diff = Math.abs(currentTime - moments.get(i).getDateDebut().getTime());
             if ((minDiff == -1) || (diff < minDiff)) {
                 minDiff = diff;
@@ -525,24 +418,18 @@ public class TimelineActivity extends SlidingActivity {
         return positionDate;
     }
 
-    public void today(View view){
+    public void today(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Go Today", null);
         goToToday(true);
     }
 
-    public void rotateToday(float deg){
-        Matrix matrix=new Matrix();
+    public void rotateToday(float deg) {
+        Matrix matrix = new Matrix();
         matrix.postRotate(deg);
         Bitmap rot = Bitmap.createBitmap(todayBitmap, 0, 0, todayBitmap.getWidth(), todayBitmap.getHeight(),
                 matrix, true);
         todayBtn.setImageBitmap(rot);
     }
-
-
-    /**
-     * Background task that will load the next moments
-     */
-
 
     private class TImelineScrollListener implements AbsListView.OnScrollListener {
 
@@ -556,6 +443,7 @@ public class TimelineActivity extends SlidingActivity {
 
         public TImelineScrollListener() {
         }
+
         public TImelineScrollListener(int visibleThreshold) {
             this.visibleThreshold = visibleThreshold;
         }
@@ -571,14 +459,13 @@ public class TimelineActivity extends SlidingActivity {
                 }
             }
 
-            //We load futur moments
             if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
-                if(!allFutur){
+                if (!allFutur) {
                     EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load futur Moments", null);
                     Log.d(TAG, "LOAD FUTUR MOMENTS");
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    String date = df.format(moments.get(moments.size()-1).getDateDebut());
-                    MomentApi.get("momentsafter/"+date+"/1", null, new JsonHttpResponseHandler() {
+                    String date = df.format(moments.get(moments.size() - 1).getDateDebut());
+                    MomentApi.get("momentsafter/" + date + "/1", null, new JsonHttpResponseHandler() {
 
                         @Override
                         public void onSuccess(JSONObject response) {
@@ -596,7 +483,7 @@ public class TimelineActivity extends SlidingActivity {
                                     moments.add(momentTemp);
 
 
-                                    if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                    if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
                                         DatabaseHelper.addMoment(momentTemp);
                                     }
 
@@ -604,7 +491,7 @@ public class TimelineActivity extends SlidingActivity {
 
                                 loading = false;
 
-                                if(nbMoments==0) allFutur = true;
+                                if (nbMoments == 0) allFutur = true;
                                 else adapter.notifyDataSetChanged();
 
                             } catch (JSONException e) {
@@ -615,7 +502,7 @@ public class TimelineActivity extends SlidingActivity {
                         @Override
                         public void onFailure(Throwable error, String content) {
                             Log.e("TIMELINE", content);
-                            Toast.makeText(getApplicationContext(),"Echec", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Echec", Toast.LENGTH_LONG).show();
                         }
 
                     });
@@ -624,14 +511,14 @@ public class TimelineActivity extends SlidingActivity {
                 }
 
             }
-            //We load old moments
+
             else if (!loading && (firstVisibleItem) <= 3) {
-                if(!allPast){
+                if (!allPast) {
                     EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load Old Moments", null);
                     Log.d(TAG, "Load PAST MOMENTS");
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
                     String date = df.format(moments.get(0).getDateDebut());
-                    MomentApi.get("momentsafter/"+date+"/0", null, new JsonHttpResponseHandler() {
+                    MomentApi.get("momentsafter/" + date + "/0", null, new JsonHttpResponseHandler() {
 
                         @Override
                         public void onSuccess(JSONObject response) {
@@ -649,16 +536,16 @@ public class TimelineActivity extends SlidingActivity {
                                     moments.add(0, momentTemp);
 
 
-                                    if(DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null){
+                                    if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
                                         DatabaseHelper.addMoment(momentTemp);
                                     }
 
                                 }
 
-                                if(nbMoments==0) allPast = true;
+                                if (nbMoments == 0) allPast = true;
                                 else {
                                     adapter.notifyDataSetChanged();
-                                    momentsList.setSelection(nbMoments+1);
+                                    momentsList.setSelection(nbMoments + 1);
                                 }
 
                             } catch (JSONException e) {
@@ -669,7 +556,7 @@ public class TimelineActivity extends SlidingActivity {
                         @Override
                         public void onFailure(Throwable error, String content) {
                             Log.e("TIMELINE", content);
-                            Toast.makeText(getApplicationContext(),"Echec", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Echec", Toast.LENGTH_LONG).show();
                         }
 
                     });
@@ -685,7 +572,6 @@ public class TimelineActivity extends SlidingActivity {
         }
 
     }
-
 
 
 }

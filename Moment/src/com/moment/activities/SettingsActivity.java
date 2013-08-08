@@ -22,7 +22,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class SettingsActivity extends SherlockActivity implements View.OnClickListener{
+public class SettingsActivity extends SherlockActivity implements View.OnClickListener {
 
     static int cpt;
     private int INVITATION = 0, NEW_PHOTO = 2, NEW_CHAT = 3, MODIF_MOMENT = 1;
@@ -36,15 +36,15 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        //Get notif indicators
-        invitPush = (ImageButton)findViewById(R.id.invitPush);
-        photoPush = (ImageButton)findViewById(R.id.photoPush);
-        modifPush = (ImageButton)findViewById(R.id.modifPush);
-        chatPush = (ImageButton)findViewById(R.id.chatPush);
-        invitMail = (ImageButton)findViewById(R.id.invitMail);
-        photoMail = (ImageButton)findViewById(R.id.photoMail);
-        chatMail = (ImageButton)findViewById(R.id.chatMail);
-        modifMail = (ImageButton)findViewById(R.id.modifMail);
+
+        invitPush = (ImageButton) findViewById(R.id.invitPush);
+        photoPush = (ImageButton) findViewById(R.id.photoPush);
+        modifPush = (ImageButton) findViewById(R.id.modifPush);
+        chatPush = (ImageButton) findViewById(R.id.chatPush);
+        invitMail = (ImageButton) findViewById(R.id.invitMail);
+        photoMail = (ImageButton) findViewById(R.id.photoMail);
+        chatMail = (ImageButton) findViewById(R.id.chatMail);
+        modifMail = (ImageButton) findViewById(R.id.modifMail);
 
         cpt = 0;
 
@@ -57,9 +57,9 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
                 Intent intent;
                 try {
                     getApplication().getPackageManager().getPackageInfo("com.facebook.katana", 0);
-                    intent = new Intent(Intent.ACTION_VIEW,Uri.parse("fb://page/277911125648059"));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("fb://page/277911125648059"));
                 } catch (PackageManager.NameNotFoundException e) {
-                    intent = new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.facebook.com/appmoment"));
+                    intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.facebook.com/appmoment"));
                 }
 
                 startActivity(intent);
@@ -83,8 +83,8 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
             @Override
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Settings", "button_press", "Love", null);
-                cpt ++;
-                if(cpt == 6){
+                cpt++;
+                if (cpt == 6) {
                     cpt = 0;
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.appmoment.fr"));
                     startActivity(intent);
@@ -136,14 +136,13 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         });
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
 
     @Override
-    public boolean onOptionsItemSelected (MenuItem item){
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
@@ -153,10 +152,11 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
     }
 
     @Override
-    public void onClick(View v) {}
+    public void onClick(View v) {
+    }
 
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         updatePush();
         EasyTracker.getInstance().activityStart(this);
@@ -165,15 +165,10 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
     @Override
     public void onStop() {
         super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
+        EasyTracker.getInstance().activityStop(this);
     }
 
-    /**
-     * Disconnect the user from the app
-     * @param view
-     */
-
-    public void disconnect(View view){
+    public void disconnect(View view) {
         EasyTracker.getTracker().sendEvent("Settings", "button_press", "Disconnect", null);
         AppMoment.getInstance().disconnect();
 
@@ -182,7 +177,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
             @Override
             public void onSuccess(JSONObject response) {
                 Log.d("DISCONNECT", "Disonnected");
-                //Remove the cookie and the user id in the shared pref
+
                 MomentApi.myCookieStore.clear();
                 Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
                 startActivity(startIntent);
@@ -192,8 +187,8 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
             @Override
             public void onFailure(Throwable error, String content) {
                 Log.d("DISCONNECT", "Pb :" + content);
-                //Remove all the moments from the DB
-                //Remove the cookie and the user id in the shared pref
+
+
                 MomentApi.myCookieStore.clear();
                 Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
                 startActivity(startIntent);
@@ -205,45 +200,37 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
     }
 
-
-    /**
-     * We update the push notifs icons
-     */
-
-    private void updatePush(){
+    private void updatePush() {
         MomentApi.get("paramsnotifs", null, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(JSONObject response) {
 
-                try{
+                try {
                     JSONArray notifs = response.getJSONArray("params_notifs");
-                    for(int i=0;i<notifs.length();i++){
+                    for (int i = 0; i < notifs.length(); i++) {
                         JSONObject tempNotif = notifs.getJSONObject(i);
 
-                        if(tempNotif.getInt("type_notif")==INVITATION){
-                            if(tempNotif.getBoolean("push")) invitPush.setSelected(true);
-                            if(tempNotif.getBoolean("mail")) invitMail.setSelected(true);
+                        if (tempNotif.getInt("type_notif") == INVITATION) {
+                            if (tempNotif.getBoolean("push")) invitPush.setSelected(true);
+                            if (tempNotif.getBoolean("mail")) invitMail.setSelected(true);
 
-                        }
-                        else if(tempNotif.getInt("type_notif")==NEW_PHOTO){
-                            if(tempNotif.getBoolean("push")) photoPush.setSelected(true);
-                            if(tempNotif.getBoolean("mail")) photoMail.setSelected(true);
+                        } else if (tempNotif.getInt("type_notif") == NEW_PHOTO) {
+                            if (tempNotif.getBoolean("push")) photoPush.setSelected(true);
+                            if (tempNotif.getBoolean("mail")) photoMail.setSelected(true);
 
-                        }
-                        else if(tempNotif.getInt("type_notif")==NEW_CHAT){
-                            if(tempNotif.getBoolean("push")) chatPush.setSelected(true);
-                            if(tempNotif.getBoolean("mail")) chatMail.setSelected(true);
+                        } else if (tempNotif.getInt("type_notif") == NEW_CHAT) {
+                            if (tempNotif.getBoolean("push")) chatPush.setSelected(true);
+                            if (tempNotif.getBoolean("mail")) chatMail.setSelected(true);
 
-                        }
-                        else if(tempNotif.getInt("type_notif")==MODIF_MOMENT){
-                            if(tempNotif.getBoolean("push")) modifPush.setSelected(true);
-                            if(tempNotif.getBoolean("mail")) modifMail.setSelected(true);
+                        } else if (tempNotif.getInt("type_notif") == MODIF_MOMENT) {
+                            if (tempNotif.getBoolean("push")) modifPush.setSelected(true);
+                            if (tempNotif.getBoolean("mail")) modifMail.setSelected(true);
 
                         }
                     }
 
-                }catch (JSONException e){
+                } catch (JSONException e) {
                     Log.e("JSONException", e.toString());
                 }
 
@@ -259,18 +246,13 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
         });
     }
 
-    /**
-     * on a click on one of the params icons
-     * @param view
-     */
-
-    public void modifParamsPush(final View viewPush){
+    public void modifParamsPush(final View viewPush) {
         EasyTracker.getTracker().sendEvent("Settings", "button_press", "Update Push Params", null);
 
-        if(viewPush.isSelected()) viewPush.setSelected(false);
+        if (viewPush.isSelected()) viewPush.setSelected(false);
         else viewPush.setSelected(true);
 
-        MomentApi.get("paramsnotifs/1/"+viewPush.getTag(), null, new JsonHttpResponseHandler() {
+        MomentApi.get("paramsnotifs/1/" + viewPush.getTag(), null, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(JSONObject response) {
@@ -278,7 +260,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Throwable error, String content) {
-                if(viewPush.isSelected()) viewPush.setSelected(false);
+                if (viewPush.isSelected()) viewPush.setSelected(false);
                 else viewPush.setSelected(true);
 
             }
@@ -287,13 +269,13 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
     }
 
-    public void modifParamsMail(final View viewPush){
+    public void modifParamsMail(final View viewPush) {
         EasyTracker.getTracker().sendEvent("Settings", "button_press", "Update Mail Params", null);
 
-        if(viewPush.isSelected()) viewPush.setSelected(false);
+        if (viewPush.isSelected()) viewPush.setSelected(false);
         else viewPush.setSelected(true);
 
-        MomentApi.get("paramsnotifs/0/"+viewPush.getTag(), null, new JsonHttpResponseHandler() {
+        MomentApi.get("paramsnotifs/0/" + viewPush.getTag(), null, new JsonHttpResponseHandler() {
 
             @Override
             public void onSuccess(JSONObject response) {
@@ -301,7 +283,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
             @Override
             public void onFailure(Throwable error, String content) {
-                if(viewPush.isSelected()) viewPush.setSelected(false);
+                if (viewPush.isSelected()) viewPush.setSelected(false);
                 else viewPush.setSelected(true);
 
             }
@@ -310,7 +292,7 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
     }
 
-    public void modifProfile(View view){
+    public void modifProfile(View view) {
         Intent intentProfile = new Intent(SettingsActivity.this, EditProfilActivity.class);
         startActivity(intentProfile);
     }

@@ -29,7 +29,7 @@ public class GuestsFragment extends Fragment {
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
 
-    public GuestsFragment(int positionFragment){
+    public GuestsFragment(int positionFragment) {
         position = positionFragment;
     }
 
@@ -37,51 +37,47 @@ public class GuestsFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Get the GoogleAnalytics singleton. Note that the SDK uses
-        // the application context to avoid leaking the current context.
+
+
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
 
-        // Use the GoogleAnalytics singleton to get a Tracker.
-        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS); // Placeholder tracking ID.
+
+        mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater,ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        //Wee get the list view
+
         View rootView = inflater.inflate(R.layout.activity_invitations_fragment, container, false);
-        listView = (ListView)rootView.findViewById(R.id.list_view_contacts);
+        listView = (ListView) rootView.findViewById(R.id.list_view_contacts);
 
-        //Listener of the list view
+
         Myonclicklistneer myClickList = new Myonclicklistneer();
         listView.setOnItemClickListener(myClickList);
 
-        //We init the array list of users
+
         users = new ArrayList<User>();
 
-        //We set the adapter for the list
+
         adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
         listView.setAdapter(adapter);
 
 
 
-
-        //Handle the position
         Bundle args = getArguments();
         position = args.getInt(POSITION);
 
-        //Depeending on the position of the fragment the list will be different.
-        if(position==0){
-            Log.d("POSITION FRAGMENT", ""+position);
-        }
-        else if(position==1){
-            Log.d("POSITION FRAGMENT", ""+position);
-        }
-        else if(position==2){
-            Log.d("POSITION FRAGMENT", ""+position);
+
+        if (position == 0) {
+            Log.d("POSITION FRAGMENT", "" + position);
+        } else if (position == 1) {
+            Log.d("POSITION FRAGMENT", "" + position);
+        } else if (position == 2) {
+            Log.d("POSITION FRAGMENT", "" + position);
         }
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             users = savedInstanceState.getParcelableArrayList("users");
             adapter = new InvitationsAdapter(getActivity().getApplicationContext(), R.layout.invitations_cell, users);
             listView.setAdapter(adapter);
@@ -91,33 +87,27 @@ public class GuestsFragment extends Fragment {
     }
 
 
-
     @Override
-    public void onStart(){
+    public void onStart() {
         super.onStart();
         mGaTracker.sendView("/GuestsFragment");
     }
 
-    /**
-     * Function which reload the list when the user list has been updated
-     */
 
-    public void updateListGuests(ArrayList<User> guests){
-        Log.d("FRAGMENT"+position, "UPDATE LISTE");
+
+    public void updateListGuests(ArrayList<User> guests) {
+        Log.d("FRAGMENT" + position, "UPDATE LISTE");
         users.clear();
-        for(int i=0;i<guests.size();i++){
+        for (int i = 0; i < guests.size(); i++) {
             users.add(guests.get(i));
         }
         adapter.notifyDataSetChanged();
     }
 
 
-    /**
-     * Listeneer of the list
-     */
 
-    class Myonclicklistneer implements AdapterView.OnItemClickListener
-    {
+
+    class Myonclicklistneer implements AdapterView.OnItemClickListener {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long arg3) {
 

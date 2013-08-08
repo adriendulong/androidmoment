@@ -38,31 +38,27 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
     private ViewPager mViewPager;
     private PagerTabStrip tabStrip;
     private Menu myMenu;
-
-    //RequestCode
     private int NEW_GUEST = 0;
-
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.list_guests_activity);
 
-        //Initialisation of the action bar
+
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
         actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        //We get the id of the moment
+
         idMoment = getIntent().getLongExtra("id", -1);
 
-        //Create the three fragments
-        //Init les fragments
+
         frs = new ArrayList<GuestsFragment>();
 
-        for(int i=0; i<3; i++){
+        for (int i = 0; i < 3; i++) {
             GuestsFragment fragment = new GuestsFragment(i);
             Bundle args = new Bundle();
             args.putInt(GuestsFragment.POSITION, i);
@@ -71,8 +67,6 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         }
 
 
-        //Manage the fragments
-        // Le page adapter qui va gerer le passage d'une page � l'autre
         mInvitationCollectionPagerAdapter =
                 new InvitationCollectionPagerAdapter(
                         getSupportFragmentManager());
@@ -81,13 +75,13 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         mViewPager.setCurrentItem(1);
         mViewPager.setOffscreenPageLimit(2);
 
-        //Customize the tab strip
-        tabStrip = (PagerTabStrip)findViewById(R.id.pager_tab_strip_guests);
+
+        tabStrip = (PagerTabStrip) findViewById(R.id.pager_tab_strip_guests);
         tabStrip.setTabIndicatorColor(getResources().getColor(R.color.orange));
         tabStrip.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 16.0f);
 
-        if(savedInstanceState==null){
-            //We init all the array list
+        if (savedInstanceState == null) {
+
             owners = new ArrayList<User>();
             admins = new ArrayList<User>();
             comings = new ArrayList<User>();
@@ -96,8 +90,8 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
             uk = new ArrayList<User>();
             allComings = new ArrayList<User>();
 
-            //We get all the guests
-            MomentApi.get("guests/" +idMoment, null, new JsonHttpResponseHandler() {
+
+            MomentApi.get("guests/" + idMoment, null, new JsonHttpResponseHandler() {
 
                 @Override
                 public void onSuccess(JSONObject response) {
@@ -112,28 +106,28 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
                         JSONArray maybeUsers = response.getJSONArray("maybe");
                         JSONArray ukUsers = response.getJSONArray("unknown");
 
-                        //We add the owners (normally only one
-                        for(int i=0;i<ownerUsers.length();i++){
+
+                        for (int i = 0; i < ownerUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(ownerUsers.getJSONObject(i));
                             owners.add(tempUser);
 
-                            //All the owner are coming
+
                             allComings.add(tempUser);
                         }
 
-                        //We add the user who are admins
-                        for(int i=0;i<adminUsers.length();i++){
+
+                        for (int i = 0; i < adminUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(adminUsers.getJSONObject(i));
                             admins.add(tempUser);
 
-                            //All the admins are coming
+
                             allComings.add(tempUser);
                         }
 
-                        //We add the users who are coming
-                        for(int i=0;i<comingUsers.length();i++){
+
+                        for (int i = 0; i < comingUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(comingUsers.getJSONObject(i));
                             comings.add(tempUser);
@@ -141,37 +135,37 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
                             allComings.add(tempUser);
                         }
 
-                        //We add the users who are not coming
-                        for(int i=0;i<notComingUsers.length();i++){
+
+                        for (int i = 0; i < notComingUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(notComingUsers.getJSONObject(i));
                             notComings.add(tempUser);
                         }
 
-                        //We add the users who are maybe coming
-                        for(int i=0;i<maybeUsers.length();i++){
+
+                        for (int i = 0; i < maybeUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(maybeUsers.getJSONObject(i));
                             maybe.add(tempUser);
                         }
 
-                        //We add the users for who we don't know their response
-                        for(int i=0;i<ukUsers.length();i++){
+
+                        for (int i = 0; i < ukUsers.length(); i++) {
                             User tempUser = new User();
                             tempUser.setUserFromJson(ukUsers.getJSONObject(i));
                             uk.add(tempUser);
                         }
 
-                        //Update the fragment displaying the users who are maybe coming
+
                         frs.get(0).updateListGuests(maybe);
-                        //Update the fragment displaying the users who are  coming
+
                         frs.get(1).updateListGuests(allComings);
-                        //Update the fragment displaying the users we don't know their response
+
                         frs.get(2).updateListGuests(uk);
 
 
                     } catch (JSONException e) {
-                        // Auto-generated catch block
+
                         e.printStackTrace();
                     }
 
@@ -189,12 +183,10 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
 
     }
 
-
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
-
 
     /**
      * Menu
@@ -202,29 +194,29 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+
         myMenu = menu;
         getSupportMenuInflater().inflate(R.menu.activity_guests_list, menu);
 
-        if(AppMoment.getInstance().user.getId()!=AppMoment.getInstance().user.getMomentById(idMoment).getUserId()) myMenu.findItem(R.id.add_guests).setVisible(false);
+        if (AppMoment.getInstance().user.getId() != AppMoment.getInstance().user.getMomentById(idMoment).getUserId())
+            myMenu.findItem(R.id.add_guests).setVisible(false);
 
         return true;
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
-                overridePendingTransition( R.anim.slide_in_right, R.anim.slide_out_right );
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                 break;
             case R.id.add_guests:
                 EasyTracker.getTracker().sendEvent("ListGuests", "button_press", "Add Guests", null);
                 Intent i = new Intent(ListGuestsActivity.this, InvitationActivity.class);
                 i.putExtra("id", idMoment);
                 startActivityForResult(i, NEW_GUEST);
-                overridePendingTransition( R.anim.slide_in_left, R.anim.slide_out_left );
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
                 break;
 
 
@@ -232,6 +224,26 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == NEW_GUEST) {
+            Log.d("FIN ACTIVITY", "NEW INVIT");
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EasyTracker.getInstance().activityStart(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EasyTracker.getInstance().activityStop(this);
+    }
 
     /**
      * Pager Adapter
@@ -258,37 +270,9 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            if(position==0) return getString(R.string.title_maybe);
-            else if(position==1) return getString(R.string.title_coming);
+            if (position == 0) return getString(R.string.title_maybe);
+            else if (position == 1) return getString(R.string.title_coming);
             else return getString(R.string.title_unknown);
         }
-    }
-
-
-    /**
-     * Activity result
-     * When we come back from the add of guests we know that the info view will need to update
-     */
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if(requestCode==NEW_GUEST){
-            Log.d("FIN ACTIVITY", "NEW INVIT");
-        }
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EasyTracker.getInstance().activityStart(this); // Add this method.
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EasyTracker.getInstance().activityStop(this); // Add this method.
     }
 }
