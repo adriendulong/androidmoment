@@ -67,7 +67,7 @@ public class CustomGallery extends SherlockActivity {
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
             thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
                     getApplicationContext().getContentResolver(), id,
-                    MediaStore.Images.Thumbnails.MINI_KIND, null);
+                    MediaStore.Images.Thumbnails.MICRO_KIND, null);
             arrPath[i] = imagecursor.getString(dataColumnIndex);
         }
 
@@ -91,19 +91,23 @@ public class CustomGallery extends SherlockActivity {
                 finish();
 
             case R.id.validate:
+                /*for(Bitmap t : thumbnails){
+                    t.recycle();
+                }*/
+
                 if (momentID == null) {
                     Intent intent = new Intent(this, EditProfilActivity.class);
                     intent.putExtra("photos", selectedPictures);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 } else {
                     Intent intent = new Intent(this, MomentInfosActivity.class);
                     intent.putExtra("precedente", "timeline");
                     intent.putExtra("position", 0);
                     intent.putExtra("id", momentID);
                     intent.putExtra("photos", selectedPictures);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    setResult(RESULT_OK, intent);
+                    finish();
                 }
                 return true;
         }

@@ -98,6 +98,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private ImageButton user_picture;
     private String gender;
     private Bundle bundle;
+    private boolean isSuccess;
     private ProgressDialog dialog;
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
@@ -293,6 +294,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                     @Override
                     public void onSuccess(JSONObject response) {
+                        isSuccess = true;
 
                         Long id = Long.parseLong("-1");
 
@@ -335,7 +337,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                     @Override
                     public void onFailure(Throwable e, JSONObject errorResponse) {
-                        System.out.println(errorResponse.toString());
+                        isSuccess = true;
                         dialog.dismiss();
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
                         alertDialogBuilder.setTitle(getResources().getString(R.string.title_problem_inscription));
@@ -355,6 +357,31 @@ public class InscriptionActivity extends SherlockFragmentActivity {
 
                         AppMoment.getInstance().user = null;
                         MomentApi.myCookieStore.clear();
+                    }
+
+                    public void onFinish() {
+
+                        if (!isSuccess) {
+                            dialog.dismiss();
+                            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(InscriptionActivity.this);
+                            alertDialogBuilder.setTitle(getResources().getString(R.string.title_problem_inscription));
+                            alertDialogBuilder
+                                    .setMessage(getResources().getString(R.string.title_problem_inscription))
+                                    .setCancelable(false)
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int id) {
+                                            dialog.cancel();
+                                        }
+                                    });
+
+                            AlertDialog alertDialog = alertDialogBuilder.create();
+                            alertDialog.show();
+
+
+                            AppMoment.getInstance().user = null;
+                            MomentApi.myCookieStore.clear();
+                        }
                     }
                 });
 

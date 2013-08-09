@@ -375,7 +375,6 @@ public class MomentActivity extends Activity {
                 }
 
                 public void onFinish() {
-                    Log.e("Connect", "Problem ?");
 
                     if (!isSuccess) {
                         dialog.dismiss();

@@ -11,7 +11,7 @@ import org.apache.http.entity.StringEntity;
 
 public class MomentApi {
 	//private static final String BASE_URL = "http://192.168.0.13:5000/";
-	public static final String BASE_URL = "http://apidev.appmoment.fr/";
+	public static final String BASE_URL = "http://api.appmoment.fr/";
 	
   private static AsyncHttpClient client = new AsyncHttpClient();
   public static PersistentCookieStore myCookieStore;

@@ -581,7 +581,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         } else {
                             AlertDialog.Builder monDialogue = new AlertDialog.Builder(MomentInfosActivity.this);
                             monDialogue.setTitle(getString(R.string.nouveaut_chat));
-                            monDialogue.setMessage(getString(R.string.test_chat));
+                            monDialogue.setMessage("Nouveau chat sur "+moment.getName());
 
 
                             monDialogue.setPositiveButton(getString(R.string.consulter), new DialogInterface.OnClickListener() {

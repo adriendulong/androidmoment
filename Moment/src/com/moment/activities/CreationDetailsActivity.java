@@ -6,13 +6,11 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -52,6 +50,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -572,23 +571,17 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     selectedImageUri = data == null ? null : data.getData();
                 }
 
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImageUri);
+                ContentResolver cr = getContentResolver();
+                Bitmap bitmap = Images.decodeSampledBitmapFromURI(selectedImageUri, cr, 900, 900);
 
-                    bitmap = Images.resizeBitmap(bitmap, 1000);
-                    Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
+                Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
 
-                    AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
-                    this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
+                AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
+                this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
 
-                    ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
-                    moment_image.setImageBitmap(bitmap);
+                ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
+                moment_image.setImageBitmap(bitmap);
 
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
 
             if(requestCode == POP_UP_CREA){

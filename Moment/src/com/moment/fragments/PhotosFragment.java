@@ -95,28 +95,28 @@ public class PhotosFragment extends Fragment {
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
 
+    private int uploadingPhotos = 0;
+    private int currentUploading = 1;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         if (savedInstanceState == null) {
             savedInstanceState = getActivity().getIntent().getExtras();
-            photos_files = new ArrayList<Bitmap>();
+            photos_uri = new ArrayList<String>();
 
             assert savedInstanceState != null;
             if (savedInstanceState.getStringArrayList("photos") != null) {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
+                /*
                 assert photos_uri != null;
+                photos_files = new ArrayList<Bitmap>();
                 for (String s : photos_uri) {
                     File tempFile = new File(s);
-                    try {
-                        FileInputStream fi = new FileInputStream(tempFile);
-                        final BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inJustDecodeBounds = true;
-                        photos_files.add(BitmapFactory.decodeStream(fi, new Rect(0, 0, 0, 0), options));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
+                    photos_files.add(Images.decodeSampledBitmapFromFile(tempFile.getPath(), 200, 200));
                 }
+                */
             }
         }
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
@@ -214,6 +214,15 @@ public class PhotosFragment extends Fragment {
                 multiUploadTask.execute();
             }
             photos_uri.clear();
+        }
+        else if(requestCode == GALLERY_PICTURE && resultCode == Activity.RESULT_OK){
+            if(data.getExtras().containsKey("photos")){
+                photos_uri = data.getExtras().getStringArrayList("photos");
+                uploadingPhotos = photos_uri.size();
+                currentUploading = 1;
+                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                multiUploadTask.execute();
+            }
         }
     }
 
@@ -319,7 +328,7 @@ public class PhotosFragment extends Fragment {
 
         @Override
         protected void onPreExecute() {
-            createNotification("Upload", photos_uri.size() + " Photos", false);
+            createNotification("Upload", "Upload Photo "+currentUploading+"/"+uploadingPhotos, false);
             asyncRun = true;
             photo = new Photo();
             photos.add(photo);
@@ -328,6 +337,7 @@ public class PhotosFragment extends Fragment {
             imageAdapter.notifyDataSetChanged();
             gridView.smoothScrollToPosition(position + 1);
             gridView.setVisibility(View.VISIBLE);
+            currentUploading += 1;
         }
 
         @Override
@@ -335,7 +345,7 @@ public class PhotosFragment extends Fragment {
 
 
             File file = new File(photo_uri);
-            Bitmap bitmap = BitmapFactory.decodeFile(file.getPath());
+            Bitmap bitmap = Images.decodeSampledBitmapFromFile(file.getPath(), 400, 400);
 
             if (bitmap != null) {
 
@@ -347,7 +357,6 @@ public class PhotosFragment extends Fragment {
                     MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
 
                     ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    bitmap = Images.resizeBitmap(bitmap, 900);
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 80, bos);
                     byte[] data = bos.toByteArray();
                     entity.addPart("photo", new ByteArrayBody(data, "photo.png"));
@@ -355,9 +364,11 @@ public class PhotosFragment extends Fragment {
                     HttpResponse response = httpClient.execute(httpPost, localContext);
 
                     String sResponse = EntityUtils.toString(response.getEntity());
+                    bitmap.recycle();
                     return sResponse;
                 } catch (Exception e) {
                     Log.e(e.getClass().getName(), e.getMessage(), e);
+                    bitmap.recycle();
                     return null;
                 }
 
@@ -487,12 +498,14 @@ public class PhotosFragment extends Fragment {
                             //We update it in the infos view also
                             ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
-                            if (!photos_files.isEmpty() && !photos_uri.isEmpty()) {
+                            /*
+                            if (!photos_uri.isEmpty()) {
 
                                 MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
                                 multiUploadTask.execute();
 
                             }
+                            */
 
                         } catch (JSONException e) {
                             e.printStackTrace();

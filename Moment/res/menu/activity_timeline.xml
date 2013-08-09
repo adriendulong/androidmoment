@@ -3,10 +3,10 @@
         android:id="@+id/badge"
         android:actionLayout="@layout/notif_action_bar"
         android:icon="@drawable/picto_message_volet"
-        android:showAsAction="always">
+        android:showAsAction="collapseActionView">
     </item>
     <item
         android:id="@+id/menu_creer"
         android:icon="@drawable/btn_plus"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="always"/>
 </menu>
