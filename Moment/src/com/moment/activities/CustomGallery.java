@@ -7,6 +7,8 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +24,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -33,6 +36,7 @@ public class CustomGallery extends SherlockActivity {
     private ImageAdapter imageAdapter;
     private ArrayList<String> selectedPictures;
     private Long momentID;
+    private int sizeImage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,9 @@ public class CustomGallery extends SherlockActivity {
         actionBar.setIcon(R.drawable.logo);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
+        sizeImage = (int)pxBitmap;
 
         savedInstanceState = getIntent().getExtras();
 
@@ -65,9 +72,9 @@ public class CustomGallery extends SherlockActivity {
             imagecursor.moveToPosition(i);
             int id = imagecursor.getInt(image_column_index);
             int dataColumnIndex = imagecursor.getColumnIndex(MediaStore.Images.Media.DATA);
-            thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
-                    getApplicationContext().getContentResolver(), id,
-                    MediaStore.Images.Thumbnails.MICRO_KIND, null);
+            //thumbnails[i] = MediaStore.Images.Thumbnails.getThumbnail(
+             //       getApplicationContext().getContentResolver(), id,
+              //      MediaStore.Images.Thumbnails.MICRO_KIND, null);
             arrPath[i] = imagecursor.getString(dataColumnIndex);
         }
 
@@ -183,16 +190,22 @@ public class CustomGallery extends SherlockActivity {
                     if (holder.checkbox.isChecked() == true) {
                         selectedPictures.remove(arrPath[holder.imageview.getId()]);
                         holder.checkbox.setChecked(false);
+                        thumbnailsselection[holder.imageview.getId()] = false;
                         v.startAnimation(fadeIn);
                     } else {
                         holder.checkbox.setChecked(true);
                         v.startAnimation(fadeOut);
                         selectedPictures.add(arrPath[holder.imageview.getId()]);
+                        thumbnailsselection[holder.imageview.getId()] = true;
                     }
                 }
             });
-            holder.imageview.setImageBitmap(thumbnails[position]);
+            Picasso.with(getApplicationContext()).load("file://" + arrPath[holder.imageview.getId()]).resize(sizeImage, sizeImage).centerCrop().into(holder.imageview);
+
+            //holder.imageview.setImageBitmap(thumbnails[position]);
             holder.checkbox.setChecked(thumbnailsselection[position]);
+            if( thumbnailsselection[holder.imageview.getId()]==true) holder.imageview.startAnimation(fadeOut);
+            else holder.imageview.startAnimation(fadeIn);
             holder.id = position;
             return convertView;
         }

@@ -15,14 +15,8 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AbsListView;
-import android.widget.ImageView;
-import android.widget.ListView;
-import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.view.ViewGroup;
+import android.widget.*;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -82,9 +76,20 @@ public class TimelineActivity extends SlidingActivity {
         sm.setBehindOffset(250);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
+
+
+        //Action bar
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        final LinearLayout actionBarLayout = (LinearLayout)inflater.inflate(R.layout.notif_action_bar, null);
+        totalNotifText = (TextView)actionBarLayout.findViewById(R.id.actionbar_notifcation_textview);
+        notifProgress = (ProgressBar)actionBarLayout.findViewById(R.id.progress_notifs);
+        getSupportActionBar().setCustomView(actionBarLayout);
+        actionBarLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        getSupportActionBar().setDisplayShowCustomEnabled(true);
+
+
         todayBtn = (ImageView) findViewById(R.id.today_btn);
 
         myMoments = (RelativeLayout) sm.getRootView().findViewById(R.id.my_moments_button);
@@ -267,15 +272,14 @@ public class TimelineActivity extends SlidingActivity {
         EasyTracker.getInstance().activityStop(this);
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getSupportMenuInflater().inflate(R.menu.activity_timeline, menu);
-
-        RelativeLayout badgeLayout = (RelativeLayout) menu.findItem(R.id.badge).getActionView();
-        totalNotifText = (TextView) badgeLayout.findViewById(R.id.actionbar_notifcation_textview);
-        notifProgress = (ProgressBar) badgeLayout.findViewById(R.id.progress_notifs);
         return true;
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

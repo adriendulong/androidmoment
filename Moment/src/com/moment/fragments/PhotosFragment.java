@@ -345,7 +345,7 @@ public class PhotosFragment extends Fragment {
 
 
             File file = new File(photo_uri);
-            Bitmap bitmap = Images.decodeSampledBitmapFromFile(file.getPath(), 400, 400);
+            Bitmap bitmap = Images.decodeSampledBitmapFromFile(file.getPath(), 900, 900);
 
             if (bitmap != null) {
 
