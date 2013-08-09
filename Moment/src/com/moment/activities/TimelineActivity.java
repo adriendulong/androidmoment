@@ -161,7 +161,7 @@ public class TimelineActivity extends SlidingActivity {
                                 JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                 Moment momentTemp = new Moment();
                                 momentTemp.setMomentFromJson(momentJson);
-                                AppMoment.getInstance().user.addMoment(momentTemp);
+                                AppMoment.getInstance().user.getMoments().add(momentTemp);
                                 moments.add(momentTemp);
 
                                 if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
@@ -233,7 +233,7 @@ public class TimelineActivity extends SlidingActivity {
                             JSONObject momentJson = (JSONObject) momentsArray.get(j);
                             Moment momentTemp = new Moment();
                             momentTemp.setMomentFromJson(momentJson);
-                            AppMoment.getInstance().user.addMoment(momentTemp);
+                            AppMoment.getInstance().user.getMoments().add(momentTemp);
                             moments.add(momentTemp);
 
                             if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
@@ -271,7 +271,6 @@ public class TimelineActivity extends SlidingActivity {
         super.onStop();
         EasyTracker.getInstance().activityStop(this);
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -483,7 +482,7 @@ public class TimelineActivity extends SlidingActivity {
                                     JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                     Moment momentTemp = new Moment();
                                     momentTemp.setMomentFromJson(momentJson);
-                                    AppMoment.getInstance().user.addMoment(momentTemp);
+                                    AppMoment.getInstance().user.getMoments().add(momentTemp);
                                     moments.add(momentTemp);
 
 
@@ -536,7 +535,7 @@ public class TimelineActivity extends SlidingActivity {
                                     JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                     Moment momentTemp = new Moment();
                                     momentTemp.setMomentFromJson(momentJson);
-                                    AppMoment.getInstance().user.addMoment(momentTemp);
+                                    AppMoment.getInstance().user.getMoments().add(momentTemp);
                                     moments.add(0, momentTemp);
 
 

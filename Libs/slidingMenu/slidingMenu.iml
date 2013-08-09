@@ -4,13 +4,6 @@
     <facet type="android" name="Android">
       <configuration>
         <option name="LIBRARY_PROJECT" value="true" />
-        <option name="UPDATE_PROPERTY_FILES" value="true" />
-        <notImportedProperties>
-          <property>MANIFEST_FILE_PATH</property>
-          <property>RESOURCES_DIR_PATH</property>
-          <property>ASSETS_DIR_PATH</property>
-          <property>NATIVE_LIBS_DIR_PATH</property>
-        </notImportedProperties>
       </configuration>
     </facet>
   </component>
@@ -22,11 +15,12 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="actionbarsherlock-plugin-maps-4.1.0" level="project" />
     <orderEntry type="module" module-name="actionbarsherlock" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../Moment/libs/maps.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Moment/libs/android-support-v4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
@@ -35,7 +29,7 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$MODULE_DIR$/../../Moment/libs/android-support-v4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../Moment/libs/maps.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />

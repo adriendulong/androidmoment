@@ -317,7 +317,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     chat.__setDaoSession(AppMoment.getInstance().daoSession);
                     chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                     chat.setUser(AppMoment.getInstance().user);
-                    AppMoment.getInstance().user.getMomentById(momentID).addChat(chat);
+                    AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
                     AppMoment.getInstance().chatDao.insert(chat);
 
                     chatFr.messageRight(chat, -1);
@@ -332,38 +332,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 }
             });
         }
-
-    }
-
-    public void messageRight(Chat chat) {
-        LinearLayout layoutChat = (LinearLayout) findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView) findViewById(R.id.scroll_chat);
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
-        TextView message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
-        message.setText(chat.getMessage());
-
-        ImageView userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
-        User usertemp = chat.getUser();
-        usertemp.printProfilePicture(userImage, true);
-
-        layoutChat.addView(chatDroit);
-
-
-    }
-
-    public void messageLeft(Chat chat) {
-
-        LinearLayout layoutChat = (LinearLayout) findViewById(R.id.chat_message_layout);
-        PullToRefreshScrollView scrollChat = (PullToRefreshScrollView) findViewById(R.id.scroll_chat);
-
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
-        TextView message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
-        message.setText(chat.getMessage());
-
-        ImageView userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
-        chat.getUser().printProfilePicture(userImage, true);
-        layoutChat.addView(chatDroit);
-
 
     }
 
@@ -484,7 +452,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         moment = tempMoment;
 
 
-                        AppMoment.getInstance().user.addMoment(tempMoment);
+                        AppMoment.getInstance().user.getMoments().add(tempMoment);
 
 
                         if (pager.getCurrentItem() == 2) {
@@ -562,7 +530,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                         tempChat.__setDaoSession(AppMoment.getInstance().daoSession);
                                         tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                                         tempChat.setUser(tempChat.getUser());
-                                        AppMoment.getInstance().user.getMomentById(momentID).addChat(tempChat);
+                                        AppMoment.getInstance().user.getMomentById(momentID).getChats().add(tempChat);
                                         AppMoment.getInstance().chatDao.insert(tempChat);
 
                                         chatFr.messageLeft(tempChat);
@@ -712,8 +680,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-
-
     }
 
     @Override

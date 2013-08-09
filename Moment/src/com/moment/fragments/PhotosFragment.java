@@ -156,8 +156,6 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        photos.clear();
-        Log.e("PhotoFragment", "DESTROY");
     }
 
     public void startDialog() {
