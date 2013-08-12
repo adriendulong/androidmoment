@@ -11,7 +11,7 @@ import android.util.Log;
 import com.google.android.gcm.GCMBaseIntentService;
 import com.moment.R;
 
-import static com.moment.classes.CommonUtilities.SENDER_ID;
+import static com.moment.util.CommonUtilities.SENDER_ID;
 
 public class GCMIntentService extends GCMBaseIntentService {
 

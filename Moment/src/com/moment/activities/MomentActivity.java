@@ -35,7 +35,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.CommonUtilities;
+import com.moment.util.CommonUtilities;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;

@@ -23,12 +23,16 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
+import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.classes.MomentsAdapter;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
+import com.moment.util.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
 
@@ -66,6 +70,11 @@ public class TimelineActivity extends SlidingActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (BuildConfig.DEBUG) {
+            Utils.logHeap();
+        }
+
+
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -173,6 +182,11 @@ public class TimelineActivity extends SlidingActivity {
                             dialog.dismiss();
 
                             goToToday(false);
+
+                            if (BuildConfig.DEBUG) {
+                                Utils.logHeap();
+                            }
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();

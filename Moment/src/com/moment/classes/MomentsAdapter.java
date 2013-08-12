@@ -26,6 +26,8 @@ import android.widget.TextView;
 import com.moment.R;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -43,11 +45,25 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
     List<Moment> data = new ArrayList<Moment>();
     private final Transformation roundTrans = new RoundTransformation();
 
+    private static final String IMAGE_CACHE_DIR = "timeline";
+    private ImageFetcher mImageFetcher;
+    private int mImageThumbSize;
+
     public MomentsAdapter(Context context, int layoutResourceId, List<Moment> data) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
+
+        mImageThumbSize = context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(context, IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(context, mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
     }
 
     @Override
@@ -56,15 +72,12 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
         MomentHolder holder = null;
 
         final Moment moment = data.get(position);
+        LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 
         if(row == null)
         {
-
-            LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             row = vi.inflate(layoutResourceId, parent, false);
-
-
             holder = new MomentHolder();
 
 
@@ -86,6 +99,7 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
         }
 
         Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.picto_photo_vide).into(holder.coverRound);
+        //mImageFetcher.loadImage(moment.getUrlCover(), holder.coverRound);
         holder.nameMoment.setText(moment.getName());
         holder.imageRoundedButton.setTag(moment.getId());
         //holder.deleteMoment.setTag(moment.getId());

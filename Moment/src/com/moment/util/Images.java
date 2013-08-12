@@ -1,8 +1,7 @@
-package com.moment.classes;
+package com.moment.util;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -22,12 +21,7 @@ import android.widget.ImageView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 
 public class Images {
 
@@ -62,7 +56,7 @@ public class Images {
 		try {
 			FileOutputStream fos = context.openFileOutput(filename, Context.MODE_PRIVATE);
 
-			image.compress(Bitmap.CompressFormat.PNG, compression, fos);
+			image.compress(Bitmap.CompressFormat.JPEG, compression, fos);
 			fos.close();
 	
 			return true;
@@ -154,6 +148,7 @@ public class Images {
             // Calculate inSampleSize
             options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
 
+            in.close();
             // Decode bitmap with inSampleSize set
             InputStream inBis = cr.openInputStream(uri);
             options.inJustDecodeBounds = false;
@@ -162,6 +157,8 @@ public class Images {
 
 
         }catch (FileNotFoundException e){
+
+        }catch (IOException e){
 
         }
 

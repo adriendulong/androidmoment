@@ -1,14 +1,20 @@
-package com.moment.classes;
+package com.moment.util;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Patterns;
 import android.view.View;
+import org.apache.http.HttpResponse;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
-import java.text.ParseException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Arrays;
 
 public final class CommonUtilities {
 
@@ -123,5 +129,28 @@ public final class CommonUtilities {
         AlertDialog alertDialog = alertDialogBuilder.create();
         // show it
         alertDialog.show();
+    }
+
+    public static boolean isSuccessRequest(HttpResponse response){
+        Integer[] successCodes = {200, 201, 202, 203, 204, 205, 206, 207, 210, 226};
+        if(Arrays.asList(successCodes).contains(response.getStatusLine().getStatusCode())) return true;
+        return false;
+    }
+
+    public static JSONObject getJSONResponse(HttpResponse response){
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
+            StringBuilder builder = new StringBuilder();
+            for (String line = null; (line = reader.readLine()) != null;) {
+                builder.append(line).append("\n");
+            }
+            JSONTokener tokener = new JSONTokener(builder.toString());
+            return new JSONObject(tokener);
+        }catch(IOException e){
+            return null;
+        }catch(JSONException e){
+            return null;
+        }
+
     }
 }

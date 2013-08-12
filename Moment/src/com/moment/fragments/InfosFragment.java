@@ -54,6 +54,8 @@ import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -77,7 +79,7 @@ public class InfosFragment extends Fragment {
     private final int OWNER = 0;
     private final int ADMIN = 1;
     private final int UNKOWN = 4;
-    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
+    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
     private final String[] jours = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
     private final Transformation roundTrans = new RoundTransformation();
     private GoogleMap mMap;
@@ -99,6 +101,12 @@ public class InfosFragment extends Fragment {
     private Button delMoment;
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
+
+    private static final String IMAGE_CACHE_DIR = "thumbs";
+    private static final String IMAGE_CACHE_DIR_COVER = "cover";
+    private ImageFetcher mImageFetcher;
+    private ImageFetcher mImageFetcherCover;
+    private int mImageThumbSize, mImageThumbSizeCover;
 
     private static final int REAUTH_ACTIVITY_CODE = 100;
     private static final List<String> PERMISSIONS = Arrays.asList("publish_actions");
@@ -122,6 +130,28 @@ public class InfosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+
+        //Fetcher cover
+        mImageThumbSizeCover = (int)(getActivity().getWindowManager().getDefaultDisplay().getWidth()*1.5);
+
+        ImageCache.ImageCacheParams cacheParamsCover = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR_COVER);
+
+        cacheParamsCover.setMemCacheSizePercent(0.10f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcherCover = new ImageFetcher(getActivity(), mImageThumbSizeCover);
+        mImageFetcherCover.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcherCover.addImageCache(getActivity().getSupportFragmentManager(), cacheParamsCover);
 
 
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
@@ -403,7 +433,8 @@ public class InfosFragment extends Fragment {
         heureFinText.setText("" + dateFinCalendar.get(Calendar.HOUR) + "H" + dateFinCalendar.get(Calendar.MINUTE));
 
 
-        Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
+        //Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
+        mImageFetcherCover.loadImage(moment.getUrlCover(), image_cover);
 
 
         if (moment.getUser() != null) {
@@ -485,8 +516,7 @@ public class InfosFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
-            float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 45, getResources().getDisplayMetrics());
-            float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
+            float pxImage = getResources().getDimensionPixelSize(R.dimen.image_background__mini_thumbnail_size);
 
             if (convertView == null) {
                 imageView = new ImageView(context);
@@ -505,7 +535,7 @@ public class InfosFragment extends Fragment {
             }
 
             try {
-                Picasso.with(context).load(photos.get(position).getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView);
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();
             }
@@ -518,12 +548,15 @@ public class InfosFragment extends Fragment {
 
     public void updatePhotos(ArrayList<Photo> photosNew) {
 
-        for (int i = 0; i < numberOfPhotos(); i++) {
-            if (photosNew.size() > i) photos.add(photosNew.get(i));
+        if(photos.size()==0){
+            for (int i = 0; i < numberOfPhotos(); i++) {
+                if (photosNew.size() > i) photos.add(photosNew.get(i));
+            }
+            Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
+            gridPreviewPhotos.setFocusable(false);
+            //imageAdapter.notifyDataSetChanged();
         }
-        Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
-        gridPreviewPhotos.setFocusable(false);
-        imageAdapter.notifyDataSetChanged();
+
     }
 
     private int numberOfPhotos() {
@@ -544,7 +577,7 @@ public class InfosFragment extends Fragment {
         int width = display.getWidth();
         float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
         float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
-        int realWidth = Math.round((float) width / density);
+        int realWidth = Math.round((float) width );//* density
 
         try {
             List<Address> addresses = geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);
