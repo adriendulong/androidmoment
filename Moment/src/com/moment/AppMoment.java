@@ -2,42 +2,30 @@ package com.moment;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.provider.Settings;
 import android.support.v4.util.LruCache;
-import android.telephony.TelephonyManager;
 
-import android.util.Log;
-import android.widget.Toast;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.moment.activities.TimelineActivity;
-import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.*;
-import org.apache.http.cookie.Cookie;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
-import java.net.NetworkInterface;
 import java.util.List;
 
 public class AppMoment extends Application {
-	
-	public User user;
-	public LruCache<String, Bitmap> mMemoryCache;
 
-	private static AppMoment sInstance;
+    public User user;
+    public LruCache<String, Bitmap> mMemoryCache;
 
-	public static final String APP_FB_ID = "445031162214877";
-	public static final String[] PERMS_FB = new String[] { "user_events", "read_friendlists", "user_about_me", "friends_about_me" };
+    private static AppMoment sInstance;
+
+    public static final String APP_FB_ID = "445031162214877";
+    public static final String[] PERMS_FB = new String[] { "user_events", "read_friendlists", "user_about_me", "friends_about_me" };
     public static final String PREFS_NAME = "MomentPrefs";
     public static final String GOOGLE_ANALYTICS = "UA-36147731-2";
-	public String tel_id;
+    public String tel_id;
 
     public DaoMaster.DevOpenHelper helper;
     public SQLiteDatabase db;
@@ -46,6 +34,8 @@ public class AppMoment extends Application {
     public MomentDao momentDao;
     public UserDao userDao;
     public ChatDao chatDao;
+    public PhotoDao photoDao;
+    public NotificationDao notificationDao;
 
     @Override
     public void onCreate() {
@@ -58,6 +48,8 @@ public class AppMoment extends Application {
         userDao = daoSession.getUserDao();
         momentDao = daoSession.getMomentDao();
         chatDao = daoSession.getChatDao();
+        photoDao = daoSession.getPhotoDao();
+        notificationDao = daoSession.getNotificationDao();
 
         sInstance = this;
         this.initializeInstance();
@@ -93,7 +85,7 @@ public class AppMoment extends Application {
             return true;
         }else if(mobile!=null){
             if (mobile.isConnected()) {
-            return true;
+                return true;
             }
         }
         return false;
@@ -104,8 +96,8 @@ public class AppMoment extends Application {
             mMemoryCache.put(key, bitmap);
         }
         else{
-        	mMemoryCache.remove(key);
-        	 mMemoryCache.put(key, bitmap);
+            mMemoryCache.remove(key);
+            mMemoryCache.put(key, bitmap);
         }
     }
 
@@ -114,19 +106,16 @@ public class AppMoment extends Application {
     }
 
     public void getUser(){
-        //We try to get the user
         SharedPreferences sharedPreferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        if(!DatabaseHelper.getUsersFromDataBase().isEmpty()){
+        if(!AppMoment.getInstance().userDao.loadAll().isEmpty()){
             Long savedUserID = sharedPreferences.getLong("userID", -1);
-            user = DatabaseHelper.getUserByIdFromDataBase(savedUserID);
+            user = AppMoment.getInstance().userDao.load(savedUserID);
         }
 
-        if(user!=null){
-            if(!DatabaseHelper.getMomentsFromDataBase().isEmpty()){
+        if(user != null){
+            if(!AppMoment.getInstance().momentDao.loadAll().isEmpty()){
                 List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
-                for (Moment moment : momentList){
-                    user.getMoments().add(moment);
-                }
+                user.setMoments(momentList);
             }
         }
 
@@ -134,17 +123,11 @@ public class AppMoment extends Application {
     }
 
     public void disconnect(){
-
-        for(Moment moment:user.getMoments()){
-            DatabaseHelper.removeMoment(moment);
-        }
-
-
-        SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
-        sharedPreferences.edit().remove("userID").commit();
-        //Finally remove the user
-        DatabaseHelper.removeUser(user);
-        user = null;
+        AppMoment.getInstance().userDao.deleteAll();
+        AppMoment.getInstance().momentDao.deleteAll();
+        AppMoment.getInstance().photoDao.deleteAll();
+        AppMoment.getInstance().chatDao.deleteAll();
+        AppMoment.getInstance().notificationDao.deleteAll();
 
     }
 

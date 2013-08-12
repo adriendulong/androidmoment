@@ -54,6 +54,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MomentInfosActivity extends SherlockFragmentActivity {
 
@@ -619,7 +620,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         pager.setCurrentItem(0);
     }
 
-    public void updateInfosPhotos(ArrayList<Photo> photos) {
+    public void updateInfosPhotos(List<Photo> photos) {
         infosFr.updatePhotos(photos);
     }
 
@@ -664,7 +665,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         final ProgressDialog progressDialog = ProgressDialog.show(MomentInfosActivity.this, null, getString(R.string.suppressing));
 
-                        if (moment.getUserId() == AppMoment.getInstance().user.getId()) {
+                        if (moment.getUser().getId() == AppMoment.getInstance().user.getId()) {
                             MomentApi.get("delmoment/" + moment.getId(), null, new JsonHttpResponseHandler() {
 
                                 @Override

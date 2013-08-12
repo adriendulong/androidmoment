@@ -1,5 +1,6 @@
 package com.moment.models;
 
+import java.util.List;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteStatement;
@@ -7,6 +8,8 @@ import android.database.sqlite.SQLiteStatement;
 import de.greenrobot.dao.AbstractDao;
 import de.greenrobot.dao.Property;
 import de.greenrobot.dao.internal.DaoConfig;
+import de.greenrobot.dao.query.Query;
+import de.greenrobot.dao.query.QueryBuilder;
 
 import com.moment.models.User;
 
@@ -40,11 +43,15 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property Description = new Property(14, String.class, "description", false, "DESCRIPTION");
         public final static Property Adress = new Property(15, String.class, "adress", false, "ADRESS");
         public final static Property IsSelect = new Property(16, Boolean.class, "isSelect", false, "IS_SELECT");
-        public final static Property NotifId = new Property(17, long.class, "notifId", false, "NOTIF_ID");
+        public final static Property MomentId = new Property(17, Long.class, "momentId", false, "MOMENT_ID");
+        public final static Property NotificationId = new Property(18, Long.class, "notificationId", false, "NOTIFICATION_ID");
+        public final static Property InvitationsId = new Property(19, Long.class, "invitationsId", false, "INVITATIONS_ID");
+        public final static Property UserId = new Property(20, Long.class, "userId", false, "USER_ID");
     };
 
     private DaoSession daoSession;
 
+    private Query<User> moment_UsersQuery;
 
     public UserDao(DaoConfig config) {
         super(config);
@@ -76,7 +83,10 @@ public class UserDao extends AbstractDao<User, Long> {
                 "'DESCRIPTION' TEXT," + // 14: description
                 "'ADRESS' TEXT," + // 15: adress
                 "'IS_SELECT' INTEGER," + // 16: isSelect
-                "'NOTIF_ID' INTEGER NOT NULL );"); // 17: notifId
+                "'MOMENT_ID' INTEGER," + // 17: momentId
+                "'NOTIFICATION_ID' INTEGER," + // 18: notificationId
+                "'INVITATIONS_ID' INTEGER," + // 19: invitationsId
+                "'USER_ID' INTEGER);"); // 20: userId
     }
 
     /** Drops the underlying database table. */
@@ -174,7 +184,21 @@ public class UserDao extends AbstractDao<User, Long> {
         if (isSelect != null) {
             stmt.bindLong(17, isSelect ? 1l: 0l);
         }
-        stmt.bindLong(18, entity.getNotifId());
+ 
+        Long momentId = entity.getMomentId();
+        if (momentId != null) {
+            stmt.bindLong(18, momentId);
+        }
+ 
+        Long notificationId = entity.getNotificationId();
+        if (notificationId != null) {
+            stmt.bindLong(19, notificationId);
+        }
+ 
+        Long invitationsId = entity.getInvitationsId();
+        if (invitationsId != null) {
+            stmt.bindLong(20, invitationsId);
+        }
     }
 
     @Override
@@ -210,7 +234,9 @@ public class UserDao extends AbstractDao<User, Long> {
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // description
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // adress
             cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0, // isSelect
-            cursor.getLong(offset + 17) // notifId
+            cursor.isNull(offset + 17) ? null : cursor.getLong(offset + 17), // momentId
+            cursor.isNull(offset + 18) ? null : cursor.getLong(offset + 18), // notificationId
+            cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19) // invitationsId
         );
         return entity;
     }
@@ -235,7 +261,9 @@ public class UserDao extends AbstractDao<User, Long> {
         entity.setDescription(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
         entity.setAdress(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
         entity.setIsSelect(cursor.isNull(offset + 16) ? null : cursor.getShort(offset + 16) != 0);
-        entity.setNotifId(cursor.getLong(offset + 17));
+        entity.setMomentId(cursor.isNull(offset + 17) ? null : cursor.getLong(offset + 17));
+        entity.setNotificationId(cursor.isNull(offset + 18) ? null : cursor.getLong(offset + 18));
+        entity.setInvitationsId(cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19));
      }
     
     /** @inheritdoc */
@@ -261,4 +289,18 @@ public class UserDao extends AbstractDao<User, Long> {
         return true;
     }
     
+    /** Internal query to resolve the "users" to-many relationship of Moment. */
+    public List<User> _queryMoment_Users(Long userId) {
+        synchronized (this) {
+            if (moment_UsersQuery == null) {
+                QueryBuilder<User> queryBuilder = queryBuilder();
+                queryBuilder.where(Properties.UserId.eq(null));
+                moment_UsersQuery = queryBuilder.build();
+            }
+        }
+        Query<User> query = moment_UsersQuery.forCurrentThread();
+        query.setParameter(0, userId);
+        return query.list();
+    }
+
 }

@@ -206,6 +206,7 @@ public class InfosFragment extends Fragment {
         if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
             this.momentId = ((MomentInfosActivity) getActivity()).getMomentId();
             moment = AppMoment.getInstance().user.getMomentById(momentId);
+            AppMoment.getInstance().momentDao.update(moment);
             initInfos();
         }
 
@@ -461,7 +462,7 @@ public class InfosFragment extends Fragment {
             blocRSVP.setLayoutParams(params);
         }
 
-        if (AppMoment.getInstance().user.getId() != moment.getUserId()) {
+        if (AppMoment.getInstance().user.getId() != moment.getOwnerId()) {
             modifLayout.setVisibility(View.INVISIBLE);
         } else {
             delMoment.setVisibility(View.VISIBLE);
@@ -480,7 +481,7 @@ public class InfosFragment extends Fragment {
 
     private Boolean canInvite(User user) {
         int PUBLIC = 2;
-        return moment.getPrivacy() == PUBLIC || moment.getIsOpenInvit() || user.getId() == moment.getUserId();
+        return moment.getPrivacy() == PUBLIC || moment.getIsOpenInvit() || user.getId() == moment.getOwnerId();
     }
 
 
@@ -546,7 +547,7 @@ public class InfosFragment extends Fragment {
 
 
 
-    public void updatePhotos(ArrayList<Photo> photosNew) {
+    public void updatePhotos(List<Photo> photosNew) {
 
         if(photos.size()==0){
             for (int i = 0; i < numberOfPhotos(); i++) {

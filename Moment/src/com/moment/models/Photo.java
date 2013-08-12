@@ -26,7 +26,7 @@ public class Photo {
     private String urlThumbnail;
     private String urlUnique;
     private java.util.Date time;
-    private long photoUserId;
+    private long userId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -51,14 +51,14 @@ public class Photo {
         this.id = id;
     }
 
-    public Photo(Long id, Integer nbLike, String urlOriginal, String urlThumbnail, String urlUnique, java.util.Date time, long photoUserId) {
+    public Photo(Long id, Integer nbLike, String urlOriginal, String urlThumbnail, String urlUnique, java.util.Date time, long userId) {
         this.id = id;
         this.nbLike = nbLike;
         this.urlOriginal = urlOriginal;
         this.urlThumbnail = urlThumbnail;
         this.urlUnique = urlUnique;
         this.time = time;
-        this.photoUserId = photoUserId;
+        this.userId = userId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -115,17 +115,17 @@ public class Photo {
         this.time = time;
     }
 
-    public long getPhotoUserId() {
-        return photoUserId;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setPhotoUserId(long photoUserId) {
-        this.photoUserId = photoUserId;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
     /** To-one relationship, resolved on first access. */
     public User getUser() {
-        long __key = this.photoUserId;
+        long __key = this.userId;
         if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -142,12 +142,12 @@ public class Photo {
 
     public void setUser(User user) {
         if (user == null) {
-            throw new DaoException("To-one property 'photoUserId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'userId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.user = user;
-            photoUserId = user.getId();
-            user__resolvedKey = photoUserId;
+            userId = user.getId();
+            user__resolvedKey = userId;
         }
     }
 
@@ -177,6 +177,22 @@ public class Photo {
 
     // KEEP METHODS - put your custom methods here
 
+
+    public Bitmap getBitmapOriginal() {
+        return bitmapOriginal;
+    }
+
+    public void setBitmapOriginal(Bitmap bitmapOriginal) {
+        this.bitmapOriginal = bitmapOriginal;
+    }
+
+    public Bitmap getBitmapThumbnail() {
+        return bitmapThumbnail;
+    }
+
+    public void setBitmapThumbnail(Bitmap bitmapThumbnail) {
+        this.bitmapThumbnail = bitmapThumbnail;
+    }
 
     public ImageView getGridImage() {
         return gridImage;

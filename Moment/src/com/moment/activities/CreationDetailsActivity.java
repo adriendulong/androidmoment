@@ -25,7 +25,6 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.DatabaseHelper;
 import com.moment.util.BitmapWorkerTask;
 import com.moment.util.CommonUtilities;
 import com.moment.util.Images;
@@ -674,7 +673,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     }
                     else{
                         AppMoment.getInstance().user.getMoments().remove(moment);
-                        DatabaseHelper.removeMoment(moment);
+                        AppMoment.getInstance().momentDao.delete(moment);
 
                         Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
                         intent.putExtra("id", moment.getId());

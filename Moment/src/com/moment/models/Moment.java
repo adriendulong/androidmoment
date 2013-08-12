@@ -20,9 +20,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import com.loopj.android.http.RequestParams;
-
-import com.moment.AppMoment;
-import com.moment.classes.DatabaseHelper;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table moments.
@@ -43,10 +40,14 @@ public class Moment {
     private String adresse;
     private String keyBitmap;
     private String urlCover;
+    private String uniqueUrl;
     private java.util.Date dateDebut;
     private java.util.Date dateFin;
     private Boolean isOpenInvit;
-    private long momentUserId;
+    private long ownerId;
+    private Long userId;
+    private Long photoId;
+    private Long chatId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -57,11 +58,11 @@ public class Moment {
     private User user;
     private Long user__resolvedKey;
 
+    private List<User> users;
+    private List<Photo> photos;
     private List<Chat> chats;
 
     // KEEP FIELDS - put your custom fields here
-    private String uniqueUrl;
-    private ArrayList<Photo> photos;
     // KEEP FIELDS END
 
     public Moment() {
@@ -71,7 +72,7 @@ public class Moment {
         this.id = id;
     }
 
-    public Moment(Long id, Integer state, Integer guestNumber, Integer guestComing, Integer guestNotComing, Integer privacy, String name, String description, String placeInformations, String infoTransport, String hashtag, String adresse, String keyBitmap, String urlCover, java.util.Date dateDebut, java.util.Date dateFin, Boolean isOpenInvit, long momentUserId) {
+    public Moment(Long id, Integer state, Integer guestNumber, Integer guestComing, Integer guestNotComing, Integer privacy, String name, String description, String placeInformations, String infoTransport, String hashtag, String adresse, String keyBitmap, String urlCover, String uniqueUrl, java.util.Date dateDebut, java.util.Date dateFin, Boolean isOpenInvit, long ownerId, Long userId, Long photoId, Long chatId) {
         this.id = id;
         this.state = state;
         this.guestNumber = guestNumber;
@@ -86,10 +87,14 @@ public class Moment {
         this.adresse = adresse;
         this.keyBitmap = keyBitmap;
         this.urlCover = urlCover;
+        this.uniqueUrl = uniqueUrl;
         this.dateDebut = dateDebut;
         this.dateFin = dateFin;
         this.isOpenInvit = isOpenInvit;
-        this.momentUserId = momentUserId;
+        this.ownerId = ownerId;
+        this.userId = userId;
+        this.photoId = photoId;
+        this.chatId = chatId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -210,6 +215,14 @@ public class Moment {
         this.urlCover = urlCover;
     }
 
+    public String getUniqueUrl() {
+        return uniqueUrl;
+    }
+
+    public void setUniqueUrl(String uniqueUrl) {
+        this.uniqueUrl = uniqueUrl;
+    }
+
     public java.util.Date getDateDebut() {
         return dateDebut;
     }
@@ -234,17 +247,41 @@ public class Moment {
         this.isOpenInvit = isOpenInvit;
     }
 
-    public long getMomentUserId() {
-        return momentUserId;
+    public long getOwnerId() {
+        return ownerId;
     }
 
-    public void setMomentUserId(long momentUserId) {
-        this.momentUserId = momentUserId;
+    public void setOwnerId(long ownerId) {
+        this.ownerId = ownerId;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public Long getPhotoId() {
+        return photoId;
+    }
+
+    public void setPhotoId(Long photoId) {
+        this.photoId = photoId;
+    }
+
+    public Long getChatId() {
+        return chatId;
+    }
+
+    public void setChatId(Long chatId) {
+        this.chatId = chatId;
     }
 
     /** To-one relationship, resolved on first access. */
     public User getUser() {
-        long __key = this.momentUserId;
+        long __key = this.ownerId;
         if (user__resolvedKey == null || !user__resolvedKey.equals(__key)) {
             if (daoSession == null) {
                 throw new DaoException("Entity is detached from DAO context");
@@ -261,13 +298,57 @@ public class Moment {
 
     public void setUser(User user) {
         if (user == null) {
-            throw new DaoException("To-one property 'momentUserId' has not-null constraint; cannot set to-one to null");
+            throw new DaoException("To-one property 'ownerId' has not-null constraint; cannot set to-one to null");
         }
         synchronized (this) {
             this.user = user;
-            momentUserId = user.getId();
-            user__resolvedKey = momentUserId;
+            ownerId = user.getId();
+            user__resolvedKey = ownerId;
         }
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<User> getUsers() {
+        if (users == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            UserDao targetDao = daoSession.getUserDao();
+            List<User> usersNew = targetDao._queryMoment_Users(id);
+            synchronized (this) {
+                if(users == null) {
+                    users = usersNew;
+                }
+            }
+        }
+        return users;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetUsers() {
+        users = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<Photo> getPhotos() {
+        if (photos == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            PhotoDao targetDao = daoSession.getPhotoDao();
+            List<Photo> photosNew = targetDao._queryMoment_Photos(id);
+            synchronized (this) {
+                if(photos == null) {
+                    photos = photosNew;
+                }
+            }
+        }
+        return photos;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetPhotos() {
+        photos = null;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
@@ -318,6 +399,10 @@ public class Moment {
 
     // KEEP METHODS - put your custom methods here
 
+    public void setPhotos(ArrayList<Photo> photos) {
+        this.photos = photos;
+    }
+
     public void setMomentFromJson(JSONObject moment) throws JSONException {
         try{
             this.id = moment.getLong("id");
@@ -356,16 +441,11 @@ public class Moment {
                 if(owner.has("id"))
                 {
                     this.user.setId(owner.getLong("id"));
-                    this.setMomentUserId(owner.getLong("id"));
+                    this.setOwnerId(owner.getLong("id"));
                 }
                 if(owner.has("facebookId")) this.user.setFacebookId(owner.getLong("facebookId"));
 
-                if(DatabaseHelper.getUserByIdFromDataBase(this.user.getId()) != null)
-                {
-                    AppMoment.getInstance().userDao.update(this.user);
-                } else {
-                    AppMoment.getInstance().userDao.insert(this.user);
-                }
+                //TODO Insert or Update User
             }
         }catch (JSONException e){
             e.printStackTrace();
@@ -402,11 +482,33 @@ public class Moment {
                 e.printStackTrace();
             }
         }
-
-
-
         return momentPrams;
     }
+
+    public String getStartDateString(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.dateDebut);
+        return ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String getStartHourString(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.dateDebut);
+        return ""+startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE);
+    }
+
+    public String getEndDateString(){
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.dateFin);
+        return ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String getEndHourString(){
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.dateFin);
+        return ""+endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE);
+    }
+
     // KEEP METHODS END
 
 }

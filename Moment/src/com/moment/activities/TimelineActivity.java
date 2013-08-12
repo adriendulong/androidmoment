@@ -15,7 +15,6 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.*;
 
 import com.actionbarsherlock.view.Menu;
@@ -25,7 +24,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.BuildConfig;
 import com.moment.R;
-import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.classes.MomentsAdapter;
 import com.moment.models.Moment;
@@ -144,7 +142,7 @@ public class TimelineActivity extends SlidingActivity {
         if (savedInstanceState == null) {
 
             if (AppMoment.getInstance().checkInternet() == false) {
-                if (!DatabaseHelper.getMomentsFromDataBase().isEmpty()) {
+                if (!AppMoment.getInstance().momentDao.loadAll().isEmpty()) {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                     for (Moment moment : momentList) {
                         AppMoment.getInstance().user.getMoments().add(moment);
@@ -170,11 +168,11 @@ public class TimelineActivity extends SlidingActivity {
                                 JSONObject momentJson = (JSONObject) momentsArray.get(j);
                                 Moment momentTemp = new Moment();
                                 momentTemp.setMomentFromJson(momentJson);
-                                AppMoment.getInstance().user.getMoments().add(momentTemp);
+                                AppMoment.getInstance().user.addMoment(momentTemp);
                                 moments.add(momentTemp);
 
-                                if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
-                                    DatabaseHelper.addMoment(momentTemp);
+                                if (AppMoment.getInstance().momentDao.load(momentTemp.getId()) == null) {
+                                    AppMoment.getInstance().momentDao.insert(momentTemp);
                                 }
                             }
                             adapter.notifyDataSetChanged();
@@ -198,7 +196,7 @@ public class TimelineActivity extends SlidingActivity {
                         Log.e("TIMELINE", content);
                         dialog.dismiss();
                         Toast.makeText(getApplicationContext(), getResources().getString(R.string.echec_dl_moments), Toast.LENGTH_LONG).show();
-                        if (!DatabaseHelper.getMomentsFromDataBase().isEmpty()) {
+                        if (!AppMoment.getInstance().momentDao.loadAll().isEmpty()) {
                             List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
                             for (Moment moment : momentList) {
                                 AppMoment.getInstance().user.getMoments().add(moment);
@@ -221,7 +219,7 @@ public class TimelineActivity extends SlidingActivity {
             Log.e("TIMELINE", "LOSTTTTTT");
             SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
             Long savedUserID = sharedPreferences.getLong("userID", -1);
-            AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedInstanceState.getLong("userID"));
+            AppMoment.getInstance().user = AppMoment.getInstance().userDao.load(savedInstanceState.getLong("userID"));
             Log.e("TIMELINE", "User id : " + savedInstanceState.getLong("userID"));
 
             if (AppMoment.getInstance().user == null) {
@@ -250,8 +248,8 @@ public class TimelineActivity extends SlidingActivity {
                             AppMoment.getInstance().user.getMoments().add(momentTemp);
                             moments.add(momentTemp);
 
-                            if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
-                                DatabaseHelper.addMoment(momentTemp);
+                            if (AppMoment.getInstance().momentDao.load(momentTemp.getId()) == null) {
+                                AppMoment.getInstance().momentDao.insert(momentTemp);
                             }
                         }
                         adapter.notifyDataSetChanged();
@@ -377,6 +375,7 @@ public class TimelineActivity extends SlidingActivity {
                     }
 
                     AppMoment.getInstance().user.setInvitations(invitations);
+
                     Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -499,11 +498,9 @@ public class TimelineActivity extends SlidingActivity {
                                     AppMoment.getInstance().user.getMoments().add(momentTemp);
                                     moments.add(momentTemp);
 
-
-                                    if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
-                                        DatabaseHelper.addMoment(momentTemp);
+                                    if (AppMoment.getInstance().momentDao.load(momentTemp.getId()) == null) {
+                                        AppMoment.getInstance().momentDao.insert(momentTemp);
                                     }
-
                                 }
 
                                 loading = false;
@@ -552,11 +549,9 @@ public class TimelineActivity extends SlidingActivity {
                                     AppMoment.getInstance().user.getMoments().add(momentTemp);
                                     moments.add(0, momentTemp);
 
-
-                                    if (DatabaseHelper.getMomentByIdFromDataBase(momentTemp.getId()) == null) {
-                                        DatabaseHelper.addMoment(momentTemp);
+                                    if (AppMoment.getInstance().momentDao.load(momentTemp.getId()) == null) {
+                                        AppMoment.getInstance().momentDao.insert(momentTemp);
                                     }
-
                                 }
 
                                 if (nbMoments == 0) allPast = true;

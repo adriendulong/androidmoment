@@ -68,6 +68,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class PhotosFragment extends Fragment {
 
@@ -77,7 +78,7 @@ public class PhotosFragment extends Fragment {
 
     private Uri outputFileUri;
 
-    private ArrayList<Photo> photos;
+    private List<Photo> photos;
     private ArrayList<String> photos_uri;
     private ArrayList<Bitmap> photos_files;
 
@@ -245,7 +246,7 @@ public class PhotosFragment extends Fragment {
 
         private final Context context;
 
-        public ImageAdapter(Context context, ArrayList<Photo> photos) {
+        public ImageAdapter(Context context, List<Photo> photos) {
             this.context = context;
         }
 
@@ -397,7 +398,7 @@ public class PhotosFragment extends Fragment {
                     JSONObject jsresult = new JSONObject(result);
                     JSONObject json = jsresult.getJSONObject("success");
 
-                    photo.setId(json.getInt("id"));
+                    photo.setId(json.getLong("id"));
 
                     photo.setNbLike(json.getInt("nb_like"));
                     photo.setUrlOriginal(json.getString("url_original"));

@@ -12,6 +12,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.ArrayList;
 // KEEP INCLUDES END
 /**
  * Entity mapped to table users.
@@ -35,7 +36,9 @@ public class User implements Parcelable {
     private String description;
     private String adress;
     private Boolean isSelect;
-    private long notifId;
+    private Long momentId;
+    private Long notificationId;
+    private Long invitationsId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -44,6 +47,8 @@ public class User implements Parcelable {
     private transient UserDao myDao;
 
     private List<Moment> moments;
+    private List<Notification> notifications;
+    private List<Notification> invitations;
 
     // KEEP FIELDS - put your custom fields here
     private Bitmap photoThumbnail;
@@ -57,7 +62,7 @@ public class User implements Parcelable {
         this.id = id;
     }
 
-    public User(Long id, Long facebookId, Integer nbFollows, Integer nbFollowers, String email, String secondEmail, String firstName, String lastName, String pictureProfileUrl, String keyBitmap, String numTel, String secondNumTel, String fbPhotoUrl, String idCarnetAdresse, String description, String adress, Boolean isSelect, long notifId) {
+    public User(Long id, Long facebookId, Integer nbFollows, Integer nbFollowers, String email, String secondEmail, String firstName, String lastName, String pictureProfileUrl, String keyBitmap, String numTel, String secondNumTel, String fbPhotoUrl, String idCarnetAdresse, String description, String adress, Boolean isSelect, Long momentId, Long notificationId, Long invitationsId) {
         this.id = id;
         this.facebookId = facebookId;
         this.nbFollows = nbFollows;
@@ -75,7 +80,9 @@ public class User implements Parcelable {
         this.description = description;
         this.adress = adress;
         this.isSelect = isSelect;
-        this.notifId = notifId;
+        this.momentId = momentId;
+        this.notificationId = notificationId;
+        this.invitationsId = invitationsId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -220,12 +227,28 @@ public class User implements Parcelable {
         this.isSelect = isSelect;
     }
 
-    public long getNotifId() {
-        return notifId;
+    public Long getMomentId() {
+        return momentId;
     }
 
-    public void setNotifId(long notifId) {
-        this.notifId = notifId;
+    public void setMomentId(Long momentId) {
+        this.momentId = momentId;
+    }
+
+    public Long getNotificationId() {
+        return notificationId;
+    }
+
+    public void setNotificationId(Long notificationId) {
+        this.notificationId = notificationId;
+    }
+
+    public Long getInvitationsId() {
+        return invitationsId;
+    }
+
+    public void setInvitationsId(Long invitationsId) {
+        this.invitationsId = invitationsId;
     }
 
     /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
@@ -248,6 +271,50 @@ public class User implements Parcelable {
     /** Resets a to-many relationship, making the next get call to query for a fresh result. */
     public synchronized void resetMoments() {
         moments = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<Notification> getNotifications() {
+        if (notifications == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            NotificationDao targetDao = daoSession.getNotificationDao();
+            List<Notification> notificationsNew = targetDao._queryUser_Notifications(id);
+            synchronized (this) {
+                if(notifications == null) {
+                    notifications = notificationsNew;
+                }
+            }
+        }
+        return notifications;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetNotifications() {
+        notifications = null;
+    }
+
+    /** To-many relationship, resolved on first access (and after reset). Changes to to-many relations are not persisted, make changes to the target entity. */
+    public List<Notification> getInvitations() {
+        if (invitations == null) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            NotificationDao targetDao = daoSession.getNotificationDao();
+            List<Notification> invitationsNew = targetDao._queryUser_Invitations(id);
+            synchronized (this) {
+                if(invitations == null) {
+                    invitations = invitationsNew;
+                }
+            }
+        }
+        return invitations;
+    }
+
+    /** Resets a to-many relationship, making the next get call to query for a fresh result. */
+    public synchronized void resetInvitations() {
+        invitations = null;
     }
 
     /** Convenient call for {@link AbstractDao#delete(Object)}. Entity must attached to an entity context. */
@@ -275,6 +342,30 @@ public class User implements Parcelable {
     }
 
     // KEEP METHODS - put your custom methods here
+
+
+    public void setNotifications(List<Notification> notifications) {
+        this.notifications = notifications;
+    }
+
+    public void addMoment(Moment moment) {
+        if(this.moments == null) {
+            this.moments = new ArrayList<Moment>();
+        }
+        this.moments.add(moment);
+    }
+
+    public void setMoments(List<Moment> moments) {
+        this.moments = moments;
+    }
+
+    public void setInvitations(List<Notification> invitations) {
+        if(invitations == null) {
+            this.invitations = new ArrayList<Notification>(invitations);
+        } else {
+            this.invitations = invitations;
+        }
+    }
 
     public Moment getMomentById(Long id){
         for(Moment m : moments){

@@ -19,8 +19,8 @@ public class Chat {
     private Long id;
     private String message;
     private java.util.Date date;
-    private long momentId;
     private long userId;
+    private long momentId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -45,12 +45,12 @@ public class Chat {
         this.id = id;
     }
 
-    public Chat(Long id, String message, java.util.Date date, long momentId, long userId) {
+    public Chat(Long id, String message, java.util.Date date, long userId, long momentId) {
         this.id = id;
         this.message = message;
         this.date = date;
-        this.momentId = momentId;
         this.userId = userId;
+        this.momentId = momentId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -83,20 +83,20 @@ public class Chat {
         this.date = date;
     }
 
-    public long getMomentId() {
-        return momentId;
-    }
-
-    public void setMomentId(long momentId) {
-        this.momentId = momentId;
-    }
-
     public long getUserId() {
         return userId;
     }
 
     public void setUserId(long userId) {
         this.userId = userId;
+    }
+
+    public long getMomentId() {
+        return momentId;
+    }
+
+    public void setMomentId(long momentId) {
+        this.momentId = momentId;
     }
 
     /** To-one relationship, resolved on first access. */

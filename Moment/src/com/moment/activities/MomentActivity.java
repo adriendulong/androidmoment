@@ -33,10 +33,10 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
+
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.util.CommonUtilities;
-import com.moment.classes.DatabaseHelper;
 import com.moment.classes.MomentApi;
 import com.moment.models.Moment;
 import com.moment.models.User;
@@ -92,9 +92,9 @@ public class MomentActivity extends Activity {
 
             SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
 
-            if (!DatabaseHelper.getUsersFromDataBase().isEmpty()) {
+            if (!AppMoment.getInstance().userDao.loadAll().isEmpty()) {
                 Long savedUserID = sharedPreferences.getLong("userID", -1);
-                AppMoment.getInstance().user = DatabaseHelper.getUserByIdFromDataBase(savedUserID);
+                AppMoment.getInstance().user = AppMoment.getInstance().userDao.load(savedUserID);
                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                 startActivity(intent);
             } else {
@@ -120,54 +120,54 @@ public class MomentActivity extends Activity {
                                 AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
                             }
 
-                            if (DatabaseHelper.getUserByIdFromDataBase(id) == null) {
+                            if (AppMoment.getInstance().userDao.load(id) == null) {
                                 AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
-                                if (DatabaseHelper.getMomentsFromDataBase() != null) {
-                                    for (Moment moment : DatabaseHelper.getMomentsFromDataBase()) {
-                                        DatabaseHelper.getUserByIdFromDataBase(id).addMoment(moment);
-                                    }
+                                if (!AppMoment.getInstance().momentDao.loadAll().isEmpty())
+                                {
+                                    AppMoment.getInstance().user.setMoments(AppMoment.getInstance().momentDao.loadAll());
+                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                                 }
                             }
 
-                            Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
-                            startActivity(intent);
+                        Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                        startActivity(intent);
 
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
-            }
-        }
-
-
-        context = getApplicationContext();
-        regid = getRegistrationId(context);
-        regid = "";
-
-        if (regid.length() == 0) {
-            registerBackground();
-        }
-        Log.v(TAG, "REGID : " + regid);
-        gcm = GoogleCloudMessaging.getInstance(this);
-
-
-        EditText password = (EditText) findViewById(R.id.password_login);
-
-        password.setOnEditorActionListener(new OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_GO) {
-
-                    hideKeyboard();
-                    connectionserveur();
-
-                    return true;
                 }
-                return false;
-            }
-        });
+            });
+        }
     }
+
+
+    context = getApplicationContext();
+    regid = getRegistrationId(context);
+    regid = "";
+
+    if (regid.length() == 0) {
+        registerBackground();
+    }
+    Log.v(TAG, "REGID : " + regid);
+    gcm = GoogleCloudMessaging.getInstance(this);
+
+
+    EditText password = (EditText) findViewById(R.id.password_login);
+
+    password.setOnEditorActionListener(new OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_GO) {
+
+                hideKeyboard();
+                connectionserveur();
+
+                return true;
+            }
+            return false;
+        }
+    });
+}
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

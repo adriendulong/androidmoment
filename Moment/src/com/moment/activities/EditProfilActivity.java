@@ -141,7 +141,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         modif_nom.setText(AppMoment.getInstance().user.getLastName());
 
         adress = (EditText) findViewById(R.id.adress);
-        adress.setText(AppMoment.getInstance().user.getAddress());
+        adress.setText(AppMoment.getInstance().user.getAdress());
 
         EditText email = (EditText) findViewById(R.id.email);
         email.setText(AppMoment.getInstance().user.getEmail());
@@ -193,7 +193,7 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         }
         if (!adress.getText().equals(adress.getHint()) && !adress.getText().equals(null)) {
             requestParams.put("phone", adress.getText().toString());
-            AppMoment.getInstance().user.setAddress(adress.getText().toString());
+            AppMoment.getInstance().user.setAdress(adress.getText().toString());
         }
 
         if (!phone.getText().toString().equals(modif_nom.getHint()) && !phone.getText().toString().equals("")) {

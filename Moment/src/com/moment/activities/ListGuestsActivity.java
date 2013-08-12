@@ -198,7 +198,7 @@ public class ListGuestsActivity extends SherlockFragmentActivity {
         myMenu = menu;
         getSupportMenuInflater().inflate(R.menu.activity_guests_list, menu);
 
-        if (AppMoment.getInstance().user.getId() != AppMoment.getInstance().user.getMomentById(idMoment).getUserId())
+        if (AppMoment.getInstance().user.getId() != AppMoment.getInstance().user.getMomentById(idMoment).getUser().getId())
             myMenu.findItem(R.id.add_guests).setVisible(false);
 
         return true;

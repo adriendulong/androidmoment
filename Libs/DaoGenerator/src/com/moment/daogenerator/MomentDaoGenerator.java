@@ -32,6 +32,7 @@ public class MomentDaoGenerator {
         moment.addStringProperty("adresse");
         moment.addStringProperty("keyBitmap");
         moment.addStringProperty("urlCover");
+        moment.addStringProperty("uniqueUrl");
 
         moment.addDateProperty("dateDebut");
         moment.addDateProperty("dateFin");
@@ -43,11 +44,13 @@ public class MomentDaoGenerator {
          */
 
         Entity user = schema.addEntity("User");
+        user.implementsInterface("Parcelable");
         user.setTableName("users");
 
         user.addIdProperty();
 
-        user.addIntProperty("facebookId");
+        user.addLongProperty("facebookId");
+
         user.addIntProperty("nbFollows");
         user.addIntProperty("nbFollowers");
 
@@ -62,6 +65,7 @@ public class MomentDaoGenerator {
         user.addStringProperty("fbPhotoUrl");
         user.addStringProperty("idCarnetAdresse");
         user.addStringProperty("description");
+        user.addStringProperty("adress");
 
         user.addBooleanProperty("isSelect");
 
@@ -78,6 +82,22 @@ public class MomentDaoGenerator {
 
         chat.addDateProperty("date");
 
+         /**
+         * Photos
+         */
+
+        Entity photo = schema.addEntity("Photo");
+        photo.setTableName("photos");
+        photo.addIdProperty().index();
+
+        photo.addIntProperty("nbLike");
+
+        photo.addStringProperty("urlOriginal");
+        photo.addStringProperty("urlThumbnail");
+        photo.addStringProperty("urlUnique");
+
+        photo.addDateProperty("time");
+
         /**
          * Notifications
          */
@@ -89,79 +109,66 @@ public class MomentDaoGenerator {
 
         notification.addDateProperty("time");
 
-/*        *//**//**
-         * Photos
-         *//**//*
-
-        Entity photo = schema.addEntity("Photo");
-        photo.setTableName("photos");
-        photo.addIdProperty().index();
-
-        photo.addIntProperty("nbLike");
-
-        photo.addStringProperty("urlOriginal");
-        photo.addStringProperty("urlThumbnail");
-
-        *//**//**
-         * Adresses
-         *//**//*
-
-        Entity adresse = schema.addEntity("Adresse");
-        adresse.setTableName("adresses");
-
-        adresse.addIntProperty("codePostal");
-
-        adresse.addStringProperty("numeroRue");
-        adresse.addStringProperty("Ville");
-
-        *//**//**
-         * FbEvent
-         *//**//*
-
-        Entity fbEvent = schema.addEntity("FbEvent");
-        fbEvent.setTableName("fbevents");
-
-        fbEvent.addStringProperty("id");
-        fbEvent.addStringProperty("title");
-        fbEvent.addStringProperty("startTime");
-        fbEvent.addStringProperty("location");
-
-        *//**//**
-         * Place
-         *//**//*
-
-        Entity place = schema.addEntity("Place");
-        place.setTableName("places");
-
-        place.addStringProperty("placeOne");
-        place.addStringProperty("placeTwo");
-        place.addStringProperty("placeThree");
-
-        *//**//**
+        /**
          * Relations
-         *//**//*
+         */
 
-        setRelationToOne(photo, user, "userId");
-        setRelationToMany(user, photo, "photoId");
+        /*** Moment Relations ***/
 
-        setRelationToOne(chat, user, "userId");
-        setRelationToMany(user, chat, "chatId");
-     */
+        Property momentHasOneOwner = moment.addLongProperty("ownerId").notNull().getProperty();
+        moment.addToOne(user, momentHasOneOwner);
 
-        Property userId = moment.addLongProperty("userId").notNull().getProperty();
-        moment.addToOne(user,userId);
-        ToMany userToMoments = user.addToMany(moment, userId);
+        Property momentHasManyUsers = moment.addLongProperty("userId").getProperty();
+        ToMany momentToUser = moment.addToMany(user, momentHasManyUsers);
+        momentToUser.setName("users");
+
+        Property momentHasManyPhotos = moment.addLongProperty("photoId").getProperty();
+        ToMany momentToPhotos = moment.addToMany(photo, momentHasManyPhotos);
+        momentToPhotos.setName("photos");
+
+        Property momentHasManyChats = moment.addLongProperty("chatId").getProperty();
+        ToMany momentToChat = moment.addToMany(chat, momentHasManyChats);
+        momentToChat.setName("chats");
+
+        /*** User Relations ***/
+
+        Property userHasManyMoments = user.addLongProperty("momentId").getProperty();
+        ToMany userToMoments = user.addToMany(moment, userHasManyMoments);
         userToMoments.setName("moments");
 
-        Property momentId = chat.addLongProperty("momentId").notNull().getProperty();
-        userId = chat.addLongProperty("userId").notNull().getProperty();
-        chat.addToOne(user,userId);
-        chat.addToOne(moment, momentId);
-        ToMany momentToChats = moment.addToMany(chat, userId);
-        momentToChats.setName("chats");
+        Property userHasManyNotifications = user.addLongProperty("notificationId").getProperty();
+        ToMany userToNotifications = user.addToMany(notification, userHasManyNotifications);
+        userToNotifications.setName("notifications");
 
-        Property notifId = user.addLongProperty("notifId").notNull().getProperty();
+        Property userHasManyInvitations = user.addLongProperty("invitationsId").getProperty();
+        ToMany userToInvitations = user.addToMany(notification, userHasManyInvitations);
+        userToInvitations.setName("invitations");
 
-        new DaoGenerator().generateAll(schema, "../momentandroid/Moment/src/");
+        /*** Chat Relation ***/
+
+        Property chatHasOneOwner = chat.addLongProperty("userId").notNull().getProperty();
+        chat.addToOne(user, chatHasOneOwner);
+
+        Property chatHasOneMoment = chat.addLongProperty("momentId").notNull().getProperty();
+        chat.addToOne(moment, chatHasOneMoment);
+
+        /*** Photo Relation ***/
+
+        Property photoHasOneOwner = photo.addLongProperty("userId").notNull().getProperty();
+        photo.addToOne(user, photoHasOneOwner);
+
+        /*** Notification Relation ***/
+
+        Property notificationHasOneOwner = notification.addLongProperty("userId").notNull().getProperty();
+        notification.addToOne(user, notificationHasOneOwner);
+
+        Property notificationHasOneMoment = notification.addLongProperty("momentId").notNull().getProperty();
+        notification.addToOne(moment, notificationHasOneMoment);
+
+        /**
+         * EOD
+         */
+
+        new DaoGenerator().generateAll(schema, "../androidmoment/Moment/src/");
     }
 }

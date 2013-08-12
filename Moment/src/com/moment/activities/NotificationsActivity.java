@@ -128,7 +128,7 @@ public class NotificationsActivity extends SherlockActivity {
                                 invitations.add(notif);
                             }
 
-                            AppMoment.getInstance().user.setInvitations(invitations);
+                            AppMoment.getInstance().user.setNotifications(invitations);
 
                             Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
 

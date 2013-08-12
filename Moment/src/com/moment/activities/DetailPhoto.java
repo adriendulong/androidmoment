@@ -147,7 +147,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         }
 
         if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
+                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
             trashButton.setImageResource(R.drawable.trash);
         } else {
             trashButton.setImageResource(R.drawable.btn_report);
@@ -195,7 +195,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Remove", null);
 
                 if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
                     alertDialogBuilder
                             .setTitle(getResources().getString(R.string.delete_photos_title))
@@ -296,7 +296,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     nbPetitCoeur.setVisibility(EditText.GONE);
                 }
                 if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
@@ -338,7 +338,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
                     nbPetitCoeur.setVisibility(EditText.GONE);
                 }
                 if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUserId()) {
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
