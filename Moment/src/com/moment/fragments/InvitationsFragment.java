@@ -25,7 +25,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.InvitationActivity;
-import com.moment.classes.CommonUtilities;
+import com.moment.utils.CommonUtilities;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;

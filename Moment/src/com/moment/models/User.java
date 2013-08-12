@@ -9,7 +9,7 @@ import android.widget.ImageView;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.moment.AppMoment;
-import com.moment.classes.Images;
+import com.moment.utils.Images;
 
 import org.json.JSONException;
 import org.json.JSONObject;

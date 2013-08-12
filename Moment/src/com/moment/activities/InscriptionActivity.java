@@ -46,8 +46,8 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.CommonUtilities;
-import com.moment.classes.Images;
+import com.moment.utils.CommonUtilities;
+import com.moment.utils.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
 
@@ -66,8 +66,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class InscriptionActivity extends SherlockFragmentActivity {
 

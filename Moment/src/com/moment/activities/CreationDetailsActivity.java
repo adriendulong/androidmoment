@@ -1,20 +1,13 @@
 package com.moment.activities;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.app.TimePickerDialog;
+import android.app.*;
 import android.content.*;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Parcelable;
+import android.os.*;
 import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -24,37 +17,42 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TimePicker;
+import android.widget.*;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
-import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.DatabaseHelper;
-import com.moment.classes.Images;
+import com.moment.utils.BitmapWorkerTask;
+import com.moment.utils.CommonUtilities;
+import com.moment.utils.Images;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.CreationStep1Fragment;
 import com.moment.fragments.CreationStep2Fragment;
 import com.moment.models.Moment;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntity;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.entity.mime.content.StringBody;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
-import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
+import java.nio.charset.Charset;
+import java.util.*;
 
 @SuppressLint("ValidFragment")
 public class CreationDetailsActivity extends SherlockFragmentActivity {
@@ -76,7 +74,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     private int PLACE_CHOOSE = 10;
     private int POP_UP_CREA = 11;
     private ProgressDialog dialog;
-    private Boolean inModif = false;
+    private Uri mCoverUri;
+    private Boolean inModif = false, isSuccess= false;
     private Button dateDebutEdit, heureDebutEdit,dateFinEdit,heureFinEdit;
 
     static int pickerChosen = 2;
@@ -395,55 +394,14 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         moment.setAdresse(adressButton.getText().toString());
         if(infosLieuEdit.getText().toString().length()>0) moment.setPlaceInformations(infosLieuEdit.getText().toString());
 
+
         if(!inModif){
-            dialog = ProgressDialog.show(this, null, getResources().getString(R.string.creation_progress));
-            MomentApi.post("newmoment", moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    try {
-                        dialog.dismiss();
-                        moment.setMomentFromJson(response);
-                        AppMoment.getInstance().user.addMoment(moment);
-
-                        Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);
-                        intent.putExtra("momentId", moment.getId());
-                        startActivityForResult(intent, POP_UP_CREA);
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(Throwable e, JSONObject errorResponse) {
-                    System.out.println(errorResponse.toString());
-                    dialog.dismiss();
-                }
-            });
+            CreateMomentTask task = new CreateMomentTask(true);
+            task.execute(moment);
         }
         else{
-            dialog = ProgressDialog.show(this, null, getResources().getString(R.string.modification_progress));
-            MomentApi.post("moment/"+moment.getId(), moment.getMomentRequestParams(getApplicationContext()), new JsonHttpResponseHandler() {
-                @Override
-                public void onSuccess(JSONObject response) {
-                    dialog.dismiss();
-
-
-                    AppMoment.getInstance().user.getMoments().remove(moment);
-                    DatabaseHelper.removeMoment(moment);
-
-                    Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
-                    intent.putExtra("id", moment.getId());
-                    intent.putExtra("precedente", "modif");
-                    startActivity(intent);
-                }
-
-                @Override
-                public void onFailure(Throwable e, JSONObject errorResponse) {
-                    System.out.println(errorResponse.toString());
-                    dialog.dismiss();
-                }
-            });
+            CreateMomentTask task = new CreateMomentTask(false);
+            task.execute(moment);
         }
     }
 
@@ -571,16 +529,26 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                     selectedImageUri = data == null ? null : data.getData();
                 }
 
-                ContentResolver cr = getContentResolver();
-                Bitmap bitmap = Images.decodeSampledBitmapFromURI(selectedImageUri, cr, 900, 900);
+                try{
+                    mCoverUri = selectedImageUri;
+                    /*ContentResolver cr = getContentResolver();
+                    Bitmap bitmap = Images.decodeSampledBitmapFromURI(selectedImageUri, cr, 900, 900);
+                    Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 80);*/
 
-                Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 90);
 
-                AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
-                this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
+                    //AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
+                    //this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
 
-                ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
-                moment_image.setImageBitmap(bitmap);
+                    ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
+                    //moment_image.setImageBitmap(bitmap);
+                    ContentResolver cr = getContentResolver();
+                    BitmapWorkerTask task = new BitmapWorkerTask(moment_image, 900,cr);
+                    task.execute(mCoverUri);
+
+                }catch (OutOfMemoryError e){
+                    Log.e("OUTOFMEMORY", e.toString());
+                }
+
 
             }
 
@@ -615,15 +583,122 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         }
     }
 
-    public void validateFirstStep(){
-        validateFirstDate = true;
-        validateSecondDate = true;
-        validateFirstFields();
-    }
-
     public boolean areDatesCorrect(){
         if(fragment.getEndDate().after(fragment.getStartDate())) return true;
         else return false;
+    }
+
+    public Uri getCoverUri(){
+        if(mCoverUri!=null){
+            return mCoverUri;
+        }
+
+        return null;
+    }
+
+    /**
+     * Task that create or modify the moment
+     */
+
+    private class CreateMomentTask extends AsyncTask<Moment, Void, HttpResponse> {
+        private boolean mIsCreation;
+        private ProgressDialog dialog;
+
+
+        public CreateMomentTask(boolean isCreation) {
+            mIsCreation = isCreation;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            if(mIsCreation) dialog = ProgressDialog.show(CreationDetailsActivity.this, null, getResources().getString(R.string.creation_progress));
+            else dialog = ProgressDialog.show(CreationDetailsActivity.this, null, getResources().getString(R.string.modification_progress));
+        }
+
+        @Override
+        protected HttpResponse doInBackground(Moment... params) {
+
+            try {
+                HttpClient httpClient = new DefaultHttpClient();
+                HttpContext localContext = new BasicHttpContext();
+                localContext.setAttribute(ClientContext.COOKIE_STORE, MomentApi.myCookieStore);
+
+                //Depend creation or modification
+                HttpPost httpPost;
+                if(mIsCreation){
+                    httpPost = new HttpPost(MomentApi.CREATION_MOMENT);
+                }
+                else{
+                    httpPost = new HttpPost(MomentApi.MODIF_MOMENT+moment.getId());
+                }
+
+                MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+                //We put the image in the parameters (if there is a new one and so an Uri)
+                if(mCoverUri!=null){
+                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                    Images.decodeSampledBitmapFromURI(mCoverUri, getContentResolver(), 900, 900).compress(Bitmap.CompressFormat.JPEG, 80, bos);
+                    byte[] data = bos.toByteArray();
+                    entity.addPart("photo", new ByteArrayBody(data, "photo.png"));
+                }
+                //We set the other parameters of the moment
+                if(moment.getName()!=null) entity.addPart("name", new StringBody(moment.getName(), Charset.defaultCharset()));
+                if(moment.getDescription()!=null) entity.addPart("description", new StringBody(moment.getDescription(), Charset.defaultCharset()));
+                if(moment.getAdresse()!=null) entity.addPart("address", new StringBody(moment.getAdresse(), Charset.defaultCharset()));
+                entity.addPart("startDate", new StringBody(moment.getStartDateString()));
+                entity.addPart("endDate", new StringBody(moment.getEndDateString()));
+                entity.addPart("startTime", new StringBody(moment.getStartHourString()));
+                entity.addPart("endTime", new StringBody(moment.getEndHourString()));
+                if(moment.getPlaceInformations() != null) entity.addPart("placeInformations", new StringBody(moment.getPlaceInformations(), Charset.defaultCharset()));
+
+                httpPost.setEntity(entity);
+                HttpResponse response = httpClient.execute(httpPost, localContext);
+                return response;
+            } catch (Exception e) {
+                Log.e(e.getClass().getName(), e.getMessage(), e);
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(HttpResponse result) {
+            dialog.dismiss();
+            if(CommonUtilities.isSuccessRequest(result)){
+                try{
+                    if(mIsCreation){
+                        moment.setMomentFromJson(CommonUtilities.getJSONResponse(result));
+                        AppMoment.getInstance().user.addMoment(moment);
+                        Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);
+                        intent.putExtra("momentId", moment.getId());
+                        startActivityForResult(intent, POP_UP_CREA);
+                    }
+                    else{
+                        AppMoment.getInstance().user.getMoments().remove(moment);
+                        DatabaseHelper.removeMoment(moment);
+
+                        Intent intent = new Intent(CreationDetailsActivity.this, MomentInfosActivity.class);
+                        intent.putExtra("id", moment.getId());
+                        intent.putExtra("precedente", "modif");
+                        startActivity(intent);
+                    }
+
+                }catch(JSONException e){
+
+                }
+
+            }
+            else{
+                if(mIsCreation) Toast.makeText(getApplicationContext(), getString(R.string.problem_creation), Toast.LENGTH_SHORT).show();
+                else Toast.makeText(getApplicationContext(), getString(R.string.problem_modif), Toast.LENGTH_SHORT).show();
+                try{
+                    Log.e("HTTP", EntityUtils.toString(result.getEntity()));
+                }catch(IOException e){
+
+                }
+
+            }
+        }
+
     }
 
 }

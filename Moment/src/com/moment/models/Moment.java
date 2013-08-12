@@ -3,6 +3,7 @@ package com.moment.models;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 
@@ -11,7 +12,7 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.classes.DatabaseHelper;
-import com.moment.classes.Images;
+import com.moment.utils.Images;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -55,6 +56,7 @@ public class Moment {
     private java.util.Date dateFin;
     private Boolean isOpenInvit;
     private long userId;
+    private Uri coverUri;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -398,13 +400,24 @@ public class Moment {
             this.adresse = moment.getString("address");
             this.state = moment.getInt("user_state");
             this.keyBitmap = "cover_moment_"+name.toLowerCase();
+
             String[] dateDedutTemp = moment.getString("startDate").split("-");
-            Log.v("MOMENT", "Date début string "+dateDedutTemp.toString());
-            GregorianCalendar dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1])-1, Integer.parseInt(dateDedutTemp[2]));
+            GregorianCalendar dateDebutGreg;
+            if(!moment.has("startTime")) dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1])-1, Integer.parseInt(dateDedutTemp[2]));
+            else{
+                String[] timeDebut = moment.getString("startTime").split(":");
+                dateDebutGreg = new GregorianCalendar(Integer.parseInt(dateDedutTemp[0]), Integer.parseInt(dateDedutTemp[1])-1, Integer.parseInt(dateDedutTemp[2]), Integer.parseInt(timeDebut[0]), Integer.parseInt(timeDebut[1]));
+            }
             this.dateDebut = dateDebutGreg.getTime();
-            Log.v("MOMENT", "Date début DATE "+this.dateDebut.toString());
+
+
             String[] dateFinTemps = moment.getString("endDate").split("-");
-            GregorianCalendar dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1])-1, Integer.parseInt(dateFinTemps[2]));
+            GregorianCalendar dateFinGreg;
+            if(!moment.has("endTime")) dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1])-1, Integer.parseInt(dateFinTemps[2]));
+            else{
+                String[] timeFin = moment.getString("endTime").split(":");
+                dateFinGreg = new GregorianCalendar(Integer.parseInt(dateFinTemps[0]), Integer.parseInt(dateFinTemps[1])-1, Integer.parseInt(dateFinTemps[2]), Integer.parseInt(timeFin[0]), Integer.parseInt(timeFin[1]));
+            }
             this.dateFin = dateFinGreg.getTime();
             if (moment.has("cover_photo_url")){
                 this.urlCover = moment.getString("cover_photo_url");
@@ -466,7 +479,6 @@ public class Moment {
         Calendar startDate = Calendar.getInstance();
         startDate.setTime(this.dateDebut);
         momentPrams.put("startDate", ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
-        System.out.println("startDate "+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH));
         momentPrams.put("startTime", startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE));
 
         Calendar endDate = Calendar.getInstance();
@@ -478,8 +490,9 @@ public class Moment {
         if (this.placeInformations != null) momentPrams.put("placeInformations", this.placeInformations);
         if (this.hashtag != null) momentPrams.put("hashtag", this.hashtag);
 
-        if(this.keyBitmap!=null){
+        if(this.urlCover!=null){
             File image = context.getFileStreamPath("cover_picture");
+            Log.e("FILE", "SIZE : "+image.length());
             try {
                 momentPrams.put("photo", image);
             } catch (FileNotFoundException e) {
@@ -581,5 +594,30 @@ public class Moment {
         }
     }
     // KEEP METHODS END
+
+
+    public String getStartDateString(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.dateDebut);
+        return ""+startDate.get(Calendar.YEAR)+"-"+(startDate.get(Calendar.MONTH)+1)+"-"+startDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String getStartHourString(){
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(this.dateDebut);
+        return ""+startDate.get(Calendar.HOUR_OF_DAY)+":"+startDate.get(Calendar.MINUTE);
+    }
+
+    public String getEndDateString(){
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.dateFin);
+        return ""+endDate.get(Calendar.YEAR)+"-"+(endDate.get(Calendar.MONTH)+1)+"-"+endDate.get(Calendar.DAY_OF_MONTH);
+    }
+
+    public String getEndHourString(){
+        Calendar endDate = Calendar.getInstance();
+        endDate.setTime(this.dateFin);
+        return ""+endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE);
+    }
 
 }

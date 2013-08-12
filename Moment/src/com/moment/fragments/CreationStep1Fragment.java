@@ -1,5 +1,6 @@
 package com.moment.fragments;
 
+import android.content.ContentResolver;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,6 +18,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;
+import com.moment.utils.BitmapWorkerTask;
 import com.squareup.picasso.Picasso;
 
 import java.sql.Date;
@@ -63,13 +65,15 @@ public class CreationStep1Fragment extends Fragment {
         dateFin = (Button) view.findViewById(R.id.date_fin_button);
         heureFin = (Button) view.findViewById(R.id.heure_fin_button);
 
-        if (this.moment.getKeyBitmap() != null) {
-            ImageView photo_moment = (ImageView) view.findViewById(R.id.creation_moment_image);
-            Bitmap photo_moment_bitmap = AppMoment.getInstance().getBitmapFromMemCache(this.moment.getKeyBitmap());
-            if (photo_moment_bitmap != null) photo_moment.setImageBitmap(photo_moment_bitmap);
-            else if (this.moment.getUrlCover() != null)
-                Picasso.with(getActivity()).load(this.moment.getUrlCover()).into(photo_moment);
+        ImageView photo_moment = (ImageView) view.findViewById(R.id.creation_moment_image);
+        if (((CreationDetailsActivity)getActivity()).getCoverUri()!=null) {
+            ContentResolver cr = getActivity().getContentResolver();
+            BitmapWorkerTask task = new BitmapWorkerTask(photo_moment, 900,cr);
+            task.execute(((CreationDetailsActivity)getActivity()).getCoverUri());
+
         }
+        else if (this.moment.getUrlCover() != null)
+            Picasso.with(getActivity()).load(this.moment.getUrlCover()).into(photo_moment);
 
         //On itnitialise la Date debut
         if (moment.getDateDebut() != null) {

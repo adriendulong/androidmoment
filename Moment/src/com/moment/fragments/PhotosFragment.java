@@ -9,8 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -39,7 +37,7 @@ import com.moment.R;
 import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
 import com.moment.activities.MomentInfosActivity;
-import com.moment.classes.Images;
+import com.moment.utils.Images;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RecyclingImageView;
 import com.moment.models.Moment;
@@ -64,8 +62,6 @@ import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Date;
 

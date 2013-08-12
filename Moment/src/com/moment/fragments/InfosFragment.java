@@ -77,7 +77,7 @@ public class InfosFragment extends Fragment {
     private final int OWNER = 0;
     private final int ADMIN = 1;
     private final int UNKOWN = 4;
-    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
+    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
     private final String[] jours = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
     private final Transformation roundTrans = new RoundTransformation();
     private GoogleMap mMap;

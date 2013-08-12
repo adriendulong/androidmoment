@@ -28,7 +28,7 @@ import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.classes.CommonUtilities;
+import com.moment.utils.CommonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
