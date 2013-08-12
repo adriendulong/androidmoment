@@ -33,16 +33,20 @@ import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
+import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
 import com.moment.activities.MomentInfosActivity;
-import com.moment.utils.Images;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
+import com.moment.util.Images;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RecyclingImageView;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
+import com.moment.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
@@ -94,9 +98,18 @@ public class PhotosFragment extends Fragment {
     private int uploadingPhotos = 0;
     private int currentUploading = 1;
 
+    private static final String IMAGE_CACHE_DIR = "thumbs";
+    private ImageFetcher mImageFetcher;
+    private int mImageThumbSize;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if (BuildConfig.DEBUG) {
+            Utils.logHeap();
+        }
+
 
         if (savedInstanceState == null) {
             savedInstanceState = getActivity().getIntent().getExtras();
@@ -105,16 +118,20 @@ public class PhotosFragment extends Fragment {
             assert savedInstanceState != null;
             if (savedInstanceState.getStringArrayList("photos") != null) {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
-                /*
-                assert photos_uri != null;
-                photos_files = new ArrayList<Bitmap>();
-                for (String s : photos_uri) {
-                    File tempFile = new File(s);
-                    photos_files.add(Images.decodeSampledBitmapFromFile(tempFile.getPath(), 200, 200));
-                }
-                */
             }
         }
+
+        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
         mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
     }
@@ -259,6 +276,7 @@ public class PhotosFragment extends Fragment {
 
             if (convertView == null) {
                 imageView = new RecyclingImageView(context);
+                imageView.setId(0);
                 imageView.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 imageView.setCropToPadding(true);
@@ -272,9 +290,8 @@ public class PhotosFragment extends Fragment {
                 imageView.setImageResource(R.drawable.plus);
             } else {
                 try {
-                    imageView.setTag(photos.get(position - 1).getId());
-                    Picasso.with(context).load(photos.get(position - 1).getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
-                    photos.get(position - 1).setGridImage(imageView);
+                    if(photos.get(position-1).getUrlThumbnail()!=null) mImageFetcher.loadImage(photos.get(position-1).getUrlThumbnail(), imageView);
+                    else imageView.setImageDrawable(getResources().getDrawable(R.drawable.picto_photo_vide));
                 } catch (OutOfMemoryError outOfMemoryError) {
                     outOfMemoryError.printStackTrace();
                 }
@@ -377,7 +394,7 @@ public class PhotosFragment extends Fragment {
 
             Log.e("RESULT", result.toString());
 
-            try {
+       //     try {
                 try {
                     JSONObject jsresult = new JSONObject(result);
                     JSONObject json = jsresult.getJSONObject("success");
@@ -399,17 +416,18 @@ public class PhotosFragment extends Fragment {
                 }
 
                 float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-                Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
+                //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
+                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (ImageView)gridView.getChildAt(position+1).findViewById(0));
 
                 if (photos_uri.size() == 0) {
                     createNotification("Upload", context.getString(R.string.termine), true);
                     asyncRun = false;
                 }
-
+/*
             } catch (NullPointerException npe) {
                 Log.e("NPE", "");
                 npe.printStackTrace();
-            }
+            }*/
 
             if (isAdded()) {
                 if (photos_uri.size() > 0) {
@@ -494,14 +512,10 @@ public class PhotosFragment extends Fragment {
                             //We update it in the infos view also
                             ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
-                            /*
-                            if (!photos_uri.isEmpty()) {
-
-                                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
-                                multiUploadTask.execute();
-
+                            if (BuildConfig.DEBUG) {
+                                Utils.logHeap();
                             }
-                            */
+
 
                         } catch (JSONException e) {
                             e.printStackTrace();

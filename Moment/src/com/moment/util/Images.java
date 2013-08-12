@@ -1,4 +1,4 @@
-package com.moment.utils;
+package com.moment.util;
 
 import android.content.ContentResolver;
 import android.content.Context;

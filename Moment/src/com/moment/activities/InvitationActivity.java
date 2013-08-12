@@ -36,7 +36,7 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.utils.CommonUtilities;
+import com.moment.util.CommonUtilities;
 import com.moment.classes.InvitationsAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.InvitationsFragment;

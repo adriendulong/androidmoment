@@ -1,7 +1,6 @@
 package com.moment.fragments;
 
 import android.content.ContentResolver;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,7 +17,7 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.CreationDetailsActivity;
 import com.moment.models.Moment;
-import com.moment.utils.BitmapWorkerTask;
+import com.moment.util.BitmapWorkerTask;
 import com.squareup.picasso.Picasso;
 
 import java.sql.Date;

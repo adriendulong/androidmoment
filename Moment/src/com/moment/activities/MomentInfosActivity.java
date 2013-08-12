@@ -37,6 +37,7 @@ import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
+import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.ChatFragment;
@@ -47,6 +48,7 @@ import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
 
+import com.moment.util.Utils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -109,6 +111,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
 
+        if (BuildConfig.DEBUG) {
+            Utils.logHeap();
+        }
+
+
         String precedente = getIntent().getStringExtra("precedente");
 
 
@@ -142,7 +149,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         pager.setCurrentItem(position, false);
 
-        pager.setOffscreenPageLimit(2);
+        pager.setOffscreenPageLimit(0);
 
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 

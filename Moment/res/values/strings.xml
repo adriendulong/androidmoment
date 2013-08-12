@@ -228,6 +228,7 @@
     <string name="invalid_phone">Numéro de téléphone invalide</string>
     <string name="second_invalid_phone">Numéro de téléphone invalide</string>
     <string name="get_informations">Récupération des informations</string>
+    <string name="no_network_connection_toast">Pas de connection à internet trouvée</string>
 
     <!-- Chat -->
     <string name="default_text_chat">Aucun message pour le moment, alors allez y, lancez vous ! Une blague, une info, un scoop, ce chat est fait pour ça !</string>

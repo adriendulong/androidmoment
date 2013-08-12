@@ -12,7 +12,7 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.classes.DatabaseHelper;
-import com.moment.utils.Images;
+import com.moment.util.Images;
 
 import org.json.JSONException;
 import org.json.JSONObject;

@@ -23,7 +23,9 @@ import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.moment.BuildConfig;
 import com.moment.R;
+import com.moment.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -42,6 +44,11 @@ public class CustomGallery extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_custom_gallery);
+
+        if (BuildConfig.DEBUG) {
+            Utils.logHeap();
+        }
+
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayUseLogoEnabled(false);
@@ -82,6 +89,8 @@ public class CustomGallery extends SherlockActivity {
         imageAdapter = new ImageAdapter();
         imagegrid.setAdapter(imageAdapter);
         imagecursor.close();
+
+
     }
 
     @Override
@@ -101,6 +110,9 @@ public class CustomGallery extends SherlockActivity {
                 /*for(Bitmap t : thumbnails){
                     t.recycle();
                 }*/
+                if (BuildConfig.DEBUG) {
+                    Utils.logHeap();
+                }
 
                 if (momentID == null) {
                     Intent intent = new Intent(this, EditProfilActivity.class);
