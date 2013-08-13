@@ -46,10 +46,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.util.CommonUtilities;
-import com.moment.util.Images;
 import com.moment.classes.MomentApi;
 import com.moment.models.User;
+import com.moment.util.CommonUtilities;
+import com.moment.util.Images;
 
 import org.json.JSONException;
 import org.json.JSONObject;

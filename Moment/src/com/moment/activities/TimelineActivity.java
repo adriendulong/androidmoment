@@ -15,7 +15,15 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.*;
+import android.widget.AbsListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
@@ -32,9 +40,8 @@ import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.moment.util.Utils;
 import com.slidingmenu.lib.SlidingMenu;
-import com.slidingmenu.lib.app.SlidingActivity;
-
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -190,18 +197,18 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
                                 if (AppMoment.getInstance().momentDao.load(momentTemp.getId()) == null) {
                                     AppMoment.getInstance().momentDao.insert(momentTemp);
+                                } else {
+                                    AppMoment.getInstance().momentDao.update(momentTemp);
                                 }
                             }
+
                             adapter.notifyDataSetChanged();
-
                             dialog.dismiss();
-
                             goToToday(false);
 
                             if (BuildConfig.DEBUG) {
                                 Utils.logHeap();
                             }
-
 
                         } catch (JSONException e) {
                             e.printStackTrace();

@@ -9,7 +9,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -55,7 +54,9 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             if (state.isOpened()) {
                 Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
                     @Override
-                    public void onCompleted(Response response) {}
+                    public void onCompleted(Response response) {
+                        bitmap.recycle();
+                    }
                 });
             }
         }
@@ -279,7 +280,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                bitmap = photo.getBitmapOriginal();
+                bitmap = imageView.getDrawingCache();
                 sharePicture();
             }
         });

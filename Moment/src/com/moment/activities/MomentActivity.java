@@ -33,13 +33,11 @@ import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-
 import com.moment.AppMoment;
 import com.moment.R;
-import com.moment.util.CommonUtilities;
 import com.moment.classes.MomentApi;
-import com.moment.models.Moment;
 import com.moment.models.User;
+import com.moment.util.CommonUtilities;
 
 import org.json.JSONException;
 import org.json.JSONObject;
