@@ -280,7 +280,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                bitmap = imageView.getDrawingCache();
+                bitmap = imageView.getDrawingCache(); //Edit
                 sharePicture();
             }
         });
