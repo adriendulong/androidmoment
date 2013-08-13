@@ -1,5 +1,8 @@
 package com.moment.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -14,7 +17,7 @@ import java.util.Date;
 /**
  * Entity mapped to table chats.
  */
-public class Chat {
+public class Chat implements Parcelable {
 
     private Long id;
     private String message;
@@ -200,6 +203,16 @@ public class Chat {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+
     }
     // KEEP METHODS END
 
