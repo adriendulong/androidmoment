@@ -508,7 +508,6 @@ public class Moment {
         endDate.setTime(this.dateFin);
         return ""+endDate.get(Calendar.HOUR_OF_DAY)+":"+endDate.get(Calendar.MINUTE);
     }
-
     // KEEP METHODS END
 
 }
