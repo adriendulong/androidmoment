@@ -54,6 +54,7 @@ import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
+import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.squareup.picasso.Picasso;
@@ -64,10 +65,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
-import java.util.Locale;
 
 public class InfosFragment extends Fragment {
 
@@ -422,21 +420,19 @@ public class InfosFragment extends Fragment {
 
         updateRSVPBloc();
 
+        org.joda.time.DateTime dt;
 
-        GregorianCalendar dateDebutCalendar = new GregorianCalendar(Locale.getDefault());
-        dateDebutCalendar.setTime(moment.getDateDebut());
-        Calendar dateFinCalendar = Calendar.getInstance();
-        dateFinCalendar.setTime(moment.getDateFin());
+        dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateDebut());
 
-        dateDebutText.setText("" + jours[dateDebutCalendar.get(Calendar.DAY_OF_WEEK) - 1] + " " + dateDebutCalendar.get(Calendar.DAY_OF_MONTH) + " " + mois[dateDebutCalendar.get(Calendar.MONTH)]);
-        dateFinText.setText("" + jours[dateFinCalendar.get(Calendar.DAY_OF_WEEK) - 1] + " " + dateFinCalendar.get(Calendar.DAY_OF_MONTH) + " " + mois[dateFinCalendar.get(Calendar.MONTH)]);
-        heureDebutText.setText("" + dateDebutCalendar.get(Calendar.HOUR) + "H" + dateDebutCalendar.get(Calendar.MINUTE));
-        heureFinText.setText("" + dateFinCalendar.get(Calendar.HOUR) + "H" + dateFinCalendar.get(Calendar.MINUTE));
+        dateDebutText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear()]);
+        heureDebutText.setText("" + dt.getHourOfDay() + "H" + dt.getMinuteOfHour());
 
+        dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateFin());
 
-        //Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
+        dateFinText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear()]);
+        heureFinText.setText("" + dt.getHourOfDay() + "H" + dt.getMinuteOfHour());
+
         mImageFetcherCover.loadImage(moment.getUrlCover(), image_cover, false);
-
 
         if (moment.getUser() != null) {
             if (moment.getUser().getPictureProfileUrl() != null)

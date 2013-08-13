@@ -43,8 +43,8 @@ public class MomentDao extends AbstractDao<Moment, Long> {
         public final static Property KeyBitmap = new Property(12, String.class, "keyBitmap", false, "KEY_BITMAP");
         public final static Property UrlCover = new Property(13, String.class, "urlCover", false, "URL_COVER");
         public final static Property UniqueUrl = new Property(14, String.class, "uniqueUrl", false, "UNIQUE_URL");
-        public final static Property DateDebut = new Property(15, java.util.Date.class, "dateDebut", false, "DATE_DEBUT");
-        public final static Property DateFin = new Property(16, java.util.Date.class, "dateFin", false, "DATE_FIN");
+        public final static Property DateDebut = new Property(15, String.class, "dateDebut", false, "DATE_DEBUT");
+        public final static Property DateFin = new Property(16, String.class, "dateFin", false, "DATE_FIN");
         public final static Property IsOpenInvit = new Property(17, Boolean.class, "isOpenInvit", false, "IS_OPEN_INVIT");
         public final static Property OwnerId = new Property(18, long.class, "ownerId", false, "OWNER_ID");
         public final static Property UserId = new Property(19, Long.class, "userId", false, "USER_ID");
@@ -85,8 +85,8 @@ public class MomentDao extends AbstractDao<Moment, Long> {
                 "'KEY_BITMAP' TEXT," + // 12: keyBitmap
                 "'URL_COVER' TEXT," + // 13: urlCover
                 "'UNIQUE_URL' TEXT," + // 14: uniqueUrl
-                "'DATE_DEBUT' INTEGER," + // 15: dateDebut
-                "'DATE_FIN' INTEGER," + // 16: dateFin
+                "'DATE_DEBUT' TEXT," + // 15: dateDebut
+                "'DATE_FIN' TEXT," + // 16: dateFin
                 "'IS_OPEN_INVIT' INTEGER," + // 17: isOpenInvit
                 "'OWNER_ID' INTEGER NOT NULL ," + // 18: ownerId
                 "'USER_ID' INTEGER," + // 19: userId
@@ -181,14 +181,14 @@ public class MomentDao extends AbstractDao<Moment, Long> {
             stmt.bindString(15, uniqueUrl);
         }
  
-        java.util.Date dateDebut = entity.getDateDebut();
+        String dateDebut = entity.getDateDebut();
         if (dateDebut != null) {
-            stmt.bindLong(16, dateDebut.getTime());
+            stmt.bindString(16, dateDebut);
         }
  
-        java.util.Date dateFin = entity.getDateFin();
+        String dateFin = entity.getDateFin();
         if (dateFin != null) {
-            stmt.bindLong(17, dateFin.getTime());
+            stmt.bindString(17, dateFin);
         }
  
         Boolean isOpenInvit = entity.getIsOpenInvit();
@@ -244,8 +244,8 @@ public class MomentDao extends AbstractDao<Moment, Long> {
             cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12), // keyBitmap
             cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13), // urlCover
             cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14), // uniqueUrl
-            cursor.isNull(offset + 15) ? null : new java.util.Date(cursor.getLong(offset + 15)), // dateDebut
-            cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)), // dateFin
+            cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // dateDebut
+            cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // dateFin
             cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // isOpenInvit
             cursor.getLong(offset + 18), // ownerId
             cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19), // userId
@@ -273,8 +273,8 @@ public class MomentDao extends AbstractDao<Moment, Long> {
         entity.setKeyBitmap(cursor.isNull(offset + 12) ? null : cursor.getString(offset + 12));
         entity.setUrlCover(cursor.isNull(offset + 13) ? null : cursor.getString(offset + 13));
         entity.setUniqueUrl(cursor.isNull(offset + 14) ? null : cursor.getString(offset + 14));
-        entity.setDateDebut(cursor.isNull(offset + 15) ? null : new java.util.Date(cursor.getLong(offset + 15)));
-        entity.setDateFin(cursor.isNull(offset + 16) ? null : new java.util.Date(cursor.getLong(offset + 16)));
+        entity.setDateDebut(cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15));
+        entity.setDateFin(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setIsOpenInvit(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
         entity.setOwnerId(cursor.getLong(offset + 18));
         entity.setUserId(cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19));

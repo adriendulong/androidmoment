@@ -7,12 +7,7 @@ import com.loopj.android.http.RequestParams;
 
 import org.json.JSONException;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 
 public class FbEvent {
 

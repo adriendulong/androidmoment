@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.view.View;
 import org.apache.http.HttpResponse;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -14,6 +17,7 @@ import org.json.JSONTokener;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 
 public final class CommonUtilities {
@@ -27,6 +31,18 @@ public final class CommonUtilities {
     static final String TAG = "GCMDemo";
 
     static final String EXTRA_MESSAGE = "message";
+
+    public static final DateTimeFormatter dateFormat = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter dateFormatReverse =DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
+    public static final DateTimeFormatter dateFormatISO = ISODateTimeFormat.dateTime();
+    public static final DateTimeFormatter dateFormatISONoMillis = ISODateTimeFormat.dateTimeNoMillis();
+
+    public static final SimpleDateFormat dateFormatSlash = new SimpleDateFormat("dd/MM/yyyy");
+    public static final SimpleDateFormat dateFormatTiret = new SimpleDateFormat("dd-MM-yyyy");
+    public static final SimpleDateFormat dateFormatReverseTiret = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat dateFormatFullMonth = new SimpleDateFormat("dd MMMM yyyy");
+
+    public static final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
 
     static void displayMessage(Context context, String message) {
         Intent intent = new Intent(DISPLAY_MESSAGE_ACTION);

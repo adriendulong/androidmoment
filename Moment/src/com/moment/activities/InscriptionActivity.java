@@ -61,7 +61,6 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -238,9 +237,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         if ((nom.length() > 0) && (prenom.length() > 0) && (email.length() > 0) && (mdp.length() > 0)) {
             if (CommonUtilities.isValidEmail(email)) {
                 java.util.Date d = null;
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+
                 try {
-                    d = sdf.parse(bdate);
+                    d = CommonUtilities.dateFormatSlash.parse(bdate);
                 } catch (ParseException e) {
                     e.printStackTrace();
                 }

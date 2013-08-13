@@ -34,8 +34,8 @@ public class MomentDaoGenerator {
         moment.addStringProperty("urlCover");
         moment.addStringProperty("uniqueUrl");
 
-        moment.addDateProperty("dateDebut");
-        moment.addDateProperty("dateFin");
+        moment.addStringProperty("dateDebut");
+        moment.addStringProperty("dateFin");
 
         moment.addBooleanProperty("isOpenInvit");
 
@@ -75,6 +75,7 @@ public class MomentDaoGenerator {
 
         Entity chat = schema.addEntity("Chat");
         chat.setTableName("chats");
+        chat.implementsInterface("Parcelable");
 
         chat.addIdProperty();
 

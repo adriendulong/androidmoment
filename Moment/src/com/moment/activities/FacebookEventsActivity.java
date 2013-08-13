@@ -19,10 +19,9 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.FbEvent;
 import com.moment.models.Moment;
+import com.moment.util.CommonUtilities;
 
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -94,13 +93,11 @@ public class FacebookEventsActivity extends SherlockActivity {
             if(event.getString("rsvp_status").equals("not answer")) { fbEvent.setState("4"); }
         }
 
-        DateTimeFormatter parser = ISODateTimeFormat.dateTimeNoMillis();
-
         if(event.has("start_time"))
         {
             if(event.getString("is_date_only").equals("false"))
             {
-                DateTime start = parser.parseDateTime(event.getString("start_time"));
+                DateTime start = CommonUtilities.dateFormatISONoMillis.parseDateTime(event.getString("start_time"));
                 String start_date = start.getYear() + "-" + start.getMonthOfYear() + "-" +start.getDayOfMonth();
                 String start_time = start.getHourOfDay() + ":" + start.getMinuteOfHour();
 
@@ -115,7 +112,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         {
             if(event.getString("is_date_only").equals("false"))
             {
-                DateTime end = parser.parseDateTime(event.getString("end_time"));
+                DateTime end = CommonUtilities.dateFormatISONoMillis.parseDateTime(event.getString("end_time"));
                 String end_date = end.getYear() + "-" + end.getMonthOfYear() + "-" + end.getDayOfMonth();
                 String end_time = end.getHourOfDay() + ":" + end.getMinuteOfHour();
 
@@ -127,7 +124,7 @@ public class FacebookEventsActivity extends SherlockActivity {
         } else {
             if(event.getString("is_date_only").equals("false"))
             {
-                DateTime end = parser.parseDateTime(event.getString("start_time"));
+                DateTime end = CommonUtilities.dateFormatISONoMillis.parseDateTime(event.getString("start_time"));
                 String end_date = end.getYear() + "-" + end.getMonthOfYear() + "-" + (end.getDayOfMonth() + 1);
                 String end_time = end.getHourOfDay() + ":" + end.getMinuteOfHour();
 

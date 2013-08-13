@@ -260,8 +260,8 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     }
 
     public void downTwo() {
-        moment.setDateDebut(fragment.getStartDate());
-        moment.setDateFin(fragment.getEndDate());
+        moment.setDateDebut(String.valueOf(fragment.getStartDate()));
+        moment.setDateFin(String.valueOf(fragment.getEndDate()));
     }
 
     public void upOne(){
@@ -602,7 +602,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
     }
 
     public boolean areDatesCorrect(){
-        if(fragment.getEndDate().after(fragment.getStartDate())) return true;
+        if(fragment.getEndDate().isAfter(fragment.getStartDate())) return true;
         else return false;
     }
 

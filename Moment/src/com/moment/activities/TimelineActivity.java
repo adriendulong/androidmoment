@@ -36,24 +36,25 @@ import com.moment.classes.MomentApi;
 import com.moment.classes.MomentsAdapter;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
+import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.moment.util.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
+import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 public class TimelineActivity extends SlidingFragmentActivity {
 
+    private static final String IMAGE_CACHE_DIR = "timeline";
     private Intent intentMoment;
     private LayoutInflater inflater;
     private Long actuelMomentSelect = Long.parseLong("-1");
@@ -72,8 +73,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
     private ProgressDialog dialog;
     private ImageView todayBtn;
     private Bitmap todayBitmap;
-
-    private static final String IMAGE_CACHE_DIR = "timeline";
     private ImageFetcher mImageFetcher;
     private int mImageThumbSize;
 
@@ -83,7 +82,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
         if (BuildConfig.DEBUG) {
             Utils.logHeap();
         }
-
 
 
         DisplayMetrics metrics = new DisplayMetrics();
@@ -113,9 +111,9 @@ public class TimelineActivity extends SlidingFragmentActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final LinearLayout actionBarLayout = (LinearLayout)inflater.inflate(R.layout.notif_action_bar, null);
-        totalNotifText = (TextView)actionBarLayout.findViewById(R.id.actionbar_notifcation_textview);
-        notifProgress = (ProgressBar)actionBarLayout.findViewById(R.id.progress_notifs);
+        final LinearLayout actionBarLayout = (LinearLayout) inflater.inflate(R.layout.notif_action_bar, null);
+        totalNotifText = (TextView) actionBarLayout.findViewById(R.id.actionbar_notifcation_textview);
+        notifProgress = (ProgressBar) actionBarLayout.findViewById(R.id.progress_notifs);
         getSupportActionBar().setCustomView(actionBarLayout);
         actionBarLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         getSupportActionBar().setDisplayShowCustomEnabled(true);
@@ -236,9 +234,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
                 getNotifications();
             }
-        }
-
-        else {
+        } else {
 
             Log.e("TIMELINE", "LOSTTTTTT");
             SharedPreferences sharedPreferences = getPreferences(MODE_PRIVATE);
@@ -313,8 +309,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
         getSupportMenuInflater().inflate(R.menu.activity_timeline, menu);
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -448,10 +442,12 @@ public class TimelineActivity extends SlidingFragmentActivity {
         Date minDate = null;
         int positionDate = -1;
         for (int i = 0; i < moments.size(); i++) {
-            long diff = Math.abs(currentTime - moments.get(i).getDateDebut().getTime());
+
+            org.joda.time.DateTime dt = CommonUtilities.dateFormatISO.parseDateTime(moments.get(i).getDateDebut());
+            long diff = Math.abs(currentTime - dt.toDate().getTime());
             if ((minDiff == -1) || (diff < minDiff)) {
                 minDiff = diff;
-                minDate = moments.get(i).getDateDebut();
+                minDate = dt.toDate();
                 positionDate = i;
             }
         }
@@ -502,10 +498,9 @@ public class TimelineActivity extends SlidingFragmentActivity {
             if (!loading && (totalItemCount - visibleItemCount) <= (firstVisibleItem + visibleThreshold)) {
                 if (!allFutur) {
                     EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load futur Moments", null);
-                    Log.d(TAG, "LOAD FUTUR MOMENTS");
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    String date = df.format(moments.get(moments.size() - 1).getDateDebut());
-                    MomentApi.get("momentsafter/" + date + "/1", null, new JsonHttpResponseHandler() {
+
+                    DateTime dt = CommonUtilities.dateFormatISO.parseDateTime(moments.get(moments.size() - 1).getDateDebut());
+                    MomentApi.get("momentsafter/" + CommonUtilities.dateFormatReverseTiret.format(dt.toDate()) + "/1", null, new JsonHttpResponseHandler() {
 
                         @Override
                         public void onSuccess(JSONObject response) {
@@ -548,15 +543,13 @@ public class TimelineActivity extends SlidingFragmentActivity {
                     loading = true;
                 }
 
-            }
-
-            else if (!loading && (firstVisibleItem) <= 3) {
+            } else if (!loading && (firstVisibleItem) <= 3) {
                 if (!allPast) {
                     EasyTracker.getTracker().sendEvent("Timeline", "scroll", "Load Old Moments", null);
                     Log.d(TAG, "Load PAST MOMENTS");
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-                    String date = df.format(moments.get(0).getDateDebut());
-                    MomentApi.get("momentsafter/" + date + "/0", null, new JsonHttpResponseHandler() {
+
+                    DateTime dt = CommonUtilities.dateFormatISO.parseDateTime(moments.get(0).getDateDebut());
+                    MomentApi.get("momentsafter/" + CommonUtilities.dateFormatReverseTiret.format(dt.toDate()) + "/0", null, new JsonHttpResponseHandler() {
 
                         @Override
                         public void onSuccess(JSONObject response) {

@@ -8,32 +8,20 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
-import com.moment.AppMoment;
-import com.moment.R;
-
-import java.text.DateFormat;
-import java.util.ArrayList;
-
-import android.content.Context;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.moment.R;
 import com.moment.models.Moment;
-import com.moment.models.Notification;
-import com.moment.util.ImageCache;
+import com.moment.util.CommonUtilities;
 import com.moment.util.ImageFetcher;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Created by adriendulong on 20/06/13.
@@ -69,18 +57,10 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
         {
             row = vi.inflate(layoutResourceId, parent, false);
             holder = new MomentHolder();
-
-
-
             holder.coverRound = (ImageView)row.findViewById(R.id.cover_moment_timeline);
             holder.nameMoment = (TextView)row.findViewById(R.id.moment_name);
             holder.dateMoment = (TextView)row.findViewById(R.id.moment_date);
             holder.imageRoundedButton = (RelativeLayout)row.findViewById(R.id.cell_full);
-            //holder.deleteMoment = (RelativeLayout)row.findViewById(R.id.delete_moment);
-
-
-
-
             row.setTag(holder);
         }
         else
@@ -88,24 +68,12 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
             holder = (MomentHolder)row.getTag();
         }
 
-        //Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.picto_photo_vide).into(holder.coverRound);
         mImageFetcher.loadImage(moment.getUrlCover(), holder.coverRound, true);
         holder.nameMoment.setText(moment.getName());
         holder.imageRoundedButton.setTag(moment.getId());
-        //holder.deleteMoment.setTag(moment.getId());
 
-        //Print date in right format
-        Locale locale = Locale.getDefault();
-        DateFormat dt=DateFormat.getDateInstance(DateFormat.LONG, locale);
-        holder.dateMoment.setText(dt.format(moment.getDateDebut()));
-
-        //Do we show delete button
-        /*
-        if(moment.getUserId()!= AppMoment.getInstance().user.getId()) holder.deleteMoment.setVisibility(View.INVISIBLE);
-        else holder.deleteMoment.setVisibility(View.VISIBLE);
-        */
-
-
+        Date dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateDebut()).toDate();
+        holder.dateMoment.setText(CommonUtilities.dateFormatFullMonth.format(dt));
         return row;
     }
 
