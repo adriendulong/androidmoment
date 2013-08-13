@@ -574,7 +574,7 @@ public class InfosFragment extends Fragment {
         int width = display.getWidth();
         float height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
         float density = getActivity().getApplicationContext().getResources().getDisplayMetrics().density;
-        int realWidth = Math.round((float) width );//* density
+        int realWidth = Math.round((float) width/density );//*
 
         try {
             List<Address> addresses = geocoder.getFromLocationName(AppMoment.getInstance().user.getMomentById(momentId).getAdresse(), 1);

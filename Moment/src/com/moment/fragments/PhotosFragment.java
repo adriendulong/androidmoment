@@ -1,10 +1,7 @@
 package com.moment.fragments;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Notification;
-import android.app.NotificationManager;
+import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,12 +18,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageView;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
@@ -79,7 +72,7 @@ public class PhotosFragment extends Fragment {
     private Uri outputFileUri;
 
     private List<Photo> photos;
-    private ArrayList<String> photos_uri;
+    private ArrayList<Uri> photos_uri;
     private ArrayList<Bitmap> photos_files;
 
     private View view;
@@ -103,6 +96,8 @@ public class PhotosFragment extends Fragment {
     private ImageFetcher mImageFetcher;
     private int mImageThumbSize;
 
+    private static final String TAG = "PhotosFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,17 +106,13 @@ public class PhotosFragment extends Fragment {
             Utils.logHeap();
         }
 
-        photos_uri = new ArrayList<String>();
+        photos_uri = new ArrayList<Uri>();
 
-        if (savedInstanceState == null) {
-            /*
-            savedInstanceState = getActivity().getIntent().getExtras();
-
-
-            assert savedInstanceState != null;
-            if (savedInstanceState.getStringArrayList("photos") != null) {
-                photos_uri = savedInstanceState.getStringArrayList("photos");
-            }*/
+        if (savedInstanceState != null) {
+            photos = savedInstanceState.getParcelableArrayList("photos");
+            if(BuildConfig.DEBUG){
+                Log.d(TAG, "Photos saved");
+            }
         }
 
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
@@ -142,6 +133,35 @@ public class PhotosFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_photos, container, false);
+
+        //Init Grid view
+        gridView = (GridView) view.findViewById(R.id.gridview);
+        gridView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+                if (position == 0) {
+                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo", null);
+                    startDialog();
+                } else {
+                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Open Detail Photo", null);
+                    Intent intent = new Intent(getActivity(), DetailPhoto.class);
+                    if (photos.get(position - 1).getUrlOriginal() == null) {
+                        intent.putExtra("position", (0));
+                    } else {
+                        intent.putExtra("position", (position - 1));
+                    }
+                    intent.putExtra("momentID", momentID);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        if(photos!=null){
+            initViewPhotos();
+            imageAdapter = new ImageAdapter(view.getContext(), photos);
+            gridView.setAdapter(imageAdapter);
+        }
+
         return view;
     }
 
@@ -220,10 +240,10 @@ public class PhotosFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAMERA_PICTURE && resultCode == Activity.RESULT_OK) {
             if (photos_uri == null) {
-                photos_uri = new ArrayList<String>();
+                photos_uri = new ArrayList<Uri>();
             }
-            photos_uri.add(outputFileUri.getPath());
-            for (String s : photos_uri) {
+            photos_uri.add(outputFileUri);
+            for (Uri s : photos_uri) {
                 MultiUploadTask multiUploadTask = new MultiUploadTask(s);
                 multiUploadTask.execute();
             }
@@ -231,7 +251,7 @@ public class PhotosFragment extends Fragment {
         }
         else if(requestCode == GALLERY_PICTURE && resultCode == Activity.RESULT_OK){
             if(data.getExtras().containsKey("photos")){
-                photos_uri = data.getExtras().getStringArrayList("photos");
+                photos_uri = data.getExtras().getParcelableArrayList("photos");
                 uploadingPhotos = photos_uri.size();
                 currentUploading = 1;
                 MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
@@ -311,11 +331,11 @@ public class PhotosFragment extends Fragment {
         private final NotificationManager notificationManager;
         private Notification notification;
         private Photo photo;
-        private final String photo_uri;
+        private final Uri photo_uri;
         private int position;
 
 
-        public MultiUploadTask(String photo_uri) {
+        public MultiUploadTask(Uri photo_uri) {
             this.context = getActivity();
             this.notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             this.photo_uri = photo_uri;
@@ -358,8 +378,8 @@ public class PhotosFragment extends Fragment {
         protected String doInBackground(Void... params) {
 
 
-            File file = new File(photo_uri);
-            Bitmap bitmap = Images.decodeSampledBitmapFromFile(file.getPath(), 900, 900);
+
+            Bitmap bitmap = Images.decodeSampledBitmapFromURI(photo_uri, getActivity().getContentResolver(), 900, 900);
 
             if (bitmap != null) {
 
@@ -454,62 +474,33 @@ public class PhotosFragment extends Fragment {
         Moment moment = user.getMomentById(momentID);
 
 
+
         if (photos == null || photos.isEmpty()) {
             photos = moment.getPhotos();
 
+            //Init adapter
             imageAdapter = new ImageAdapter(view.getContext(), photos);
-            gridView = (GridView) view.findViewById(R.id.gridview);
             gridView.setAdapter(imageAdapter);
 
-            gridView.setOnItemClickListener(new OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
-                    if (position == 0) {
-                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo", null);
-                        startDialog();
-                    } else {
-                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Open Detail Photo", null);
-                        Intent intent = new Intent(getActivity(), DetailPhoto.class);
-                        if (photos.get(position - 1).getUrlOriginal() == null) {
-                            intent.putExtra("position", (0));
-                        } else {
-                            intent.putExtra("position", (position - 1));
-                        }
-                        intent.putExtra("momentID", momentID);
-                        startActivity(intent);
-                    }
-                }
-            });
-
             if (AppMoment.getInstance().checkInternet()) {
+                if(BuildConfig.DEBUG) Log.d(TAG, "Download photos");
+
                 MomentApi.get("photosmoment/" + momentID, null, new JsonHttpResponseHandler() {
 
                     public void onSuccess(JSONObject response) {
                         try {
                             JSONArray jsonPhotos = response.getJSONArray("photos");
 
-                            if (jsonPhotos.length() == 0) {
-                                defaultButton = (Button) view.findViewById(R.id.default_button_photos);
-                                defaultButton.setVisibility(View.VISIBLE);
-                                defaultButton.setOnClickListener(new View.OnClickListener() {
-                                    @Override
-                                    public void onClick(View view) {
-                                        EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo First", null);
-                                        startDialog();
-                                    }
-                                });
-                            } else {
-                                gridView = (GridView) view.findViewById(R.id.gridview);
-                                gridView.setVisibility(View.VISIBLE);
-                            }
 
+                            photos.clear();
                             for (int i = 0; i < jsonPhotos.length(); i++) {
                                 Photo photo = new Photo();
                                 photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                                 AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
-                                imageAdapter.notifyDataSetChanged();
                             }
 
+                            initViewPhotos();
+                            imageAdapter.notifyDataSetChanged();
                             //We update it in the infos view also
                             ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
@@ -522,13 +513,48 @@ public class PhotosFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
+
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.pb_get_photos), Toast.LENGTH_LONG).show();
+                        initViewPhotos();
+                        imageAdapter.notifyDataSetChanged();
+                    }
                 });
             } else {
+                initViewPhotos();
                 imageAdapter.notifyDataSetChanged();
             }
 
         }
 
 
+    }
+
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        // Save the user's current game state
+        savedInstanceState.putParcelableArrayList("photos", (ArrayList<Photo>)photos);
+
+        // Always call the superclass so it can save the view hierarchy state
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public void initViewPhotos(){
+        if(photos.size()>0){
+            gridView = (GridView) view.findViewById(R.id.gridview);
+            gridView.setVisibility(View.VISIBLE);
+        }
+        else{
+            defaultButton = (Button) view.findViewById(R.id.default_button_photos);
+            defaultButton.setVisibility(View.VISIBLE);
+            defaultButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    EasyTracker.getTracker().sendEvent("Photo", "button_press", "Add Photo First", null);
+                    startDialog();
+                }
+            });
+
+        }
     }
 }

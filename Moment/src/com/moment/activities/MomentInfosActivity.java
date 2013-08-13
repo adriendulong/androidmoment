@@ -323,7 +323,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
                     AppMoment.getInstance().chatDao.insert(chat);
 
-                    chatFr.messageRight(chat, -1);
+                    chatFr.newMessage(chat);
 
                     postMessage.setText("");
                 }
@@ -536,7 +536,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                         AppMoment.getInstance().user.getMomentById(momentID).getChats().add(tempChat);
                                         AppMoment.getInstance().chatDao.insert(tempChat);
 
-                                        chatFr.messageLeft(tempChat);
+                                        chatFr.newMessage(tempChat);
 
                                         if (pager.getCurrentItem() == 1) pager.setCurrentItem(2);
 

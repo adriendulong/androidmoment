@@ -7,10 +7,12 @@
         android:background="@color/white_transparent"
         android:layout_centerHorizontal="true"/>
     <ListView android:layout_width="fill_parent"
-              android:layout_height="fill_parent"
+              android:layout_height="wrap_content"
               android:background="@android:color/transparent"
               android:id="@+id/list_moments"
+              android:layout_centerInParent="true"
               android:layout_centerHorizontal="true"
+              android:scrollbars="none"
               android:divider="@android:color/transparent"/>
     <ImageView android:layout_height="wrap_content"
                android:layout_width="wrap_content"

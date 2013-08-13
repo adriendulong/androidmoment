@@ -22,5 +22,6 @@
     <dimen name="image_mini_thumbnail_size">40dp</dimen>
     <dimen name="image_background__mini_thumbnail_size">40dp</dimen>
     <dimen name="image_detail_pager_margin">80dp</dimen>
+    <dimen name="image_profile">40dp</dimen>
 
 </resources>

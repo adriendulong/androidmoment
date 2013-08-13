@@ -209,7 +209,30 @@ public class Chat implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeString(message);
+        dest.writeSerializable(date);
+        dest.writeLong(userId);
+        dest.writeLong(momentId);
+    }
 
+    public static final Parcelable.Creator<Chat> CREATOR
+            = new Parcelable.Creator<Chat>() {
+        public Chat createFromParcel(Parcel in) {
+            return new Chat(in);
+        }
+
+        public Chat[] newArray(int size) {
+            return new Chat[size];
+        }
+    };
+
+    private Chat(Parcel in) {
+        id = in.readLong();
+        message = in.readString();
+        date = (Date)in.readSerializable();
+        userId = in.readLong();
+        momentId = in.readLong();
     }
 
     // KEEP METHODS END

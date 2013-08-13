@@ -410,8 +410,12 @@ public class Moment {
 
             org.joda.time.DateTime dt;
 
-            String dateDebut = moment.getString("startDate") + " " + moment.getString("startTime");
-            String dateFin = moment.getString("endDate") + " " + moment.getString("endTime");
+            String dateDebut;
+            String dateFin;
+            if(moment.has("startTime")) dateDebut = moment.getString("startDate") + " " + moment.getString("startTime");
+            else dateDebut = moment.getString("startDate") + " 00:00:00";
+            if(moment.has("endTime")) dateFin = moment.getString("endDate") + " " + moment.getString("endTime");
+            else dateFin = moment.getString("endDate") + " 00:00:00";
 
             dt = CommonUtilities.dateFormat.parseDateTime(dateDebut);
             this.dateDebut = dt.toString();

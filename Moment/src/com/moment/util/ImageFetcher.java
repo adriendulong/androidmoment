@@ -181,75 +181,80 @@ public class ImageFetcher extends ImageResizer {
      * @return The downloaded and resized bitmap
      */
     private Bitmap processBitmap(String data) {
-        if (BuildConfig.DEBUG) {
-            Log.d(TAG, "processBitmap - " + data);
-        }
 
-        final String key = ImageCache.hashKeyForDisk(data);
-        FileDescriptor fileDescriptor = null;
-        FileInputStream fileInputStream = null;
-        DiskLruCache.Snapshot snapshot;
-        synchronized (mHttpDiskCacheLock) {
-            // Wait for disk cache to initialize
-            while (mHttpDiskCacheStarting) {
-                try {
-                    mHttpDiskCacheLock.wait();
-                } catch (InterruptedException e) {}
+        if(data.startsWith("http://")||data.startsWith("wwww")||data.startsWith("https://")){
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "processBitmap - " + data);
             }
 
-            if (mHttpDiskCache != null) {
-                try {
-                    snapshot = mHttpDiskCache.get(key);
-                    if (snapshot == null) {
-                        if (BuildConfig.DEBUG) {
-                            Log.d(TAG, "processBitmap, not found in http cache, downloading...");
-                        }
-                        DiskLruCache.Editor editor = mHttpDiskCache.edit(key);
-                        if (editor != null) {
-                            if (downloadUrlToStream(data,
-                                    editor.newOutputStream(DISK_CACHE_INDEX))) {
-                                editor.commit();
-                            } else {
-                                editor.abort();
-                            }
-                        }
+            final String key = ImageCache.hashKeyForDisk(data);
+            FileDescriptor fileDescriptor = null;
+            FileInputStream fileInputStream = null;
+            DiskLruCache.Snapshot snapshot;
+            synchronized (mHttpDiskCacheLock) {
+                // Wait for disk cache to initialize
+                while (mHttpDiskCacheStarting) {
+                    try {
+                        mHttpDiskCacheLock.wait();
+                    } catch (InterruptedException e) {}
+                }
+
+                if (mHttpDiskCache != null) {
+                    try {
                         snapshot = mHttpDiskCache.get(key);
-                    }
-                    if (snapshot != null) {
-                        fileInputStream =
-                                (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
-                        fileDescriptor = fileInputStream.getFD();
-                    }
-                } catch (IOException e) {
-                    Log.e(TAG, "processBitmap - " + e);
-                } catch (IllegalStateException e) {
-                    Log.e(TAG, "processBitmap - " + e);
-                } finally {
-                    if (fileDescriptor == null && fileInputStream != null) {
-                        try {
-                            fileInputStream.close();
-                        } catch (IOException e) {}
+                        if (snapshot == null) {
+                            if (BuildConfig.DEBUG) {
+                                Log.d(TAG, "processBitmap, not found in http cache, downloading...");
+                            }
+                            DiskLruCache.Editor editor = mHttpDiskCache.edit(key);
+                            if (editor != null) {
+                                if (downloadUrlToStream(data,
+                                        editor.newOutputStream(DISK_CACHE_INDEX))) {
+                                    editor.commit();
+                                } else {
+                                    editor.abort();
+                                }
+                            }
+                            snapshot = mHttpDiskCache.get(key);
+                        }
+                        if (snapshot != null) {
+                            fileInputStream =
+                                    (FileInputStream) snapshot.getInputStream(DISK_CACHE_INDEX);
+                            fileDescriptor = fileInputStream.getFD();
+                        }
+                    } catch (IOException e) {
+                        Log.e(TAG, "processBitmap - " + e);
+                    } catch (IllegalStateException e) {
+                        Log.e(TAG, "processBitmap - " + e);
+                    } finally {
+                        if (fileDescriptor == null && fileInputStream != null) {
+                            try {
+                                fileInputStream.close();
+                            } catch (IOException e) {}
+                        }
                     }
                 }
             }
-        }
 
-        Bitmap bitmap = null;
-        if (fileDescriptor != null) {
-            bitmap = decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth,
-                    mImageHeight, getImageCache());
-        }
-        if (fileInputStream != null) {
-            try {
-                fileInputStream.close();
-            } catch (IOException e) {}
-        }
+            Bitmap bitmap = null;
+            if (fileDescriptor != null) {
+                bitmap = decodeSampledBitmapFromDescriptor(fileDescriptor, mImageWidth,
+                        mImageHeight, getImageCache());
+            }
+            if (fileInputStream != null) {
+                try {
+                    fileInputStream.close();
+                } catch (IOException e) {}
+            }
 
-        if(BuildConfig.DEBUG){
-            Log.d(TAG, "finish process");
-        }
+            if(BuildConfig.DEBUG){
+                Log.d(TAG, "finish process");
+            }
 
-        return bitmap;
+            return bitmap;
+        }
+        else return decodeSampledBitmapFromFile(data, mImageWidth, mImageHeight, getImageCache());
+
     }
 
     @Override

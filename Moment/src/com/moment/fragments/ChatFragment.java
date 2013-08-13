@@ -7,10 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
-import android.widget.TextView;
+import android.widget.*;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
@@ -19,12 +16,17 @@ import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
+import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
+import com.moment.classes.ChatAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Chat;
+import com.moment.models.Photo;
 import com.moment.models.User;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -61,14 +63,22 @@ public class ChatFragment extends Fragment {
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
 
+    private ArrayList<Chat> chats;
+    private ListView mChatsList;
+    private ChatAdapter adapter;
+
+    private static final String IMAGE_CACHE_DIR = "profile";
+    private ImageFetcher mImageFetcher;
+    private int mImageThumbSize;
+
+    private final static String TAG = "ChatsFragment";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
 
         mGaInstance = GoogleAnalytics.getInstance(getActivity());
-
-
         mGaTracker = mGaInstance.getTracker(AppMoment.getInstance().GOOGLE_ANALYTICS);
     }
 
@@ -77,12 +87,44 @@ public class ChatFragment extends Fragment {
 
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_chat, container, false);
+        mChatsList = (ListView)view.findViewById(R.id.chats_list);
+        defaultTextChat = (TextView) view.findViewById(R.id.default_text_chat);
+
+
+        if(savedInstanceState!=null){
+            chats = savedInstanceState.getParcelableArrayList("chats");
+            if(BuildConfig.DEBUG) Log.d(TAG, "Saved");
+
+            if(chats!=null){
+                initViewForChats();
+                adapter = new ChatAdapter(getActivity(), R.layout.chat_message_droite, chats, mImageFetcher);
+                mChatsList.setAdapter(adapter);
+            }
+        }
+
+        //Image Fetcher
+        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_profile);
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.1f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
+
+
+
+
+
+        /*
         this.inflater = inflater;
 
         if (view != null) {
             layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
             scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
-            defaultTextChat = (TextView) view.findViewById(R.id.default_text_chat);
+
         }
 
         scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
@@ -92,14 +134,22 @@ public class ChatFragment extends Fragment {
                 EasyTracker.getTracker().sendEvent("Chat", "scroll_refresh", "Load old chats", null);
                 new GetDataTask().execute();
             }
-        });
+        });*/
 
-        if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
-            this.momentId = ((MomentInfosActivity) getActivity()).getMomentId();
-            Log.d("CHAT", "INIT");
-            initChat();
+        if(chats==null){
 
+            chats = new ArrayList<Chat>();
+            adapter = new ChatAdapter(getActivity(), R.layout.chat_message_droite, chats, mImageFetcher);
+            mChatsList.setAdapter(adapter);
+
+            if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
+                this.momentId = ((MomentInfosActivity) getActivity()).getMomentId();
+                Log.d("CHAT", "INIT");
+                initChat();
+
+            }
         }
+
 
         return view;
     }
@@ -108,239 +158,16 @@ public class ChatFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
         mGaTracker.sendView("/ChatFragment");
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putBoolean("Sleep", true);
+        if(chats!=null) savedInstanceState.putParcelableArrayList("chats", chats);
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    private void messageRight(Chat chat) {
-
-        LinearLayout layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
-
-        TextView message = null;
-        TextView heure = null;
-        TextView autheur = null;
-        TextView date = null;
-        ImageView userImage = null;
-
-        if (chatDroit != null) {
-            message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
-            autheur = (TextView) chatDroit.findViewById(R.id.autheur);
-            date = (TextView) chatDroit.findViewById(R.id.date);
-            heure = (TextView) chatDroit.findViewById(R.id.heure);
-        }
-
-        if (message != null) {
-            message.setText(chat.getMessage());
-        }
-
-        if (autheur != null) {
-            autheur.setText(chat.getUser().getFirstName());
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(chat.getDate());
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month - 1];
-        int hh = cal.get(Calendar.HOUR_OF_DAY);
-        int mm = cal.get(Calendar.MINUTE);
-
-        if (heure != null) {
-            heure.setText("" + hh + ":" + mm);
-        }
-
-        if (date != null) {
-            date.setText("" + day + " " + monthString);
-        }
-
-        if (chatDroit != null) {
-            userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
-        }
-
-        if (AppMoment.getInstance().checkInternet())
-            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
-
-        if (chatDroit != null) {
-            layoutChat.addView(chatDroit);
-        }
-
-    }
-
-    public void messageRight(Chat chat, int index) {
-
-        defaultTextChat.setVisibility(View.GONE);
-
-        LinearLayout layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-        LinearLayout chatDroit = (LinearLayout) inflater.inflate(R.layout.chat_message_droite, null);
-
-        TextView message = null;
-        TextView heure = null;
-        TextView autheur = null;
-        TextView date = null;
-        ImageView userImage = null;
-
-        if (chatDroit != null) {
-            message = (TextView) chatDroit.findViewById(R.id.chat_message_text);
-            autheur = (TextView) chatDroit.findViewById(R.id.autheur);
-            date = (TextView) chatDroit.findViewById(R.id.date);
-            heure = (TextView) chatDroit.findViewById(R.id.heure);
-        }
-
-        if (message != null) {
-            message.setText(chat.getMessage());
-        }
-
-        if (autheur != null) {
-            autheur.setText(chat.getUser().getFirstName());
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(chat.getDate());
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month - 1];
-        int hh = cal.get(Calendar.HOUR_OF_DAY);
-        int mm = cal.get(Calendar.MINUTE);
-
-        if (heure != null) {
-            heure.setText("" + hh + ":" + mm);
-        }
-
-        if (date != null) {
-            date.setText("" + day + " " + monthString);
-        }
-
-        if (chatDroit != null) {
-            userImage = (ImageView) chatDroit.findViewById(R.id.photo_user);
-        }
-
-        if (AppMoment.getInstance().checkInternet())
-            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
-
-        if (chatDroit != null) {
-            if (index != -1) layoutChat.addView(chatDroit, index);
-            else layoutChat.addView(chatDroit);
-        }
-
-    }
-
-    public void messageLeft(Chat chat) {
-        defaultTextChat.setVisibility(View.GONE);
-
-        LinearLayout layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-        LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
-
-        TextView message = null;
-        TextView heure = null;
-        TextView autheur = null;
-        TextView date = null;
-        ImageView userImage = null;
-
-        if (chatGauche != null) {
-            message = (TextView) chatGauche.findViewById(R.id.chat_message_text);
-            autheur = (TextView) chatGauche.findViewById(R.id.autheur);
-            date = (TextView) chatGauche.findViewById(R.id.date);
-            heure = (TextView) chatGauche.findViewById(R.id.heure);
-        }
-
-        if (message != null) {
-            message.setText(chat.getMessage());
-        }
-
-        if (autheur != null) {
-            autheur.setText(chat.getUser().getFirstName());
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(chat.getDate());
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month];
-        int hh = cal.get(Calendar.HOUR_OF_DAY);
-        int mm = cal.get(Calendar.MINUTE);
-
-        if (heure != null) {
-            heure.setText("" + hh + ":" + mm);
-        }
-
-        if (date != null) {
-            date.setText("" + day + " " + monthString);
-        }
-
-        if (chatGauche != null) {
-            userImage = (ImageView) chatGauche.findViewById(R.id.photo_user);
-        }
-
-        if (AppMoment.getInstance().checkInternet())
-            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
-
-        if (chatGauche != null) {
-            layoutChat.addView(chatGauche);
-        }
-
-    }
-
-    private void messageLeft(Chat chat, int index) {
-        LinearLayout layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-        LinearLayout chatGauche = (LinearLayout) inflater.inflate(R.layout.chat_message_gauche, null);
-
-        TextView message = null;
-        TextView heure = null;
-        TextView autheur = null;
-        TextView date = null;
-        ImageView userImage = null;
-
-        if (chatGauche != null) {
-            message = (TextView) chatGauche.findViewById(R.id.chat_message_text);
-            autheur = (TextView) chatGauche.findViewById(R.id.autheur);
-            date = (TextView) chatGauche.findViewById(R.id.date);
-            heure = (TextView) chatGauche.findViewById(R.id.heure);
-        }
-
-        if (message != null) {
-            message.setText(chat.getMessage());
-        }
-
-        if (autheur != null) {
-            autheur.setText(chat.getUser().getFirstName());
-        }
-
-        Calendar cal = Calendar.getInstance();
-        cal.setTime(chat.getDate());
-        int day = cal.get(Calendar.DAY_OF_MONTH);
-        int month = cal.get(Calendar.MONTH) + 1;
-        String monthString = new DateFormatSymbols().getMonths()[month];
-        int hh = cal.get(Calendar.HOUR_OF_DAY);
-        int mm = cal.get(Calendar.MINUTE);
-
-        if (heure != null) {
-            heure.setText("" + hh + ":" + mm);
-        }
-
-        if (date != null) {
-            date.setText("" + day + " " + monthString);
-        }
-
-        if (chatGauche != null) {
-            userImage = (ImageView) chatGauche.findViewById(R.id.photo_user);
-        }
-
-        if (AppMoment.getInstance().checkInternet())
-            Picasso.with(getActivity()).load(chat.getUser().getPictureProfileUrl()).transform(roundTrans).into(userImage);
-
-        if (chatGauche != null) {
-            layoutChat.addView(chatGauche, index);
-        }
-    }
-
+    /*
     private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
 
         @Override
@@ -460,7 +287,7 @@ public class ChatFragment extends Fragment {
             }
         }
 
-    }
+    }*/
 
 
     public void createFragment(Long momentId) {
@@ -472,6 +299,8 @@ public class ChatFragment extends Fragment {
 
     private void initChat() {
         Log.d("CHATFRAGMENT", "INIT");
+
+        //Withou internet
         if (!AppMoment.getInstance().checkInternet()) {
             List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
 
@@ -482,23 +311,20 @@ public class ChatFragment extends Fragment {
                 c.setUser(user);
 
                 if (c.getMomentId() == momentId) {
-
-                    if (c.getUserId() == AppMoment.getInstance().user.getId()) {
-                        messageRight(c);
-                    } else {
-                        messageLeft(c);
-                    }
+                    chats = (ArrayList<Chat>)tempChats;
+                    adapter.notifyDataSetChanged();
                 }
             }
         }
 
         if (AppMoment.getInstance().checkInternet()) {
+            if(BuildConfig.DEBUG) Log.d(TAG, "Download");
             MomentApi.get("lastchats/" + momentId, null, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject response) {
                     try {
 
-                        JSONArray chats;
+                        JSONArray chatsJSON;
 
                         if (!response.isNull("next_page")) {
                             if (response.getInt("next_page") >= nextPage)
@@ -507,17 +333,18 @@ public class ChatFragment extends Fragment {
                                 nextPage = 0;
                         }
 
-                        chats = response.getJSONArray("chats");
+                        chatsJSON = response.getJSONArray("chats");
 
                         ArrayList<Chat> tempChats = new ArrayList<Chat>();
 
-                        if (chats.length() > 0) defaultTextChat.setVisibility(View.GONE);
+                        if (chatsJSON.length() > 0) defaultTextChat.setVisibility(View.GONE);
 
-                        for (int i = 0; i < chats.length(); i++) {
+
+                        for (int i = 0; i < chatsJSON.length(); i++) {
 
                             Chat tempChat = new Chat();
 
-                            tempChat.chatFromJSON(chats.getJSONObject(i));
+                            tempChat.chatFromJSON(chatsJSON.getJSONObject(i));
                             User user = tempChat.getUser();
 
                             if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {
@@ -527,16 +354,22 @@ public class ChatFragment extends Fragment {
                                     AppMoment.getInstance().userDao.insert(user);
                             }
 
+                            /*
                             if (tempChat.getUser().getId().equals(AppMoment.getInstance().user.getId())) {
                                 messageRight(tempChat);
                             } else {
                                 messageLeft(tempChat);
                             }
+                            */
 
                             tempChats.add(tempChat);
                         }
 
                         AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
+
+                        chats.addAll(tempChats);
+                        adapter.notifyDataSetChanged();
+                        mChatsList.smoothScrollToPosition(chats.size()-1);
 
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -546,5 +379,18 @@ public class ChatFragment extends Fragment {
         }
 
     }
+
+    public void newMessage(Chat chat){
+        chats.add(chat);
+        initViewForChats();
+        adapter.notifyDataSetChanged();
+        mChatsList.smoothScrollToPosition(chats.size()-1);
+    }
+
+    public void initViewForChats(){
+        if(chats.size()>0) defaultTextChat.setVisibility(View.GONE);
+    }
+
+
 
 }

@@ -13,11 +13,12 @@ import java.lang.ref.WeakReference;
  */
 
 
-public class BitmapWorkerTask  extends AsyncTask<Uri, Void, Bitmap> {
+public class BitmapWorkerTask  extends AsyncTask<Object, Void, Bitmap> {
     private final WeakReference<ImageView> imageViewReference;
-    private Uri data;
+    private Object data;
     private int mReqSize = 0;
     private ContentResolver mContent;
+    private boolean mIsFIle = false;
 
     public BitmapWorkerTask(ImageView imageView, int reqSize, ContentResolver contentResolver) {
         // Use a WeakReference to ensure the ImageView can be garbage collected
@@ -26,11 +27,20 @@ public class BitmapWorkerTask  extends AsyncTask<Uri, Void, Bitmap> {
         mContent = contentResolver;
     }
 
+    public BitmapWorkerTask(ImageView imageView, int reqSize, ContentResolver contentResolver, boolean isFile) {
+        // Use a WeakReference to ensure the ImageView can be garbage collected
+        imageViewReference = new WeakReference<ImageView>(imageView);
+        mReqSize = reqSize;
+        mContent = contentResolver;
+        mIsFIle = true;
+    }
+
     // Decode image in background.
     @Override
-    protected Bitmap doInBackground(Uri... params) {
+    protected Bitmap doInBackground(Object... params) {
         data = params[0];
-        return Images.decodeSampledBitmapFromURI(data, mContent, mReqSize, mReqSize);
+        if(mIsFIle) return Images.decodeSampledBitmapFromFile((String)data, mReqSize, mReqSize);
+        else return Images.decodeSampledBitmapFromURI((Uri)data, mContent, mReqSize, mReqSize);
     }
 
     // Once complete, see if ImageView is still around and set bitmap.

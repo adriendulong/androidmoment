@@ -198,7 +198,34 @@ public class Photo implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(id);
+        dest.writeInt(nbLike);
+        dest.writeString(urlOriginal);
+        dest.writeString(urlThumbnail);
+        dest.writeString(urlUnique);
+        dest.writeSerializable(time);
+        dest.writeLong(userId);
+    }
 
+    public static final Parcelable.Creator<Photo> CREATOR
+            = new Parcelable.Creator<Photo>() {
+        public Photo createFromParcel(Parcel in) {
+            return new Photo(in);
+        }
+
+        public Photo[] newArray(int size) {
+            return new Photo[size];
+        }
+    };
+
+    private Photo(Parcel in) {
+        id = in.readLong();
+        nbLike = in.readInt();
+        urlOriginal = in.readString();
+        urlThumbnail = in.readString();
+        urlUnique = in.readString();
+        time = (Date)in.readSerializable();
+        userId = in.readLong();
     }
     // KEEP METHODS END
 

@@ -238,6 +238,8 @@
     <string name="partage_photo_facebook_titre">Partage Facebook</string>
     <string name="partage_photo_facebook_text1">Photo prise lors de l\'évènement </string>
     <string name="partage_photo_facebook_text2"> #appmoment</string>
+    <string name="pb_get_photos">Problème lors de la régupération des photos</string>
+    <string name="loading_photos">Chargement des photos</string>
 
     <!-- SMS -->
     <string name="text_sms_1"> Je viens de t\'inviter à </string>

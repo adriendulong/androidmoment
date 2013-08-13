@@ -40,6 +40,7 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.AppMoment;
+import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.fragments.CreationStep1Fragment;
@@ -549,6 +550,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
                 try{
                     mCoverUri = selectedImageUri;
+                    if(BuildConfig.DEBUG) Log.d("URI", ""+mCoverUri);
                     /*ContentResolver cr = getContentResolver();
                     Bitmap bitmap = Images.decodeSampledBitmapFromURI(selectedImageUri, cr, 900, 900);
                     Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 80);*/

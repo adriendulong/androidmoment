@@ -12,6 +12,7 @@
               android:id="@+id/default_text_chat"
               android:gravity="center"
               android:layout_margin="20dp"/>
+    <!--
     <com.handmark.pulltorefresh.library.PullToRefreshScrollView
             android:id="@+id/scroll_chat"
             android:layout_width="fill_parent"
@@ -27,6 +28,7 @@
         </LinearLayout>
 
     </com.handmark.pulltorefresh.library.PullToRefreshScrollView>
+    -->
     <LinearLayout android:id="@+id/layout_post_message"
         android:layout_width="fill_parent"
         android:layout_height="55dp"
@@ -70,4 +72,11 @@
         </RelativeLayout>
         -->
      </LinearLayout>
+    <ListView android:layout_width="fill_parent"
+              android:layout_height="wrap_content"
+              android:id="@+id/chats_list"
+              android:layout_above="@id/layout_post_message"
+              android:scrollbars="none"
+              android:isScrollContainer = "true"
+              android:divider="@android:color/transparent"/>
 </RelativeLayout>

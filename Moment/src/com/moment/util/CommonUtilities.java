@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
+import android.util.Log;
 import android.view.View;
+import com.moment.BuildConfig;
 import org.apache.http.HttpResponse;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -19,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Locale;
 
 public final class CommonUtilities {
 
@@ -167,6 +170,13 @@ public final class CommonUtilities {
         }catch(JSONException e){
             return null;
         }
+
+    }
+
+    public static SimpleDateFormat getDateTimeFormat(String locale){
+        if(BuildConfig.DEBUG) Log.d("Language", "Actual Language :" + locale);
+        if(locale.equals("fr")) return new SimpleDateFormat("dd MMM yyyy HH'H'mm ", new Locale("fr"));
+        else return new SimpleDateFormat("dd MMM yyyy h:mm a", new Locale("en"));
 
     }
 }
