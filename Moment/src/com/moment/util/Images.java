@@ -26,31 +26,34 @@ import java.io.*;
 public class Images {
 
 	public static Bitmap getRoundedCornerBitmap(Bitmap bitmap) {
-	    Bitmap output; 
-	    if(bitmap.getWidth() > bitmap.getHeight()) output = Bitmap.createBitmap(bitmap.getHeight(),
-		         bitmap.getHeight(), Config.ARGB_8888);
-	    else output = Bitmap.createBitmap(bitmap.getWidth(),
-		         bitmap.getWidth(), Config.ARGB_8888);
-	    Canvas canvas = new Canvas(output);
+	    Bitmap output;
+        if(bitmap!=null){
+            if(bitmap.getWidth() > bitmap.getHeight()) output = Bitmap.createBitmap(bitmap.getHeight(),
+                     bitmap.getHeight(), Config.ARGB_8888);
+            else output = Bitmap.createBitmap(bitmap.getWidth(),
+                     bitmap.getWidth(), Config.ARGB_8888);
+            Canvas canvas = new Canvas(output);
 
-	    final int color = 0xff424242;
-	    final Paint paint = new Paint();
-	    final Rect rect;
-	    if(bitmap.getWidth() > bitmap.getHeight()) rect = new Rect(0, 0, bitmap.getHeight(), bitmap.getHeight());
-	    else rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getWidth());
-	    final RectF rectF = new RectF(rect);
-	    final float roundPx = bitmap.getHeight()/2;
+            final int color = 0xff424242;
+            final Paint paint = new Paint();
+            final Rect rect;
+            if(bitmap.getWidth() > bitmap.getHeight()) rect = new Rect(0, 0, bitmap.getHeight(), bitmap.getHeight());
+            else rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getWidth());
+            final RectF rectF = new RectF(rect);
+            final float roundPx = bitmap.getHeight()/2;
 
-	    paint.setAntiAlias(true);
-	    canvas.drawARGB(0, 0, 0, 0);
-	    paint.setColor(color);
+            paint.setAntiAlias(true);
+            canvas.drawARGB(0, 0, 0, 0);
+            paint.setColor(color);
 
-	    canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
-	    paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
-	    canvas.drawBitmap(bitmap, rect, rect, paint);
+            canvas.drawRoundRect(rectF, roundPx, roundPx, paint);
+            paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+            canvas.drawBitmap(bitmap, rect, rect, paint);
 
-	    return output;
-	    }
+            return output;
+        }
+        return bitmap;
+	 }
 
 	public static boolean saveImageToInternalStorage(Bitmap image, Context context, String filename, int compression) {
 		try {

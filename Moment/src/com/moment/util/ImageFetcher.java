@@ -45,6 +45,7 @@ public class ImageFetcher extends ImageResizer {
     private final Object mHttpDiskCacheLock = new Object();
     private static final int DISK_CACHE_INDEX = 0;
 
+
     /**
      * Initialize providing a target image width and height for the processing images.
      *
@@ -67,6 +68,7 @@ public class ImageFetcher extends ImageResizer {
         super(context, imageSize);
         init(context);
     }
+
 
     private void init(Context context) {
         checkConnection(context);
@@ -242,6 +244,11 @@ public class ImageFetcher extends ImageResizer {
                 fileInputStream.close();
             } catch (IOException e) {}
         }
+
+        if(BuildConfig.DEBUG){
+            Log.d(TAG, "finish process");
+        }
+
         return bitmap;
     }
 

@@ -111,15 +111,17 @@ public class PhotosFragment extends Fragment {
             Utils.logHeap();
         }
 
+        photos_uri = new ArrayList<String>();
 
         if (savedInstanceState == null) {
+            /*
             savedInstanceState = getActivity().getIntent().getExtras();
-            photos_uri = new ArrayList<String>();
+
 
             assert savedInstanceState != null;
             if (savedInstanceState.getStringArrayList("photos") != null) {
                 photos_uri = savedInstanceState.getStringArrayList("photos");
-            }
+            }*/
         }
 
         mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
@@ -289,7 +291,7 @@ public class PhotosFragment extends Fragment {
                 imageView.setImageResource(R.drawable.plus);
             } else {
                 try {
-                    if(photos.get(position-1).getUrlThumbnail()!=null) mImageFetcher.loadImage(photos.get(position-1).getUrlThumbnail(), imageView);
+                    if(photos.get(position-1).getUrlThumbnail()!=null) mImageFetcher.loadImage(photos.get(position-1).getUrlThumbnail(), imageView, false);
                     else imageView.setImageDrawable(getResources().getDrawable(R.drawable.picto_photo_vide));
                 } catch (OutOfMemoryError outOfMemoryError) {
                     outOfMemoryError.printStackTrace();
@@ -416,7 +418,7 @@ public class PhotosFragment extends Fragment {
 
                 float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                 //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
-                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (ImageView)gridView.getChildAt(position+1).findViewById(0));
+                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (ImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
 
                 if (photos_uri.size() == 0) {
                     createNotification("Upload", context.getString(R.string.termine), true);

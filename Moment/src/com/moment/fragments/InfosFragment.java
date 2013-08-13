@@ -435,7 +435,7 @@ public class InfosFragment extends Fragment {
 
 
         //Picasso.with(getActivity()).load(moment.getUrlCover()).into(image_cover);
-        mImageFetcherCover.loadImage(moment.getUrlCover(), image_cover);
+        mImageFetcherCover.loadImage(moment.getUrlCover(), image_cover, false);
 
 
         if (moment.getUser() != null) {
@@ -536,7 +536,7 @@ public class InfosFragment extends Fragment {
             }
 
             try {
-                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView);
+                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView, false);
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();
             }

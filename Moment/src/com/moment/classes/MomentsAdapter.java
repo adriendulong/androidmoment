@@ -44,26 +44,16 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
     int layoutResourceId;
     List<Moment> data = new ArrayList<Moment>();
     private final Transformation roundTrans = new RoundTransformation();
-
-    private static final String IMAGE_CACHE_DIR = "timeline";
     private ImageFetcher mImageFetcher;
-    private int mImageThumbSize;
 
-    public MomentsAdapter(Context context, int layoutResourceId, List<Moment> data) {
+
+
+    public MomentsAdapter(Context context, int layoutResourceId, List<Moment> data, ImageFetcher imagefetcher) {
         super(context, layoutResourceId, data);
         this.layoutResourceId = layoutResourceId;
         this.context = context;
         this.data = data;
-
-        mImageThumbSize = context.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
-
-        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(context, IMAGE_CACHE_DIR);
-
-        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
-
-        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
-        mImageFetcher = new ImageFetcher(context, mImageThumbSize);
-        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        this.mImageFetcher = imagefetcher;
     }
 
     @Override
@@ -98,8 +88,8 @@ public class MomentsAdapter extends ArrayAdapter<Moment> {
             holder = (MomentHolder)row.getTag();
         }
 
-        Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.picto_photo_vide).into(holder.coverRound);
-        //mImageFetcher.loadImage(moment.getUrlCover(), holder.coverRound);
+        //Picasso.with(context).load(moment.getUrlCover()).transform(roundTrans).placeholder(R.drawable.picto_photo_vide).into(holder.coverRound);
+        mImageFetcher.loadImage(moment.getUrlCover(), holder.coverRound, true);
         holder.nameMoment.setText(moment.getName());
         holder.imageRoundedButton.setTag(moment.getId());
         //holder.deleteMoment.setTag(moment.getId());

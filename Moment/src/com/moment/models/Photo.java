@@ -182,26 +182,6 @@ public class Photo {
         return bitmapOriginal;
     }
 
-    public void setBitmapOriginal(Bitmap bitmapOriginal) {
-        this.bitmapOriginal = bitmapOriginal;
-    }
-
-    public Bitmap getBitmapThumbnail() {
-        return bitmapThumbnail;
-    }
-
-    public void setBitmapThumbnail(Bitmap bitmapThumbnail) {
-        this.bitmapThumbnail = bitmapThumbnail;
-    }
-
-    public ImageView getGridImage() {
-        return gridImage;
-    }
-
-    public void setGridImage(ImageView gridImage) {
-        this.gridImage = gridImage;
-    }
-
     public void photoFromJSON(JSONObject photoObject){
         try {
             this.setId(photoObject.getLong("id"));

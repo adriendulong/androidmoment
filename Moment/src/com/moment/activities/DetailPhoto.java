@@ -9,6 +9,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.FragmentActivity;
 import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -33,7 +35,8 @@ import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
-import com.squareup.picasso.Picasso;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +48,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
-public class DetailPhoto extends Activity implements View.OnClickListener {
+public class DetailPhoto extends SherlockFragmentActivity implements View.OnClickListener {
 
     private final Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
@@ -73,6 +76,10 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
     private DetailPhoto _this = this;
     private EditText editText;
 
+    private static final String IMAGE_CACHE_DIR = "big";
+    private ImageFetcher mImageFetcher;
+    private int mImageThumbSize;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,6 +89,17 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_detail_photo);
         imageView = (ImageView) findViewById(R.id.photo_moment_detail);
 
+        mImageThumbSize = imageView.getWidth();
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(this, mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
+
 
         position = getIntent().getIntExtra("position", 0);
         momentID = getIntent().getLongExtra("momentID", 0);
@@ -89,7 +107,8 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
 
         photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
         pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
-        Picasso.with(this).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+        //Picasso.with(this).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+        mImageFetcher.loadImage(photo.getUrlOriginal(), imageView, false);
 
         final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
@@ -278,7 +297,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position++;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                mImageFetcher.loadImage(photo.getUrlOriginal(), imageView, false);
                 if (position == AppMoment.getInstance().user.getMomentById(momentID).getPhotos().size() - 1) {
                     v.setVisibility(View.INVISIBLE);
                 }
@@ -320,7 +339,7 @@ public class DetailPhoto extends Activity implements View.OnClickListener {
             public void onClick(View v) {
                 position--;
                 photo = AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position);
-                Picasso.with(getApplicationContext()).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
+                mImageFetcher.loadImage(photo.getUrlOriginal(), imageView, false);
                 if (position == 0) {
                     v.setVisibility(View.INVISIBLE);
                 }

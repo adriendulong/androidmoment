@@ -71,7 +71,7 @@ public abstract class ImageWorker {
      * @param data The URL of the image to download.
      * @param imageView The ImageView to bind the downloaded image to.
      */
-    public void loadImage(Object data, ImageView imageView) {
+    public void loadImage(Object data, ImageView imageView, boolean isRounded) {
         if (data == null) {
             return;
         }
@@ -86,7 +86,7 @@ public abstract class ImageWorker {
             // Bitmap found in memory cache
             imageView.setImageDrawable(value);
         } else if (cancelPotentialWork(data, imageView)) {
-            final BitmapWorkerTask task = new BitmapWorkerTask(imageView);
+            final BitmapWorkerTask task = new BitmapWorkerTask(imageView, isRounded);
             final AsyncDrawable asyncDrawable =
                     new AsyncDrawable(mResources, mLoadingBitmap, task);
             imageView.setImageDrawable(asyncDrawable);
@@ -233,9 +233,11 @@ public abstract class ImageWorker {
     private class BitmapWorkerTask extends AsyncTask<Object, Void, BitmapDrawable> {
         private Object data;
         private final WeakReference<ImageView> imageViewReference;
+        private boolean mIsRounded = false;
 
-        public BitmapWorkerTask(ImageView imageView) {
+        public BitmapWorkerTask(ImageView imageView, boolean isRounded) {
             imageViewReference = new WeakReference<ImageView>(imageView);
+            mIsRounded = isRounded;
         }
 
         /**
@@ -286,11 +288,14 @@ public abstract class ImageWorker {
             if (bitmap != null) {
                 if (Utils.hasHoneycomb()) {
                     // Running on Honeycomb or newer, so wrap in a standard BitmapDrawable
-                    drawable = new BitmapDrawable(mResources, bitmap);
+                    if(!mIsRounded) drawable = new BitmapDrawable(mResources, bitmap);
+                    else drawable = new BitmapDrawable(mResources, Images.getRoundedCornerBitmap(bitmap));
                 } else {
                     // Running on Gingerbread or older, so wrap in a RecyclingBitmapDrawable
                     // which will recycle automagically
-                    drawable = new RecyclingBitmapDrawable(mResources, bitmap);
+                    if(!mIsRounded) drawable = new RecyclingBitmapDrawable(mResources, bitmap);
+                    else drawable = new RecyclingBitmapDrawable(mResources, Images.getRoundedCornerBitmap(bitmap));
+
                 }
 
                 if (mImageCache != null) {

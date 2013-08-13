@@ -36,6 +36,7 @@ public class ImageResizer extends ImageWorker {
     private static final String TAG = "ImageResizer";
     protected int mImageWidth;
     protected int mImageHeight;
+    protected boolean isRounded;
 
     /**
      * Initialize providing a single target image size (used for both width and height);
@@ -47,6 +48,20 @@ public class ImageResizer extends ImageWorker {
     public ImageResizer(Context context, int imageWidth, int imageHeight) {
         super(context);
         setImageSize(imageWidth, imageHeight);
+    }
+
+    /**
+     * Initialize providing a single target image size (used for both width and height);
+     *
+     * @param context
+     * @param imageWidth
+     * @param imageHeight
+     */
+
+    public ImageResizer(Context context, int imageSize, boolean isRoundedImage) {
+        super(context);
+        setImageSize(imageSize);
+        isRounded = true;
     }
 
     /**

@@ -34,6 +34,7 @@ import com.moment.util.Utils;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingActivity;
 
+import com.slidingmenu.lib.app.SlidingFragmentActivity;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class TimelineActivity extends SlidingActivity {
+public class TimelineActivity extends SlidingFragmentActivity {
 
     private Intent intentMoment;
     private LayoutInflater inflater;
@@ -65,6 +66,10 @@ public class TimelineActivity extends SlidingActivity {
     private ImageView todayBtn;
     private Bitmap todayBitmap;
 
+    private static final String IMAGE_CACHE_DIR = "timeline";
+    private ImageFetcher mImageFetcher;
+    private int mImageThumbSize;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +88,18 @@ public class TimelineActivity extends SlidingActivity {
         sm.setBehindOffset(250);
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
+
+        //Fetcher images
+        mImageThumbSize = this.getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+
+        ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(this, IMAGE_CACHE_DIR);
+
+        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+
+        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
+        mImageFetcher = new ImageFetcher(this, mImageThumbSize);
+        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 
 
         //Action bar
@@ -107,7 +124,7 @@ public class TimelineActivity extends SlidingActivity {
         moments = new ArrayList<Moment>();
         momentsList = (ListView) findViewById(R.id.list_moments);
         momentsList.setSelector(android.R.color.transparent);
-        adapter = new MomentsAdapter(this, R.layout.timeline_moment, moments);
+        adapter = new MomentsAdapter(this, R.layout.timeline_moment, moments, mImageFetcher);
         momentsList.setAdapter(adapter);
         momentsList.setOnScrollListener(new TImelineScrollListener());
 
