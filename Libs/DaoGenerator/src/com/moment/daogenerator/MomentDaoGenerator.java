@@ -88,6 +88,7 @@ public class MomentDaoGenerator {
 
         Entity photo = schema.addEntity("Photo");
         photo.setTableName("photos");
+        photo.implementsInterface("Parcelable");
         photo.addIdProperty().index();
 
         photo.addIntProperty("nbLike");
