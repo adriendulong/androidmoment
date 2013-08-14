@@ -447,15 +447,11 @@ public class Moment {
                 {
                     this.user.setId(owner.getLong("id"));
                     this.setOwnerId(owner.getLong("id"));
+                    AppMoment.getInstance().userDao.insertOrReplace(this.user);
                 }
                 if(owner.has("facebookId")) this.user.setFacebookId(owner.getLong("facebookId"));
 
-                if(AppMoment.getInstance().momentDao.load(this.id) == null)
-                {
-                    AppMoment.getInstance().momentDao.insert(this);
-                } else {
-                    AppMoment.getInstance().momentDao.update(this);
-                }
+                AppMoment.getInstance().momentDao.insertOrReplace(this);
             }
         }catch (JSONException e){
             e.printStackTrace();
