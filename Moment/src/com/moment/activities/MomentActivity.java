@@ -89,9 +89,9 @@ public class MomentActivity extends Activity {
         if (MomentApi.myCookieStore.getCookies().size() > 0) {
 
             SharedPreferences sharedPreferences = getSharedPreferences(AppMoment.PREFS_NAME, MODE_PRIVATE);
+            Long savedUserID = sharedPreferences.getLong("userID", -1);
 
-            if (!AppMoment.getInstance().userDao.loadAll().isEmpty()) {
-                Long savedUserID = sharedPreferences.getLong("userID", -1);
+            if (AppMoment.getInstance().userDao.load(savedUserID) != null) {
                 AppMoment.getInstance().user = AppMoment.getInstance().userDao.load(savedUserID);
                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                 startActivity(intent);
@@ -118,59 +118,52 @@ public class MomentActivity extends Activity {
                                 AppMoment.getInstance().user.setPictureProfileUrl(profile_picture_url);
                             }
 
-                            if (AppMoment.getInstance().userDao.load(id) == null) {
-                                AppMoment.getInstance().userDao.insert(AppMoment.getInstance().user);
-                                if (!AppMoment.getInstance().momentDao.loadAll().isEmpty())
-                                {
-                                    AppMoment.getInstance().user.setMoments(AppMoment.getInstance().momentDao.loadAll());
-
-                                    if(AppMoment.getInstance().user != null)
-                                    {
-                                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
-                                    }
-
-                                }
+                            AppMoment.getInstance().userDao.insertOrReplace(AppMoment.getInstance().user);
+                            if (!AppMoment.getInstance().momentDao.loadAll().isEmpty())
+                            {
+                                AppMoment.getInstance().user.setMoments(AppMoment.getInstance().momentDao.loadAll());
+                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                             }
 
-                        Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
-                        startActivity(intent);
+                            Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
+                            startActivity(intent);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }
-            });
-        }
-    }
-
-
-    context = getApplicationContext();
-    regid = getRegistrationId(context);
-    regid = "";
-
-    if (regid.length() == 0) {
-        registerBackground();
-    }
-    Log.v(TAG, "REGID : " + regid);
-    gcm = GoogleCloudMessaging.getInstance(this);
-
-
-    EditText password = (EditText) findViewById(R.id.password_login);
-
-    password.setOnEditorActionListener(new OnEditorActionListener() {
-        @Override
-        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_GO) {
-
-                hideKeyboard();
-                connectionserveur();
-
-                return true;
+                });
             }
-            return false;
         }
-    });
-}
+
+
+        context = getApplicationContext();
+        regid = getRegistrationId(context);
+        regid = "";
+
+        if (regid.length() == 0) {
+            registerBackground();
+        }
+        Log.v(TAG, "REGID : " + regid);
+        gcm = GoogleCloudMessaging.getInstance(this);
+
+
+        EditText password = (EditText) findViewById(R.id.password_login);
+
+        password.setOnEditorActionListener(new OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+
+                    hideKeyboard();
+                    connectionserveur();
+
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -185,7 +185,7 @@ public class Notification {
             }
 
             this.user = AppMoment.getInstance().user;
-            this.userId = user.getId();
+            this.userId = AppMoment.getInstance().user.getId();
 
         }catch (JSONException e) {
             e.printStackTrace();
