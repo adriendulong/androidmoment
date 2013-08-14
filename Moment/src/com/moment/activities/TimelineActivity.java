@@ -340,7 +340,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
     public void getNotifications() {
 
-
         MomentApi.get("notifications", null, new JsonHttpResponseHandler() {
 
             @Override
@@ -362,9 +361,16 @@ public class TimelineActivity extends SlidingFragmentActivity {
                             notifications.add(notif);
                         }
 
+                        AppMoment.getInstance().notificationDao.insertOrReplace(notif);
+
                     }
 
                     AppMoment.getInstance().user.setNotifications(notifications);
+
+                    if(AppMoment.getInstance().user != null)
+                    {
+                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                    }
 
                 } catch (JSONException e) {
                     e.printStackTrace();

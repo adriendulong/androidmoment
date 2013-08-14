@@ -123,7 +123,12 @@ public class MomentActivity extends Activity {
                                 if (!AppMoment.getInstance().momentDao.loadAll().isEmpty())
                                 {
                                     AppMoment.getInstance().user.setMoments(AppMoment.getInstance().momentDao.loadAll());
-                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+
+                                    if(AppMoment.getInstance().user != null)
+                                    {
+                                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                    }
+
                                 }
                             }
 

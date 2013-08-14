@@ -126,12 +126,19 @@ public class NotificationsActivity extends SherlockActivity {
                                 Notification notif = new Notification();
                                 notif.setFromJson(notifsObject.getJSONObject(i));
                                 invitations.add(notif);
+
+                                AppMoment.getInstance().notificationDao.insertOrReplace(notif);
                             }
 
                             AppMoment.getInstance().user.setNotifications(invitations);
 
-                            Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
 
+                            if(AppMoment.getInstance().user != null)
+                            {
+                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                            }
+
+                            Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
 
                             adapterInvits.notifyDataSetChanged();
                         } catch (JSONException e) {

@@ -31,6 +31,7 @@ import com.moment.R;
 import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
 import com.moment.activities.MomentInfosActivity;
+import com.moment.models.Chat;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.moment.util.Images;
@@ -40,7 +41,6 @@ import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
 import com.moment.util.Utils;
-import com.squareup.picasso.Picasso;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -473,8 +473,6 @@ public class PhotosFragment extends Fragment {
         User user = AppMoment.getInstance().user;
         Moment moment = user.getMomentById(momentID);
 
-
-
         if (photos == null || photos.isEmpty()) {
             photos = moment.getPhotos();
 
@@ -497,6 +495,8 @@ public class PhotosFragment extends Fragment {
                                 Photo photo = new Photo();
                                 photo.photoFromJSON(jsonPhotos.getJSONObject(i));
                                 AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
+
+                                AppMoment.getInstance().photoDao.insertOrReplace(photo);
                             }
 
                             initViewPhotos();
@@ -522,6 +522,7 @@ public class PhotosFragment extends Fragment {
                     }
                 });
             } else {
+
                 initViewPhotos();
                 imageAdapter.notifyDataSetChanged();
             }

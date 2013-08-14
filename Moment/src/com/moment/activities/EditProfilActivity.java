@@ -89,7 +89,12 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
                                 MomentApi.post("user", params, new JsonHttpResponseHandler() {
                                     @Override
                                     public void onSuccess(JSONObject response) {
-                                        AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+
+                                        if(AppMoment.getInstance().user != null)
+                                        {
+                                            AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                        }
+
                                         progressDialog.cancel();
                                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(EditProfilActivity.this);
                                         alertDialogBuilder
@@ -251,8 +256,10 @@ public class EditProfilActivity extends SherlockActivity implements View.OnClick
         MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
             @Override
             public void onSuccess(JSONObject response) {
-
-                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                if(AppMoment.getInstance().user != null)
+                {
+                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                }
                 progressDialog.cancel();
             }
 

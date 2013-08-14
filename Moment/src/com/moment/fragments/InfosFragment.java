@@ -47,7 +47,6 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
-import com.moment.activities.MomentInfosActivity.Exchanger;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
 import com.moment.classes.RoundTransformation;
@@ -113,7 +112,7 @@ public class InfosFragment extends Fragment {
         GeoPoint p = new GeoPoint((int) latitude, (int) longitude);
 
 
-        List<Overlay> mapOverlays = Exchanger.mMapView.getOverlays();
+        List<Overlay> mapOverlays = MomentInfosActivity.Exchanger.mMapView.getOverlays();
         Drawable drawable = context.getResources().getDrawable(R.drawable.picto_o);
         PositionOverlay itemizedoverlay = new PositionOverlay(drawable, context);
 

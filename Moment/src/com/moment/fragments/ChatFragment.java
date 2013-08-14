@@ -354,18 +354,17 @@ public class ChatFragment extends Fragment {
                                     AppMoment.getInstance().userDao.insert(user);
                             }
 
-                            /*
-                            if (tempChat.getUser().getId().equals(AppMoment.getInstance().user.getId())) {
-                                messageRight(tempChat);
-                            } else {
-                                messageLeft(tempChat);
-                            }
-                            */
+                            AppMoment.getInstance().chatDao.insertOrReplace(tempChat);
 
                             tempChats.add(tempChat);
                         }
 
                         AppMoment.getInstance().user.getMomentById(momentId).getChats().addAll(tempChats);
+
+                        if(AppMoment.getInstance().user != null)
+                        {
+                            AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                        }
 
                         chats.addAll(tempChats);
                         adapter.notifyDataSetChanged();

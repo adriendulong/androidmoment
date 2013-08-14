@@ -1,5 +1,6 @@
 package com.moment.models;
 
+import com.moment.AppMoment;
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -180,7 +181,11 @@ public class Notification {
                 Moment moment = new Moment();
                 moment.setMomentFromJson(notifJson.getJSONObject("moment"));
                 this.moment = moment;
+                this.momentId = moment.getId();
             }
+
+            this.user = AppMoment.getInstance().user;
+            this.userId = user.getId();
 
         }catch (JSONException e) {
             e.printStackTrace();

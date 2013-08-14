@@ -317,7 +317,10 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                             public void onSuccess(JSONObject response) {
                                 AppMoment.getInstance().user.setUserFromJson(response);
 
-                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                if(AppMoment.getInstance().user != null)
+                                {
+                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                }
 
                                 dialog.dismiss();
                                 Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);

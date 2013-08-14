@@ -24,6 +24,7 @@ import com.google.analytics.tracking.android.Tracker;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
+
 import com.moment.activities.InvitationActivity;
 import com.moment.util.CommonUtilities;
 import com.moment.classes.InvitationsAdapter;
