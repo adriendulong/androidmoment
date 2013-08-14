@@ -89,12 +89,16 @@ public class CreationStep1Fragment extends Fragment {
     }
 
     public DateTime getStartDate() {
-        org.joda.time.DateTime dt = CommonUtilities.dateFormatReverse.parseDateTime(dateDebut.getText().toString() + " " + heureDebut.getText().toString());
+        org.joda.time.DateTime dt;
+        if(heureDebut.getText().toString().split(":").length>1) dt = CommonUtilities.dateFormatReverse.parseDateTime(dateDebut.getText().toString() + " " + heureDebut.getText().toString());
+        else dt = CommonUtilities.dateFormatReverse.parseDateTime(dateDebut.getText().toString() + " 00:00");
         return dt;
     }
 
     public DateTime getEndDate() {
-        org.joda.time.DateTime dt = CommonUtilities.dateFormatReverse.parseDateTime(dateFin.getText().toString() + " " + heureFin.getText().toString());
+        org.joda.time.DateTime dt;
+        if(heureFin.getText().toString().split(":").length>1) dt = CommonUtilities.dateFormatReverse.parseDateTime(dateFin.getText().toString() + " " + heureFin.getText().toString());
+        else dt = CommonUtilities.dateFormatReverse.parseDateTime(dateFin.getText().toString() + " 00:00");
         return dt;
     }
 
@@ -104,5 +108,10 @@ public class CreationStep1Fragment extends Fragment {
         mGaTracker.sendView("/CreationStep1Fragment");
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("STEP 1", "DESTROY");
+    }
 
 }

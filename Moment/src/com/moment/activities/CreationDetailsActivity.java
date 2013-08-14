@@ -551,13 +551,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                 try{
                     mCoverUri = selectedImageUri;
                     if(BuildConfig.DEBUG) Log.d("URI", ""+mCoverUri);
-                    /*ContentResolver cr = getContentResolver();
-                    Bitmap bitmap = Images.decodeSampledBitmapFromURI(selectedImageUri, cr, 900, 900);
-                    Images.saveImageToInternalStorage(bitmap, getApplicationContext(), "cover_picture", 80);*/
 
-
-                    //AppMoment.getInstance().addBitmapToMemoryCache("cover_moment_"+this.moment.getName().toLowerCase(), bitmap);
-                    //this.moment.setKeyBitmap("cover_moment_"+this.moment.getName().toLowerCase());
 
                     ImageView moment_image = (ImageView)findViewById(R.id.creation_moment_image);
                     //moment_image.setImageBitmap(bitmap);

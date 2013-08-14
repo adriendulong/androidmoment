@@ -10,14 +10,12 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
-import android.widget.BaseAdapter;
-import android.widget.CheckBox;
-import android.widget.GridView;
-import android.widget.ImageView;
+import android.widget.*;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -27,6 +25,7 @@ import com.actionbarsherlock.view.MenuItem;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.moment.BuildConfig;
 import com.moment.R;
+import com.moment.classes.RecyclingImageView;
 import com.moment.util.*;
 import com.squareup.picasso.Picasso;
 
@@ -110,7 +109,7 @@ public class CustomGallery extends SherlockFragmentActivity {
         }
 
         GridView imagegrid = (GridView) findViewById(R.id.PhoneImageGrid);
-        imageAdapter = new ImageAdapter();
+        imageAdapter = new ImageAdapter(this);
         imagegrid.setAdapter(imageAdapter);
 
 
@@ -168,8 +167,12 @@ public class CustomGallery extends SherlockFragmentActivity {
     public class ImageAdapter extends BaseAdapter {
 
         private LayoutInflater mInflater;
+        private Context mContext;
+        final float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
+        final float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
 
-        public ImageAdapter() {
+        public ImageAdapter(Context context) {
+            mContext = context;
             mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -187,7 +190,7 @@ public class CustomGallery extends SherlockFragmentActivity {
 
         public View getView(int position, View convertView, ViewGroup parent) {
             final ViewHolder holder;
-
+            RelativeLayout layout;
 
             final AlphaAnimation fadeIn = new AlphaAnimation(0.5f, 1.0f);
             fadeIn.setDuration(325);
@@ -199,11 +202,32 @@ public class CustomGallery extends SherlockFragmentActivity {
 
             if (convertView == null) {
                 holder = new ViewHolder();
-                convertView = mInflater.inflate(
-                        R.layout.custom_gallery_item, null);
-                holder.imageview = (ImageView) convertView.findViewById(R.id.thumbImage);
-                holder.checkbox = (CheckBox) convertView.findViewById(R.id.itemCheckBox);
+
+                layout = new RelativeLayout(mContext);
+                layout.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
+                layout.setBackgroundColor(getResources().getColor(R.color.white));
+                layout.setGravity(Gravity.CENTER);
+
+                holder.imageview = new RecyclingImageView(mContext);
+                holder.imageview.setId(0);
+                holder.imageview.setLayoutParams(new GridView.LayoutParams((int) pxBitmap, (int) pxBitmap));
+                holder.imageview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+                RelativeLayout.LayoutParams lp2 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                lp2.addRule(RelativeLayout.CENTER_IN_PARENT, 1);
+
+                holder.checkbox = new CheckBox((mContext));
+                holder.checkbox.setLayoutParams(new GridView.LayoutParams(GridLayout.LayoutParams.WRAP_CONTENT, GridLayout.LayoutParams.WRAP_CONTENT));
+                holder.checkbox.setButtonDrawable(getResources().getDrawable(R.drawable.checkbox));
+                RelativeLayout.LayoutParams lp1 = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+                lp1.addRule(RelativeLayout.ALIGN_RIGHT, holder.imageview.getId());
+                lp1.addRule(RelativeLayout.ALIGN_TOP, holder.imageview.getId());
+                holder.checkbox.setLayoutParams(lp1);
+
+                layout.addView(holder.imageview);
+                layout.addView(holder.checkbox);
+
                 holder.checkbox.setEnabled(false);
+                convertView = layout;
                 convertView.setTag(holder);
             } else {
                 holder = (ViewHolder) convertView.getTag();
@@ -226,23 +250,20 @@ public class CustomGallery extends SherlockFragmentActivity {
                     }
                 }
             });
-            /*
-            holder.imageview.setImageDrawable(getResources().getDrawable(R.drawable.picto_photo_vide));
-            BitmapWorkerTask task = new BitmapWorkerTask(holder.imageview, getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size), getContentResolver(), true);
-            task.execute(thumbnailsUri[holder.imageview.getId()]);
-            //Picasso.with(CustomGallery.this).load("file://"+thumbnailsUri[holder.imageview.getId()]).resize(mImageThumbSize,mImageThumbSize).centerCrop().placeholder(getResources().getDrawable(R.drawable.picto_photo_vide)).into(holder.imageview);*/
             mImageFetcher.loadImage(thumbnailsUri[holder.imageview.getId()], holder.imageview, false);
 
             holder.checkbox.setChecked(thumbnailsselection[position]);
             if( thumbnailsselection[holder.imageview.getId()]==true) holder.imageview.startAnimation(fadeOut);
             else holder.imageview.startAnimation(fadeIn);
             holder.id = position;
+
+
             return convertView;
         }
     }
 
     class ViewHolder {
-        ImageView imageview;
+        RecyclingImageView imageview;
         CheckBox checkbox;
         int id;
     }

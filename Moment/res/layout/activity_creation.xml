@@ -3,8 +3,8 @@
               android:layout_height="fill_parent"
               android:paddingLeft="0dp"
               android:paddingRight="0dp"
-              android:background="@drawable/background"
               android:orientation="vertical"
+              android:background="@color/gris_chat"
               android:weightSum="19">
     <RelativeLayout
         android:layout_width="fill_parent"

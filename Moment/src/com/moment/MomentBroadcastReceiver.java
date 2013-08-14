@@ -6,6 +6,9 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -118,6 +121,11 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
                             .setAutoCancel(true);
 
             mBuilder.setContentIntent(contentIntent);
+            mBuilder.setLights(Color.RED, 500, 500);
+            long[] pattern = {500,500,500,500,500,500,500,500,500};
+            mBuilder.setVibrate(pattern);
+            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            mBuilder.setSound(alarmSound);
             mNotificationManager.notify(Calendar.getInstance().get(Calendar.MILLISECOND), mBuilder.build());
 
 

@@ -15,6 +15,7 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -292,19 +293,25 @@ public class PhotosFragment extends Fragment {
         public View getView(int position, View convertView, ViewGroup parent) {
 
             ImageView imageView;
+            LinearLayout layout;
             float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 100, getResources().getDisplayMetrics());
             float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
 
             if (convertView == null) {
+                layout = new LinearLayout(context);
+                layout.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
+                layout.setBackgroundColor(getResources().getColor(R.color.white));
+                layout.setGravity(Gravity.CENTER);
+
                 imageView = new RecyclingImageView(context);
                 imageView.setId(0);
-                imageView.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
+                imageView.setLayoutParams(new GridView.LayoutParams((int) pxBitmap, (int) pxBitmap));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setCropToPadding(true);
-                imageView.setPadding(10, 10, 10, 10);
-                imageView.setBackgroundColor(getResources().getColor(R.color.white));
+
+                layout.addView(imageView);
             } else {
-                imageView = (ImageView) convertView;
+                layout = (LinearLayout)convertView;
+                imageView = (RecyclingImageView) convertView.findViewById(0);
             }
 
             if (position == 0) {
@@ -317,7 +324,7 @@ public class PhotosFragment extends Fragment {
                     outOfMemoryError.printStackTrace();
                 }
             }
-            return imageView;
+            return layout;
         }
     }
 
@@ -438,7 +445,7 @@ public class PhotosFragment extends Fragment {
 
                 float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
                 //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
-                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (ImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
+                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (RecyclingImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
 
                 if (photos_uri.size() == 0) {
                     createNotification("Upload", context.getString(R.string.termine), true);
@@ -502,7 +509,7 @@ public class PhotosFragment extends Fragment {
                             initViewPhotos();
                             imageAdapter.notifyDataSetChanged();
                             //We update it in the infos view also
-                            ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
+                            if(getActivity()!=null) ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
 
                             if (BuildConfig.DEBUG) {
                                 Utils.logHeap();
