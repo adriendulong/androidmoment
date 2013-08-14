@@ -392,6 +392,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                                     JSONObject friend = d.getJSONObject(i);
 
                                     User user = new User();
+                                    user.setIsSelect(false);
                                     user.setFirstName(friend.getString("name"));
                                     user.setFacebookId(friend.getLong("id"));
                                     user.setFbPhotoUrl("http://graph.facebook.com/" + user.getFacebookId() + "/picture");

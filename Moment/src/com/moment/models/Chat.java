@@ -1,5 +1,6 @@
 package com.moment.models;
 
+import com.moment.AppMoment;
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -197,6 +198,10 @@ public class Chat implements Parcelable {
             User user = new User();
             user.setUserFromJson(chatObject.getJSONObject("user"));
             this.setUser(user);
+
+            AppMoment.getInstance().userDao.insertOrReplace(user);
+            AppMoment.getInstance().chatDao.insertOrReplace(this);
+
         } catch (JSONException e) {
             e.printStackTrace();
         }

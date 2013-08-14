@@ -182,10 +182,17 @@ public class Notification {
                 moment.setMomentFromJson(notifJson.getJSONObject("moment"));
                 this.moment = moment;
                 this.momentId = moment.getId();
+
+                AppMoment.getInstance().momentDao.insertOrReplace(moment);
             }
 
             this.user = AppMoment.getInstance().user;
+
+            AppMoment.getInstance().userDao.insertOrReplace(user);
+
             this.userId = AppMoment.getInstance().user.getId();
+
+            AppMoment.getInstance().notificationDao.insertOrReplace(this);
 
         }catch (JSONException e) {
             e.printStackTrace();

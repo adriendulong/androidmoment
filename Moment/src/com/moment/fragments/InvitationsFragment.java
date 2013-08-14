@@ -109,6 +109,7 @@ public class InvitationsFragment extends Fragment {
 
                                 for (int i = 0; i < favorisUsers.length(); i++) {
                                     User tempUser = new User();
+                                    tempUser.setIsSelect(false);
                                     tempUser.setUserFromJson(favorisUsers.getJSONObject(i));
                                     users.add(tempUser);
                                 }
@@ -178,7 +179,7 @@ public class InvitationsFragment extends Fragment {
             while (cur.moveToNext()) {
 
                 User userCur = new User();
-
+                userCur.setIsSelect(false);
                 String id = cur.getString(cur.getColumnIndex(Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(Contacts.DISPLAY_NAME));
 
