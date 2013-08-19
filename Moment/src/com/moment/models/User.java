@@ -323,7 +323,7 @@ public class User implements Parcelable {
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.delete(this);
     }
 
@@ -331,7 +331,7 @@ public class User implements Parcelable {
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.update(this);
     }
 
@@ -339,7 +339,7 @@ public class User implements Parcelable {
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }    
+        }
         myDao.refresh(this);
     }
 
@@ -370,14 +370,10 @@ public class User implements Parcelable {
     }
 
     public Moment getMomentById(Long id){
-        if(AppMoment.getInstance().momentDao.load(id) != null)
-        {
-            return AppMoment.getInstance().momentDao.load(id);
-        } else {
-            for(Moment m : moments){
-                if(m.getId().equals(id)){
-                    return m;
-                }
+        List<Moment> moments = this.getMoments();
+        for(Moment m : moments){
+            if(m.getId().equals(id)){
+                return m;
             }
         }
         return null;

@@ -1,7 +1,10 @@
 package com.moment.fragments;
 
 import android.annotation.TargetApi;
-import android.app.*;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -19,8 +22,14 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
@@ -32,15 +41,14 @@ import com.moment.R;
 import com.moment.activities.CustomGallery;
 import com.moment.activities.DetailPhoto;
 import com.moment.activities.MomentInfosActivity;
-import com.moment.models.Chat;
-import com.moment.util.ImageCache;
-import com.moment.util.ImageFetcher;
-import com.moment.util.Images;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RecyclingImageView;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.models.User;
+import com.moment.util.ImageCache;
+import com.moment.util.ImageFetcher;
+import com.moment.util.Images;
 import com.moment.util.Utils;
 
 import org.apache.http.HttpResponse;
