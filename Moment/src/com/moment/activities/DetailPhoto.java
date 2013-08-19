@@ -135,7 +135,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         });
 
         prenom.setText(photo.getUser().getFirstName().toUpperCase());
-        nom.setText(" " + photo.getUser().getLastName().toUpperCase());
+        nom.setText(" " + photo.getUser().getLastName().toUpperCase().substring(0,1));
 
         if (photo.getTime() != null) {
             Calendar cal = Calendar.getInstance();
@@ -497,6 +497,11 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this);
+    }
+
+
+    public void fullScreen(View view){
+
     }
 
 }

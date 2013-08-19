@@ -33,6 +33,9 @@
                       android:layout_width="wrap_content"
                       android:layout_height="wrap_content"
                       android:layout_alignParentLeft="true"
+                      android:singleLine="true"
+                      android:ellipsize="end"
+                      android:maxWidth="200dp"
                       android:textColor="@color/gris_texte"/>
             <com.moment.customfont.MomentTextView android:id="@+id/date_moment_notif"
                       android:text="test"

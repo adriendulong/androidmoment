@@ -325,6 +325,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                                 dialog.dismiss();
                                 Intent intent = new Intent(getApplication(), InscriptionActivityStep2.class);
                                 startActivity(intent);
+                                finish();
                             }
 
                             @Override
@@ -450,6 +451,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     public void retour(View view) {
         Intent intent = new Intent(this, MomentActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void openImageIntent() {

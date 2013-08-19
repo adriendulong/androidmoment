@@ -94,6 +94,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
 
                 Intent intent = new Intent(getApplication(), TimelineActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 editPhoneAlert();
             }
@@ -120,6 +121,7 @@ public class InscriptionActivityStep2 extends SherlockActivity {
                             setResult(RESULT_OK, returnIntent);
                             Intent intent = new Intent(getApplication(), TimelineActivity.class);
                             startActivity(intent);
+                            finish();
                         }
                     });
 

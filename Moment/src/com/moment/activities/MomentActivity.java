@@ -95,6 +95,7 @@ public class MomentActivity extends Activity {
                 AppMoment.getInstance().user = AppMoment.getInstance().userDao.load(savedUserID);
                 Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                 startActivity(intent);
+                finish();
             } else {
                 AppMoment.getInstance().user = new User();
                 MomentApi.get("user", null, new JsonHttpResponseHandler() {
@@ -128,6 +129,7 @@ public class MomentActivity extends Activity {
 
                             Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                             startActivity(intent);
+                            finish();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -267,6 +269,7 @@ public class MomentActivity extends Activity {
     public void inscription(View view) {
         Intent intent = new Intent(this, InscriptionActivity.class);
         startActivity(intent);
+        finish();
     }
 
     private void hideKeyboard() {
@@ -335,6 +338,7 @@ public class MomentActivity extends Activity {
 
                                     Intent intent = new Intent(MomentActivity.this, TimelineActivity.class);
                                     startActivity(intent);
+                                    finish();
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();

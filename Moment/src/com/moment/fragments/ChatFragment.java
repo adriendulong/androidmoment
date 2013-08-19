@@ -73,6 +73,7 @@ public class ChatFragment extends Fragment {
         super.onCreateView(inflater, container, savedInstanceState);
         view = inflater.inflate(R.layout.fragment_chat, container, false);
         mChatsList = (ListView)view.findViewById(R.id.chats_list);
+        mChatsList.setSelector(android.R.color.transparent);
         defaultTextChat = (TextView) view.findViewById(R.id.default_text_chat);
 
 
