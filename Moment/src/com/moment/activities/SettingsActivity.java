@@ -179,8 +179,16 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
                 Log.d("DISCONNECT", "Disonnected");
 
                 MomentApi.myCookieStore.clear();
+
+                /** Say all activity that we are logging out**/
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("com.package.ACTION_LOGOUT");
+                sendBroadcast(broadcastIntent);
+
+
                 Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
                 startActivity(startIntent);
+                finish();
 
             }
 
@@ -190,8 +198,15 @@ public class SettingsActivity extends SherlockActivity implements View.OnClickLi
 
 
                 MomentApi.myCookieStore.clear();
+
+                /** Say all activity that we are logging out**/
+                Intent broadcastIntent = new Intent();
+                broadcastIntent.setAction("com.package.ACTION_LOGOUT");
+                sendBroadcast(broadcastIntent);
+
                 Intent startIntent = new Intent(SettingsActivity.this, MomentActivity.class);
                 startActivity(startIntent);
+                finish();
 
             }
 

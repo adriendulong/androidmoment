@@ -74,10 +74,10 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
         holder.bg.setBackgroundColor(context.getResources().getColor(R.color.gris_chat));
         
         if(user.getPictureProfileUrl()!=null){
-            Picasso.with(context).load(user.getPictureProfileUrl()).transform(roundTrans).resize(100,100).into(holder.photo_thumbnail);
+            Picasso.with(context).load(user.getPictureProfileUrl()).transform(roundTrans).resize(100,100).placeholder(R.drawable.picto_photo_vide).into(holder.photo_thumbnail);
         }
         else if(user.getFbPhotoUrl()!=null){
-            Picasso.with(context).load(user.getFbPhotoUrl()).transform(roundTrans).resize(100,100).into(holder.photo_thumbnail);
+            Picasso.with(context).load(user.getFbPhotoUrl()).transform(roundTrans).resize(100,100).placeholder(R.drawable.picto_photo_vide).into(holder.photo_thumbnail);
         }
         else{
         	holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);

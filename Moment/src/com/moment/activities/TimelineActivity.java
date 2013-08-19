@@ -1,9 +1,7 @@
 package com.moment.activities;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -83,14 +81,25 @@ public class TimelineActivity extends SlidingFragmentActivity {
             Utils.logHeap();
         }
 
+        //Broadcast Listener (when logout remove from history)
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.package.ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
+
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
         sm = getSlidingMenu();
-        sm.setBehindOffset(250);
+        sm.setBehindOffset(getMarginRightSlider());
         sm.setShadowDrawable(R.drawable.shadow);
         sm.setShadowWidth(10);
 
@@ -606,6 +615,28 @@ public class TimelineActivity extends SlidingFragmentActivity {
         public void onScrollStateChanged(AbsListView view, int scrollState) {
         }
 
+    }
+
+    /**
+     * Calculate the margin right of the slide in order to have at least 200 dp width
+     * @return width
+     */
+
+    public int getMarginRightSlider(){
+        int offset;
+        float density = getApplicationContext().getResources().getDisplayMetrics().density;
+        Display display = getWindowManager().getDefaultDisplay();
+        int widthScreen = display.getWidth();
+        int dpWidth = (int) (widthScreen/density);
+
+        if(dpWidth>250){
+            offset = dpWidth - 250;
+        }
+        else offset = 0;
+
+
+
+        return offset;
     }
 
 

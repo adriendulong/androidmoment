@@ -114,6 +114,17 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             Utils.logHeap();
         }
 
+        //Broadcast Listener (when logout remove from history)
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("com.package.ACTION_LOGOUT");
+        registerReceiver(new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                finish();
+            }
+        }, intentFilter);
+
 
         String precedente = getIntent().getStringExtra("precedente");
 
@@ -482,6 +493,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                     if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
                         moment = AppMoment.getInstance().user.getMomentById(momentID);
+                        mNbPhotos = moment.getPhotos().size();
                         if (pager.getCurrentItem() == 2) {
                             ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
                             ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
@@ -503,6 +515,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                         if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
                             moment = AppMoment.getInstance().user.getMomentById(momentID);
+                            mNbPhotos = moment.getPhotos().size();
                             if (pager.getCurrentItem() == 2) {
                                 ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
                                 ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
@@ -522,6 +535,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         else{
             if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
                 moment = AppMoment.getInstance().user.getMomentById(momentID);
+                mNbPhotos = moment.getPhotos().size();
             }
         }
     }
