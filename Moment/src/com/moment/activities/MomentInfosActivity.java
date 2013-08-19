@@ -59,11 +59,13 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     static final int LIST_INVIT = 4;
 
 
+
     private int CHAT_PUSH = 3;
     private int PHOTO_PUSH = 2;
 
 
     private int type_id, moment_id;
+    public static int mNbPhotos=1;
 
     LayoutInflater inflater;
     Boolean stateAcceptVolet = false;
@@ -85,6 +87,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     private Moment moment;
 
+    private boolean isSuccess = false;
 
     private ProgressDialog mProgressDialog;
 
@@ -173,11 +176,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
         if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
+        getMoment();
+        /*
         if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
             moment = AppMoment.getInstance().user.getMomentById(momentID);
+            mNbPhotos = moment.getPhotos().size();
         } else {
             getMoment();
-        }
+        }*/
 
     }
 
@@ -321,7 +327,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                     chat.setUser(AppMoment.getInstance().user);
                     AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
-                    AppMoment.getInstance().chatDao.insert(chat);
+                    //AppMoment.getInstance().chatDao.insert(chat); Already insert when setFromJson
 
                     chatFr.newMessage(chat);
 
@@ -437,20 +443,20 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     public void getMoment() {
 
-
-        Log.d("MOMENTINFOS", "Moment id :" + momentID);
         if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
-        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
-            moment = AppMoment.getInstance().user.getMomentById(momentID);
-        } else {
+
+        //If we have internet we go to get the moment
+        if (AppMoment.getInstance().checkInternet()) {
             mProgressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.loading_info_moment));
             MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
 
                 @Override
                 public void onSuccess(JSONObject response) {
+                    isSuccess = true;
                     Moment tempMoment = new Moment();
                     try {
                         tempMoment.setMomentFromJson(response);
+                        if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
                         Log.v(TAG, tempMoment.getName());
                         moment = tempMoment;
 
@@ -479,9 +485,52 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
                 @Override
                 public void onFailure(Throwable error, String content) {
+                    isSuccess = true;
                     mProgressDialog.dismiss();
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
+                    if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
+                        moment = AppMoment.getInstance().user.getMomentById(momentID);
+                        if (pager.getCurrentItem() == 2) {
+                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                        } else if (pager.getCurrentItem() == 1) {
+                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                        } else if (pager.getCurrentItem() == 0) {
+                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                        }
+                    }
+                }
+
+                public void onFinish() {
+
+                    if (!isSuccess) {
+                        mProgressDialog.dismiss();
+                        Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
+                        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
+                            moment = AppMoment.getInstance().user.getMomentById(momentID);
+                            if (pager.getCurrentItem() == 2) {
+                                ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            } else if (pager.getCurrentItem() == 1) {
+                                ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                                ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                            } else if (pager.getCurrentItem() == 0) {
+                                ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            }
+                        }
+                    }
                 }
             });
+        }
+        else{
+            if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
+                moment = AppMoment.getInstance().user.getMomentById(momentID);
+            }
         }
     }
 
@@ -550,6 +599,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                 });
                             }
                         } else {
+                            /*
                             AlertDialog.Builder monDialogue = new AlertDialog.Builder(MomentInfosActivity.this);
                             monDialogue.setTitle(getString(R.string.nouveaut_chat));
                             monDialogue.setMessage("Nouveau chat sur "+moment.getName());
@@ -573,6 +623,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                             });
 
                             monDialogue.show();
+                            */
                         }
                     } else if (type_notifs == PHOTO_PUSH) {
 
@@ -683,6 +734,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 });
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
+    }
+
+    public void addPhotosFromInfos(View view){
+        pager.setCurrentItem(0);
+        photosFr.startDialog();
     }
 
     @Override

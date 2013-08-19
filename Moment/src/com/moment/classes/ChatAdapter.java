@@ -47,31 +47,24 @@ public class ChatAdapter extends ArrayAdapter<Chat> {
 
         LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
+        if(isUser(data.get(position))) row = vi.inflate(layoutResourceId, parent, false);
+        else row = vi.inflate(R.layout.chat_message_gauche , parent, false);
 
-        if(row == null)
-        {
-            if(isUser(data.get(position))) row = vi.inflate(layoutResourceId, parent, false);
-            else row = vi.inflate(R.layout.chat_message_gauche , parent, false);
+        holder = new ChatHolder();
 
-            holder = new ChatHolder();
+        holder.userPhoto = (ImageView)row.findViewById(R.id.photo_user);
+        holder.userName = (TextView)row.findViewById(R.id.autheur);
+        holder.heure = (TextView)row.findViewById(R.id.heure);
+        holder.date = (TextView)row.findViewById(R.id.date);
+        holder.messageChat = (TextView)row.findViewById(R.id.chat_message_text);
 
-            holder.userPhoto = (ImageView)row.findViewById(R.id.photo_user);
-            holder.userName = (TextView)row.findViewById(R.id.autheur);
-            holder.heure = (TextView)row.findViewById(R.id.heure);
-            holder.date = (TextView)row.findViewById(R.id.date);
-            holder.messageChat = (TextView)row.findViewById(R.id.chat_message_text);
-
-            row.setTag(holder);
-        }
-        else
-        {
-            holder = (ChatHolder)row.getTag();
-        }
+        row.setTag(holder);
 
         holder.userName.setText(data.get(position).getUser().getFirstName()+" "+data.get(position).getUser().getLastName()+".");
         holder.date.setText(CommonUtilities.getDateTimeFormat(Locale.getDefault().getLanguage()).format(data.get(position).getDate()));
         holder.messageChat.setText(data.get(position).getMessage());
         if(data.get(position).getUser().getPictureProfileUrl()!=null) mImageFetcher.loadImage(data.get(position).getUser().getPictureProfileUrl(), holder.userPhoto, true);
+        else holder.userPhoto.setImageDrawable(context.getResources().getDrawable(R.drawable.btn_profilpic_up));
 
 
 

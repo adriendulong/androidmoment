@@ -15,19 +15,9 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
+import android.view.*;
 import android.webkit.WebView;
-import android.widget.BaseAdapter;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ImageButton;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 
 import com.facebook.FacebookRequestError;
 import com.facebook.HttpMethod;
@@ -49,6 +39,7 @@ import com.moment.R;
 import com.moment.activities.MomentInfosActivity;
 import com.moment.classes.MomentApi;
 import com.moment.classes.PositionOverlay;
+import com.moment.classes.RecyclingImageView;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Moment;
 import com.moment.models.Photo;
@@ -127,7 +118,7 @@ public class InfosFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_thumbnail_size);
+        mImageThumbSize = getResources().getDimensionPixelSize(R.dimen.image_mini_thumbnail_size);
 
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
@@ -321,7 +312,12 @@ public class InfosFragment extends Fragment {
                 alertDialog.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
+                        stateAnwser = COMING;
+                        moment.setState(COMING);
+                        updateRSVPBloc();
+                        updateStateServer(oldState, COMING);
                         dialog.dismiss();
+
                     }
                 });
 
@@ -466,6 +462,12 @@ public class InfosFragment extends Fragment {
         imageAdapter = new ImageAdapter(view.getContext(), photos);
         gridPreviewPhotos.setAdapter(imageAdapter);
 
+        if(((MomentInfosActivity)getActivity()).mNbPhotos == 0){
+            RelativeLayout photosLayout = (RelativeLayout)view.findViewById(R.id.bloc_photos);
+            photosLayout.setVisibility(View.GONE);
+            Button addPhotos = (Button)view.findViewById(R.id.add_photos_infos);
+            addPhotos.setVisibility(View.VISIBLE);
+        }
 
 
         if (AppMoment.getInstance().checkInternet()) {
@@ -511,31 +513,35 @@ public class InfosFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            ImageView imageView;
+            RecyclingImageView imageView;
             float pxImage = getResources().getDimensionPixelSize(R.dimen.image_background__mini_thumbnail_size);
+            LinearLayout layout;
+            float pxBitmap = getResources().getDimensionPixelSize(R.dimen.image_mini_thumbnail_size);
 
             if (convertView == null) {
-                imageView = new ImageView(context);
+                layout = new LinearLayout(context);
+                layout.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
+                layout.setBackgroundColor(getResources().getColor(R.color.white));
+                layout.setGravity(Gravity.CENTER);
 
-                imageView.setLayoutParams(new GridView.LayoutParams((int) pxImage, (int) pxImage));
+                imageView = new RecyclingImageView(context);
+                imageView.setId(0);
+                imageView.setLayoutParams(new GridView.LayoutParams((int) pxBitmap, (int) pxBitmap));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-                imageView.setCropToPadding(true);
-                imageView.setPadding(5, 5, 5, 5);
-                try {
-                    imageView.setBackground(getResources().getDrawable(R.drawable.bg));
-                } catch (OutOfMemoryError outOfMemoryError) {
-                    outOfMemoryError.printStackTrace();
-                }
+
+                layout.addView(imageView);
             } else {
-                imageView = (ImageView) convertView;
+                layout = (LinearLayout)convertView;
+                imageView = (RecyclingImageView) convertView.findViewById(0);
             }
 
             try {
-                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView, false);
+                if(photos.get(position).getUrlThumbnail()!=null) mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView, false);
+                else imageView.setImageDrawable(getResources().getDrawable(R.drawable.picto_photo_vide));
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();
             }
-            return imageView;
+            return layout;
         }
     }
 
@@ -550,7 +556,7 @@ public class InfosFragment extends Fragment {
             }
             Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
             gridPreviewPhotos.setFocusable(false);
-            //imageAdapter.notifyDataSetChanged();
+            imageAdapter.notifyDataSetChanged();
         }
 
     }
@@ -559,7 +565,7 @@ public class InfosFragment extends Fragment {
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         int width = display.getWidth();
 
-        float pxImage = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 60, getResources().getDisplayMetrics());
+        float pxImage = getResources().getDimensionPixelSize(R.dimen.image_background__mini_thumbnail_size);
 
         return Math.round(width / pxImage);
     }

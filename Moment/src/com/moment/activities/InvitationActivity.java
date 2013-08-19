@@ -22,6 +22,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -492,6 +493,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
                 public void onFailure(Throwable error, String content) {
 
                     System.out.println(content);
+                    Toast.makeText(getApplicationContext(), "Invitation impossible", Toast.LENGTH_LONG).show();
                     dialog.dismiss();
                 }
             });

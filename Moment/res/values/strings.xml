@@ -167,9 +167,11 @@
     <string name="rsvp_not_coming">Je ne serai pas présent au Moment</string>
     <string name="rsvp_maybe">Je ne sais pas si je serai présent au Moment</string>
     <string name="delete_moment">Supprimer ce Moment</string>
+    <string name="add_photos_infos">Ajouter des photos</string>
     <string name="error_delete">Erreur lors de la suppression du Moment</string>
     <string name="title_pop_up_delete">Suupression du Moment</string>
     <string name="pop_up_delete">Etes vous sur de vouloir supprimer ce Moment ? Cette action est irreversible</string>
+    <string name="error_dl_moment">Erreur lors du téléchargement du moment</string>
 
     <!-- Volet -->
     <string name="my_moments_volet">Mes Moments</string>
@@ -293,7 +295,7 @@
     <string name="oui">Oui</string>
     <string name="erreur_envoi_meessage">Problème dans l\'envoi du message</string>
     <string name="loading_info_moment">Chargement des informations du moment</string>
-    <string name="loading">Chargem@ent</string>
+    <string name="loading">Chargement</string>
     <string name="new_message">Nouveau message</string>
     <string name="nouveaut_chat">Nouveau chat</string>
     <string name="test_chat">Test</string>

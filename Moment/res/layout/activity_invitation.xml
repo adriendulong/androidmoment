@@ -70,7 +70,7 @@
     <RelativeLayout android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:orientation="horizontal"
-        android:background="@drawable/background">
+        android:background="@color/gris_chat">
         
         <EditText android:id="@+id/search_guests"
             android:layout_width="fill_parent"

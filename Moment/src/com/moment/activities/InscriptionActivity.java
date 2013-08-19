@@ -95,7 +95,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private ImageButton user_picture;
     private String gender;
     private Bundle bundle;
-    private boolean isSuccess;
+    private boolean isSuccess = false;
     private ProgressDialog dialog;
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {

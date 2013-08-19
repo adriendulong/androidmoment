@@ -121,7 +121,7 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
                             .setAutoCancel(true);
 
             mBuilder.setContentIntent(contentIntent);
-            mBuilder.setLights(Color.RED, 500, 500);
+            mBuilder.setLights(Color.argb(100, 255, 156, 8), 500, 500);
             long[] pattern = {500,500,500,500,500,500,500,500,500};
             mBuilder.setVibrate(pattern);
             Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);

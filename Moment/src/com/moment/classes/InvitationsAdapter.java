@@ -71,7 +71,7 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
             holder.txtLastname.setText(user.getLastName());
         }
         holder.photo_thumbnail.setImageResource(R.drawable.back_goldphoto);
-        holder.bg.setBackgroundResource(R.drawable.background);
+        holder.bg.setBackgroundColor(context.getResources().getColor(R.color.gris_chat));
         
         if(user.getPictureProfileUrl()!=null){
             Picasso.with(context).load(user.getPictureProfileUrl()).transform(roundTrans).resize(100,100).into(holder.photo_thumbnail);

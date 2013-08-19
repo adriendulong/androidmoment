@@ -107,11 +107,11 @@ public class ChatFragment extends Fragment {
 
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
-        cacheParams.setMemCacheSizePercent(0.1f); // Set memory cache to 25% of app memory
+        cacheParams.setMemCacheSizePercent(0.1f); // Set memory cache to 10% of app memory
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
         mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
-        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        mImageFetcher.setLoadingImage(R.drawable.btn_profilpic_up);
         mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
 

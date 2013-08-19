@@ -120,7 +120,7 @@ public class PhotosFragment extends Fragment {
 
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
-        cacheParams.setMemCacheSizePercent(0.25f); // Set memory cache to 25% of app memory
+        cacheParams.setMemCacheSizePercent(0.35f); // Set memory cache to 35% of app memory
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
         mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
@@ -526,12 +526,16 @@ public class PhotosFragment extends Fragment {
                         Toast.makeText(getActivity(), getResources().getString(R.string.pb_get_photos), Toast.LENGTH_LONG).show();
                         initViewPhotos();
                         imageAdapter.notifyDataSetChanged();
+                        //We update it in the infos view also
+                        if(getActivity()!=null) ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
                     }
                 });
             } else {
 
                 initViewPhotos();
                 imageAdapter.notifyDataSetChanged();
+                //We update it in the infos view also
+                if(getActivity()!=null) ((MomentInfosActivity) getActivity()).updateInfosPhotos(AppMoment.getInstance().user.getMomentById(momentID).getPhotos());
             }
 
         }

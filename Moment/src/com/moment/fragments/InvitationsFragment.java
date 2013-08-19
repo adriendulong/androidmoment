@@ -425,7 +425,7 @@ public class InvitationsFragment extends Fragment {
 
             } else {
                 RelativeLayout v = (RelativeLayout) view.findViewById(R.id.bg_cell_invitations);
-                v.setBackgroundResource(R.drawable.background);
+                v.setBackgroundColor(getResources().getColor(R.color.gris_chat));
                 InvitationActivity.invitesUser.remove(users.get(positionClick));
                 InvitationActivity.nb_invites.setText("" + InvitationActivity.invitesUser.size());
 
