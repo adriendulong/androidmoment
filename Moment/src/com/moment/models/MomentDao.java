@@ -47,10 +47,7 @@ public class MomentDao extends AbstractDao<Moment, Long> {
         public final static Property DateFin = new Property(16, String.class, "dateFin", false, "DATE_FIN");
         public final static Property IsOpenInvit = new Property(17, Boolean.class, "isOpenInvit", false, "IS_OPEN_INVIT");
         public final static Property OwnerId = new Property(18, long.class, "ownerId", false, "OWNER_ID");
-        public final static Property UserId = new Property(19, Long.class, "userId", false, "USER_ID");
-        public final static Property PhotoId = new Property(20, Long.class, "photoId", false, "PHOTO_ID");
-        public final static Property ChatId = new Property(21, Long.class, "chatId", false, "CHAT_ID");
-        public final static Property MomentId = new Property(22, Long.class, "momentId", false, "MOMENT_ID");
+        public final static Property MomentId = new Property(19, Long.class, "momentId", false, "MOMENT_ID");
     };
 
     private DaoSession daoSession;
@@ -89,10 +86,7 @@ public class MomentDao extends AbstractDao<Moment, Long> {
                 "'DATE_FIN' TEXT," + // 16: dateFin
                 "'IS_OPEN_INVIT' INTEGER," + // 17: isOpenInvit
                 "'OWNER_ID' INTEGER NOT NULL ," + // 18: ownerId
-                "'USER_ID' INTEGER," + // 19: userId
-                "'PHOTO_ID' INTEGER," + // 20: photoId
-                "'CHAT_ID' INTEGER," + // 21: chatId
-                "'MOMENT_ID' INTEGER);"); // 22: momentId
+                "'MOMENT_ID' INTEGER);"); // 19: momentId
     }
 
     /** Drops the underlying database table. */
@@ -196,21 +190,6 @@ public class MomentDao extends AbstractDao<Moment, Long> {
             stmt.bindLong(18, isOpenInvit ? 1l: 0l);
         }
         stmt.bindLong(19, entity.getOwnerId());
- 
-        Long userId = entity.getUserId();
-        if (userId != null) {
-            stmt.bindLong(20, userId);
-        }
- 
-        Long photoId = entity.getPhotoId();
-        if (photoId != null) {
-            stmt.bindLong(21, photoId);
-        }
- 
-        Long chatId = entity.getChatId();
-        if (chatId != null) {
-            stmt.bindLong(22, chatId);
-        }
     }
 
     @Override
@@ -247,10 +226,7 @@ public class MomentDao extends AbstractDao<Moment, Long> {
             cursor.isNull(offset + 15) ? null : cursor.getString(offset + 15), // dateDebut
             cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16), // dateFin
             cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0, // isOpenInvit
-            cursor.getLong(offset + 18), // ownerId
-            cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19), // userId
-            cursor.isNull(offset + 20) ? null : cursor.getLong(offset + 20), // photoId
-            cursor.isNull(offset + 21) ? null : cursor.getLong(offset + 21) // chatId
+            cursor.getLong(offset + 18) // ownerId
         );
         return entity;
     }
@@ -277,9 +253,6 @@ public class MomentDao extends AbstractDao<Moment, Long> {
         entity.setDateFin(cursor.isNull(offset + 16) ? null : cursor.getString(offset + 16));
         entity.setIsOpenInvit(cursor.isNull(offset + 17) ? null : cursor.getShort(offset + 17) != 0);
         entity.setOwnerId(cursor.getLong(offset + 18));
-        entity.setUserId(cursor.isNull(offset + 19) ? null : cursor.getLong(offset + 19));
-        entity.setPhotoId(cursor.isNull(offset + 20) ? null : cursor.getLong(offset + 20));
-        entity.setChatId(cursor.isNull(offset + 21) ? null : cursor.getLong(offset + 21));
      }
     
     /** @inheritdoc */

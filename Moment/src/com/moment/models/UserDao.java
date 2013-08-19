@@ -46,7 +46,6 @@ public class UserDao extends AbstractDao<User, Long> {
         public final static Property MomentId = new Property(17, Long.class, "momentId", false, "MOMENT_ID");
         public final static Property NotificationId = new Property(18, Long.class, "notificationId", false, "NOTIFICATION_ID");
         public final static Property InvitationsId = new Property(19, Long.class, "invitationsId", false, "INVITATIONS_ID");
-        public final static Property UserId = new Property(20, Long.class, "userId", false, "USER_ID");
     };
 
     private DaoSession daoSession;
@@ -85,8 +84,7 @@ public class UserDao extends AbstractDao<User, Long> {
                 "'IS_SELECT' INTEGER," + // 16: isSelect
                 "'MOMENT_ID' INTEGER," + // 17: momentId
                 "'NOTIFICATION_ID' INTEGER," + // 18: notificationId
-                "'INVITATIONS_ID' INTEGER," + // 19: invitationsId
-                "'USER_ID' INTEGER);"); // 20: userId
+                "'INVITATIONS_ID' INTEGER);"); // 19: invitationsId
     }
 
     /** Drops the underlying database table. */
@@ -290,16 +288,16 @@ public class UserDao extends AbstractDao<User, Long> {
     }
     
     /** Internal query to resolve the "users" to-many relationship of Moment. */
-    public List<User> _queryMoment_Users(Long userId) {
+    public List<User> _queryMoment_Users(Long momentId) {
         synchronized (this) {
             if (moment_UsersQuery == null) {
                 QueryBuilder<User> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.UserId.eq(null));
+                queryBuilder.where(Properties.MomentId.eq(null));
                 moment_UsersQuery = queryBuilder.build();
             }
         }
         Query<User> query = moment_UsersQuery.forCurrentThread();
-        query.setParameter(0, userId);
+        query.setParameter(0, momentId);
         return query.list();
     }
 

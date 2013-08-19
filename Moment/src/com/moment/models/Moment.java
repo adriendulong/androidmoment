@@ -45,9 +45,6 @@ public class Moment {
     private String dateFin;
     private Boolean isOpenInvit;
     private long ownerId;
-    private Long userId;
-    private Long photoId;
-    private Long chatId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -72,7 +69,7 @@ public class Moment {
         this.id = id;
     }
 
-    public Moment(Long id, Integer state, Integer guestNumber, Integer guestComing, Integer guestNotComing, Integer privacy, String name, String description, String placeInformations, String infoTransport, String hashtag, String adresse, String keyBitmap, String urlCover, String uniqueUrl, String dateDebut, String dateFin, Boolean isOpenInvit, long ownerId, Long userId, Long photoId, Long chatId) {
+    public Moment(Long id, Integer state, Integer guestNumber, Integer guestComing, Integer guestNotComing, Integer privacy, String name, String description, String placeInformations, String infoTransport, String hashtag, String adresse, String keyBitmap, String urlCover, String uniqueUrl, String dateDebut, String dateFin, Boolean isOpenInvit, long ownerId) {
         this.id = id;
         this.state = state;
         this.guestNumber = guestNumber;
@@ -92,9 +89,6 @@ public class Moment {
         this.dateFin = dateFin;
         this.isOpenInvit = isOpenInvit;
         this.ownerId = ownerId;
-        this.userId = userId;
-        this.photoId = photoId;
-        this.chatId = chatId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -253,30 +247,6 @@ public class Moment {
 
     public void setOwnerId(long ownerId) {
         this.ownerId = ownerId;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getPhotoId() {
-        return photoId;
-    }
-
-    public void setPhotoId(Long photoId) {
-        this.photoId = photoId;
-    }
-
-    public Long getChatId() {
-        return chatId;
-    }
-
-    public void setChatId(Long chatId) {
-        this.chatId = chatId;
     }
 
     /** To-one relationship, resolved on first access. */

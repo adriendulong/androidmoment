@@ -429,37 +429,37 @@ public class PhotosFragment extends Fragment {
         @Override
         protected void onPostExecute(String result) {
 
-            Log.e("RESULT", result.toString());
 
-       //     try {
-                try {
-                    JSONObject jsresult = new JSONObject(result);
-                    JSONObject json = jsresult.getJSONObject("success");
+            //     try {
+            try {
+                Log.e("RESULT", result.toString());
+                JSONObject jsresult = new JSONObject(result);
+                JSONObject json = jsresult.getJSONObject("success");
 
-                    photo.setId(json.getLong("id"));
+                photo.setId(json.getLong("id"));
 
-                    photo.setNbLike(json.getInt("nb_like"));
-                    photo.setUrlOriginal(json.getString("url_original"));
-                    photo.setUrlThumbnail(json.getString("url_thumbnail"));
-                    photo.setUrlUnique(json.getString("unique_url"));
-                    Date timestamp = new Date(Long.valueOf(json.getString("time")) * 1000);
+                photo.setNbLike(json.getInt("nb_like"));
+                photo.setUrlOriginal(json.getString("url_original"));
+                photo.setUrlThumbnail(json.getString("url_thumbnail"));
+                photo.setUrlUnique(json.getString("unique_url"));
+                Date timestamp = new Date(Long.valueOf(json.getString("time")) * 1000);
 
-                    photo.setTime(timestamp);
-                    User user = new User();
-                    user.setUserFromJson(json.getJSONObject("taken_by"));
-                    photo.setUser(user);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                photo.setTime(timestamp);
+                User user = new User();
+                user.setUserFromJson(json.getJSONObject("taken_by"));
+                photo.setUser(user);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-                float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
-                //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
-                mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (RecyclingImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
+            float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
+            //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
+            mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (RecyclingImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
 
-                if (photos_uri.size() == 0) {
-                    createNotification("Upload", context.getString(R.string.termine), true);
-                    asyncRun = false;
-                }
+            if (photos_uri.size() == 0) {
+                createNotification("Upload", context.getString(R.string.termine), true);
+                asyncRun = false;
+            }
 /*
             } catch (NullPointerException npe) {
                 Log.e("NPE", "");

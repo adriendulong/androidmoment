@@ -208,6 +208,26 @@ public class Chat implements Parcelable {
         }
     }
 
+    public void chatFromJSON(JSONObject chatObject, Moment moment){
+        try {
+            this.setId(chatObject.getLong("id"));
+            this.setMessage(chatObject.getString("message"));
+            long time = chatObject.getLong("time");
+            time = time * 1000;
+            this.setDate(new Date(time));
+            User user = new User();
+            user.setUserFromJson(chatObject.getJSONObject("user"));
+            this.setUser(user);
+            this.setMoment(moment);
+
+            AppMoment.getInstance().userDao.insertOrReplace(user);
+            AppMoment.getInstance().chatDao.insertOrReplace(this);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public int describeContents() {
         return 0;

@@ -22,6 +22,7 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.NotificationsAdapter;
 import com.moment.models.Notification;
+import com.moment.util.CommonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -114,48 +115,60 @@ public class NotificationsActivity extends SherlockActivity {
                     invitations.add(AppMoment.getInstance().user.getInvitations().get(i));
                 }
             } else {
-                MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
 
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        try {
-                            JSONArray notifsObject = response.getJSONArray("invitations");
+                if(AppMoment.getInstance().checkInternet() == true)
+                {
+                    MomentApi.get("invitations", null, new JsonHttpResponseHandler() {
 
-                            for (int i = 0; i < notifsObject.length(); i++) {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+                            try {
+                                JSONArray notifsObject = response.getJSONArray("invitations");
 
-                                Notification notif = new Notification();
-                                notif.setFromJson(notifsObject.getJSONObject(i));
-                                invitations.add(notif);
+                                for (int i = 0; i < notifsObject.length(); i++) {
 
-                                AppMoment.getInstance().notificationDao.insertOrReplace(notif);
+                                    Notification notif = new Notification();
+                                    notif.setFromJson(notifsObject.getJSONObject(i));
+                                    invitations.add(notif);
+
+                                    AppMoment.getInstance().notificationDao.insertOrReplace(notif);
+                                }
+
+                                AppMoment.getInstance().user.setNotifications(invitations);
+
+
+                                if(AppMoment.getInstance().user != null)
+                                {
+                                    AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                }
+
+                                Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
+
+                                adapterInvits.notifyDataSetChanged();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-
-                            AppMoment.getInstance().user.setNotifications(invitations);
-
-
-                            if(AppMoment.getInstance().user != null)
-                            {
-                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
-                            }
-
-                            Log.e("NB INVITATIONS", "" + AppMoment.getInstance().user.getInvitations().size());
-
-                            adapterInvits.notifyDataSetChanged();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
-                    }
 
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        System.out.println(content);
-                    }
-                });
+                        @Override
+                        public void onFailure(Throwable error, String content) {
+                            System.out.println(content);
+                        }
+                    });
+                }
+
             }
-
+        } else {
+            invitations = (ArrayList<Notification>) AppMoment.getInstance().notificationDao.loadAll();
+            for(Notification invit : invitations)
+            {
+                if(invit.getTypeNotif() != 0)
+                {
+                    invitations.remove(invit);
+                }
+            }
+            AppMoment.getInstance().user.setNotifications(invitations);
         }
-
-
     }
 
     @Override

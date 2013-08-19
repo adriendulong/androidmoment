@@ -115,23 +115,6 @@ public class MomentDaoGenerator {
          * Relations
          */
 
-        /*** Moment Relations ***/
-
-        Property momentHasOneOwner = moment.addLongProperty("ownerId").notNull().getProperty();
-        moment.addToOne(user, momentHasOneOwner);
-
-        Property momentHasManyUsers = moment.addLongProperty("userId").getProperty();
-        ToMany momentToUser = moment.addToMany(user, momentHasManyUsers);
-        momentToUser.setName("users");
-
-        Property momentHasManyPhotos = moment.addLongProperty("photoId").getProperty();
-        ToMany momentToPhotos = moment.addToMany(photo, momentHasManyPhotos);
-        momentToPhotos.setName("photos");
-
-        Property momentHasManyChats = moment.addLongProperty("chatId").getProperty();
-        ToMany momentToChat = moment.addToMany(chat, momentHasManyChats);
-        momentToChat.setName("chats");
-
         /*** User Relations ***/
 
         Property userHasManyMoments = user.addLongProperty("momentId").getProperty();
@@ -169,6 +152,23 @@ public class MomentDaoGenerator {
 
         Property notificationHasOneMoment = notification.addLongProperty("momentId").notNull().getProperty();
         notification.addToOne(moment, notificationHasOneMoment);
+
+        /*** Moment Relations ***/
+
+        Property momentHasOneOwner = moment.addLongProperty("ownerId").notNull().getProperty();
+        moment.addToOne(user, momentHasOneOwner);
+
+        //Property momentHasManyUsers = moment.addLongProperty("userId").getProperty();
+        ToMany momentToUser = moment.addToMany(user, userHasManyMoments);
+        momentToUser.setName("users");
+
+        //Property momentHasManyPhotos = moment.addLongProperty("photoId").getProperty();
+        ToMany momentToPhotos = moment.addToMany(photo, photoHasOneMoment);
+        momentToPhotos.setName("photos");
+
+        //Property momentHasManyChats = moment.addLongProperty("chatId").getProperty();
+        ToMany momentToChat = moment.addToMany(chat, chatHasOneMoment);
+        momentToChat.setName("chats");
 
         /**
          * EOD

@@ -36,7 +36,6 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
         public final static Property Time = new Property(5, java.util.Date.class, "time", false, "TIME");
         public final static Property UserId = new Property(6, long.class, "userId", false, "USER_ID");
         public final static Property MomentId = new Property(7, Long.class, "momentId", false, "MOMENT_ID");
-        public final static Property PhotoId = new Property(8, Long.class, "photoId", false, "PHOTO_ID");
     };
 
     private DaoSession daoSession;
@@ -63,8 +62,7 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
                 "'URL_UNIQUE' TEXT," + // 4: urlUnique
                 "'TIME' INTEGER," + // 5: time
                 "'USER_ID' INTEGER NOT NULL ," + // 6: userId
-                "'MOMENT_ID' INTEGER," + // 7: momentId
-                "'PHOTO_ID' INTEGER);"); // 8: photoId
+                "'MOMENT_ID' INTEGER);"); // 7: momentId
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_photos__id ON photos" +
                 " (_id);");
@@ -183,16 +181,16 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
     }
     
     /** Internal query to resolve the "photos" to-many relationship of Moment. */
-    public List<Photo> _queryMoment_Photos(Long photoId) {
+    public List<Photo> _queryMoment_Photos(Long momentId) {
         synchronized (this) {
             if (moment_PhotosQuery == null) {
                 QueryBuilder<Photo> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.PhotoId.eq(null));
+                queryBuilder.where(Properties.MomentId.eq(null));
                 moment_PhotosQuery = queryBuilder.build();
             }
         }
         Query<Photo> query = moment_PhotosQuery.forCurrentThread();
-        query.setParameter(0, photoId);
+        query.setParameter(0, momentId);
         return query.list();
     }
 

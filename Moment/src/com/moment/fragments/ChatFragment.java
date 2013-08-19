@@ -1,18 +1,17 @@
 package com.moment.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
 
-import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
@@ -23,30 +22,16 @@ import com.moment.classes.ChatAdapter;
 import com.moment.classes.MomentApi;
 import com.moment.classes.RoundTransformation;
 import com.moment.models.Chat;
-import com.moment.models.Photo;
 import com.moment.models.User;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
-import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.DateFormatSymbols;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class ChatFragment extends Fragment {
 
@@ -300,24 +285,12 @@ public class ChatFragment extends Fragment {
     private void initChat() {
         Log.d("CHATFRAGMENT", "INIT");
 
-        //Withou internet
         if (!AppMoment.getInstance().checkInternet()) {
-            List<Chat> tempChats = AppMoment.getInstance().chatDao.loadAll();
-
-            for (Chat c : tempChats) {
-
-                User user = AppMoment.getInstance().userDao.load(c.getUserId());
-
-                c.setUser(user);
-
-                if (c.getMomentId() == momentId) {
-                    chats = (ArrayList<Chat>)tempChats;
-                    adapter.notifyDataSetChanged();
-                }
-            }
-        }
-
-        if (AppMoment.getInstance().checkInternet()) {
+            chats.addAll(AppMoment.getInstance().user.getMomentById(momentId).getChats());
+            defaultTextChat.setVisibility(View.GONE);
+            adapter.notifyDataSetChanged();
+            mChatsList.smoothScrollToPosition(chats.size()-1);
+        } else {
             if(BuildConfig.DEBUG) Log.d(TAG, "Download");
             MomentApi.get("lastchats/" + momentId, null, new JsonHttpResponseHandler() {
                 @Override
@@ -344,7 +317,7 @@ public class ChatFragment extends Fragment {
 
                             Chat tempChat = new Chat();
 
-                            tempChat.chatFromJSON(chatsJSON.getJSONObject(i));
+                            tempChat.chatFromJSON(chatsJSON.getJSONObject(i), AppMoment.getInstance().user.getMomentById(momentId));
                             User user = tempChat.getUser();
 
                             if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {

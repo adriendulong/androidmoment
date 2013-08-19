@@ -171,6 +171,22 @@ public class TimelineActivity extends SlidingFragmentActivity {
                         moments.add(moment);
                     }
                     goToToday(false);
+
+                    List<Notification> tempNotifs = AppMoment.getInstance().notificationDao.loadAll();
+                    for(Notification notif: tempNotifs)
+                    {
+                        if(notif.getTypeNotif() == 0)
+                        {
+                            invitations.add(notif);
+                        } else {
+                            notifications.add(notif);
+                        }
+                    }
+                    totalNotifText.setText("" + 0);
+                    totalNotifText.setVisibility(View.VISIBLE);
+                    AppMoment.getInstance().user.setNotifications(notifications);
+                    AppMoment.getInstance().user.setInvitations(invitations);
+                    notifProgress.setVisibility(View.INVISIBLE);
                 }
             } else {
                 dialog = ProgressDialog.show(this, null, getResources().getString(R.string.moment_dl));
@@ -333,13 +349,11 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
     public void notifications(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Notifications", null);
-        Log.e("NOTIFS", "HERE NOTIFS");
         Intent notifs = new Intent(this, NotificationsActivity.class);
         startActivity(notifs);
     }
 
     public void getNotifications() {
-
         MomentApi.get("notifications", null, new JsonHttpResponseHandler() {
 
             @Override

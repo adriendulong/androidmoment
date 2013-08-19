@@ -166,8 +166,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             previousButton.setVisibility(View.INVISIBLE);
         }
 
-        if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
+        if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUserId())
+                || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getOwnerId()) {
             trashButton.setImageResource(R.drawable.trash);
         } else {
             trashButton.setImageResource(R.drawable.btn_report);
@@ -214,8 +214,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Remove", null);
 
-                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUserId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getOwnerId()) {
                     AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
                     alertDialogBuilder
                             .setTitle(getResources().getString(R.string.delete_photos_title))
@@ -315,8 +315,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
                     petitCoeur.setVisibility(ImageButton.GONE);
                     nbPetitCoeur.setVisibility(EditText.GONE);
                 }
-                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUserId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getOwnerId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);
@@ -357,8 +357,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
                     petitCoeur.setVisibility(ImageButton.GONE);
                     nbPetitCoeur.setVisibility(EditText.GONE);
                 }
-                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUser().getId())
-                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getUser().getId()) {
+                if (AppMoment.getInstance().user.getId().equals(AppMoment.getInstance().user.getMomentById(momentID).getPhotos().get(position).getUserId())
+                        || AppMoment.getInstance().user.getId() == AppMoment.getInstance().user.getMomentById(momentID).getOwnerId()) {
                     trashButton.setImageResource(R.drawable.trash);
                 } else {
                     trashButton.setImageResource(R.drawable.btn_report);

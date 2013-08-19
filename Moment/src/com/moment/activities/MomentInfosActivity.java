@@ -319,7 +319,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     chat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                     chat.setUser(AppMoment.getInstance().user);
                     AppMoment.getInstance().user.getMomentById(momentID).getChats().add(chat);
-                    //AppMoment.getInstance().chatDao.insert(chat); Already insert when setFromJson
 
                     chatFr.newMessage(chat);
 
@@ -566,7 +565,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                         Toast.makeText(getApplicationContext(), getString(R.string.new_message), Toast.LENGTH_SHORT).show();
                                         Chat tempChat = new Chat();
                                         try {
-                                            tempChat.chatFromJSON(response.getJSONObject("chat"));
+                                            tempChat.chatFromJSON(response.getJSONObject("chat"), moment);
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         }

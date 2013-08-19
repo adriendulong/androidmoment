@@ -1,8 +1,6 @@
 package com.moment.models;
 
 import java.util.List;
-
-import com.moment.AppMoment;
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -323,7 +321,7 @@ public class User implements Parcelable {
     public void delete() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }
+        }    
         myDao.delete(this);
     }
 
@@ -331,7 +329,7 @@ public class User implements Parcelable {
     public void update() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }
+        }    
         myDao.update(this);
     }
 
@@ -339,7 +337,7 @@ public class User implements Parcelable {
     public void refresh() {
         if (myDao == null) {
             throw new DaoException("Entity is detached from DAO context");
-        }
+        }    
         myDao.refresh(this);
     }
 

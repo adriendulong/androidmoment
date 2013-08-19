@@ -33,7 +33,6 @@ public class ChatDao extends AbstractDao<Chat, Long> {
         public final static Property Date = new Property(2, java.util.Date.class, "date", false, "DATE");
         public final static Property UserId = new Property(3, long.class, "userId", false, "USER_ID");
         public final static Property MomentId = new Property(4, long.class, "momentId", false, "MOMENT_ID");
-        public final static Property ChatId = new Property(5, Long.class, "chatId", false, "CHAT_ID");
     };
 
     private DaoSession daoSession;
@@ -57,8 +56,7 @@ public class ChatDao extends AbstractDao<Chat, Long> {
                 "'MESSAGE' TEXT," + // 1: message
                 "'DATE' INTEGER," + // 2: date
                 "'USER_ID' INTEGER NOT NULL ," + // 3: userId
-                "'MOMENT_ID' INTEGER NOT NULL ," + // 4: momentId
-                "'CHAT_ID' INTEGER);"); // 5: chatId
+                "'MOMENT_ID' INTEGER NOT NULL );"); // 4: momentId
     }
 
     /** Drops the underlying database table. */
@@ -149,16 +147,16 @@ public class ChatDao extends AbstractDao<Chat, Long> {
     }
     
     /** Internal query to resolve the "chats" to-many relationship of Moment. */
-    public List<Chat> _queryMoment_Chats(Long chatId) {
+    public List<Chat> _queryMoment_Chats(long momentId) {
         synchronized (this) {
             if (moment_ChatsQuery == null) {
                 QueryBuilder<Chat> queryBuilder = queryBuilder();
-                queryBuilder.where(Properties.ChatId.eq(null));
+                queryBuilder.where(Properties.MomentId.eq(null));
                 moment_ChatsQuery = queryBuilder.build();
             }
         }
         Query<Chat> query = moment_ChatsQuery.forCurrentThread();
-        query.setParameter(0, chatId);
+        query.setParameter(0, momentId);
         return query.list();
     }
 
