@@ -26,6 +26,7 @@ public class Photo implements Parcelable {
     private String urlUnique;
     private java.util.Date time;
     private long userId;
+    private Long momentId;
 
     /** Used to resolve relations */
     private transient DaoSession daoSession;
@@ -35,6 +36,9 @@ public class Photo implements Parcelable {
 
     private User user;
     private Long user__resolvedKey;
+
+    private Moment moment;
+    private Long moment__resolvedKey;
 
 
     // KEEP FIELDS - put your custom fields here
@@ -47,7 +51,7 @@ public class Photo implements Parcelable {
         this.id = id;
     }
 
-    public Photo(Long id, Integer nbLike, String urlOriginal, String urlThumbnail, String urlUnique, java.util.Date time, long userId) {
+    public Photo(Long id, Integer nbLike, String urlOriginal, String urlThumbnail, String urlUnique, java.util.Date time, long userId, Long momentId) {
         this.id = id;
         this.nbLike = nbLike;
         this.urlOriginal = urlOriginal;
@@ -55,6 +59,7 @@ public class Photo implements Parcelable {
         this.urlUnique = urlUnique;
         this.time = time;
         this.userId = userId;
+        this.momentId = momentId;
     }
 
     /** called by internal mechanisms, do not call yourself. */
@@ -119,6 +124,14 @@ public class Photo implements Parcelable {
         this.userId = userId;
     }
 
+    public Long getMomentId() {
+        return momentId;
+    }
+
+    public void setMomentId(Long momentId) {
+        this.momentId = momentId;
+    }
+
     /** To-one relationship, resolved on first access. */
     public User getUser() {
         long __key = this.userId;
@@ -144,6 +157,31 @@ public class Photo implements Parcelable {
             this.user = user;
             userId = user.getId();
             user__resolvedKey = userId;
+        }
+    }
+
+    /** To-one relationship, resolved on first access. */
+    public Moment getMoment() {
+        Long __key = this.momentId;
+        if (moment__resolvedKey == null || !moment__resolvedKey.equals(__key)) {
+            if (daoSession == null) {
+                throw new DaoException("Entity is detached from DAO context");
+            }
+            MomentDao targetDao = daoSession.getMomentDao();
+            Moment momentNew = targetDao.load(__key);
+            synchronized (this) {
+                moment = momentNew;
+            	moment__resolvedKey = __key;
+            }
+        }
+        return moment;
+    }
+
+    public void setMoment(Moment moment) {
+        synchronized (this) {
+            this.moment = moment;
+            momentId = moment == null ? null : moment.getId();
+            moment__resolvedKey = momentId;
         }
     }
 
@@ -187,6 +225,25 @@ public class Photo implements Parcelable {
             User user = new User();
             user.setUserFromJson(photoObject.getJSONObject("taken_by"));
             this.setUser(user);
+
+        } catch (JSONException e) {e.printStackTrace();}
+    }
+
+    public void photoFromJSON(JSONObject photoObject, Moment moment){
+        try {
+            this.setId(photoObject.getLong("id"));
+            this.setNbLike(photoObject.getInt("nb_like"));
+            this.setUrlOriginal(photoObject.getString("url_original"));
+            this.setUrlThumbnail(photoObject.getString("url_thumbnail"));
+            this.setUrlUnique(photoObject.getString("unique_url"));
+
+            Date timestamp = new Date(Long.valueOf(photoObject.getString("time"))*1000);
+            this.setTime(timestamp);
+
+            User user = new User();
+            user.setUserFromJson(photoObject.getJSONObject("taken_by"));
+            this.setUser(user);
+            this.setMoment(moment);
 
         } catch (JSONException e) {e.printStackTrace();}
     }

@@ -98,6 +98,7 @@ public class PhotosFragment extends Fragment {
     private int mImageThumbSize;
 
     private static final String TAG = "PhotosFragment";
+    private Moment moment;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -478,7 +479,7 @@ public class PhotosFragment extends Fragment {
     private void initPhoto() {
 
         User user = AppMoment.getInstance().user;
-        Moment moment = user.getMomentById(momentID);
+        moment = user.getMomentById(momentID);
 
         if (photos == null || photos.isEmpty()) {
             photos = moment.getPhotos();
@@ -500,7 +501,7 @@ public class PhotosFragment extends Fragment {
                             photos.clear();
                             for (int i = 0; i < jsonPhotos.length(); i++) {
                                 Photo photo = new Photo();
-                                photo.photoFromJSON(jsonPhotos.getJSONObject(i));
+                                photo.photoFromJSON(jsonPhotos.getJSONObject(i), moment);
                                 AppMoment.getInstance().user.getMomentById(momentID).getPhotos().add(photo);
 
                                 AppMoment.getInstance().photoDao.insertOrReplace(photo);

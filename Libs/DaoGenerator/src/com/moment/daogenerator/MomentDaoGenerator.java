@@ -159,6 +159,9 @@ public class MomentDaoGenerator {
         Property photoHasOneOwner = photo.addLongProperty("userId").notNull().getProperty();
         photo.addToOne(user, photoHasOneOwner);
 
+        Property photoHasOneMoment = photo.addLongProperty("momentId").getProperty();
+        photo.addToOne(moment, photoHasOneMoment);
+
         /*** Notification Relation ***/
 
         Property notificationHasOneOwner = notification.addLongProperty("userId").notNull().getProperty();

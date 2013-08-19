@@ -1,6 +1,5 @@
 package com.moment.models;
 
-import com.moment.AppMoment;
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -9,7 +8,7 @@ import de.greenrobot.dao.DaoException;
 // KEEP INCLUDES - put your custom includes here
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import com.moment.AppMoment;
 import java.util.Date;
 // KEEP INCLUDES END
 /**

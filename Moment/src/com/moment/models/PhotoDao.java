@@ -35,7 +35,8 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
         public final static Property UrlUnique = new Property(4, String.class, "urlUnique", false, "URL_UNIQUE");
         public final static Property Time = new Property(5, java.util.Date.class, "time", false, "TIME");
         public final static Property UserId = new Property(6, long.class, "userId", false, "USER_ID");
-        public final static Property PhotoId = new Property(7, Long.class, "photoId", false, "PHOTO_ID");
+        public final static Property MomentId = new Property(7, Long.class, "momentId", false, "MOMENT_ID");
+        public final static Property PhotoId = new Property(8, Long.class, "photoId", false, "PHOTO_ID");
     };
 
     private DaoSession daoSession;
@@ -62,7 +63,8 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
                 "'URL_UNIQUE' TEXT," + // 4: urlUnique
                 "'TIME' INTEGER," + // 5: time
                 "'USER_ID' INTEGER NOT NULL ," + // 6: userId
-                "'PHOTO_ID' INTEGER);"); // 7: photoId
+                "'MOMENT_ID' INTEGER," + // 7: momentId
+                "'PHOTO_ID' INTEGER);"); // 8: photoId
         // Add Indexes
         db.execSQL("CREATE INDEX " + constraint + "IDX_photos__id ON photos" +
                 " (_id);");
@@ -109,6 +111,11 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
             stmt.bindLong(6, time.getTime());
         }
         stmt.bindLong(7, entity.getUserId());
+ 
+        Long momentId = entity.getMomentId();
+        if (momentId != null) {
+            stmt.bindLong(8, momentId);
+        }
     }
 
     @Override
@@ -133,7 +140,8 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // urlThumbnail
             cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4), // urlUnique
             cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)), // time
-            cursor.getLong(offset + 6) // userId
+            cursor.getLong(offset + 6), // userId
+            cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7) // momentId
         );
         return entity;
     }
@@ -148,6 +156,7 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
         entity.setUrlUnique(cursor.isNull(offset + 4) ? null : cursor.getString(offset + 4));
         entity.setTime(cursor.isNull(offset + 5) ? null : new java.util.Date(cursor.getLong(offset + 5)));
         entity.setUserId(cursor.getLong(offset + 6));
+        entity.setMomentId(cursor.isNull(offset + 7) ? null : cursor.getLong(offset + 7));
      }
     
     /** @inheritdoc */
@@ -195,8 +204,11 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
             SqlUtils.appendColumns(builder, "T", getAllColumns());
             builder.append(',');
             SqlUtils.appendColumns(builder, "T0", daoSession.getUserDao().getAllColumns());
+            builder.append(',');
+            SqlUtils.appendColumns(builder, "T1", daoSession.getMomentDao().getAllColumns());
             builder.append(" FROM photos T");
             builder.append(" LEFT JOIN users T0 ON T.'USER_ID'=T0.'_id'");
+            builder.append(" LEFT JOIN moments T1 ON T.'MOMENT_ID'=T1.'_id'");
             builder.append(' ');
             selectDeep = builder.toString();
         }
@@ -211,6 +223,10 @@ public class PhotoDao extends AbstractDao<Photo, Long> {
          if(user != null) {
             entity.setUser(user);
         }
+        offset += daoSession.getUserDao().getAllColumns().length;
+
+        Moment moment = loadCurrentOther(daoSession.getMomentDao(), cursor, offset);
+        entity.setMoment(moment);
 
         return entity;    
     }

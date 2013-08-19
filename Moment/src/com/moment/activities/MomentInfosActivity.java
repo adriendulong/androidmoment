@@ -177,14 +177,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
         getMoment();
-        /*
-        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
-            moment = AppMoment.getInstance().user.getMomentById(momentID);
-            mNbPhotos = moment.getPhotos().size();
-        } else {
-            getMoment();
-        }*/
-
     }
 
 

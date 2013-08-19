@@ -1,6 +1,8 @@
 package com.moment.models;
 
 import java.util.List;
+
+import com.moment.AppMoment;
 import com.moment.models.DaoSession;
 import de.greenrobot.dao.DaoException;
 
@@ -368,9 +370,14 @@ public class User implements Parcelable {
     }
 
     public Moment getMomentById(Long id){
-        for(Moment m : moments){
-            if(m.getId().equals(id)){
-                return m;
+        if(AppMoment.getInstance().momentDao.load(id) != null)
+        {
+            return AppMoment.getInstance().momentDao.load(id);
+        } else {
+            for(Moment m : moments){
+                if(m.getId().equals(id)){
+                    return m;
+                }
             }
         }
         return null;
