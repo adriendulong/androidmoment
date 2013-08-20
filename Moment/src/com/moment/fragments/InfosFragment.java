@@ -90,7 +90,7 @@ public class InfosFragment extends Fragment {
     private Tracker mGaTracker;
     private GoogleAnalytics mGaInstance;
 
-    private static final String IMAGE_CACHE_DIR = "thumbs";
+    private static final String IMAGE_CACHE_DIR = "thumbs_info";
     private static final String IMAGE_CACHE_DIR_COVER = "cover";
     private ImageFetcher mImageFetcher;
     private ImageFetcher mImageFetcherCover;
@@ -431,7 +431,7 @@ public class InfosFragment extends Fragment {
 
         if (moment.getUser() != null) {
             if (moment.getUser().getPictureProfileUrl() != null)
-                Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).resize(600, 400).transform(roundTrans).into(owner_picture);
+                Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).resize(200, 200).transform(roundTrans).into(owner_picture);
             firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
             lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
         }
@@ -550,14 +550,17 @@ public class InfosFragment extends Fragment {
 
     public void updatePhotos(List<Photo> photosNew) {
 
-        if(photos.size()==0){
-            for (int i = 0; i < numberOfPhotos(); i++) {
-                if (photosNew.size() > i) photos.add(photosNew.get(i));
+        if(photos!=null){
+            if(photos.size()==0){
+                for (int i = 0; i < numberOfPhotos(); i++) {
+                    if (photosNew.size() > i) photos.add(photosNew.get(i));
+                }
+                Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
+                gridPreviewPhotos.setFocusable(false);
+                imageAdapter.notifyDataSetChanged();
             }
-            Log.v("INFOSFRAGMENT", "Nombre de photos : " + numberOfPhotos());
-            gridPreviewPhotos.setFocusable(false);
-            imageAdapter.notifyDataSetChanged();
         }
+
 
     }
 

@@ -362,8 +362,11 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
     public void notifications(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Notifications", null);
-        Intent notifs = new Intent(this, NotificationsActivity.class);
-        startActivity(notifs);
+        if(notifProgress.getVisibility()!=View.VISIBLE){
+            Intent notifs = new Intent(this, NotificationsActivity.class);
+            startActivity(notifs);
+        }
+
     }
 
     public void getNotifications() {
@@ -407,6 +410,9 @@ public class TimelineActivity extends SlidingFragmentActivity {
             @Override
             public void onFailure(Throwable error, String content) {
                 System.out.println(content);
+                totalNotifText.setText("-");
+                totalNotifText.setVisibility(View.VISIBLE);
+                notifProgress.setVisibility(View.INVISIBLE);
             }
         });
 
