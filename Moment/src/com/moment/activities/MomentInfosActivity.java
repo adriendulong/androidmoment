@@ -58,11 +58,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     static final int NEW_INVIT = 3;
     static final int LIST_INVIT = 4;
 
-
-
     private int CHAT_PUSH = 3;
     private int PHOTO_PUSH = 2;
-
 
     private int type_id, moment_id;
     public static int mNbPhotos=1;
@@ -83,7 +80,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     private GoogleMap mMap;
 
     ArrayList<Fragment> fragments;
-
 
     private Moment moment;
 

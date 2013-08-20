@@ -29,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class NotificationsActivity extends SherlockActivity {
@@ -160,13 +161,16 @@ public class NotificationsActivity extends SherlockActivity {
             }
         } else {
             invitations = (ArrayList<Notification>) AppMoment.getInstance().notificationDao.loadAll();
+            ArrayList<Notification> invitationsTemp = new ArrayList<Notification>();
             for(Notification invit : invitations)
             {
-                if(invit.getTypeNotif() != 0)
+                if(invit.getTypeNotif() == 0)
                 {
-                    invitations.remove(invit);
+                    invitationsTemp.add(invit);
                 }
             }
+            invitations = new ArrayList<Notification>(invitationsTemp);
+            invitationsTemp.clear();
             AppMoment.getInstance().user.setNotifications(invitations);
         }
     }
