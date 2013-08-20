@@ -211,7 +211,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     @Override
     public void onBackPressed() {
-
         if (photosFr.isAsyncRun() == true) {
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder
@@ -232,9 +231,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     });
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
-        } else {
-            NavUtils.navigateUpFromSameTask(this);
         }
+        super.onBackPressed();
     }
 
     public class MyPagerAdapter extends FragmentStatePagerAdapter {

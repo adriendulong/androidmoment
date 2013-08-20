@@ -54,7 +54,7 @@ public class NotificationsAdapter extends ArrayAdapter<Notification> {
             holder = new NotifHolder();
 
             //Notifications list
-            if(type==NOTIFICATIONS){
+            if(type == NOTIFICATIONS){
                 holder.imageNotif = (ImageView)row.findViewById(R.id.image_notif);
                 holder.textNotif = (TextView)row.findViewById(R.id.text_notif);
             }
