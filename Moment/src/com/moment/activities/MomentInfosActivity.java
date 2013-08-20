@@ -97,7 +97,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         super.setContentView(R.layout.activity_moment_infos);
 
         ActionBar actionBar = getSupportActionBar();
@@ -214,7 +213,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     public void onBackPressed() {
 
         if (photosFr.isAsyncRun() == true) {
-
             AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
             alertDialogBuilder
                     .setTitle(getString(R.string.attention))
@@ -235,7 +233,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             AlertDialog alertDialog = alertDialogBuilder.create();
             alertDialog.show();
         } else {
-            super.onBackPressed();
+            NavUtils.navigateUpFromSameTask(this);
         }
     }
 
