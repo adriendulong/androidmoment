@@ -93,36 +93,13 @@ public class ChatFragment extends Fragment {
 
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
-        cacheParams.setMemCacheSizePercent(0.1f); // Set memory cache to 10% of app memory
+        cacheParams.setMemCacheSizePercent(0.1f);
 
-        // The ImageFetcher takes care of loading images into our ImageView children asynchronously
         mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
         mImageFetcher.setLoadingImage(R.drawable.btn_profilpic_up);
         mImageFetcher.addImageCache(getActivity().getSupportFragmentManager(), cacheParams);
 
-
-
-
-
-        /*
-        this.inflater = inflater;
-
-        if (view != null) {
-            layoutChat = (LinearLayout) view.findViewById(R.id.chat_message_layout);
-            scrollChat = (PullToRefreshScrollView) view.findViewById(R.id.scroll_chat);
-
-        }
-
-        scrollChat.setOnRefreshListener(new PullToRefreshBase.OnRefreshListener<ScrollView>() {
-
-            @Override
-            public void onRefresh(PullToRefreshBase<ScrollView> refreshView) {
-                EasyTracker.getTracker().sendEvent("Chat", "scroll_refresh", "Load old chats", null);
-                new GetDataTask().execute();
-            }
-        });*/
-
-        if(chats==null){
+        if(chats == null){
 
             chats = new ArrayList<Chat>();
             adapter = new ChatAdapter(getActivity(), R.layout.chat_message_droite, chats, mImageFetcher);
@@ -153,140 +130,15 @@ public class ChatFragment extends Fragment {
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    /*
-    private class GetDataTask extends AsyncTask<Void, Void, ArrayList<Chat>> {
-
-        @Override
-        protected void onPreExecute() {
-            if (nextPage < 2) {
-                scrollChat.onRefreshComplete();
-                cancel(true);
-            }
-        }
-
-        @Override
-        protected ArrayList<Chat> doInBackground(Void... params) {
-
-            JSONObject jsonChats = null;
-
-            try {
-                jsonChats = getChatsFromURL(MomentApi.BASE_URL + momentId + "/" + nextPage);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            if (jsonChats == null) {
-                return null;
-            }
-
-            if (jsonChats.has("next_page"))
-                try {
-                    if (jsonChats.getInt("next_page") >= nextPage)
-                        nextPage = jsonChats.getInt("next_page");
-                    else
-                        nextPage = 0;
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            JSONArray chats = null;
-            try {
-                chats = jsonChats.getJSONArray("chats");
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-
-            ArrayList<Chat> tempChats = new ArrayList<Chat>();
-
-            if (chats != null) {
-                for (int i = 0; i < chats.length(); i++) {
-
-                    Chat tempChat = new Chat();
-
-                    try {
-                        tempChat.chatFromJSON(chats.getJSONObject(i));
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    User user = tempChat.getUser();
-
-                    if (AppMoment.getInstance().chatDao.load(tempChat.getId()) == null) {
-                        tempChat.setMomentId(momentId);
-                        AppMoment.getInstance().chatDao.insert(tempChat);
-                        if (AppMoment.getInstance().userDao.load(user.getId()) == null)
-                            AppMoment.getInstance().userDao.insert(user);
-                    }
-
-                    tempChats.add(tempChat);
-
-                }
-            }
-            return tempChats;
-        }
-
-
-        @Override
-        protected void onPostExecute(ArrayList<Chat> chats) {
-            if (chats != null) {
-                int index = 0;
-                for (Chat chat : chats) {
-                    if (chat.getUser().getId().equals(AppMoment.getInstance().user.getId())) {
-                        messageRight(chat, index);
-
-                    } else {
-                        messageLeft(chat, index);
-                    }
-                    index++;
-                }
-            }
-
-            scrollChat.onRefreshComplete();
-            super.onPostExecute(chats);
-        }
-
-        private JSONObject getChatsFromURL(String url) throws JSONException {
-            try {
-                DefaultHttpClient httpclient = new DefaultHttpClient(new BasicHttpParams());
-                httpclient.setCookieStore(MomentApi.myCookieStore);
-                HttpGet httpGet = new HttpGet(url);
-                httpGet.setHeader("Content-type", "application/json");
-                InputStream inputStream;
-                String result;
-                HttpResponse response = httpclient.execute(httpGet);
-                HttpEntity entity = response.getEntity();
-                inputStream = entity.getContent();
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"), 8);
-                StringBuilder sb = new StringBuilder();
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line).append("\n");
-                }
-                result = sb.toString();
-
-                return new JSONObject(result);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-
-    }*/
-
-
     public void createFragment(Long momentId) {
         this.momentId = momentId;
 
         initChat();
     }
 
-
     private void initChat() {
-        Log.d("CHATFRAGMENT", "INIT");
 
-        if (!AppMoment.getInstance().checkInternet()) {
+        if (!AppMoment.getInstance().checkInternet() && chats.isEmpty()) {
             chats.addAll(AppMoment.getInstance().user.getMomentById(momentId).getChats());
             defaultTextChat.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();

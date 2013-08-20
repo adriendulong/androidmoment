@@ -34,6 +34,7 @@ import com.moment.classes.MomentApi;
 import com.moment.classes.MomentsAdapter;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
+import com.moment.models.User;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
@@ -47,6 +48,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -175,6 +178,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
             if (AppMoment.getInstance().checkInternet() == false) {
                 if (!AppMoment.getInstance().momentDao.loadAll().isEmpty()) {
                     List<Moment> momentList = AppMoment.getInstance().momentDao.loadAll();
+                    Collections.sort(momentList, new CustomComparator());
                     for (Moment moment : momentList) {
                         AppMoment.getInstance().user.getMoments().add(moment);
                         moments.add(moment);
@@ -653,5 +657,13 @@ public class TimelineActivity extends SlidingFragmentActivity {
         return offset;
     }
 
+    private class CustomComparator implements Comparator<Moment> {
+        @Override
+        public int compare(Moment lhs, Moment rhs) {
+            DateTime dateOne = new DateTime(lhs.getDateDebut());
+            DateTime dateTwo = new DateTime(rhs.getDateDebut());
+            return dateOne.compareTo(dateTwo);
+        }
+    }
 
 }
