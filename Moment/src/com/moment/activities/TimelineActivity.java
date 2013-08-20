@@ -152,6 +152,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
                     EasyTracker.getTracker().sendEvent("Volet", "button_press", "Timeline", null);
                     toggle();
 
+
                 } else if (v.getId() == profile.getId()) {
                     EasyTracker.getTracker().sendEvent("Volet", "button_press", "Profil", null);
                     Intent intent = new Intent(getApplication(), EditProfilActivity.class);
