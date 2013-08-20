@@ -114,7 +114,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             Utils.logHeap();
         }
 
-        //Broadcast Listener (when logout remove from history)
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.package.ACTION_LOGOUT");
         registerReceiver(new BroadcastReceiver() {
