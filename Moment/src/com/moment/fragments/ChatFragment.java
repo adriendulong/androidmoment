@@ -93,7 +93,7 @@ public class ChatFragment extends Fragment {
 
         ImageCache.ImageCacheParams cacheParams = new ImageCache.ImageCacheParams(getActivity(), IMAGE_CACHE_DIR);
 
-        cacheParams.setMemCacheSizePercent(0.1f);
+        cacheParams.setMemCacheSizePercent(0.25f);
 
         mImageFetcher = new ImageFetcher(getActivity(), mImageThumbSize);
         mImageFetcher.setLoadingImage(R.drawable.btn_profilpic_up);

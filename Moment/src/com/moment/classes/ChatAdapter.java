@@ -14,6 +14,8 @@ import com.moment.models.Chat;
 import com.moment.models.Moment;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageFetcher;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Transformation;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -28,6 +30,7 @@ public class ChatAdapter extends ArrayAdapter<Chat> {
     int layoutResourceId;
     List<Chat> data = new ArrayList<Chat>();
     private ImageFetcher mImageFetcher;
+    private final Transformation roundTrans = new RoundTransformation();
 
 
 
@@ -63,7 +66,7 @@ public class ChatAdapter extends ArrayAdapter<Chat> {
         holder.userName.setText(data.get(position).getUser().getFirstName()+" "+data.get(position).getUser().getLastName()+".");
         holder.date.setText(CommonUtilities.getDateTimeFormat(Locale.getDefault().getLanguage()).format(data.get(position).getDate()));
         holder.messageChat.setText(data.get(position).getMessage());
-        if(data.get(position).getUser().getPictureProfileUrl()!=null) mImageFetcher.loadImage(data.get(position).getUser().getPictureProfileUrl(), holder.userPhoto, true);
+        if(data.get(position).getUser().getPictureProfileUrl()!=null) Picasso.with(context).load(data.get(position).getUser().getPictureProfileUrl()).resize(200, 200).transform(roundTrans).into(holder.userPhoto); //mImageFetcher.loadImage(data.get(position).getUser().getPictureProfileUrl(), holder.userPhoto, true);
         else holder.userPhoto.setImageDrawable(context.getResources().getDrawable(R.drawable.btn_profilpic_up));
 
 
