@@ -160,7 +160,7 @@ public class NotificationsActivity extends SherlockActivity {
 
             }
         } else {
-            invitations = (ArrayList<Notification>) AppMoment.getInstance().notificationDao.loadAll();
+            invitations = new ArrayList<Notification>(AppMoment.getInstance().notificationDao.loadAll());
             ArrayList<Notification> invitationsTemp = new ArrayList<Notification>();
             for(Notification invit : invitations)
             {
