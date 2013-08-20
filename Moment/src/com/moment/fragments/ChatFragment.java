@@ -107,7 +107,6 @@ public class ChatFragment extends Fragment {
 
             if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
                 this.momentId = ((MomentInfosActivity) getActivity()).getMomentId();
-                Log.d("CHAT", "INIT");
                 initChat();
 
             }
@@ -138,7 +137,8 @@ public class ChatFragment extends Fragment {
 
     private void initChat() {
 
-        if (!AppMoment.getInstance().checkInternet() && chats.isEmpty()) {
+        if (!AppMoment.getInstance().checkInternet()) {
+            AppMoment.getInstance().user.getMomentById(momentId).resetChats();
             chats.addAll(AppMoment.getInstance().user.getMomentById(momentId).getChats());
             defaultTextChat.setVisibility(View.GONE);
             adapter.notifyDataSetChanged();
