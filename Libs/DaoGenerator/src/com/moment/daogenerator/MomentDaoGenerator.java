@@ -16,7 +16,7 @@ public class MomentDaoGenerator {
         Entity moment = schema.addEntity("Moment");
         moment.setTableName("moments");
 
-        moment.addIdProperty();
+        moment.addIdProperty().index();
 
         moment.addIntProperty("state");
         moment.addIntProperty("guestNumber");
@@ -47,7 +47,7 @@ public class MomentDaoGenerator {
         user.implementsInterface("Parcelable");
         user.setTableName("users");
 
-        user.addIdProperty();
+        user.addIdProperty().index();
 
         user.addLongProperty("facebookId");
 
@@ -77,7 +77,7 @@ public class MomentDaoGenerator {
         chat.setTableName("chats");
         chat.implementsInterface("Parcelable");
 
-        chat.addIdProperty();
+        chat.addIdProperty().index();
 
         chat.addStringProperty("message");
 
@@ -90,6 +90,7 @@ public class MomentDaoGenerator {
         Entity photo = schema.addEntity("Photo");
         photo.setTableName("photos");
         photo.implementsInterface("Parcelable");
+
         photo.addIdProperty().index();
 
         photo.addIntProperty("nbLike");
@@ -106,6 +107,8 @@ public class MomentDaoGenerator {
 
         Entity notification = schema.addEntity("Notification");
         notification.setTableName("notifications");
+
+        notification.addIdProperty().index();
 
         notification.addIntProperty("typeNotif");
 

@@ -22,7 +22,6 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.NotificationsAdapter;
 import com.moment.models.Notification;
-import com.moment.util.CommonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -49,9 +48,7 @@ public class NotificationsActivity extends SherlockActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.notifications_activity);
 
-
         positionTab = NOTIFICATIONS;
-
 
         metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -59,10 +56,8 @@ public class NotificationsActivity extends SherlockActivity {
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         notifications = new ArrayList<Notification>();
         notifsListView = (ListView) findViewById(R.id.list_notifs);
-
 
         adapterNotifs = new NotificationsAdapter(this, R.layout.notifs_cell, notifications, NOTIFICATIONS);
         notifsListView.setAdapter(adapterNotifs);
@@ -80,10 +75,8 @@ public class NotificationsActivity extends SherlockActivity {
             }
         });
 
-
         invitations = new ArrayList<Notification>();
         adapterInvits = new NotificationsAdapter(this, R.layout.notifs_invit, invitations, INVITATIONS);
-
 
         orangeIndicator = (ImageView) findViewById(R.id.orange_indicator);
         orangeIndicator.getLayoutParams().width = metrics.widthPixels / 2;
@@ -157,8 +150,8 @@ public class NotificationsActivity extends SherlockActivity {
                         }
                     });
                 }
-
             }
+
         } else {
             invitations = new ArrayList<Notification>(AppMoment.getInstance().notificationDao.loadAll());
             ArrayList<Notification> invitationsTemp = new ArrayList<Notification>();
@@ -177,7 +170,6 @@ public class NotificationsActivity extends SherlockActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         return true;
     }
 
@@ -218,11 +210,9 @@ public class NotificationsActivity extends SherlockActivity {
             LinearLayout.LayoutParams params = (LinearLayout.LayoutParams) orangeIndicator.getLayoutParams();
             params.setMargins(metrics.widthPixels / 2, 0, 0, 0);
             orangeIndicator.setLayoutParams(params);
-
             notifsListView.setAdapter(adapterInvits);
-
-
         }
+
         if (invitations.size() == 0) {
             notifsListView.setVisibility(View.GONE);
             defaultNotifs.setText(R.string.invits_vide);

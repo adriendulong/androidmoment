@@ -87,6 +87,9 @@ public class MomentDao extends AbstractDao<Moment, Long> {
                 "'IS_OPEN_INVIT' INTEGER," + // 17: isOpenInvit
                 "'OWNER_ID' INTEGER NOT NULL ," + // 18: ownerId
                 "'MOMENT_ID' INTEGER);"); // 19: momentId
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_moments__id ON moments" +
+                " (_id);");
     }
 
     /** Drops the underlying database table. */

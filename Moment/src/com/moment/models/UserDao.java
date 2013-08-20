@@ -85,6 +85,9 @@ public class UserDao extends AbstractDao<User, Long> {
                 "'MOMENT_ID' INTEGER," + // 17: momentId
                 "'NOTIFICATION_ID' INTEGER," + // 18: notificationId
                 "'INVITATIONS_ID' INTEGER);"); // 19: invitationsId
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_users__id ON users" +
+                " (_id);");
     }
 
     /** Drops the underlying database table. */

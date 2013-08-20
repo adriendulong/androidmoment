@@ -19,7 +19,7 @@ import com.moment.models.Notification;
 /** 
  * DAO for table notifications.
 */
-public class NotificationDao extends AbstractDao<Notification, Void> {
+public class NotificationDao extends AbstractDao<Notification, Long> {
 
     public static final String TABLENAME = "notifications";
 
@@ -28,12 +28,13 @@ public class NotificationDao extends AbstractDao<Notification, Void> {
      * Can be used for QueryBuilder and for referencing column names.
     */
     public static class Properties {
-        public final static Property TypeNotif = new Property(0, Integer.class, "typeNotif", false, "TYPE_NOTIF");
-        public final static Property Time = new Property(1, java.util.Date.class, "time", false, "TIME");
-        public final static Property UserId = new Property(2, long.class, "userId", false, "USER_ID");
-        public final static Property MomentId = new Property(3, long.class, "momentId", false, "MOMENT_ID");
-        public final static Property NotificationId = new Property(4, Long.class, "notificationId", false, "NOTIFICATION_ID");
-        public final static Property InvitationsId = new Property(5, Long.class, "invitationsId", false, "INVITATIONS_ID");
+        public final static Property Id = new Property(0, Long.class, "id", true, "_id");
+        public final static Property TypeNotif = new Property(1, Integer.class, "typeNotif", false, "TYPE_NOTIF");
+        public final static Property Time = new Property(2, java.util.Date.class, "time", false, "TIME");
+        public final static Property UserId = new Property(3, long.class, "userId", false, "USER_ID");
+        public final static Property MomentId = new Property(4, long.class, "momentId", false, "MOMENT_ID");
+        public final static Property NotificationId = new Property(5, Long.class, "notificationId", false, "NOTIFICATION_ID");
+        public final static Property InvitationsId = new Property(6, Long.class, "invitationsId", false, "INVITATIONS_ID");
     };
 
     private DaoSession daoSession;
@@ -54,12 +55,16 @@ public class NotificationDao extends AbstractDao<Notification, Void> {
     public static void createTable(SQLiteDatabase db, boolean ifNotExists) {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "'notifications' (" + //
-                "'TYPE_NOTIF' INTEGER," + // 0: typeNotif
-                "'TIME' INTEGER," + // 1: time
-                "'USER_ID' INTEGER NOT NULL ," + // 2: userId
-                "'MOMENT_ID' INTEGER NOT NULL ," + // 3: momentId
-                "'NOTIFICATION_ID' INTEGER," + // 4: notificationId
-                "'INVITATIONS_ID' INTEGER);"); // 5: invitationsId
+                "'_id' INTEGER PRIMARY KEY ," + // 0: id
+                "'TYPE_NOTIF' INTEGER," + // 1: typeNotif
+                "'TIME' INTEGER," + // 2: time
+                "'USER_ID' INTEGER NOT NULL ," + // 3: userId
+                "'MOMENT_ID' INTEGER NOT NULL ," + // 4: momentId
+                "'NOTIFICATION_ID' INTEGER," + // 5: notificationId
+                "'INVITATIONS_ID' INTEGER);"); // 6: invitationsId
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_notifications__id ON notifications" +
+                " (_id);");
     }
 
     /** Drops the underlying database table. */
@@ -73,17 +78,22 @@ public class NotificationDao extends AbstractDao<Notification, Void> {
     protected void bindValues(SQLiteStatement stmt, Notification entity) {
         stmt.clearBindings();
  
+        Long id = entity.getId();
+        if (id != null) {
+            stmt.bindLong(1, id);
+        }
+ 
         Integer typeNotif = entity.getTypeNotif();
         if (typeNotif != null) {
-            stmt.bindLong(1, typeNotif);
+            stmt.bindLong(2, typeNotif);
         }
  
         java.util.Date time = entity.getTime();
         if (time != null) {
-            stmt.bindLong(2, time.getTime());
+            stmt.bindLong(3, time.getTime());
         }
-        stmt.bindLong(3, entity.getUserId());
-        stmt.bindLong(4, entity.getMomentId());
+        stmt.bindLong(4, entity.getUserId());
+        stmt.bindLong(5, entity.getMomentId());
     }
 
     @Override
@@ -94,18 +104,19 @@ public class NotificationDao extends AbstractDao<Notification, Void> {
 
     /** @inheritdoc */
     @Override
-    public Void readKey(Cursor cursor, int offset) {
-        return null;
+    public Long readKey(Cursor cursor, int offset) {
+        return cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0);
     }    
 
     /** @inheritdoc */
     @Override
     public Notification readEntity(Cursor cursor, int offset) {
         Notification entity = new Notification( //
-            cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0), // typeNotif
-            cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)), // time
-            cursor.getLong(offset + 2), // userId
-            cursor.getLong(offset + 3) // momentId
+            cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
+            cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1), // typeNotif
+            cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)), // time
+            cursor.getLong(offset + 3), // userId
+            cursor.getLong(offset + 4) // momentId
         );
         return entity;
     }
@@ -113,23 +124,28 @@ public class NotificationDao extends AbstractDao<Notification, Void> {
     /** @inheritdoc */
     @Override
     public void readEntity(Cursor cursor, Notification entity, int offset) {
-        entity.setTypeNotif(cursor.isNull(offset + 0) ? null : cursor.getInt(offset + 0));
-        entity.setTime(cursor.isNull(offset + 1) ? null : new java.util.Date(cursor.getLong(offset + 1)));
-        entity.setUserId(cursor.getLong(offset + 2));
-        entity.setMomentId(cursor.getLong(offset + 3));
+        entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
+        entity.setTypeNotif(cursor.isNull(offset + 1) ? null : cursor.getInt(offset + 1));
+        entity.setTime(cursor.isNull(offset + 2) ? null : new java.util.Date(cursor.getLong(offset + 2)));
+        entity.setUserId(cursor.getLong(offset + 3));
+        entity.setMomentId(cursor.getLong(offset + 4));
      }
     
     /** @inheritdoc */
     @Override
-    protected Void updateKeyAfterInsert(Notification entity, long rowId) {
-        // Unsupported or missing PK type
-        return null;
+    protected Long updateKeyAfterInsert(Notification entity, long rowId) {
+        entity.setId(rowId);
+        return rowId;
     }
     
     /** @inheritdoc */
     @Override
-    public Void getKey(Notification entity) {
-        return null;
+    public Long getKey(Notification entity) {
+        if(entity != null) {
+            return entity.getId();
+        } else {
+            return null;
+        }
     }
 
     /** @inheritdoc */

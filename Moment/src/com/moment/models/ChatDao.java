@@ -57,6 +57,9 @@ public class ChatDao extends AbstractDao<Chat, Long> {
                 "'DATE' INTEGER," + // 2: date
                 "'USER_ID' INTEGER NOT NULL ," + // 3: userId
                 "'MOMENT_ID' INTEGER NOT NULL );"); // 4: momentId
+        // Add Indexes
+        db.execSQL("CREATE INDEX " + constraint + "IDX_chats__id ON chats" +
+                " (_id);");
     }
 
     /** Drops the underlying database table. */

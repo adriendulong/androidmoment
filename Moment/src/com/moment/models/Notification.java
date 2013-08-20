@@ -16,6 +16,7 @@ import java.util.Date;
  */
 public class Notification {
 
+    private Long id;
     private Integer typeNotif;
     private java.util.Date time;
     private long userId;
@@ -40,7 +41,12 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(Integer typeNotif, java.util.Date time, long userId, long momentId) {
+    public Notification(Long id) {
+        this.id = id;
+    }
+
+    public Notification(Long id, Integer typeNotif, java.util.Date time, long userId, long momentId) {
+        this.id = id;
         this.typeNotif = typeNotif;
         this.time = time;
         this.userId = userId;
@@ -51,6 +57,14 @@ public class Notification {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getNotificationDao() : null;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Integer getTypeNotif() {
@@ -169,28 +183,23 @@ public class Notification {
 
     public void setFromJson(JSONObject notifJson){
         try{
-            this.typeNotif = notifJson.getInt("type_id");
+            this.setId(notifJson.getLong("id"));
+            this.setTypeNotif(notifJson.getInt("type_id"));
 
             String timeString = notifJson.getString("time");
             Long time = Long.parseLong(timeString);
-            this.time = new Date(time*1000);
-
+            this.setTime(new Date(time*1000));
 
             if(notifJson.has("moment")){
                 Moment moment = new Moment();
                 moment.setMomentFromJson(notifJson.getJSONObject("moment"));
-                this.moment = moment;
-                this.momentId = moment.getId();
-
-                AppMoment.getInstance().momentDao.insertOrReplace(moment);
+                this.setMoment(moment);
             }
 
-            this.user = AppMoment.getInstance().user;
+            this.setUser(AppMoment.getInstance().user);
 
+            AppMoment.getInstance().momentDao.insertOrReplace(moment);
             AppMoment.getInstance().userDao.insertOrReplace(user);
-
-            this.userId = AppMoment.getInstance().user.getId();
-
             AppMoment.getInstance().notificationDao.insertOrReplace(this);
 
         }catch (JSONException e) {
