@@ -11,9 +11,13 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -76,6 +80,11 @@ public class TimelineActivity extends SlidingFragmentActivity {
     private Bitmap todayBitmap;
     private ImageFetcher mImageFetcher;
     private int mImageThumbSize;
+    private EditText searchEditText;
+    private ListView searchlist;
+    private ImageView separator;
+    private ImageView separator2;
+    private ImageView separator3;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -101,6 +110,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
         setContentView(R.layout.activity_timeline);
         setBehindContentView(R.layout.volet_timeline);
+
         sm = getSlidingMenu();
         sm.setBehindOffset(getMarginRightSlider());
         sm.setShadowDrawable(R.drawable.shadow);
@@ -134,11 +144,59 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
 
         todayBtn = (ImageView) findViewById(R.id.today_btn);
-
         myMoments = (RelativeLayout) sm.getRootView().findViewById(R.id.my_moments_button);
         profile = (RelativeLayout) sm.getRootView().findViewById(R.id.profile_button_volet);
         settings = (RelativeLayout) sm.getRootView().findViewById(R.id.settings_button_volet);
         todayBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.btn_today);
+        separator = (ImageView) findViewById(R.id.separator);
+        separator2 = (ImageView) findViewById(R.id.separator2);
+        separator3 = (ImageView) findViewById(R.id.separator3);
+
+        searchlist = (ListView) findViewById(R.id.searchList);
+        searchlist.setVisibility(View.INVISIBLE);
+
+        searchEditText = (EditText) sm.getRootView().findViewById(R.id.volet_search);
+        searchEditText.setOnClickListener(new TextView.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sm.setBehindOffset(0);
+                myMoments.setVisibility(View.INVISIBLE);
+                profile.setVisibility(View.INVISIBLE);
+                settings.setVisibility(View.INVISIBLE);
+                separator.setVisibility(View.INVISIBLE);
+                separator2.setVisibility(View.INVISIBLE);
+                separator3.setVisibility(View.INVISIBLE);
+            }
+        });
+
+        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                searchlist.setVisibility(View.VISIBLE);
+                MomentApi.get("search/" + searchEditText.getText().toString(), null, new JsonHttpResponseHandler(){
+                    @Override
+                    public void onSuccess(JSONObject response){
+                        response.toString();
+                    }
+                });
+                return false;
+            }
+        });
+
+        sm.setOnCloseListener(new SlidingMenu.OnCloseListener() {
+            @Override
+            public void onClose() {
+                sm.setBehindOffset(getMarginRightSlider());
+                myMoments.setVisibility(View.VISIBLE);
+                profile.setVisibility(View.VISIBLE);
+                settings.setVisibility(View.VISIBLE);
+                separator.setVisibility(View.VISIBLE);
+                separator2.setVisibility(View.VISIBLE);
+                separator3.setVisibility(View.VISIBLE);
+                searchlist.setVisibility(View.INVISIBLE);
+                searchEditText.setText("");
+            }
+        });
 
         moments = new ArrayList<Moment>();
         momentsList = (ListView) findViewById(R.id.list_moments);
@@ -189,10 +247,8 @@ public class TimelineActivity extends SlidingFragmentActivity {
                     goToToday(false);
 
                     List<Notification> tempNotifs = AppMoment.getInstance().notificationDao.loadAll();
-                    for(Notification notif: tempNotifs)
-                    {
-                        if(notif.getTypeNotif() == 0)
-                        {
+                    for (Notification notif : tempNotifs) {
+                        if (notif.getTypeNotif() == 0) {
                             invitations.add(notif);
                         } else {
                             notifications.add(notif);
@@ -365,7 +421,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
     public void notifications(View view) {
         EasyTracker.getTracker().sendEvent("Timeline", "button_press", "Notifications", null);
-        if(notifProgress.getVisibility()!=View.VISIBLE){
+        if (notifProgress.getVisibility() != View.VISIBLE) {
             Intent notifs = new Intent(this, NotificationsActivity.class);
             startActivity(notifs);
         }
@@ -400,8 +456,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
                     AppMoment.getInstance().user.setNotifications(notifications);
 
-                    if(AppMoment.getInstance().user != null)
-                    {
+                    if (AppMoment.getInstance().user != null) {
                         AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
                     }
 
@@ -507,6 +562,36 @@ public class TimelineActivity extends SlidingFragmentActivity {
         Bitmap rot = Bitmap.createBitmap(todayBitmap, 0, 0, todayBitmap.getWidth(), todayBitmap.getHeight(),
                 matrix, true);
         todayBtn.setImageBitmap(rot);
+    }
+
+    /**
+     * Calculate the margin right of the slide in order to have at least 200 dp width
+     *
+     * @return width
+     */
+
+    public int getMarginRightSlider() {
+        int offset;
+        float density = getApplicationContext().getResources().getDisplayMetrics().density;
+        Display display = getWindowManager().getDefaultDisplay();
+        int widthScreen = display.getWidth();
+        int dpWidth = (int) (widthScreen / density);
+
+        if (dpWidth > 250) {
+            offset = dpWidth - 250;
+        } else offset = 0;
+
+
+        return offset;
+    }
+
+    public void createMoment(View view) {
+        Intent intent = new Intent(this, CreationActivity.class);
+        startActivity(intent);
+    }
+
+    public void volet(View view) {
+        toggle();
     }
 
     private class TImelineScrollListener implements AbsListView.OnScrollListener {
@@ -644,28 +729,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
     }
 
-    /**
-     * Calculate the margin right of the slide in order to have at least 200 dp width
-     * @return width
-     */
-
-    public int getMarginRightSlider(){
-        int offset;
-        float density = getApplicationContext().getResources().getDisplayMetrics().density;
-        Display display = getWindowManager().getDefaultDisplay();
-        int widthScreen = display.getWidth();
-        int dpWidth = (int) (widthScreen/density);
-
-        if(dpWidth>250){
-            offset = dpWidth - 250;
-        }
-        else offset = 0;
-
-
-
-        return offset;
-    }
-
     private class CustomComparator implements Comparator<Moment> {
         @Override
         public int compare(Moment lhs, Moment rhs) {
@@ -673,15 +736,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
             DateTime dateTwo = new DateTime(rhs.getDateDebut());
             return dateOne.compareTo(dateTwo);
         }
-    }
-
-    public void createMoment(View view){
-        Intent intent = new Intent(this, CreationActivity.class);
-        startActivity(intent);
-    }
-
-    public void volet(View view){
-        toggle();
     }
 
 }
