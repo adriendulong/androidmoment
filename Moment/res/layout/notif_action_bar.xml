@@ -1,19 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
               android:layout_width="fill_parent"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal"
-              android:layout_gravity="right"
-              android:gravity="right">
+              android:layout_height="wrap_content">
+    <ImageButton android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:onClick="createMoment"
+                 android:id="@+id/plus"
+                 android:layout_centerVertical="true"
+                 android:layout_alignParentRight="true"
+                 android:background="@drawable/btn_plus"
+                 android:layout_marginRight="10dp"
+                 android:layout_marginLeft="10dp"/>
     <RelativeLayout android:layout_width="48dp"
                     android:layout_height="48dp"
+                    android:layout_centerVertical="true"
+                    android:layout_toLeftOf="@+id/plus"
                     android:onClick="notifications"
                     android:clickable="true">
-
         <!-- Menu Item Image -->
         <ImageView
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:clickable="true"
             android:layout_centerInParent="true"
             android:background="@color/orange"/>
@@ -38,4 +45,19 @@
                      android:onClick="notifications"/>
 
     </RelativeLayout>
-</LinearLayout>
+    <RelativeLayout android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:onClick="volet"
+                    android:background="@android:color/transparent"
+                    android:layout_alignParentLeft="true">
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:background="@drawable/btn_volet_top_bar"
+                     android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <ImageView android:layout_width="wrap_content"
+               android:layout_height="wrap_content"
+               android:src="@drawable/logo"
+               android:layout_centerInParent="true"/>
+</RelativeLayout>

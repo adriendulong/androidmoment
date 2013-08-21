@@ -87,6 +87,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     private ProgressDialog mProgressDialog;
 
+    private String precedente; //previous screen
+
 
     private String TAG = "InfosActivity";
 
@@ -120,12 +122,11 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         }, intentFilter);
 
 
-        String precedente = getIntent().getStringExtra("precedente");
+        precedente = getIntent().getStringExtra("precedente");
 
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
         if (precedente.equals("push") || precedente.equals("notifs")) {
-            Log.d("MOMENTINFOS", "TYPE INIT : " + getIntent().getLongExtra("type_id", -1));
             type_id = getIntent().getIntExtra("type_id", -1);
             momentID = getIntent().getLongExtra("moment_id", 1);
 
@@ -134,8 +135,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             else position = 1;
         } else momentID = getIntent().getLongExtra("id", 1);
 
-        Log.d("MOMENTINFOS", "Position : " + position);
-        Log.d("MOMENTINFOS", "TYPE : " + type_id);
 
         fragments = new ArrayList<Fragment>();
 
@@ -175,9 +174,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
             }
         });
-
-
-        if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
 
         if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
@@ -470,6 +466,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         }
 
                         mProgressDialog.dismiss();
+                        if (precedente.equals("creation")) callInvit(NEW_INVIT);
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON problems");
                     }
@@ -479,7 +476,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 @Override
                 public void onFailure(Throwable error, String content) {
                     isSuccess = true;
-                    mProgressDialog.dismiss();
+
                     Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                     if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
                         moment = AppMoment.getInstance().user.getMomentById(momentID);
@@ -496,12 +493,14 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                             ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
                         }
                     }
+                    if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                    mProgressDialog.dismiss();
                 }
 
                 public void onFinish() {
 
                     if (!isSuccess) {
-                        mProgressDialog.dismiss();
+
                         Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                         if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
                             moment = AppMoment.getInstance().user.getMomentById(momentID);
@@ -518,6 +517,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                 ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
                             }
                         }
+                        if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                        mProgressDialog.dismiss();
                     }
                 }
             });
@@ -579,7 +580,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                         tempChat.setMoment(AppMoment.getInstance().user.getMomentById(momentID));
                                         tempChat.setUser(tempChat.getUser());
                                         AppMoment.getInstance().user.getMomentById(momentID).getChats().add(tempChat);
-                                        AppMoment.getInstance().chatDao.insert(tempChat);
 
                                         chatFr.newMessage(tempChat);
 

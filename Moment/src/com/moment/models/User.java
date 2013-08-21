@@ -56,6 +56,7 @@ public class User implements Parcelable {
     // KEEP FIELDS END
 
     public User() {
+        isSelect = false;
     }
 
     public User(Long id) {

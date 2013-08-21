@@ -121,13 +121,15 @@ public class TimelineActivity extends SlidingFragmentActivity {
 
         //Action bar
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayUseLogoEnabled(false);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        final LinearLayout actionBarLayout = (LinearLayout) inflater.inflate(R.layout.notif_action_bar, null);
+        final RelativeLayout actionBarLayout = (RelativeLayout) inflater.inflate(R.layout.notif_action_bar, null);
         totalNotifText = (TextView) actionBarLayout.findViewById(R.id.actionbar_notifcation_textview);
         notifProgress = (ProgressBar) actionBarLayout.findViewById(R.id.progress_notifs);
         getSupportActionBar().setCustomView(actionBarLayout);
-        actionBarLayout.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        actionBarLayout.setLayoutParams(new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.MATCH_PARENT, RelativeLayout.LayoutParams.MATCH_PARENT));
         getSupportActionBar().setDisplayShowCustomEnabled(true);
 
 
@@ -346,11 +348,11 @@ public class TimelineActivity extends SlidingFragmentActivity {
             case android.R.id.home:
                 toggle();
                 return true;
-
+            /*
             case R.id.menu_creer:
                 Intent intent = new Intent(this, CreationActivity.class);
                 startActivity(intent);
-                return true;
+                return true;*/
         }
         return super.onOptionsItemSelected(item);
     }
@@ -671,6 +673,15 @@ public class TimelineActivity extends SlidingFragmentActivity {
             DateTime dateTwo = new DateTime(rhs.getDateDebut());
             return dateOne.compareTo(dateTwo);
         }
+    }
+
+    public void createMoment(View view){
+        Intent intent = new Intent(this, CreationActivity.class);
+        startActivity(intent);
+    }
+
+    public void volet(View view){
+        toggle();
     }
 
 }

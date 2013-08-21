@@ -148,6 +148,7 @@ public class InvitationsAdapter extends ArrayAdapter<User> implements Filterable
 
                 if(FilteredUsers.size()==0){
                     User customUser = new User();
+                    customUser.setIsSelect(false);
                     if(constraint.length()==1){
                         if(Character.isLetter(constraint.charAt(0))){
                             customUser.setEmail(constraint.toString());

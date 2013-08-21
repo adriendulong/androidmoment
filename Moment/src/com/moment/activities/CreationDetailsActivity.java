@@ -632,6 +632,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
         @Override
         protected HttpResponse doInBackground(Moment... params) {
 
+            if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
             try {
                 HttpClient httpClient = new DefaultHttpClient();
                 HttpContext localContext = new BasicHttpContext();
