@@ -148,6 +148,12 @@
         <ImageView android:layout_width="fill_parent"
                    android:layout_height="2dp"
                    android:background="@drawable/sep_top"/>
+
+        <ListView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/listView"
+                android:visibility="invisible"/>
         <!--
         <RelativeLayout android:id="@+id/missing_button_volet"
                         android:layout_width="fill_parent"
