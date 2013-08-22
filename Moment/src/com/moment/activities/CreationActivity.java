@@ -166,6 +166,7 @@ public class CreationActivity extends SherlockActivity {
                         intent.putExtra("events", events.toString());
                         intent.putExtra("session", session);
                         startActivity(intent);
+
                     }
                 });
         Request.executeBatchAsync(request);
@@ -217,6 +218,7 @@ public class CreationActivity extends SherlockActivity {
     	    Intent intent = new Intent(CreationActivity.this, CreationDetailsActivity.class);
     	    intent.putExtras(bundle);
     	    startActivity(intent);
+            finish();
         } else {
         	AlertDialog.Builder builder = new AlertDialog.Builder(this);
         	builder.setMessage(R.string.alert_nom_creation_moment)

@@ -444,13 +444,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     isSuccess = true;
                     Moment tempMoment = new Moment();
                     try {
-                        tempMoment.setMomentFromJson(response);
                         if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
-                        Log.v(TAG, tempMoment.getName());
-                        moment = tempMoment;
 
+                        if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
+                            AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
+                            moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
+                        }
+                        else{
+                            tempMoment.setMomentFromJson(response);
+                            moment = tempMoment;
+                            AppMoment.getInstance().user.getMoments().add(tempMoment);
+                        }
 
-                        AppMoment.getInstance().user.getMoments().add(tempMoment);
 
 
                         if (pager.getCurrentItem() == 2) {

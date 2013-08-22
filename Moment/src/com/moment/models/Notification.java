@@ -183,28 +183,28 @@ public class Notification {
 
     public void setFromJson(JSONObject notifJson){
         try{
-            this.setId(notifJson.getLong("id"));
-            this.setTypeNotif(notifJson.getInt("type_id"));
-
-            String timeString = notifJson.getString("time");
-            Long time = Long.parseLong(timeString);
-            this.setTime(new Date(time*1000));
-
             if(notifJson.has("moment")){
-                Moment moment = new Moment();
-                moment.setMomentFromJson(notifJson.getJSONObject("moment"));
-                this.setMoment(moment);
-            }
+                this.setId(notifJson.getLong("id"));
+                this.setTypeNotif(notifJson.getInt("type_id"));
 
-            this.setUser(AppMoment.getInstance().user);
+                String timeString = notifJson.getString("time");
+                Long time = Long.parseLong(timeString);
+                this.setTime(new Date(time*1000));
 
-            AppMoment.getInstance().momentDao.insertOrReplace(moment);
-            AppMoment.getInstance().userDao.insertOrReplace(user);
+                if(notifJson.has("moment")){
+                    Moment moment = new Moment();
+                    moment.setMomentFromJson(notifJson.getJSONObject("moment"));
+                    this.setMoment(moment);
+                }
 
-            if(this.getMoment() != null)
-            {
+                this.setUser(AppMoment.getInstance().user);
+
+                AppMoment.getInstance().momentDao.insertOrReplace(moment);
+                AppMoment.getInstance().userDao.insertOrReplace(user);
+
                 AppMoment.getInstance().notificationDao.insertOrReplace(this);
             }
+
 
         }catch (JSONException e) {
             e.printStackTrace();

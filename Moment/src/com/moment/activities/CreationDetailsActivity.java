@@ -144,7 +144,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if(step==0){
+        if(step==0 || step == -1){
             if(inModif){
                 myMenu.findItem(R.id.left_options_creation).setVisible(false);
                 myMenu.findItem(R.id.right_options_creation).setIcon(R.drawable.btn_flechedown);
@@ -197,7 +197,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
             case R.id.right_options_creation:
                 if(step==0 || step == -1){
                     if(validateFirst){
-                        EasyTracker.getTracker().sendEvent("PhoCreateto", "button_press", "Go Step 2", null);
+                        EasyTracker.getTracker().sendEvent("Create", "button_press", "Go Step 2", null);
                         downTwo();
 
                         if(areDatesCorrect()){
@@ -686,6 +686,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                         Intent intent = new Intent(CreationDetailsActivity.this, CreationPopUp.class);
                         intent.putExtra("momentId", moment.getId());
                         startActivityForResult(intent, POP_UP_CREA);
+
                     }
                     else{
                         AppMoment.getInstance().user.getMoments().remove(moment);
@@ -695,6 +696,7 @@ public class CreationDetailsActivity extends SherlockFragmentActivity {
                         intent.putExtra("id", moment.getId());
                         intent.putExtra("precedente", "modif");
                         startActivity(intent);
+                        finish();
                     }
 
                 }catch(JSONException e){
