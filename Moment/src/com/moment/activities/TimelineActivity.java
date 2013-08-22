@@ -44,6 +44,8 @@ import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.moment.util.Utils;
+import com.moment.models.User;
+import com.moment.util.*;
 import com.slidingmenu.lib.SlidingMenu;
 import com.slidingmenu.lib.app.SlidingFragmentActivity;
 
@@ -381,7 +383,21 @@ public class TimelineActivity extends SlidingFragmentActivity {
                 }
 
             });
+
+            getNotifications();
         }
+
+
+        //Get a rate from the user
+        RateMeMaybe rmm = new RateMeMaybe(this);
+        rmm.setPromptMinimums(5, 5, 10, 15);
+        rmm.setRunWithoutPlayStore(true);
+        rmm.setDialogMessage(getString(R.string.rate_body));
+        rmm.setDialogTitle(getString(R.string.rate_title));
+        rmm.setPositiveBtn(getString(R.string.rate_yes));
+        rmm.setNegativeBtn(getString(R.string.rate_no));
+        rmm.setNeutralBtn(getString(R.string.rate_neutral));
+        rmm.run();
     }
 
     @Override
@@ -450,9 +466,13 @@ public class TimelineActivity extends SlidingFragmentActivity {
                         Log.e("EX", notifsObject.getJSONObject(i).toString());
                         notif.setFromJson(notifsObject.getJSONObject(i));
 
-                        if (notif.getTypeNotif() == 2 || notif.getTypeNotif() == 3) {
-                            notifications.add(notif);
+                        //If has no moment the notif will be null
+                        if(notif.getId()!=null){
+                            if (notif.getTypeNotif() == 2 || notif.getTypeNotif() == 3) {
+                                notifications.add(notif);
+                            }
                         }
+
                     }
 
                     AppMoment.getInstance().user.setNotifications(notifications);
