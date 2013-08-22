@@ -200,7 +200,11 @@ public class Notification {
 
             AppMoment.getInstance().momentDao.insertOrReplace(moment);
             AppMoment.getInstance().userDao.insertOrReplace(user);
-            AppMoment.getInstance().notificationDao.insertOrReplace(this);
+
+            if(this.getMoment() != null)
+            {
+                AppMoment.getInstance().notificationDao.insertOrReplace(this);
+            }
 
         }catch (JSONException e) {
             e.printStackTrace();

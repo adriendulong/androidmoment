@@ -126,8 +126,6 @@ public class NotificationsActivity extends SherlockActivity {
                                     Notification notif = new Notification();
                                     notif.setFromJson(notifsObject.getJSONObject(i));
                                     invitations.add(notif);
-
-                                    AppMoment.getInstance().notificationDao.insertOrReplace(notif);
                                 }
 
                                 AppMoment.getInstance().user.setNotifications(invitations);

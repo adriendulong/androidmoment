@@ -449,9 +449,6 @@ public class TimelineActivity extends SlidingFragmentActivity {
                         if (notif.getTypeNotif() == 2 || notif.getTypeNotif() == 3) {
                             notifications.add(notif);
                         }
-
-                        AppMoment.getInstance().notificationDao.insertOrReplace(notif);
-
                     }
 
                     AppMoment.getInstance().user.setNotifications(notifications);
