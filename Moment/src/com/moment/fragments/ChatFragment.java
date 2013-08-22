@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.analytics.tracking.android.GoogleAnalytics;
 import com.google.analytics.tracking.android.Tracker;
-import com.handmark.pulltorefresh.library.PullToRefreshScrollView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.BuildConfig;
@@ -38,7 +37,6 @@ public class ChatFragment extends Fragment {
     private View view;
     private LayoutInflater inflater;
     private Long momentId;
-    private PullToRefreshScrollView scrollChat;
     private LinearLayout layoutChat;
 
     private int nextPage;

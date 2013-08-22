@@ -67,8 +67,8 @@ public class InfosFragment extends Fragment {
     private final int OWNER = 0;
     private final int ADMIN = 1;
     private final int UNKOWN = 4;
-    private final String[] mois = {"Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Aout", "Septembre", "Aout", "Novembre", "Décembre"};
-    private final String[] jours = {"Dimanche", "Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi"};
+    private String[] mois;
+    private String[] jours;
     private final Transformation roundTrans = new RoundTransformation();
     private GoogleMap mMap;
     private Long momentId;
@@ -407,6 +407,7 @@ public class InfosFragment extends Fragment {
 
 
     private void initInfos() {
+
         titreText.setText(moment.getName().substring(1));
         flTitreText.setText(moment.getName().substring(0, 1));
         descriptionText.setText(moment.getDescription());
@@ -417,23 +418,28 @@ public class InfosFragment extends Fragment {
 
         org.joda.time.DateTime dt;
 
+        mois = this.getResources().getStringArray(R.array.mois);
+        jours = this.getResources().getStringArray(R.array.jours);
+
         dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateDebut());
 
-        dateDebutText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear()]);
+        dateDebutText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear() - 1]);
         heureDebutText.setText("" + dt.getHourOfDay() + "H" + dt.getMinuteOfHour());
 
         dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateFin());
 
-        dateFinText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear()]);
+        dateFinText.setText("" + jours[dt.getDayOfWeek() - 1] + " " + dt.getDayOfMonth() + " " + mois[dt.getMonthOfYear() - 1]);
         heureFinText.setText("" + dt.getHourOfDay() + "H" + dt.getMinuteOfHour());
 
         mImageFetcherCover.loadImage(moment.getUrlCover(), image_cover, false);
 
         if (moment.getUser() != null) {
             if (moment.getUser().getPictureProfileUrl() != null)
+            {
                 Picasso.with(getActivity()).load(moment.getUser().getPictureProfileUrl()).resize(200, 200).transform(roundTrans).into(owner_picture);
-            firstname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getFirstName());
-            lastname.setText(AppMoment.getInstance().user.getMomentById(momentId).getUser().getLastName());
+            }
+            firstname.setText(moment.getUser().getFirstName());
+            lastname.setText(moment.getUser().getLastName());
         }
 
 

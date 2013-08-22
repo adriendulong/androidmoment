@@ -1,12 +1,17 @@
 package com.moment.activities;
 
 import android.app.ProgressDialog;
-import android.content.*;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -14,12 +19,9 @@ import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -38,7 +40,6 @@ import com.moment.classes.MomentApi;
 import com.moment.classes.MomentsAdapter;
 import com.moment.models.Moment;
 import com.moment.models.Notification;
-import com.moment.models.User;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
@@ -92,6 +93,9 @@ public class TimelineActivity extends SlidingFragmentActivity {
         if (BuildConfig.DEBUG) {
             Utils.logHeap();
         }
+
+        TelephonyManager manager =(TelephonyManager)this.getSystemService(Context.TELEPHONY_SERVICE);
+        manager.getLine1Number();
 
         //Broadcast Listener (when logout remove from history)
         IntentFilter intentFilter = new IntentFilter();

@@ -411,19 +411,23 @@ public class Moment {
 
             if (moment.has("owner")){
                 JSONObject owner = moment.getJSONObject("owner");
-                this.user = new User();
-                if(owner.has("email")) this.user.setEmail(owner.getString("email"));
-                if(owner.has("firstname")) this.user.setFirstName(owner.getString("firstname"));
-                if(owner.has("lastname")) this.user.setLastName(owner.getString("lastname"));
-                if(owner.has("profile_picture_url")) this.user.setPictureProfileUrl(owner.getString("profile_picture_url"));
+                User user = new User();
+                if(owner.has("email")) user.setEmail(owner.getString("email"));
+                if(owner.has("firstname")) user.setFirstName(owner.getString("firstname"));
+                if(owner.has("lastname")) user.setLastName(owner.getString("lastname"));
+                if(owner.has("profile_picture_url")) user.setPictureProfileUrl(owner.getString("profile_picture_url"));
                 if(owner.has("id"))
                 {
-                    this.user.setId(owner.getLong("id"));
+                    user.setId(owner.getLong("id"));
                     this.setOwnerId(owner.getLong("id"));
-                    AppMoment.getInstance().userDao.insertOrReplace(this.user);
+                    AppMoment.getInstance().userDao.insertOrReplace(user);
+                } else {
+                    user.setId(Long.valueOf(0));
                 }
-                if(owner.has("facebookId")) this.user.setFacebookId(owner.getLong("facebookId"));
 
+                if(owner.has("facebookId")) user.setFacebookId(owner.getLong("facebookId"));
+
+                this.setUser(user);
                 AppMoment.getInstance().momentDao.insertOrReplace(this);
             }
         }catch (JSONException e){
