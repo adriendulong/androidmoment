@@ -69,8 +69,8 @@
         </receiver> -->
 
         <receiver
-            android:name=".MomentBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+                android:name=".MomentBroadcastReceiver"
+                android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <category android:name="com.moment" />
@@ -103,8 +103,8 @@
                 android:windowSoftInputMode="stateHidden"
                 android:label="">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.moment.activities.TimelineActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.moment.activities.TimelineActivity" />
 
         </activity>
 
@@ -186,8 +186,8 @@
                 android:windowSoftInputMode="stateHidden"/>
         <activity android:name=".activities.NotificationsActivity">
             <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.moment.activities.TimelineActivity" />
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.moment.activities.TimelineActivity" />
         </activity>
 
         <meta-data android:value="@string/app_id" android:name="com.facebook.sdk.ApplicationId"/>
@@ -198,10 +198,10 @@
                 android:value="AIzaSyDMB8Fck4_vlpCqIj7aaorcn35YioK4aI4"/>
 
         <activity
-            android:screenOrientation="portrait"
-            android:name=".activities.CustomGallery"
-            android:parentActivityName="com.moment.MomentInfosActivity"
-            android:label="">
+                android:screenOrientation="portrait"
+                android:name=".activities.CustomGallery"
+                android:parentActivityName="com.moment.MomentInfosActivity"
+                android:label="">
         </activity>
 
         <activity
@@ -212,12 +212,12 @@
         </activity>
 
         <activity
-            android:screenOrientation="portrait"
-            android:name=".activities.EditProfilActivity"
-            android:parentActivityName="com.moment.TimelineActivity"
-            android:windowSoftInputMode="stateHidden"
-            android:label="">
-    </activity>
+                android:screenOrientation="portrait"
+                android:name=".activities.EditProfilActivity"
+                android:parentActivityName="com.moment.TimelineActivity"
+                android:windowSoftInputMode="stateHidden"
+                android:label="">
+        </activity>
 
         <activity
                 android:screenOrientation="portrait"
@@ -233,6 +233,12 @@
                 android:label="">
         </activity>
 
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".activities.SearchActivity"
+            android:parentActivityName="com.moment.MomentActivity"
+            android:label="">
+        </activity>
 
     </application>
 </manifest>

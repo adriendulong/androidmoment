@@ -18,7 +18,9 @@ import android.util.TypedValue;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -83,11 +85,11 @@ public class TimelineActivity extends SlidingFragmentActivity {
     private Bitmap todayBitmap;
     private ImageFetcher mImageFetcher;
     private int mImageThumbSize;
-    private EditText searchEditText;
     private ListView searchlist;
     private ImageView separator;
     private ImageView separator2;
     private ImageView separator3;
+    private RelativeLayout search;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -158,49 +160,14 @@ public class TimelineActivity extends SlidingFragmentActivity {
         separator2 = (ImageView) findViewById(R.id.separator2);
         separator3 = (ImageView) findViewById(R.id.separator3);
 
-        searchlist = (ListView) findViewById(R.id.searchList);
-        searchlist.setVisibility(View.INVISIBLE);
+        search = (RelativeLayout) sm.getRootView().findViewById(R.id.volet_search);
 
-        searchEditText = (EditText) sm.getRootView().findViewById(R.id.volet_search);
-        searchEditText.setOnClickListener(new TextView.OnClickListener() {
+        search.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public void onClick(View v) {
-                sm.setBehindOffset(0);
-                myMoments.setVisibility(View.INVISIBLE);
-                profile.setVisibility(View.INVISIBLE);
-                settings.setVisibility(View.INVISIBLE);
-                separator.setVisibility(View.INVISIBLE);
-                separator2.setVisibility(View.INVISIBLE);
-                separator3.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                searchlist.setVisibility(View.VISIBLE);
-                MomentApi.get("search/" + searchEditText.getText().toString(), null, new JsonHttpResponseHandler(){
-                    @Override
-                    public void onSuccess(JSONObject response){
-                        response.toString();
-                    }
-                });
+            public boolean onTouch(View v, MotionEvent event) {
+                Intent intent = new Intent(TimelineActivity.this, SearchActivity.class);
+                startActivity(intent);
                 return false;
-            }
-        });
-
-        sm.setOnCloseListener(new SlidingMenu.OnCloseListener() {
-            @Override
-            public void onClose() {
-                sm.setBehindOffset(getMarginRightSlider());
-                myMoments.setVisibility(View.VISIBLE);
-                profile.setVisibility(View.VISIBLE);
-                settings.setVisibility(View.VISIBLE);
-                separator.setVisibility(View.VISIBLE);
-                separator2.setVisibility(View.VISIBLE);
-                separator3.setVisibility(View.VISIBLE);
-                searchlist.setVisibility(View.INVISIBLE);
-                searchEditText.setText("");
             }
         });
 
@@ -437,6 +404,16 @@ public class TimelineActivity extends SlidingFragmentActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putLong("userID", AppMoment.getInstance().user.getId());
+    }
+
+    private void hideKeyboard()
+    {
+        InputMethodManager inputManager = (InputMethodManager)
+                getApplicationContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+        if(this.getCurrentFocus()!=null){
+            inputManager.hideSoftInputFromWindow(this.getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
     public void notifications(View view) {
