@@ -11,7 +11,7 @@ public class SearchActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
-
+        getActionBar().hide();
     }
 
 }
