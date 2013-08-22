@@ -315,4 +315,11 @@
     <string name="upload_annul">Upload annule</string>
     <string name="upload_annul_2">photos n\'ont pas etees uploadées</string>
 
+    <!-- Notation -->
+    <string name="rate_body">Vous voulez nous faire plaisir ?</string>
+    <string name="rate_title">Notez Moment</string>
+    <string name="rate_no">Non</string>
+    <string name="rate_neutral">Plus tard</string>
+    <string name="rate_yes">★★★★★</string>
+
 </resources>
