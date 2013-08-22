@@ -73,18 +73,16 @@ public class CreationStep1Fragment extends Fragment {
         org.joda.time.DateTime dt;
 
         if (moment.getDateDebut() != null) {
-            dt = CommonUtilities.dateFormat.parseDateTime(moment.getDateDebut());
+            dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateDebut());
             dateDebut.setText("" + dt.getDayOfMonth() + "/" + dt.getMonthOfYear() + "/" + dt.getYear());
             heureDebut.setText(dt.getHourOfDay() + ":" + dt.getMinuteOfHour());
         }
 
         if (moment.getDateFin() != null) {
-            dt = CommonUtilities.dateFormat.parseDateTime(moment.getDateFin());
+            dt = CommonUtilities.dateFormatISO.parseDateTime(moment.getDateFin());
             dateFin.setText("" + dt.getDayOfMonth() + "/" + dt.getMonthOfYear() + "/" + dt.getYear());
             heureFin.setText(dt.getHourOfDay() + ":" + dt.getMinuteOfHour());
         }
-
-
         return view;
     }
 
