@@ -65,6 +65,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 public class InscriptionActivity extends SherlockFragmentActivity {
 
@@ -96,7 +97,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private String gender;
     private Bundle bundle;
     private boolean isSuccess = false;
-    private ProgressDialog dialog;
+    public static ProgressDialog dialog;
+    private String facebookId;
+
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
@@ -104,6 +107,8 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                     public void onCompleted(GraphUser user, Response response) {
                         if (response != null) {
                             try {
+
+                                facebookId = user.getId();
 
                                 prenomEdit.setText(user.getFirstName());
                                 nomEdit.setText(user.getLastName());
@@ -151,8 +156,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         pictureDir = getApplication().getCacheDir();
 
         bundle = null;
-        //GCM
-        //Take care of GCM
         context = getApplicationContext();
         regid = getRegistrationId(context);
         regid = "";
@@ -245,6 +248,14 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                 }
 
                 RequestParams params = new RequestParams();
+
+                if(facebookId != null)
+                {
+                    params.put("facebookId", facebookId);
+                }
+
+                params.put("lang", Locale.getDefault().getLanguage());
+
                 params.put("firstname", prenom);
                 params.put("lastname", nom);
                 params.put("password", mdp);

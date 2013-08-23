@@ -26,25 +26,30 @@ import com.facebook.SessionLoginBehavior;
 import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
+import com.moment.classes.MomentApi;
 import com.moment.util.CommonUtilities;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class CreationActivity extends SherlockActivity {
 
-	public static Typeface fontNumans;
+    public static Typeface fontNumans;
 
     private Bundle bundle;
     private Session session;
     private String facebookUserId;
     private ProgressDialog dialog;
     private EditText edit_nom_moment;
+    private String facebookId;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +62,7 @@ public class CreationActivity extends SherlockActivity {
         dialog.setMessage(getResources().getString(R.string.dialog_import_fb));
 
         CommonUtilities.disableHardwareRendering(getWindow().getDecorView());
-        
+
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -177,9 +182,9 @@ public class CreationActivity extends SherlockActivity {
         return true;
     }
 
-    
+
     @Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Intent intent = new Intent(this, TimelineActivity.class);
@@ -194,6 +199,33 @@ public class CreationActivity extends SherlockActivity {
             dialog.show();
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
                     new String[]{"user_events"}), bundle);
+
+            if(AppMoment.getInstance().user.getFacebookId() == null)
+            {
+                final Session session = Session.getActiveSession();
+                if (session != null && session.isOpened()) {
+                    Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            if (session == Session.getActiveSession()) {
+                                if (user != null) {
+                                    facebookId = user.getId();
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.put("facebookId", facebookId);
+                                    MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(JSONObject response) {
+                                            AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
+                                            AppMoment.getInstance().userDao.insertOrReplace(AppMoment.getInstance().user);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    Request.executeBatchAsync(request);
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -211,27 +243,27 @@ public class CreationActivity extends SherlockActivity {
         EditText nomMoment = (EditText)findViewById(R.id.edit_nom_moment);
 
         if(!nomMoment.getText().toString().matches("")){
-        	
-        	Bundle bundle = new Bundle();  
-    	    bundle.putString("nomMoment", nomMoment.getText().toString());
 
-    	    Intent intent = new Intent(CreationActivity.this, CreationDetailsActivity.class);
-    	    intent.putExtras(bundle);
-    	    startActivity(intent);
+            Bundle bundle = new Bundle();
+            bundle.putString("nomMoment", nomMoment.getText().toString());
+
+            Intent intent = new Intent(CreationActivity.this, CreationDetailsActivity.class);
+            intent.putExtras(bundle);
+            startActivity(intent);
             finish();
         } else {
-        	AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        	builder.setMessage(R.string.alert_nom_creation_moment)
-        	       .setCancelable(false)
-        	       .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-        	           @Override
-					public void onClick(DialogInterface dialog, int id) {
-        	                dialog.cancel();
-        	           }
-        	       });
-        	AlertDialog alert = builder.create();
-        	alert.show();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setMessage(R.string.alert_nom_creation_moment)
+                    .setCancelable(false)
+                    .setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog alert = builder.create();
+            alert.show();
         }
-     }
+    }
 
 }

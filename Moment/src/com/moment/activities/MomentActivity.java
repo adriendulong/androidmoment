@@ -44,6 +44,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.sql.Timestamp;
+import java.util.Locale;
 
 public class MomentActivity extends Activity {
 
@@ -299,6 +300,7 @@ public class MomentActivity extends Activity {
             params.put("os_version", android.os.Build.VERSION.RELEASE);
             params.put("model", CommonUtilities.getDeviceName());
             params.put("device_id", AppMoment.getInstance().tel_id);
+            params.put("lang", Locale.getDefault().getLanguage());
 
 
             MomentApi.initialize(getApplicationContext());

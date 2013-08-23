@@ -433,7 +433,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
             @Override
             public void onCompleted(Response response) {
-                Log.d("Upload", response.toString());
+                response.toString();
             }
         });
 

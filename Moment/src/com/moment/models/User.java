@@ -401,6 +401,7 @@ public class User implements Parcelable {
     public void setUserFromJson(JSONObject userJson){
         try {
             if(userJson.has("id")) this.setId(userJson.getLong("id"));
+            if(userJson.has("facebookId")) this.setFacebookId(userJson.getLong("facebookId"));
             if(userJson.has("firstname")) this.setFirstName(userJson.getString("firstname"));
             if(userJson.has("lastname")) this.setLastName(userJson.getString("lastname"));
             if(userJson.has("email")) this.setEmail(userJson.getString("email"));

@@ -35,6 +35,8 @@ import com.facebook.SessionState;
 import com.facebook.model.GraphUser;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.InvitationsAdapter;
@@ -69,6 +71,7 @@ public class InvitationActivity extends SherlockFragmentActivity {
     private ArrayList<User> SMSUsers;
     ArrayList<InvitationsFragment> frs;
     private ProgressDialog progressDialog;
+    private String facebookId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -351,6 +354,34 @@ public class InvitationActivity extends SherlockFragmentActivity {
         try {
             openActiveSession(this, true, fbStatusCallback, Arrays.asList(
                     new String[]{"email"}), null);
+
+            if(AppMoment.getInstance().user.getFacebookId() == null)
+            {
+                final Session session = Session.getActiveSession();
+                if (session != null && session.isOpened()) {
+                    Request request = Request.newMeRequest(session, new Request.GraphUserCallback() {
+                        @Override
+                        public void onCompleted(GraphUser user, Response response) {
+                            if (session == Session.getActiveSession()) {
+                                if (user != null) {
+                                    facebookId = user.getId();
+                                    RequestParams requestParams = new RequestParams();
+                                    requestParams.put("facebookId", facebookId);
+                                    MomentApi.post("user", requestParams, new JsonHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(JSONObject response)
+                                        {
+                                                AppMoment.getInstance().user.setFacebookId(Long.valueOf(facebookId));
+                                                AppMoment.getInstance().userDao.insertOrReplace(AppMoment.getInstance().user);
+                                        }
+                                    });
+                                }
+                            }
+                        }
+                    });
+                    Request.executeBatchAsync(request);
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
