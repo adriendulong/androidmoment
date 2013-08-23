@@ -180,6 +180,9 @@ public class PhotosFragment extends Fragment {
         if (((MomentInfosActivity) getActivity()).getMomentId() != null) {
             this.momentID = ((MomentInfosActivity) getActivity()).getMomentId();
             initPhoto();
+            if(BuildConfig.DEBUG){
+                Log.d(TAG, "START");
+            }
         }
 
         mGaTracker.sendView("/PhotosFragment");
@@ -194,7 +197,12 @@ public class PhotosFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        if (this.momentID != null) imageAdapter.notifyDataSetChanged();
+        if (this.momentID != null){
+            if(BuildConfig.DEBUG){
+                Log.d(TAG, "RESUME");
+            }
+            imageAdapter.notifyDataSetChanged();
+        }
         Log.e("PhotoFragment", "RESUME");
     }
 
@@ -311,7 +319,7 @@ public class PhotosFragment extends Fragment {
                 layout.setBackgroundColor(getResources().getColor(R.color.white));
                 layout.setGravity(Gravity.CENTER);
 
-                imageView = new RecyclingImageView(context);
+                imageView = new ImageView(context);
                 imageView.setId(0);
                 imageView.setLayoutParams(new GridView.LayoutParams((int) pxBitmap, (int) pxBitmap));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -319,7 +327,7 @@ public class PhotosFragment extends Fragment {
                 layout.addView(imageView);
             } else {
                 layout = (LinearLayout)convertView;
-                imageView = (RecyclingImageView) convertView.findViewById(0);
+                imageView = (ImageView) convertView.findViewById(0);
             }
 
             if (position == 0) {
@@ -332,6 +340,11 @@ public class PhotosFragment extends Fragment {
                     outOfMemoryError.printStackTrace();
                 }
             }
+
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, "Position : "+position);
+            }
+
             return layout;
         }
     }
@@ -484,6 +497,9 @@ public class PhotosFragment extends Fragment {
 
 
     private void initPhoto() {
+        if(BuildConfig.DEBUG){
+            Log.d(TAG, "INIT");
+        }
 
         User user = AppMoment.getInstance().user;
         moment = user.getMomentById(momentID);

@@ -3,7 +3,6 @@
 
     <style name="Theme.Styled" parent="Theme.Sherlock.Light">
         <item name="actionBarStyle">@style/Widget.Styled.ActionBar</item>
-        <item name="android:actionBarStyle">@style/Widget.Styled.ActionBar</item>
         <item name="android:editTextStyle">@style/EditTextMomentTheme</item>
         <item name="android:buttonStyle">@style/ButtonMomentTheme</item>
     </style>
@@ -13,6 +12,9 @@
         <item name="android:buttonStyle">@style/ButtonMomentTheme</item>
     </style>
 
+    <style name="AppTheme" parent="android:Theme" />
+
+    <style name="AppTheme.FullScreen" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen" />
 
     <style name="Widget.Styled.ActionBar" parent="Widget.Sherlock.Light.ActionBar.Solid">
         <item name="background">@color/white</item>

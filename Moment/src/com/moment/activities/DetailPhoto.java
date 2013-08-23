@@ -1,6 +1,8 @@
 package com.moment.activities;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,6 +39,7 @@ import com.moment.models.Photo;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 
+import com.moment.util.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -500,8 +503,21 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     }
 
 
-    public void fullScreen(View view){
-
+    @TargetApi(16)
+    public void fullScreen(View v){
+        final Intent i = new Intent(this, ImageDetailActivity.class);
+        i.putExtra(ImageDetailActivity.MOMENT_ID, momentID);
+        i.putExtra(ImageDetailActivity.IMAGE_POSITION, position);
+        if (Utils.hasJellyBean()) {
+            // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
+            // show plus the thumbnail image in GridView is cropped. so using
+            // makeScaleUpAnimation() instead.
+            ActivityOptions options =
+                    ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
+            startActivity(i, options.toBundle());
+        } else {
+            startActivity(i);
+        }
     }
 
 }

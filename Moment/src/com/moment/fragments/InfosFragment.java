@@ -519,7 +519,7 @@ public class InfosFragment extends Fragment {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            RecyclingImageView imageView;
+            ImageView imageView;
             float pxImage = getResources().getDimensionPixelSize(R.dimen.image_background__mini_thumbnail_size);
             LinearLayout layout;
             float pxBitmap = getResources().getDimensionPixelSize(R.dimen.image_mini_thumbnail_size);
@@ -530,7 +530,7 @@ public class InfosFragment extends Fragment {
                 layout.setBackgroundColor(getResources().getColor(R.color.white));
                 layout.setGravity(Gravity.CENTER);
 
-                imageView = new RecyclingImageView(context);
+                imageView = new ImageView(context);
                 imageView.setId(0);
                 imageView.setLayoutParams(new GridView.LayoutParams((int) pxBitmap, (int) pxBitmap));
                 imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
@@ -538,11 +538,11 @@ public class InfosFragment extends Fragment {
                 layout.addView(imageView);
             } else {
                 layout = (LinearLayout)convertView;
-                imageView = (RecyclingImageView) convertView.findViewById(0);
+                imageView = (ImageView) convertView.findViewById(0);
             }
 
             try {
-                if(photos.get(position).getUrlThumbnail()!=null) mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView, false);
+                if(photos.get(position).getUrlThumbnail()!=null) Picasso.with(context).load(photos.get(position).getUrlThumbnail()).placeholder(R.drawable.picto_photo_vide).resize((int)pxBitmap, (int)pxBitmap).into(imageView); //mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), imageView, false);
                 else imageView.setImageDrawable(getResources().getDrawable(R.drawable.picto_photo_vide));
             } catch (OutOfMemoryError outOfMemoryError) {
                 outOfMemoryError.printStackTrace();

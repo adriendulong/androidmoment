@@ -471,6 +471,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         }
 
                         mProgressDialog.dismiss();
+                        //if(position!=1)pager.setCurrentItem(position, false);
                         if (precedente.equals("creation")) callInvit(NEW_INVIT);
                     } catch (JSONException e) {
                         Log.e(TAG, "JSON problems");
@@ -497,8 +498,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                             ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
                             ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
                         }
+                        if(position!=1)pager.setCurrentItem(position, false);
                     }
-                    if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                    //if (precedente.equals("creation")) callInvit(NEW_INVIT);
                     mProgressDialog.dismiss();
                 }
 
@@ -521,8 +523,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                 ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
                                 ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
                             }
+                            if(position!=1)pager.setCurrentItem(position, false);
                         }
-                        if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                        //if (precedente.equals("creation")) callInvit(NEW_INVIT);
                         mProgressDialog.dismiss();
                     }
                 }
