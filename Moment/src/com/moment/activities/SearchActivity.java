@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.SearchAdapter;
@@ -36,6 +35,7 @@ public class SearchActivity extends SherlockActivity {
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
+        getSupportActionBar().hide();
 
         moments = new ArrayList<Moment>();
         searchEditText = (EditText) findViewById(R.id.volet_search);
@@ -93,5 +93,4 @@ public class SearchActivity extends SherlockActivity {
         });
 
     }
-
 }

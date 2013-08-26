@@ -344,7 +344,7 @@ public class InfosFragment extends Fragment {
 
     private void updateRSVPBloc() {
 
-        if ((moment.getState() == COMING) || (moment.getState() == OWNER)) {
+        if (moment.getState() != null && (moment.getState() == COMING || moment.getState() == OWNER)) {
             goingButton.setSelected(true);
             goingButton.setImageResource(R.drawable.picto_yes_down);
             maybeButton.setSelected(false);
@@ -352,7 +352,7 @@ public class InfosFragment extends Fragment {
             notGoigButton.setSelected(false);
             notGoigButton.setImageResource(R.drawable.picto_no);
             textRSVP.setText(getResources().getString(R.string.rsvp_coming));
-        } else if (moment.getState() == NOT_COMING) {
+        } else if (moment.getState() != null && moment.getState() == NOT_COMING) {
             notGoigButton.setSelected(true);
             notGoigButton.setImageResource(R.drawable.picto_no_down);
             maybeButton.setSelected(false);
@@ -360,7 +360,7 @@ public class InfosFragment extends Fragment {
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
             textRSVP.setText(getResources().getString(R.string.rsvp_not_coming));
-        } else if (moment.getState() == MAYBE) {
+        } else if (moment.getState() != null && moment.getState() == MAYBE) {
             maybeButton.setSelected(true);
             maybeButton.setImageResource(R.drawable.picto_maybe_down);
             notGoigButton.setSelected(false);
@@ -368,7 +368,7 @@ public class InfosFragment extends Fragment {
             goingButton.setSelected(false);
             goingButton.setImageResource(R.drawable.picto_valid);
             textRSVP.setText(getResources().getString(R.string.rsvp_maybe));
-        } else if (moment.getState() == UNKOWN) {
+        } else if (moment.getState() != null && moment.getState() == UNKOWN) {
             Toast.makeText(getActivity(), getResources().getString(R.string.premiere_visite), Toast.LENGTH_SHORT).show();
             maybeRsvp();
         }

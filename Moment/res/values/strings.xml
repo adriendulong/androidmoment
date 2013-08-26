@@ -321,5 +321,6 @@
     <string name="rate_no">Non</string>
     <string name="rate_neutral">Plus tard</string>
     <string name="rate_yes">★★★★★</string>
+    <string name="action_search">Rechercher</string>
 
 </resources>

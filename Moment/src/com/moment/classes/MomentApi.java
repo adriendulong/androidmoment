@@ -10,7 +10,6 @@ import com.loopj.android.http.RequestParams;
 import org.apache.http.entity.StringEntity;
 
 public class MomentApi {
-	//private static final String BASE_URL = "http://192.168.0.13:5000/";
 	public static final String BASE_URL = "http://apidev.appmoment.fr/";
     public static String CREATION_MOMENT = BASE_URL + "newmoment";
     public static String MODIF_MOMENT = BASE_URL + "moment/";

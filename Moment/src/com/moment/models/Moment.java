@@ -375,39 +375,37 @@ public class Moment {
 
     public void setMomentFromJson(JSONObject moment) throws JSONException {
         try{
-            this.id = moment.getLong("id");
-            this.name = moment.getString("name");
-            this.adresse = moment.getString("address");
-            this.state = moment.getInt("user_state");
-            this.keyBitmap = "cover_moment_"+name.toLowerCase();
-
             org.joda.time.DateTime dt;
 
             String dateDebut;
             String dateFin;
+
+            if(moment.has("id"))                this.setId(moment.getLong("id"));
+            if(moment.has("name"))              this.setName(moment.getString("name"));
+            if(moment.has("address"))           this.setAdresse(moment.getString("address"));
+            if(moment.has("user_state"))        this.setState(moment.getInt("user_state"));
+            if(moment.has("cover_photo_url"))   this.setUrlCover(moment.getString("cover_photo_url"));
+            if(moment.has("guests_number"))     this.setGuestNumber(moment.getInt("guests_number"));
+            if(moment.has("guests_coming"))     this.setGuestComing(moment.getInt("guests_coming"));
+            if(moment.has("guests_not_coming")) this.setGuestNotComing(moment.getInt("guests_not_coming"));
+            if(moment.has("hashtag"))           this.setHashtag(moment.getString("hashtag"));
+            if(moment.has("description"))       this.setDescription(moment.getString("description"));
+            if(moment.has("privacy"))           this.setPrivacy(moment.getInt("privacy"));
+            if(moment.has("isOpenInvit"))       this.setIsOpenInvit(moment.getBoolean("isOpenInvit"));
+            if(moment.has("unique_url"))        this.setUniqueUrl(moment.getString("unique_url"));
+
+            this.setKeyBitmap("cover_moment_"+name.toLowerCase());
+
             if(moment.has("startTime")) dateDebut = moment.getString("startDate") + " " + moment.getString("startTime");
             else dateDebut = moment.getString("startDate") + " 00:00:00";
             if(moment.has("endTime")) dateFin = moment.getString("endDate") + " " + moment.getString("endTime");
             else dateFin = moment.getString("endDate") + " 00:00:00";
 
             dt = CommonUtilities.dateFormat.parseDateTime(dateDebut);
-            this.dateDebut = dt.toString();
+            this.setDateDebut(dt.toString());
 
             dt = CommonUtilities.dateFormat.parseDateTime(dateFin);
-            this.dateFin = dt.toString();
-
-            if (moment.has("cover_photo_url")){
-                this.urlCover = moment.getString("cover_photo_url");
-            }
-
-            this.guestNumber = moment.getInt("guests_number");
-            this.guestComing = moment.getInt("guests_coming");
-            this.guestNotComing = moment.getInt("guests_not_coming");
-            if(moment.has("hashtag")) this.hashtag = moment.getString("hashtag");
-            if(moment.has("description")) this.description = moment.getString("description");
-            if(moment.has("privacy")) this.privacy = moment.getInt("privacy");
-            if(moment.has("isOpenInvit")) this.isOpenInvit = moment.getBoolean("isOpenInvit");
-            if(moment.has("unique_url")) this.uniqueUrl = moment.getString("unique_url");
+            this.setDateFin(dt.toString());
 
             if (moment.has("owner")){
                 JSONObject owner = moment.getJSONObject("owner");
