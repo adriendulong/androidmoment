@@ -29,7 +29,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
+import android.widget.*;
 
 
 import android.annotation.TargetApi;
@@ -52,6 +52,8 @@ import com.moment.AppMoment;
 import com.moment.BuildConfig;
 import com.moment.R;
 import com.moment.fragments.ImageDetailFragment;
+import com.moment.models.Photo;
+import com.moment.models.User;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
 import com.moment.util.Images;
@@ -69,6 +71,10 @@ public class ImageDetailActivity extends FragmentActivity implements View.OnClic
     private Long mMomentId;
     private int mPositionImage;
 
+    private Button backButton;
+    private LinearLayout infosPhoto;
+    private TextView nameUser, nbLikes;
+
     @TargetApi(11)
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,6 +83,12 @@ public class ImageDetailActivity extends FragmentActivity implements View.OnClic
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.image_detail_pager);
+
+        //Graphic elements
+        backButton = (Button)findViewById(R.id.button_back);
+        infosPhoto = (LinearLayout)findViewById(R.id.infos_photo);
+        nameUser = (TextView)findViewById(R.id.name_user_photos);
+        nbLikes = (TextView)findViewById(R.id.nb_likes);
 
         //Get the moment Id
         mMomentId = getIntent().getLongExtra(MOMENT_ID, -1);
@@ -144,6 +156,29 @@ public class ImageDetailActivity extends FragmentActivity implements View.OnClic
             mPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
             actionBar.hide();
         }
+
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i2) {
+
+            }
+
+            @Override
+            public void onPageSelected(int i) {
+                if(infosPhoto.getVisibility()==View.VISIBLE){
+                    Photo actualPhoto = AppMoment.getInstance().user.getMomentById(mMomentId).getPhotos().get(mPager.getCurrentItem());
+                    User userPhoto = actualPhoto.getUser();
+                    String userInfos = userPhoto.getFirstName()+" "+userPhoto.getLastName();
+                    nameUser.setText(userInfos);
+                    nbLikes.setText(actualPhoto.getNbLike().toString());
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int i) {
+
+            }
+        });
 
         // Set the current item based on the extra passed in to this activity
         if (mPositionImage != -1) {
@@ -230,5 +265,35 @@ public class ImageDetailActivity extends FragmentActivity implements View.OnClic
         } else {
             mPager.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE);
         }*/
+        updateVisibility();
+    }
+
+    public void updateVisibility(){
+        if(backButton.getVisibility()==View.VISIBLE){
+            backButton.setVisibility(View.INVISIBLE);
+            infosPhoto.setVisibility(View.INVISIBLE);
+        }
+        else{
+            Photo actualPhoto = AppMoment.getInstance().user.getMomentById(mMomentId).getPhotos().get(mPager.getCurrentItem());
+            User userPhoto = actualPhoto.getUser();
+            String userInfos = userPhoto.getFirstName()+" "+userPhoto.getLastName();
+            nameUser.setText(userInfos);
+            nbLikes.setText(actualPhoto.getNbLike().toString());
+
+
+            backButton.setVisibility(View.VISIBLE);
+            infosPhoto.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void back(View v){
+        setResult(RESULT_OK);
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        setResult(RESULT_OK);
+        finish();
     }
 }

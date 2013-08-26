@@ -261,6 +261,8 @@ public class PhotosFragment extends Fragment {
             }
             photos_uri.add(outputFileUri);
             for (Uri s : photos_uri) {
+                Photo p = new Photo();
+                photos.add(0,p);
                 MultiUploadTask multiUploadTask = new MultiUploadTask(s);
                 multiUploadTask.execute();
             }
@@ -271,7 +273,15 @@ public class PhotosFragment extends Fragment {
                 photos_uri = data.getExtras().getParcelableArrayList("photos");
                 uploadingPhotos = photos_uri.size();
                 currentUploading = 1;
-                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+
+                int positionPhoto = 0;
+                for (Uri s : photos_uri) {
+                    Photo p = new Photo();
+                    photos.add(positionPhoto, p);
+                    positionPhoto += 1;
+                }
+
+                MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(photos_uri.size()-1));
                 multiUploadTask.execute();
             }
         }
@@ -392,10 +402,9 @@ public class PhotosFragment extends Fragment {
         protected void onPreExecute() {
             createNotification("Upload", "Upload Photo "+currentUploading+"/"+uploadingPhotos, false);
             asyncRun = true;
-            photo = new Photo();
-            photos.add(photo);
-            position = photos.size() - 1;
-            photos_uri.remove(0);
+            photo = photos.get(photos_uri.size()-1);
+            position = photos_uri.size()-1;
+            photos_uri.remove(photos_uri.size()-1);
             imageAdapter.notifyDataSetChanged();
             gridView.smoothScrollToPosition(position + 1);
             gridView.setVisibility(View.VISIBLE);
@@ -444,7 +453,6 @@ public class PhotosFragment extends Fragment {
 
             //     try {
             try {
-                Log.e("RESULT", result.toString());
                 JSONObject jsresult = new JSONObject(result);
                 JSONObject json = jsresult.getJSONObject("success");
 
@@ -466,7 +474,7 @@ public class PhotosFragment extends Fragment {
 
             float pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 90, getResources().getDisplayMetrics());
             //Picasso.with(context).load(photo.getUrlThumbnail()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().into(photo.getGridImage());
-            mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (RecyclingImageView)gridView.getChildAt((position+1)-gridView.getFirstVisiblePosition()).findViewById(0), false);
+            mImageFetcher.loadImage(photos.get(position).getUrlThumbnail(), (ImageView)gridView.getChildAt((position+1)).findViewById(0), false);
 
             if (photos_uri.size() == 0) {
                 createNotification("Upload", context.getString(R.string.termine), true);
@@ -480,7 +488,7 @@ public class PhotosFragment extends Fragment {
 
             if (isAdded()) {
                 if (photos_uri.size() > 0) {
-                    MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(0));
+                    MultiUploadTask multiUploadTask = new MultiUploadTask(photos_uri.get(photos_uri.size()-1));
                     multiUploadTask.execute();
                 }
             } else {

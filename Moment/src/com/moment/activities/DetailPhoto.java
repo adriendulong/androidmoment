@@ -46,6 +46,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
@@ -79,6 +80,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     private ImageView imageView;
     private DetailPhoto _this = this;
     private EditText editText;
+
+    final private int FULL_SCREEN = 1234;
 
     private static final String IMAGE_CACHE_DIR = "big";
     private ImageFetcher mImageFetcher;
@@ -482,8 +485,14 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Session.getActiveSession()
-                .onActivityResult(this, requestCode, resultCode, data);
+
+        if (requestCode == FULL_SCREEN && resultCode == Activity.RESULT_OK) {
+
+        }
+        else{
+            Session.getActiveSession()
+                    .onActivityResult(this, requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -514,9 +523,9 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             // makeScaleUpAnimation() instead.
             ActivityOptions options =
                     ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
-            startActivity(i, options.toBundle());
+            startActivityForResult(i, FULL_SCREEN, options.toBundle());
         } else {
-            startActivity(i);
+            startActivityForResult(i, FULL_SCREEN);
         }
     }
 
