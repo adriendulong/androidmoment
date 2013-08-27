@@ -238,6 +238,7 @@
             android:screenOrientation="portrait"
             android:name=".activities.SearchActivity"
             android:parentActivityName="com.moment.MomentActivity"
+            android:theme="@style/Theme.Styled.Dark"
             android:label="">
         </activity>
 

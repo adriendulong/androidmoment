@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -20,6 +21,7 @@ import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.SearchAdapter;
 import com.moment.models.Moment;
+import com.moment.models.User;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageFetcher;
 
@@ -28,6 +30,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class SearchActivity extends SherlockActivity {
 
@@ -38,6 +42,7 @@ public class SearchActivity extends SherlockActivity {
     private SearchAdapter adapter;
     private Menu myMenu;
     private SearchView searchView;
+    private ProgressBar searchProgress;
     private ProgressDialog progressDialog;
 
     @Override
@@ -52,9 +57,12 @@ public class SearchActivity extends SherlockActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         moments = new ArrayList<Moment>();
+        searchProgress = (ProgressBar) findViewById(R.id.search_progress);
         resultList = (ListView) findViewById(R.id.searchList);
         adapter = new SearchAdapter(this, R.layout.search_activity, moments, mImageFetcher);
         resultList.setAdapter(adapter);
+
+        searchProgress.setVisibility(View.INVISIBLE);
 
         resultList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,7 +91,8 @@ public class SearchActivity extends SherlockActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                progressDialog = ProgressDialog.show(SearchActivity.this, "Recherche", "Récupération des informations");
+                searchView.clearFocus();
+                searchProgress.setVisibility(View.VISIBLE);
                 MomentApi.get("search/" + query, null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject result) {
@@ -108,8 +117,9 @@ public class SearchActivity extends SherlockActivity {
                                 adapter.notifyDataSetChanged();
                             }
 
-                            searchView.clearFocus();
-                            progressDialog.cancel();
+                            Collections.sort(moments, new CustomComparator());
+
+                            searchProgress.setVisibility(View.INVISIBLE);
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -135,6 +145,13 @@ public class SearchActivity extends SherlockActivity {
                 return true;
         }
         return false;
+    }
+
+    private class CustomComparator implements Comparator<Moment> {
+        @Override
+        public int compare(Moment lhs, Moment rhs) {
+            return lhs.getIsOpenInvit().compareTo(rhs.getIsOpenInvit());
+        }
     }
 
 }

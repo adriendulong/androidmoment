@@ -12,6 +12,10 @@
         <item name="android:buttonStyle">@style/ButtonMomentTheme</item>
     </style>
 
+    <style name="Theme.Styled.Dark" parent="Theme.Sherlock.Light.DarkActionBar">
+        <item name="background">@color/black_detail_photo_trans</item>
+    </style>
+
     <style name="AppTheme" parent="android:Theme" />
 
     <style name="AppTheme.FullScreen" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen" />

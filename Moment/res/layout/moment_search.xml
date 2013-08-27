@@ -19,21 +19,20 @@
                     android:layout_height="50dp"
                     android:id="@+id/moment_photo"
                     android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="2dp"
-                    android:layout_marginBottom="2dp"/>
+                    android:layout_alignParentLeft="true"/>
 
-            <TextView
+            <com.moment.customfont.MomentTextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:maxLines="1"
+                android:maxLines="1"
                     android:maxLength="20"
                     android:id="@+id/moment_name"
+                    android:layout_centerVertical="true"
                     android:layout_toRightOf="@+id/moment_photo"
-                    android:layout_marginLeft="10dp"/>
+                    android:layout_marginLeft="10dp"
+                android:textSize="14dp"
+                android:textColor="@color/blanc" />
 
             <ImageView
                     android:layout_width="wrap_content"
@@ -41,7 +40,7 @@
                     android:id="@+id/is_public"
                     android:layout_centerVertical="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="5dp"/>
         </RelativeLayout>
     </LinearLayout>
 </LinearLayout>
