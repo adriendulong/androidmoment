@@ -64,7 +64,7 @@ public class SearchActivity extends SherlockActivity {
                 intent.putExtra("id", moment.getId());
                 intent.putExtra("precedente", "search");
                 startActivity(intent);
-                overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_left);
             }
         });
 

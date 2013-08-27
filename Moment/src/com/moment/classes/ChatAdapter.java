@@ -6,18 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.models.Chat;
-import com.moment.models.Moment;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageFetcher;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
