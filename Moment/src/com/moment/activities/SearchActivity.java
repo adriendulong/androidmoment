@@ -1,20 +1,26 @@
 package com.moment.activities;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.widget.SearchView;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.R;
 import com.moment.classes.MomentApi;
 import com.moment.classes.SearchAdapter;
 import com.moment.models.Moment;
+import com.moment.util.CommonUtilities;
 import com.moment.util.ImageFetcher;
 
 import org.json.JSONArray;
@@ -30,15 +36,22 @@ public class SearchActivity extends SherlockActivity {
     private ImageFetcher mImageFetcher;
     private ArrayList<Moment> moments;
     private SearchAdapter adapter;
+    private Menu myMenu;
+    private SearchView searchView;
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.search_activity);
-        getSupportActionBar().hide();
+
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setDisplayUseLogoEnabled(false);
+        actionBar.setIcon(R.drawable.picto_o);
+        actionBar.setDisplayShowTitleEnabled(false);
+        actionBar.setDisplayHomeAsUpEnabled(true);
 
         moments = new ArrayList<Moment>();
-        searchEditText = (EditText) findViewById(R.id.volet_search);
         resultList = (ListView) findViewById(R.id.searchList);
         adapter = new SearchAdapter(this, R.layout.search_activity, moments, mImageFetcher);
         resultList.setAdapter(adapter);
@@ -51,22 +64,35 @@ public class SearchActivity extends SherlockActivity {
                 intent.putExtra("id", moment.getId());
                 intent.putExtra("precedente", "search");
                 startActivity(intent);
+                overridePendingTransition(R.anim.slide_out_left, R.anim.slide_in_left);
             }
         });
 
-        searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        myMenu = menu;
+        getSupportMenuInflater().inflate(R.menu.activity_search, menu);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        searchView = (SearchView) searchItem.getActionView();
+        searchView.setIconifiedByDefault(false);
+        searchView.setFocusable(true);
+        searchView.requestFocusFromTouch();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                MomentApi.get("search/" + searchEditText.getText().toString(), null, new JsonHttpResponseHandler() {
+            public boolean onQueryTextSubmit(String query) {
+                progressDialog = ProgressDialog.show(SearchActivity.this, "Recherche", "Récupération des informations");
+                MomentApi.get("search/" + query, null, new JsonHttpResponseHandler() {
                     @Override
-                    public void onSuccess(JSONObject result){
+                    public void onSuccess(JSONObject result) {
                         moments.clear();
                         try {
                             JSONArray publics = result.getJSONArray("public_moments");
                             JSONArray prives = result.getJSONArray("user_moments");
 
-                            for(int i = 0; i < publics.length(); i++)
-                            {
+                            for (int i = 0; i < publics.length(); i++) {
                                 Moment moment = new Moment();
                                 JSONObject momentJSON = publics.getJSONObject(i);
                                 moment.setMomentFromJson(momentJSON);
@@ -74,14 +100,16 @@ public class SearchActivity extends SherlockActivity {
                                 adapter.notifyDataSetChanged();
                             }
 
-                            for(int i = 0; i < prives.length(); i++)
-                            {
+                            for (int i = 0; i < prives.length(); i++) {
                                 Moment moment = new Moment();
                                 JSONObject momentJSON = prives.getJSONObject(i);
                                 moment.setMomentFromJson(momentJSON);
                                 moments.add(moment);
                                 adapter.notifyDataSetChanged();
                             }
+
+                            searchView.clearFocus();
+                            progressDialog.cancel();
 
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -90,7 +118,23 @@ public class SearchActivity extends SherlockActivity {
                 });
                 return false;
             }
-        });
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+        return true;
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return false;
+    }
+
 }

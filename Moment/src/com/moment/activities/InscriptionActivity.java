@@ -98,8 +98,9 @@ public class InscriptionActivity extends SherlockFragmentActivity {
     private Bundle bundle;
     private boolean isSuccess = false;
     public static ProgressDialog dialog;
-    private String facebookId;
+    private ProgressDialog progressDialog;
 
+    private String facebookId;
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
@@ -126,6 +127,8 @@ public class InscriptionActivity extends SherlockFragmentActivity {
                                 ProfilePictureTask profilePictureTask = new ProfilePictureTask(user);
                                 profilePictureTask.execute();
 
+                                progressDialog.cancel();
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -144,7 +147,6 @@ public class InscriptionActivity extends SherlockFragmentActivity {
             Log.v(TAG, "" + packageInfo.versionCode);
             return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
             throw new RuntimeException("Could not get package name: " + e);
         }
     }
@@ -183,6 +185,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 facebookConnect();
+                progressDialog = ProgressDialog.show(InscriptionActivity.this, "Facebook", "Récupération des informations");
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {
