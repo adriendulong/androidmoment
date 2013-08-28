@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -60,22 +61,30 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
 
         holder.photo = (ImageView) row.findViewById(R.id.moment_photo);
         holder.name = (TextView) row.findViewById(R.id.moment_name);
+        holder.progressBar = (ProgressBar) row.findViewById(R.id.progressBar);
+        holder.progressBar.setVisibility(View.INVISIBLE);
 
-        if(data.get(position).getIsOpenInvit() != null && data.get(position).getIsOpenInvit())
+        if(data.get(position).getPrivacy() == 2)
         {
             holder.isPublic = (ImageView) row.findViewById(R.id.is_public);
+
             if(AppMoment.getInstance().user.getMomentById(data.get(position).getId()) != null)
             {
                 holder.isPublic.setImageResource(R.drawable.btn_follow_moment_down);
+                holder.isPublic.setClickable(false);
             } else {
                 holder.isPublic.setImageResource(R.drawable.btn_follow_moment_up);
                 final View finalRow = row;
                 final MomentHolder finalHolder = holder;
+
                 holder.isPublic.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
+                        finalHolder.isPublic.setVisibility(View.INVISIBLE);
+                        finalHolder.progressBar.setVisibility(View.VISIBLE);
+
                         StringEntity entity = null;
-                        finalHolder.isPublic.setImageResource(R.drawable.btn_follow_moment_down);
                         try {
                             JSONArray users = new JSONArray();
                             users.put(AppMoment.getInstance().user.getUserToJSON());
@@ -91,6 +100,10 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
                         MomentApi.postJSON(getContext(), "newguests/"+ data.get(positionTmp).getId(), entity, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject result) {
+                                result.toString();
+                                finalHolder.isPublic.setImageResource(R.drawable.btn_follow_moment_down);
+                                finalHolder.progressBar.setVisibility(View.INVISIBLE);
+                                finalHolder.isPublic.setVisibility(View.VISIBLE);
                                 Intent intent = new Intent(getContext(), MomentInfosActivity.class);
                                 intent.putExtra("id", data.get(position).getId());
                                 intent.putExtra("precedente", "search");
@@ -120,6 +133,7 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
         ImageView photo;
         TextView name;
         ImageView isPublic;
+        ProgressBar progressBar;
     }
 
 }
