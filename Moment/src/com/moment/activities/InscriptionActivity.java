@@ -185,7 +185,7 @@ public class InscriptionActivity extends SherlockFragmentActivity {
         builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 facebookConnect();
-                progressDialog = ProgressDialog.show(InscriptionActivity.this, "Facebook", "Récupération des informations");
+                progressDialog = ProgressDialog.show(InscriptionActivity.this, "Facebook", getResources().getString(R.string.get_informations));
             }
         });
         builder.setNegativeButton(getResources().getString(R.string.no), new DialogInterface.OnClickListener() {

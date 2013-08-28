@@ -434,79 +434,101 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
         if (AppMoment.getInstance().user == null) AppMoment.getInstance().getUser();
 
-        //If we have internet we go to get the moment
-        if (AppMoment.getInstance().checkInternet()) {
-            mProgressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.loading_info_moment));
-            MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
+        if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
+            moment = AppMoment.getInstance().user.getMomentById(momentID);
+            mNbPhotos = moment.getPhotos().size();
 
-                @Override
-                public void onSuccess(JSONObject response) {
-                    isSuccess = true;
-                    Moment tempMoment = new Moment();
-                    try {
-                        if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
+            //Coming from the creation w go to the invits
+            if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
-                        if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
-                            AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
-                            moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
-                        }
-                        else{
-                            tempMoment.setMomentFromJson(response);
-                            moment = tempMoment;
-                            AppMoment.getInstance().user.getMoments().add(tempMoment);
-                        }
+            //If we have internet we update the moment
+            if (AppMoment.getInstance().checkInternet()) {
+                MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
 
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        isSuccess = true;
+                        try {
+                            if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
 
+                            if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
+                                AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
+                                moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
+                            }
 
-                        if (pager.getCurrentItem() == 2) {
-                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
-                        } else if (pager.getCurrentItem() == 1) {
-                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
-                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
-                        } else if (pager.getCurrentItem() == 0) {
-                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            //Update the infos fragment
+                            if(!infosFr.isDetached()) infosFr.createFragment(moment.getId());
+                            Toast.makeText(getApplicationContext(), getString(R.string.update_moment_success), Toast.LENGTH_SHORT).show();
+
+                        } catch (JSONException e) {
+                            Log.e(TAG, "JSON problems");
                         }
 
-                        mProgressDialog.dismiss();
-                        //if(position!=1)pager.setCurrentItem(position, false);
-                        if (precedente.equals("creation")) callInvit(NEW_INVIT);
-                    } catch (JSONException e) {
-                        Log.e(TAG, "JSON problems");
                     }
 
-                }
-
-                @Override
-                public void onFailure(Throwable error, String content) {
-                    isSuccess = true;
-
-                    Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
-                    if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
-                        moment = AppMoment.getInstance().user.getMomentById(momentID);
-                        mNbPhotos = moment.getPhotos().size();
-                        if (pager.getCurrentItem() == 2) {
-                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
-                        } else if (pager.getCurrentItem() == 1) {
-                            ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
-                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
-                        } else if (pager.getCurrentItem() == 0) {
-                            ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
-                            ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
-                        }
-                        if(position!=1)pager.setCurrentItem(position, false);
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        isSuccess = true;
+                        Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                     }
-                    //if (precedente.equals("creation")) callInvit(NEW_INVIT);
-                    mProgressDialog.dismiss();
-                }
 
-                public void onFinish() {
+                    public void onFinish() {
+                        if (!isSuccess) {
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }
+        else{
+            //If we have internet we go to get the moment
+            if (AppMoment.getInstance().checkInternet()) {
+                mProgressDialog = ProgressDialog.show(this, getString(R.string.loading), getString(R.string.loading_info_moment));
+                MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
 
-                    if (!isSuccess) {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        isSuccess = true;
+                        Moment tempMoment = new Moment();
+                        try {
+                            if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
+
+                            if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
+                                AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
+                                moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
+                            }
+                            else{
+                                tempMoment.setMomentFromJson(response);
+                                moment = tempMoment;
+                                AppMoment.getInstance().user.getMoments().add(tempMoment);
+                            }
+
+
+
+                            if (pager.getCurrentItem() == 2) {
+                                ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            } else if (pager.getCurrentItem() == 1) {
+                                ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                                ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                            } else if (pager.getCurrentItem() == 0) {
+                                ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                                ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                            }
+
+                            mProgressDialog.dismiss();
+                            //if(position!=1)pager.setCurrentItem(position, false);
+                            if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                        } catch (JSONException e) {
+                            Log.e(TAG, "JSON problems");
+                        }
+
+                    }
+
+                    @Override
+                    public void onFailure(Throwable error, String content) {
+                        isSuccess = true;
 
                         Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
                         if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
@@ -528,15 +550,41 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                         //if (precedente.equals("creation")) callInvit(NEW_INVIT);
                         mProgressDialog.dismiss();
                     }
-                }
-            });
-        }
-        else{
-            if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
-                moment = AppMoment.getInstance().user.getMomentById(momentID);
-                mNbPhotos = moment.getPhotos().size();
+
+                    public void onFinish() {
+
+                        if (!isSuccess) {
+
+                            Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
+                            if (AppMoment.getInstance().user.getMomentById(momentID) != null) {
+                                moment = AppMoment.getInstance().user.getMomentById(momentID);
+                                mNbPhotos = moment.getPhotos().size();
+                                if (pager.getCurrentItem() == 2) {
+                                    ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                    ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                                } else if (pager.getCurrentItem() == 1) {
+                                    ((ChatFragment) mPagerAdapter.getItem(2)).createFragment(momentID);
+                                    ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                                    ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                                } else if (pager.getCurrentItem() == 0) {
+                                    ((PhotosFragment) mPagerAdapter.getItem(0)).createFragment(momentID);
+                                    ((InfosFragment) mPagerAdapter.getItem(1)).createFragment(momentID);
+                                }
+                                if(position!=1)pager.setCurrentItem(position, false);
+                            }
+                            //if (precedente.equals("creation")) callInvit(NEW_INVIT);
+                            mProgressDialog.dismiss();
+                        }
+                    }
+                });
+            }
+            //Otherwise we have no way to get the moment and we come back
+            else{
+                Toast.makeText(getApplicationContext(), getString(R.string.impossible_get_moment), Toast.LENGTH_SHORT).show();
             }
         }
+
+
     }
 
     public Long getMomentId() {

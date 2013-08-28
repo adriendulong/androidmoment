@@ -104,7 +104,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
 
         // The ImageFetcher takes care of loading images into our ImageView children asynchronously
         mImageFetcher = new ImageFetcher(this, mImageThumbSize);
-        mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
+        //mImageFetcher.setLoadingImage(R.drawable.picto_photo_vide);
         mImageFetcher.addImageCache(getSupportFragmentManager(), cacheParams);
 
 
