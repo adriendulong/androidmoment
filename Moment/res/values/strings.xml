@@ -172,6 +172,8 @@
     <string name="title_pop_up_delete">Suupression du Moment</string>
     <string name="pop_up_delete">Etes vous sur de vouloir supprimer ce Moment ? Cette action est irreversible</string>
     <string name="error_dl_moment">Erreur lors du téléchargement du moment</string>
+    <string name="update_moment_success">Moment mise à jour</string>
+    <string name="impossible_get_moment">Impossible de récupérer le Moment</string>
 
     <!-- Volet -->
     <string name="my_moments_volet">Mes Moments</string>
