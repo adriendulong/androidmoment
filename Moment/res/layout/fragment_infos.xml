@@ -114,7 +114,8 @@
             <RelativeLayout android:layout_width="fill_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center"
-                            android:layout_marginTop="5dp">
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp">
                 <LinearLayout android:orientation="horizontal"
                               android:layout_width="wrap_content"
                               android:layout_height="wrap_content"
@@ -153,65 +154,26 @@
                             android:layout_centerHorizontal="true"/>
 
             </RelativeLayout>
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
-                       android:layout_marginBottom="5dp"/>
-            <com.moment.customfont.MomentButton android:layout_width="fill_parent"
-                            android:layout_height="40dp"
-                            android:background="@color/orange"
-                            android:layout_margin="10dp"
-                            android:text="@string/add_photos_infos"
-                            android:textSize="18dp"
-                            android:textColor="@android:color/white"
-                            android:onClick="addPhotosFromInfos"
-                            android:id="@+id/add_photos_infos"
-                            android:visibility="gone"/>
-            <RelativeLayout android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingLeft="20dp"
-                            android:paddingRight="20dp"
-                            android:layout_marginTop="5dp"
-                            android:id="@+id/bloc_photos"
-                            android:layout_marginBottom="5dp"
-                            android:onClick="goPhotos">
-                <ImageView android:layout_width="fill_parent"
-                           android:layout_height="wrap_content"
-                           android:background="@drawable/bloc_phba"
-                           android:layout_marginTop="2dp"
-                           android:layout_marginLeft="2dp"/>
-                <GridView android:id="@+id/grid_preview_photos"
-                          android:layout_width="fill_parent"
-                          android:layout_height="45dp"
-                          android:gravity="center"
-                          android:layout_marginTop="10dp"
-                          android:columnWidth="45dp"
-                          android:numColumns="auto_fit"
-                          android:verticalSpacing="10dp"
-                          android:horizontalSpacing="10dp"
-                          android:stretchMode="columnWidth"
-                          android:layout_marginRight="10dp"
-                          android:layout_marginLeft="10dp"/>
-                <ImageView android:layout_width="wrap_content"
-                           android:layout_height="wrap_content"
-                           android:background="@drawable/ribbon"/>
-                <ImageButton android:layout_width="fill_parent"
-                             android:layout_height="70dp"
-                             android:background="@android:color/transparent"
-                             android:onClick="goPhotos"/>
-            </RelativeLayout>
+                       android:layout_marginBottom="5dp"/>-->
 
+
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                         android:layout_marginTop="5dp"
-                        android:layout_marginBottom="5dp"/>
+                        android:layout_marginBottom="5dp"/>-->
             <LinearLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:layout_marginTop="0dp">
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp">
                 <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_description"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
@@ -223,62 +185,99 @@
                     android:text="test test test test"
                     android:padding="4dp"/>
             </LinearLayout>
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
-                       android:layout_marginBottom="5dp"/>
-            <RelativeLayout android:id="@+id/mapHost"
-                android:layout_width="fill_parent"
-                android:layout_height="100dp"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:onClick="detailMap">
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:background="@drawable/bloc_lieu" />
-                <!--
-				 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-				     xmlns:map="http://schemas.android.com/apk/res-auto"
-				     android:id="@+id/map"
-				     android:layout_margin="5px"
-			          android:layout_width="match_parent"
-			          android:layout_height="60dp"
-			          class="com.google.android.gms.maps.SupportMapFragment"
-			          map:uiCompass="false"
-					  map:uiRotateGestures="false"
-					  map:uiScrollGestures="false"
-					  map:uiTiltGestures="false"
-					  map:uiZoomControls="false"
-					  map:uiZoomGestures="false"/>
-					  -->
-                <WebView android:layout_width="match_parent"
-                         android:layout_height="60dp"
-                         android:id="@+id/map_web"
-                         android:layout_margin="5px"/>
-                <ImageButton android:layout_width="fill_parent"
-                             android:layout_height="fill_parent"
-                             android:background="@android:color/transparent"
-                             android:onClick="detailMap"/>
-                <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_adresse"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/gris_texte"
-                    android:textSize="10sp"
-                    android:textAllCaps="true"
-                    android:text="50 cours de la renine, 75006 Paris"
-                    android:layout_alignParentBottom="true"
-                    android:paddingBottom="17dp"
-                    android:paddingLeft="32dp"/>
-            </RelativeLayout>
+                       android:layout_marginBottom="5dp"/>-->
+
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
-                       android:layout_marginBottom="5dp"/>
+                       android:layout_marginBottom="5dp"/>-->
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingRight="10dp"
+                            android:paddingLeft="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp">
+                <ImageButton android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:background="@drawable/btn_see_invite"
+                             android:layout_centerVertical="true"
+                             android:onClick="listInvit"/>
+                <ImageButton android:layout_width="wrap_content"
+                             android:layout_height="wrap_content"
+                             android:background="@drawable/btn_add_invite"
+                             android:layout_centerVertical="true"
+                             android:layout_alignParentRight="true"
+                             android:onClick="addGuests"/>
+                <LinearLayout android:layout_width="fill_parent"
+                              android:layout_height="70dp"
+                              android:background="@android:color/white"
+                              android:orientation="horizontal"
+                              android:weightSum="2"
+                              android:clickable="true"
+                              android:layout_marginLeft="50dp"
+                              android:layout_marginRight="50dp"
+                              android:onClick="listInvit"
+                              android:layout_centerInParent="true">
+                    <LinearLayout android:layout_width="0dp"
+                                  android:orientation="horizontal"
+                                    android:layout_height="fill_parent"
+                                    android:gravity="center"
+                                    android:layout_weight="1">
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:background="@drawable/picto_invite"/>
+                        <com.moment.customfont.MomentTextView android:id="@+id/guests_number"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="12"
+                                  android:textSize="14sp"
+                                  android:textColor="@color/gris_texte"
+                                  android:layout_marginLeft="3dp"/>
+                        <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="@string/infos_moment_invites"
+                                  android:textSize="10sp"
+                                  android:textColor="@color/gris_texte"
+                                  android:layout_marginLeft="5dp"
+                                  android:textAllCaps="true"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp"
+                                  android:orientation="horizontal"
+                                  android:layout_height="fill_parent"
+                                  android:gravity="center"
+                                  android:layout_weight="1">
+                        <com.moment.customfont.MomentTextView android:id="@+id/guests_not_coming"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="3"
+                                  android:textSize="14sp"
+                                  android:textColor="@color/gris_texte"
+                                  android:layout_marginRight="5dp"/>
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:src="@drawable/picto_no"/>
+                        <com.moment.customfont.MomentTextView android:id="@+id/guests_coming"
+                                  android:layout_width="wrap_content"
+                                  android:layout_height="wrap_content"
+                                  android:text="9"
+                                  android:textSize="14sp"
+                                  android:textColor="@color/gris_texte"
+                                  android:layout_marginLeft="15dp"
+                                  android:layout_marginRight="5dp"/>
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:src="@drawable/picto_valid"/>
+                    </LinearLayout>
+                </LinearLayout>
+             </RelativeLayout>
+            <!--
              <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="20dp"
@@ -349,15 +348,17 @@
                         android:src="@drawable/picto_valid"/>
                 </LinearLayout>
             </RelativeLayout>
+            -->
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
-                       android:layout_marginBottom="5dp"/>
+                       android:layout_marginBottom="5dp"/>-->
             <RelativeLayout android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:paddingRight="20dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_marginBottom="5dp">
                 <ImageView android:layout_width="fill_parent"
@@ -418,11 +419,165 @@
                     </LinearLayout>
                 </RelativeLayout>
             </RelativeLayout>
+            <RelativeLayout android:id="@+id/mapHost"
+                            android:layout_width="fill_parent"
+                            android:layout_height="100dp"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp"
+                            android:onClick="detailMap">
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:background="@drawable/bloc_lieu" />
+                <!--
+				 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+				     xmlns:map="http://schemas.android.com/apk/res-auto"
+				     android:id="@+id/map"
+				     android:layout_margin="5px"
+			          android:layout_width="match_parent"
+			          android:layout_height="60dp"
+			          class="com.google.android.gms.maps.SupportMapFragment"
+			          map:uiCompass="false"
+					  map:uiRotateGestures="false"
+					  map:uiScrollGestures="false"
+					  map:uiTiltGestures="false"
+					  map:uiZoomControls="false"
+					  map:uiZoomGestures="false"/>
+					  -->
+                <WebView android:layout_width="match_parent"
+                         android:layout_height="60dp"
+                         android:id="@+id/map_web"
+                         android:layout_margin="5px"/>
+                <ImageButton android:layout_width="fill_parent"
+                             android:layout_height="fill_parent"
+                             android:background="@android:color/transparent"
+                             android:onClick="detailMap"/>
+                <com.moment.customfont.MomentTextView android:id="@+id/infos_moment_adresse"
+                                                      android:layout_width="wrap_content"
+                                                      android:layout_height="wrap_content"
+                                                      android:textColor="@color/gris_texte"
+                                                      android:textSize="10sp"
+                                                      android:textAllCaps="true"
+                                                      android:text="50 cours de la renine, 75006 Paris"
+                                                      android:layout_alignParentBottom="true"
+                                                      android:paddingBottom="17dp"
+                                                      android:paddingLeft="32dp"/>
+            </RelativeLayout>
+            <com.moment.customfont.MomentButton android:layout_width="fill_parent"
+                                                android:layout_height="40dp"
+                                                android:background="@color/orange"
+                                                android:layout_margin="10dp"
+                                                android:text="@string/add_photos_infos"
+                                                android:textSize="18dp"
+                                                android:textColor="@android:color/white"
+                                                android:onClick="addPhotosFromInfos"
+                                                android:id="@+id/add_photos_infos"
+                                                android:visibility="gone"/>
+            <RelativeLayout android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:paddingLeft="10dp"
+                            android:paddingRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:id="@+id/bloc_photos"
+                            android:layout_marginBottom="5dp"
+                            android:onClick="goPhotos">
+                <ImageView android:layout_width="fill_parent"
+                           android:layout_height="wrap_content"
+                           android:background="@drawable/bloc_phba"
+                           android:layout_marginTop="2dp"
+                           android:layout_marginLeft="2dp"/>
+                <GridView android:id="@+id/grid_preview_photos"
+                          android:layout_width="fill_parent"
+                          android:layout_height="45dp"
+                          android:gravity="center"
+                          android:layout_marginTop="15dp"
+                          android:columnWidth="45dp"
+                          android:numColumns="auto_fit"
+                          android:verticalSpacing="10dp"
+                          android:horizontalSpacing="10dp"
+                          android:stretchMode="columnWidth"
+                          android:layout_marginRight="10dp"
+                          android:layout_marginLeft="10dp"/>
+                <ImageView android:layout_width="wrap_content"
+                           android:layout_height="wrap_content"
+                           android:background="@drawable/ribbon"/>
+                <ImageButton android:layout_width="fill_parent"
+                             android:layout_height="70dp"
+                             android:background="@android:color/transparent"
+                             android:onClick="goPhotos"/>
+            </RelativeLayout>
+            <!--
             <ImageView android:layout_width="fill_parent"
                        android:layout_height="fill_parent"
                        android:background="@drawable/separation_point"
                        android:layout_marginTop="5dp"
                        android:layout_marginBottom="5dp"/>
+            -->
+            <RelativeLayout android:layout_width="match_parent"
+                            android:layout_height="80dp"
+                            android:background="@android:color/white"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_marginBottom="5dp">
+                <ImageView android:layout_width="match_parent"
+                           android:layout_height="20dp"
+                           android:background="@color/orange"/>
+                <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
+                          android:layout_height="20dp"
+                          android:textColor="@color/white"
+                          android:textSize="12dp"
+                          android:text="@string/share_moment"
+                          android:layout_centerHorizontal="true"
+                          android:gravity="center"/>
+                <LinearLayout android:layout_width="match_parent"
+                               android:layout_height="60dp"
+                               android:layout_alignParentBottom="true"
+                               android:weightSum="4"
+                               android:gravity="center"
+                               android:orientation="horizontal">
+                    <RelativeLayout android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:background="@drawable/btn_rgl_fb"
+                                   android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                    <RelativeLayout android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1">
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:background="@drawable/btn_rgl_fb"
+                                   android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                    <RelativeLayout android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:tag="facebook"
+                                    android:clickable="true"
+                                    android:onClick="share">
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:background="@drawable/btn_rgl_fb"
+                                   android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                    <RelativeLayout android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:tag="twitter"
+                                    android:clickable="true"
+                                    android:onClick="share">
+                        <ImageView android:layout_width="wrap_content"
+                                   android:layout_height="wrap_content"
+                                   android:background="@drawable/btn_rgl_tw"
+                                   android:layout_centerInParent="true"/>
+                    </RelativeLayout>
+                 </LinearLayout>
+            </RelativeLayout>
 
             <com.moment.customfont.MomentButton android:layout_width="fill_parent"
                     android:layout_height="40dp"

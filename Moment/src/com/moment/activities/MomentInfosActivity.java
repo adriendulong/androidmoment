@@ -816,6 +816,21 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         EasyTracker.getInstance().activityStop(this);
     }
 
+    public void share(View v){
+        if(v.getTag().equals("facebook")){
+
+        }
+        else if(v.getTag().equals("twitter")){
+
+        }
+        else if(v.getTag().equals("mail")){
+
+        }
+        else{
+
+        }
+    }
+
 
 }
 

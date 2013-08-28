@@ -78,7 +78,6 @@ public class InfosFragment extends Fragment {
     private TextView titreText, flTitreText, descriptionText, adresse, dateDebutText, dateFinText, heureDebutText, heureFinText, guests_number, guests_coming, guests__not_coming, firstname, lastname, textRSVP;
     private ImageView image_cover, owner_picture;
     private RelativeLayout modifLayout;
-    private ImageView blocRSVP;
     //State buttons
     private ImageButton maybeButton, goingButton, notGoigButton, addGuests;
     private GridView gridPreviewPhotos;
@@ -176,7 +175,6 @@ public class InfosFragment extends Fragment {
             guests__not_coming = (TextView) view.findViewById(R.id.guests_not_coming);
             modifLayout = (RelativeLayout) view.findViewById(R.id.modif_layout);
 
-            blocRSVP = (ImageView) view.findViewById(R.id.bloc_rsvp);
             textRSVP = (TextView) view.findViewById(R.id.text_rsvp);
 
             delMoment = (Button) view.findViewById(R.id.del_moment);
@@ -451,12 +449,7 @@ public class InfosFragment extends Fragment {
 
 
         if (!canInvite(AppMoment.getInstance().user)) {
-            addGuests.setVisibility(View.INVISIBLE);
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) blocRSVP.getLayoutParams();
-            if (params != null) {
-                params.setMargins(0, 0, 5, 0);
-            }
-            blocRSVP.setLayoutParams(params);
+
         }
 
         if (AppMoment.getInstance().user.getId() != moment.getOwnerId()) {
