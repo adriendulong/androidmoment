@@ -93,6 +93,7 @@ public class SearchActivity extends SherlockActivity {
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
                 searchProgress.setVisibility(View.VISIBLE);
+                query = query.replaceAll("\\s", "");
                 MomentApi.get("search/" + query, null, new JsonHttpResponseHandler() {
                     @Override
                     public void onSuccess(JSONObject result) {
