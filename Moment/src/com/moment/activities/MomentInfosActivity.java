@@ -1,14 +1,18 @@
 package com.moment.activities;
 
+import android.annotation.TargetApi;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +31,9 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.Session;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.maps.MapView;
@@ -111,6 +118,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     private BroadcastReceiver mReceiver;
+    private UiLifecycleHelper uiHelper;
+    private Session.StatusCallback callback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,9 +147,10 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             }
         }, intentFilter);
 
+        uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper.onCreate(savedInstanceState);
 
         precedente = getIntent().getStringExtra("precedente");
-
 
         if (precedente.equals("timeline")) position = getIntent().getIntExtra("position", 1);
         if (precedente.equals("push") || precedente.equals("notifs")) {
@@ -219,6 +229,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     @Override
     public void onDestroy() {
+        uiHelper.onDestroy();
         super.onDestroy();
     }
 
@@ -421,11 +432,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == NEW_INVIT) {
-            Log.d("FIN ACTIVITY", "NEW INVIT");
-        } else if (requestCode == LIST_INVIT) {
-            Log.d("FIN ACTIVITY", "LIST");
-        }
+        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+            @Override
+            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+                Log.e("Activity", String.format("Error: %s", error.toString()));
+            }
+
+            @Override
+            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+                Log.i("Activity", "Success!");
+            }
+        });
+
     }
 
 
@@ -580,6 +598,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     protected void onResume() {
         super.onResume();
 
+        uiHelper.onResume();
+
         if(isInUpdate){
             MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
 
@@ -706,9 +726,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     @Override
     protected void onPause() {
-
         super.onPause();
-
+        uiHelper.onPause();
         this.unregisterReceiver(this.mReceiver);
     }
 
@@ -813,21 +832,48 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     @Override
     public void onStop() {
         super.onStop();
+        uiHelper.onStop();
         EasyTracker.getInstance().activityStop(this);
     }
 
     public void share(View v){
         if(v.getTag().equals("facebook")){
+            if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
+                    FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 
+                FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                        .setLink(moment.getUniqueUrl())
+                        .build();
+
+                uiHelper.trackPendingDialogCall(shareDialog.present());
+            }
         }
         else if(v.getTag().equals("twitter")){
-
+            String tweetUrl = "https://twitter.com/intent/tweet?text=" + getString(R.string.moment_mail) + " " + moment.getName() + " " + getString(R.string.moment_mail_2) + "&url=" + moment.getUniqueUrl();
+            Uri uri = Uri.parse(tweetUrl);
+            startActivity(new Intent(Intent.ACTION_VIEW, uri));
         }
         else if(v.getTag().equals("mail")){
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("message/rfc822");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Moment");
+            intent.putExtra(Intent.EXTRA_TEXT, getString(R.string.moment_mail) + " "
+                    + moment.getName() + " " + getString(R.string.moment_mail_2) + "\n"
+                    + moment.getUniqueUrl());
 
+            startActivity(Intent.createChooser(intent, "Send Email"));
         }
         else{
-
+            int sdk = android.os.Build.VERSION.SDK_INT;
+            if(sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
+                android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                clipboard.setText("text to clip");
+            } else {
+                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                android.content.ClipData clip = android.content.ClipData.newPlainText("text label","text to clip");
+                clipboard.setPrimaryClip(clip);
+            }
+            Toast.makeText(MomentInfosActivity.this, getString(R.string.copier_coller), Toast.LENGTH_SHORT).show();
         }
     }
 
