@@ -10,9 +10,10 @@ import com.loopj.android.http.RequestParams;
 import org.apache.http.entity.StringEntity;
 
 public class MomentApi {
-	public static final String BASE_URL = "http://apidev.appmoment.fr/";
-    public static String CREATION_MOMENT = BASE_URL + "newmoment";
-    public static String MODIF_MOMENT = BASE_URL + "moment/";
+    final public static String BASE_URL = "http://apidev.appmoment.fr/";
+    final public static String CREATION_MOMENT = BASE_URL + "newmoment";
+    final public static String MODIF_MOMENT = BASE_URL + "moment/";
+    final public static String GET_MOMENT = BASE_URL + "moment/";
 	
   private static AsyncHttpClient client = new AsyncHttpClient();
   public static PersistentCookieStore myCookieStore;

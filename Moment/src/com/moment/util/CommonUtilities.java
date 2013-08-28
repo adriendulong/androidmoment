@@ -20,6 +20,7 @@ import org.json.JSONTokener;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -179,6 +180,37 @@ public final class CommonUtilities {
         if(BuildConfig.DEBUG) Log.d("Language", "Actual Language :" + locale);
         if(locale.equals("fr")) return new SimpleDateFormat("dd MMM yyyy HH'H'mm ", new Locale("fr"));
         else return new SimpleDateFormat("dd MMM yyyy h:mm a", new Locale("en"));
+    }
+
+    // convert InputStream to String
+    public static String getStringFromInputStream(InputStream is) {
+
+        BufferedReader br = null;
+        StringBuilder sb = new StringBuilder();
+
+        String line;
+        try {
+
+            br = new BufferedReader(new InputStreamReader(is));
+            while ((line = br.readLine()) != null) {
+                sb.append(line+ "\n");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try{
+                is.close();
+            }catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+
+        return sb.toString();
 
     }
+
 }
+
+
+

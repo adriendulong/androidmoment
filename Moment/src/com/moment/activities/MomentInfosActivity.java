@@ -41,13 +41,27 @@ import com.moment.fragments.InfosFragment;
 import com.moment.fragments.PhotosFragment;
 import com.moment.models.Chat;
 import com.moment.models.Moment;
+import com.moment.models.Notification;
 import com.moment.models.Photo;
+import com.moment.util.AsyncTask;
+import com.moment.util.CommonUtilities;
 import com.moment.util.Utils;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.ClientContext;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +105,9 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
 
     private String TAG = "InfosActivity";
+
+    //Boolean that says if we already have the moment and we only need to update it
+    private boolean isInUpdate = false;
 
 
     private BroadcastReceiver mReceiver;
@@ -438,47 +455,12 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             moment = AppMoment.getInstance().user.getMomentById(momentID);
             mNbPhotos = moment.getPhotos().size();
 
+            //We only need to update
+            isInUpdate = true;
+
             //Coming from the creation w go to the invits
             if (precedente.equals("creation")) callInvit(NEW_INVIT);
 
-            //If we have internet we update the moment
-            if (AppMoment.getInstance().checkInternet()) {
-                MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
-
-                    @Override
-                    public void onSuccess(JSONObject response) {
-                        isSuccess = true;
-                        try {
-                            if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
-
-                            if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
-                                AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
-                                moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
-                            }
-
-                            //Update the infos fragment
-                            if(!infosFr.isDetached()) infosFr.createFragment(moment.getId());
-                            Toast.makeText(getApplicationContext(), getString(R.string.update_moment_success), Toast.LENGTH_SHORT).show();
-
-                        } catch (JSONException e) {
-                            Log.e(TAG, "JSON problems");
-                        }
-
-                    }
-
-                    @Override
-                    public void onFailure(Throwable error, String content) {
-                        isSuccess = true;
-                        Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
-                    }
-
-                    public void onFinish() {
-                        if (!isSuccess) {
-                            Toast.makeText(getApplicationContext(), getString(R.string.error_dl_moment), Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
         }
         else{
             //If we have internet we go to get the moment
@@ -597,6 +579,33 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        if(isInUpdate){
+            MomentApi.get("moment/" + momentID, null, new JsonHttpResponseHandler() {
+
+                @Override
+                public void onSuccess(JSONObject response) {
+                    isSuccess = true;
+                    try {
+                        if(response.has("nb_photos")) mNbPhotos = response.getInt("nb_photos");
+
+                        if(AppMoment.getInstance().user.getMomentById(response.getLong("id"))!=null){
+                            AppMoment.getInstance().user.getMomentById(response.getLong("id")).setMomentFromJson(response);
+                            moment = AppMoment.getInstance().user.getMomentById(response.getLong("id"));
+                        }
+
+                        //Update the infos fragment
+                        if(!infosFr.isDetached()) infosFr.createFragment(moment.getId());
+                        //Toast.makeText(getApplicationContext(), getString(R.string.update_moment_success), Toast.LENGTH_SHORT).show();
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "JSON problems");
+                    }
+
+                }
+            });
+        }
+
         IntentFilter intentFilter = new IntentFilter(
                 "com.google.android.c2dm.intent.RECEIVE");
         mReceiver = new BroadcastReceiver() {
@@ -798,6 +807,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
         super.onStart();
         EasyTracker.getInstance().activityStart(this);
     }
+
+
 
     @Override
     public void onStop() {
