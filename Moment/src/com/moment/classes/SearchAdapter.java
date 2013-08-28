@@ -37,7 +37,6 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
     private ArrayList<Moment> data = new ArrayList<Moment>();
     private ImageFetcher mImageFetcher;
     private Transformation roundTrans = new RoundTransformation();
-    private int positionTmp;
 
     public SearchAdapter(Context context, int layoutResourceId, ArrayList<Moment> data, ImageFetcher imagefetcher) {
         super(context, layoutResourceId, data);
@@ -52,7 +51,6 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
 
         View row = convertView;
         MomentHolder holder = null;
-        positionTmp = position;
 
         LayoutInflater vi = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         row = vi.inflate(R.layout.moment_search, parent, false);
@@ -68,9 +66,10 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
         {
             holder.isPublic = (ImageView) row.findViewById(R.id.is_public);
 
-            if(AppMoment.getInstance().user.getMomentById(data.get(position).getId()) != null)
+            if(data.get(position).getState() != null)
             {
                 holder.isPublic.setImageResource(R.drawable.btn_follow_moment_down);
+                holder.progressBar.setVisibility(View.GONE);
                 holder.isPublic.setClickable(false);
             } else {
                 holder.isPublic.setImageResource(R.drawable.btn_follow_moment_up);
@@ -97,17 +96,14 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
                             e.printStackTrace();
                         }
 
-                        MomentApi.postJSON(getContext(), "newguests/"+ data.get(positionTmp).getId(), entity, new JsonHttpResponseHandler() {
+                        MomentApi.postJSON(getContext(), "newguests/"+ data.get(position).getId(), entity, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(JSONObject result) {
                                 result.toString();
                                 finalHolder.isPublic.setImageResource(R.drawable.btn_follow_moment_down);
-                                finalHolder.progressBar.setVisibility(View.INVISIBLE);
+                                finalHolder.progressBar.setVisibility(View.GONE);
                                 finalHolder.isPublic.setVisibility(View.VISIBLE);
-                                Intent intent = new Intent(getContext(), MomentInfosActivity.class);
-                                intent.putExtra("id", data.get(position).getId());
-                                intent.putExtra("precedente", "search");
-                                getContext().startActivity(intent);
+                                finalHolder.isPublic.setClickable(false);
                             }
 
                             @Override
