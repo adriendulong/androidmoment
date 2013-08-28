@@ -1,7 +1,6 @@
 package com.moment.activities;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -11,7 +10,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.InputType;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.ContextThemeWrapper;
@@ -24,11 +22,9 @@ import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.Request;
-import com.facebook.Response;
 import com.facebook.Session;
-import com.facebook.SessionDefaultAudience;
-import com.facebook.SessionLoginBehavior;
-import com.facebook.SessionState;
+import com.facebook.UiLifecycleHelper;
+import com.facebook.widget.FacebookDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -38,33 +34,18 @@ import com.moment.classes.MomentApi;
 import com.moment.models.Photo;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
-
 import com.moment.util.Utils;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 public class DetailPhoto extends SherlockFragmentActivity implements View.OnClickListener {
 
-    private final Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
-        public void call(Session session, SessionState state, Exception exception) {
-            if (state.isOpened()) {
-                Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
-                    @Override
-                    public void onCompleted(Response response) {
-                        bitmap.recycle();
-                    }
-                });
-            }
-        }
-    };
     private int position;
     private Long momentID;
     private Photo photo;
@@ -80,18 +61,21 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     private ImageView imageView;
     private DetailPhoto _this = this;
     private EditText editText;
+    private UiLifecycleHelper uiHelper;
 
     final private int FULL_SCREEN = 1234;
 
     private static final String IMAGE_CACHE_DIR = "big";
     private ImageFetcher mImageFetcher;
     private int mImageThumbSize;
+    private Session.StatusCallback callback;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         bundle = savedInstanceState;
+
 
         setContentView(R.layout.activity_detail_photo);
         imageView = (ImageView) findViewById(R.id.photo_moment_detail);
@@ -116,6 +100,9 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         pxBitmap = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 400, getResources().getDisplayMetrics());
         //Picasso.with(this).load(photo.getUrlOriginal()).resize((int) pxBitmap, (int) pxBitmap).centerCrop().placeholder(R.drawable.picto_photo_vide).into(imageView);
         mImageFetcher.loadImage(photo.getUrlOriginal(), imageView, false);
+
+        uiHelper = new UiLifecycleHelper(this, callback);
+        uiHelper.onCreate(savedInstanceState);
 
         final ImageButton closeButton = (ImageButton) findViewById(R.id.close);
         final ImageButton previousButton = (ImageButton) findViewById(R.id.previous);
@@ -280,13 +267,6 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Facebook", null);
-                try {
-                    openActiveSession(_this, true, fbStatusCallback, Arrays.asList(
-                            "publish_actions"), bundle);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                bitmap = imageView.getDrawingCache(); //Edit
                 sharePicture();
             }
         });
@@ -411,92 +391,66 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         });
     }
 
-    private Session openActiveSession(Activity activity, boolean allowLoginUI,
-                                      Session.StatusCallback callback, List<String> permissions, Bundle savedInstanceState) {
-        Session.OpenRequest openRequest = new Session.OpenRequest(activity).
-                setPermissions(permissions).setLoginBehavior(SessionLoginBehavior.
-                SSO_WITH_FALLBACK).setCallback(callback).
-                setDefaultAudience(SessionDefaultAudience.FRIENDS);
-
-        session = null;
-
-        Log.d("", "" + savedInstanceState);
-        if (savedInstanceState != null) {
-            session = Session.restoreSession(this, null, fbStatusCallback, savedInstanceState);
-        }
-        if (session == null) {
-            session = new Session(this);
-        }
-        Session.setActiveSession(session);
-        if (session.getState().equals(SessionState.CREATED_TOKEN_LOADED) || allowLoginUI) {
-            session.openForPublish(openRequest);
-            return session;
-        }
-        return null;
-    }
-
     private void sharePicture() {
-        request = Request.newUploadPhotoRequest(session, bitmap, new Request.Callback() {
-            @Override
-            public void onCompleted(Response response) {
-                response.toString();
-            }
-        });
+        if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
+                FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 
-        params = request.getParameters();
+            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                    .setLink(photo.getUrlUnique())
+                    .setDescription(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
+                            + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
+                            + getResources().getString(R.string.partage_photo_facebook_text2))
+                    .setPlace(AppMoment.getInstance().user.getMomentById(momentID).getAdresse())
+                    .build();
 
-        editText = new EditText(this);
-        editText.setTextColor(getResources().getColor(android.R.color.black));
-        editText.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        editText.setSingleLine(false);
-        editText.setText(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
-                + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
-                + " " + photo.getUrlUnique() + "\n"
-                + getResources().getString(R.string.partage_photo_facebook_text2));
-
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(new ContextThemeWrapper(_this, android.R.style.Theme_Holo_Light_Dialog));
-        alertDialog.setTitle(getResources().getString(R.string.partage_photo_facebook_titre));
-
-        alertDialog.setView(editText);
-        alertDialog.setPositiveButton(getString(R.string.envoyer), new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                setFacebookComment();
-                Request.executeBatchAsync(request);
-                dialog.cancel();
-            }
-        });
-
-        alertDialog.setNegativeButton(getString(R.string.annuler), new DialogInterface.OnClickListener() {
-
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-
-        alertDialog.show();
-    }
-
-    private void setFacebookComment() {
-        assert editText.getText() != null;
-        message = editText.getText().toString();
-        params.putString("message", message);
+            uiHelper.trackPendingDialogCall(shareDialog.present());
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == FULL_SCREEN && resultCode == Activity.RESULT_OK) {
+        uiHelper.onActivityResult(requestCode, resultCode, data, new FacebookDialog.Callback() {
+            @Override
+            public void onError(FacebookDialog.PendingCall pendingCall, Exception error, Bundle data) {
+                Log.e("Activity", String.format("Error: %s", error.toString()));
+            }
 
-        }
-        else{
-            Session.getActiveSession()
-                    .onActivityResult(this, requestCode, resultCode, data);
-        }
+            @Override
+            public void onComplete(FacebookDialog.PendingCall pendingCall, Bundle data) {
+                Log.i("Activity", "Success!");
+            }
+        });
+
     }
 
     @Override
     public void onClick(View v) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        uiHelper.onResume();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        uiHelper.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        uiHelper.onPause();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        uiHelper.onDestroy();
     }
 
     @Override
@@ -509,8 +463,8 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     public void onStop() {
         super.onStop();
         EasyTracker.getInstance().activityStop(this);
+        uiHelper.onStop();
     }
-
 
     @TargetApi(16)
     public void fullScreen(View v){
@@ -518,9 +472,6 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         i.putExtra(ImageDetailActivity.MOMENT_ID, momentID);
         i.putExtra(ImageDetailActivity.IMAGE_POSITION, position);
         if (Utils.hasJellyBean()) {
-            // makeThumbnailScaleUpAnimation() looks kind of ugly here as the loading spinner may
-            // show plus the thumbnail image in GridView is cropped. so using
-            // makeScaleUpAnimation() instead.
             ActivityOptions options =
                     ActivityOptions.makeScaleUpAnimation(v, 0, 0, v.getWidth(), v.getHeight());
             startActivityForResult(i, FULL_SCREEN, options.toBundle());
