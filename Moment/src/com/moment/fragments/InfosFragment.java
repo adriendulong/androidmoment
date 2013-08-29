@@ -449,7 +449,10 @@ public class InfosFragment extends Fragment {
 
 
         if (!canInvite(AppMoment.getInstance().user)) {
-
+            ImageView hideAdd = (ImageView)view.findViewById(R.id.hide_add);
+            hideAdd.setVisibility(View.VISIBLE);
+            ImageButton addGuests = (ImageButton)view.findViewById(R.id.add_guests_button);
+            addGuests.setEnabled(false);
         }
 
         if (AppMoment.getInstance().user.getId() != moment.getOwnerId()) {
