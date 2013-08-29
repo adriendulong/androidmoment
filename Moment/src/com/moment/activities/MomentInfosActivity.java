@@ -876,7 +876,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             if(sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
                 android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText("text to clip");
-            } else {
+            }
+            else {
                 android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 android.content.ClipData clip = android.content.ClipData.newPlainText("text label","text to clip");
                 clipboard.setPrimaryClip(clip);
