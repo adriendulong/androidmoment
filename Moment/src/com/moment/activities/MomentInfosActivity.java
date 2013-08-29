@@ -872,7 +872,16 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             startActivity(Intent.createChooser(intent, "Send Email"));
         }
         else{
-            int sdk = android.os.Build.VERSION.SDK_INT;
+
+            Intent sendIntent = new Intent();
+            sendIntent.setAction(Intent.ACTION_SEND);
+            sendIntent.setType("text/plain");
+            sendIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.moment_mail) + " "
+                    + moment.getName() + " " + getString(R.string.moment_mail_2) + "\n"
+                    + moment.getUniqueUrl());
+            startActivity(Intent.createChooser(sendIntent, getString(R.string.multi_share)));
+
+            /*int sdk = android.os.Build.VERSION.SDK_INT;
             if(sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
                 android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                 clipboard.setText("text to clip");
@@ -882,7 +891,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                 android.content.ClipData clip = android.content.ClipData.newPlainText("text label","text to clip");
                 clipboard.setPrimaryClip(clip);
             }
-            Toast.makeText(MomentInfosActivity.this, getString(R.string.copier_coller), Toast.LENGTH_SHORT).show();
+            Toast.makeText(MomentInfosActivity.this, getString(R.string.copier_coller), Toast.LENGTH_SHORT).show();*/
         }
     }
 

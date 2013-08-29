@@ -330,5 +330,6 @@
     <string name="moment_mail">Retrouvez toutes les photos de l\'évènement de</string>
     <string name="moment_mail_2">sur l\'application Moment !</string>
     <string name="copier_coller">URL copiée dans le presse-papier</string>
+    <string name="multi_share">Partage du Moment</string>
 
 </resources>
