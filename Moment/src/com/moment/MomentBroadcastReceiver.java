@@ -59,78 +59,81 @@ public class MomentBroadcastReceiver extends BroadcastReceiver {
 
     // Put the GCM message into a notification and post it.
     private void sendNotification(String msg) {
-        mNotificationManager = (NotificationManager)
-                ctx.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        try{
-            JSONArray array = new JSONArray(msg);
-            JSONObject jsonMessage = array.getJSONObject(0);
-            title = jsonMessage.getString("titre");
-            message = jsonMessage.getString("message");
-            moment_id = jsonMessage.getLong("moment_id");
-            type_id = jsonMessage.getInt("type_notif");
-
-        }catch(JSONException e){
-            Log.e(TAG, "JSON PRoblem");
-        }
-
-        if(message!=""){
-
-            if(type_id==INVIT_PUSH){
-                Log.v(TAG, "INVITATION PUSH");
-                destIntent = new Intent(ctx, MomentInfosActivity.class);
-                destIntent.putExtra("type_id", type_id);
-                destIntent.putExtra("moment_id", moment_id);
-                destIntent.putExtra("message", message);
-                destIntent.putExtra("precedente", "push");
-                Log.v(TAG, message);
-            }
-            else if(type_id==CHAT_PUSH){
-                Log.v(TAG, "PUSH CHAT");
-                destIntent = new Intent(ctx, MomentInfosActivity.class);
-                destIntent.putExtra("type_id", type_id);
-                destIntent.putExtra("moment_id", moment_id);
-                destIntent.putExtra("message", message);
-                destIntent.putExtra("precedente", "push");
-                Log.d(TAG, "Type : "+type_id);
-            }
-            else if(type_id==PHOTO_PUSH){
-                Log.v(TAG, "PHOTO PUSH");
-                destIntent = new Intent(ctx, MomentInfosActivity.class);
-                destIntent.putExtra("type_id", type_id);
-                destIntent.putExtra("moment_id", moment_id);
-                destIntent.putExtra("message", message);
-                destIntent.putExtra("precedente", "push");
-                Log.v(TAG, "PHOTO PUSH : "+destIntent.getIntExtra("type_id", 0));
-            }
-
-
+        if(AppMoment.getInstance().user.getId()!=null){
             mNotificationManager = (NotificationManager)
                     ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
-            PendingIntent contentIntent = PendingIntent.getActivity(ctx, Calendar.getInstance().get(Calendar.MILLISECOND),
-                    destIntent, android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+            try{
+                JSONArray array = new JSONArray(msg);
+                JSONObject jsonMessage = array.getJSONObject(0);
+                title = jsonMessage.getString("titre");
+                message = jsonMessage.getString("message");
+                moment_id = jsonMessage.getLong("moment_id");
+                type_id = jsonMessage.getInt("type_notif");
 
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(ctx)
-                            .setSmallIcon(R.drawable.app_icon)
-                            .setContentTitle(title)
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText(message))
-                            .setContentText(message)
-                            .setAutoCancel(true);
+            }catch(JSONException e){
+                Log.e(TAG, "JSON PRoblem");
+            }
 
-            mBuilder.setContentIntent(contentIntent);
-            mBuilder.setLights(Color.argb(100, 255, 156, 8), 500, 500);
-            long[] pattern = {500,500,500,500,500,500,500,500,500};
-            mBuilder.setVibrate(pattern);
-            Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-            mBuilder.setSound(alarmSound);
-            mNotificationManager.notify(Calendar.getInstance().get(Calendar.MILLISECOND), mBuilder.build());
+            if(message!=""){
+
+                if(type_id==INVIT_PUSH){
+                    Log.v(TAG, "INVITATION PUSH");
+                    destIntent = new Intent(ctx, MomentInfosActivity.class);
+                    destIntent.putExtra("type_id", type_id);
+                    destIntent.putExtra("moment_id", moment_id);
+                    destIntent.putExtra("message", message);
+                    destIntent.putExtra("precedente", "push");
+                    Log.v(TAG, message);
+                }
+                else if(type_id==CHAT_PUSH){
+                    Log.v(TAG, "PUSH CHAT");
+                    destIntent = new Intent(ctx, MomentInfosActivity.class);
+                    destIntent.putExtra("type_id", type_id);
+                    destIntent.putExtra("moment_id", moment_id);
+                    destIntent.putExtra("message", message);
+                    destIntent.putExtra("precedente", "push");
+                    Log.d(TAG, "Type : "+type_id);
+                }
+                else if(type_id==PHOTO_PUSH){
+                    Log.v(TAG, "PHOTO PUSH");
+                    destIntent = new Intent(ctx, MomentInfosActivity.class);
+                    destIntent.putExtra("type_id", type_id);
+                    destIntent.putExtra("moment_id", moment_id);
+                    destIntent.putExtra("message", message);
+                    destIntent.putExtra("precedente", "push");
+                    Log.v(TAG, "PHOTO PUSH : "+destIntent.getIntExtra("type_id", 0));
+                }
 
 
+                mNotificationManager = (NotificationManager)
+                        ctx.getSystemService(Context.NOTIFICATION_SERVICE);
 
+                PendingIntent contentIntent = PendingIntent.getActivity(ctx, Calendar.getInstance().get(Calendar.MILLISECOND),
+                        destIntent, android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(ctx)
+                                .setSmallIcon(R.drawable.app_icon)
+                                .setContentTitle(title)
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(message))
+                                .setContentText(message)
+                                .setAutoCancel(true);
+
+                mBuilder.setContentIntent(contentIntent);
+                mBuilder.setLights(Color.argb(100, 255, 156, 8), 500, 500);
+                long[] pattern = {500,500,500,500,500,500,500,500,500};
+                mBuilder.setVibrate(pattern);
+                Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+                mBuilder.setSound(alarmSound);
+                mNotificationManager.notify(Calendar.getInstance().get(Calendar.MILLISECOND), mBuilder.build());
+
+
+            }
 
         }
+
+
     }
 }

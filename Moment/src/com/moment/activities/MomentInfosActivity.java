@@ -119,6 +119,8 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
     //Boolean that says if we already have the moment and we only need to update it
     private boolean isInUpdate = false;
 
+    private BroadcastReceiver receiver;
+
 
     private BroadcastReceiver mReceiver;
     private UiLifecycleHelper uiHelper;
@@ -140,15 +142,18 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             Utils.logHeap();
         }
 
+        //Broadcast Listener (when logout remove from history)
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.package.ACTION_LOGOUT");
-        registerReceiver(new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.e("TIMELINE", "FINISH()");
                 finish();
             }
-        }, intentFilter);
+        };
+        registerReceiver(receiver, intentFilter);
 
         uiHelper = new UiLifecycleHelper(this, callback);
         uiHelper.onCreate(savedInstanceState);
@@ -232,6 +237,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
 
     @Override
     public void onDestroy() {
+        unregisterReceiver(receiver);
         uiHelper.onDestroy();
         super.onDestroy();
     }
