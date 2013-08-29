@@ -33,6 +33,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphObject;
+import com.facebook.model.OpenGraphAction;
 import com.facebook.widget.FacebookDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.GoogleMap;
@@ -70,6 +72,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MomentInfosActivity extends SherlockFragmentActivity {
@@ -841,11 +844,16 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
                     FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 
-                FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-                        .setLink(moment.getUniqueUrl())
-                        .build();
+                    OpenGraphAction action = GraphObject.Factory.create(OpenGraphAction.class);
+                    action.setProperty("evenement", moment.getUniqueUrl());
 
-                uiHelper.trackPendingDialogCall(shareDialog.present());
+
+                    FacebookDialog shareDialog = new FacebookDialog.OpenGraphActionDialogBuilder(this, action, "appmoment:participe", "evenement")
+                            .build();
+                    uiHelper.trackPendingDialogCall(shareDialog.present());
+            }
+            else{
+
             }
         }
         else if(v.getTag().equals("twitter")){

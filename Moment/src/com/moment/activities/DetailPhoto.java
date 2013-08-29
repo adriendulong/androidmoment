@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -24,6 +25,9 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.facebook.Request;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
+import com.facebook.model.GraphObject;
+import com.facebook.model.OpenGraphAction;
+import com.facebook.model.OpenGraphObject;
 import com.facebook.widget.FacebookDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -31,6 +35,7 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.moment.AppMoment;
 import com.moment.R;
 import com.moment.classes.MomentApi;
+import com.moment.models.Moment;
 import com.moment.models.Photo;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
@@ -42,7 +47,10 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 public class DetailPhoto extends SherlockFragmentActivity implements View.OnClickListener {
 
@@ -395,15 +403,40 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
         if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 
-            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-                    .setLink(photo.getUrlUnique())
-                    .setDescription(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
-                            + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
-                            + getResources().getString(R.string.partage_photo_facebook_text2))
-                    .setPlace(AppMoment.getInstance().user.getMomentById(momentID).getAdresse())
-                    .build();
+            /*
+            Moment moment = AppMoment.getInstance().user.getMomentById(this.momentID);
 
+            imageView.buildDrawingCache();
+            //BitmapDrawable image = (BitmapDrawable) imageView.getDrawingCache()
+            Bitmap bitmap = imageView.getDrawingCache();
+
+            OpenGraphAction action = GraphObject.Factory.create(OpenGraphAction.class);
+            action.setProperty("evenement", moment.getUniqueUrl());
+
+
+            FacebookDialog shareDialog = new FacebookDialog.OpenGraphActionDialogBuilder(this, action, "appmoment:participe", "evenement")
+                    .setImageAttachmentsForAction(Arrays.asList(bitmap))
+                    .build();
             uiHelper.trackPendingDialogCall(shareDialog.present());
+            */
+
+            if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
+                    FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+
+                FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                        .setLink(photo.getUrlUnique())
+                        .setDescription(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
+                                + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
+                                + getResources().getString(R.string.partage_photo_facebook_text2))
+                        .setApplicationName("Moment")
+                        .setPicture(photo.getUrlOriginal())
+                        .build();
+
+                uiHelper.trackPendingDialogCall(shareDialog.present());
+            }
+            else{
+
+            }
         }
     }
 
