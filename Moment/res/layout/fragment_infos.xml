@@ -216,15 +216,6 @@
                              android:layout_centerVertical="true"
                              android:layout_alignParentRight="true"
                              android:onClick="addGuests"/>
-                <ImageView android:layout_width="50dp"
-                           android:layout_height="50dp"
-                           android:layout_marginRight="2dp"
-                           android:background="@android:color/darker_gray"
-                           android:id="@+id/hide_add"
-                           android:visibility="visible"
-                           android:alpha="0.8"
-                           android:layout_alignParentRight="true"
-                           android:layout_centerVertical="true"/>
                 <LinearLayout android:layout_width="fill_parent"
                               android:layout_height="70dp"
                               android:background="@android:color/white"

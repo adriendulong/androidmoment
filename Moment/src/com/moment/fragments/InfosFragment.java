@@ -47,6 +47,7 @@ import com.moment.models.User;
 import com.moment.util.CommonUtilities;
 import com.moment.util.ImageCache;
 import com.moment.util.ImageFetcher;
+import com.moment.util.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -449,10 +450,15 @@ public class InfosFragment extends Fragment {
 
 
         if (!canInvite(AppMoment.getInstance().user)) {
-            ImageView hideAdd = (ImageView)view.findViewById(R.id.hide_add);
-            hideAdd.setVisibility(View.VISIBLE);
             ImageButton addGuests = (ImageButton)view.findViewById(R.id.add_guests_button);
             addGuests.setEnabled(false);
+            if(Utils.hasHoneycomb()){
+                addGuests.setAlpha(0.5f);
+            }
+            else{
+                addGuests.setVisibility(View.GONE);
+            }
+
         }
 
         if (AppMoment.getInstance().user.getId() != moment.getOwnerId()) {
