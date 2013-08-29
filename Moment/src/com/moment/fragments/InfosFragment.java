@@ -313,9 +313,11 @@ public class InfosFragment extends Fragment {
             MomentApi.postJSON(getActivity(), "newguests/"+ momentId, entity, new JsonHttpResponseHandler() {
                 @Override
                 public void onSuccess(JSONObject result) {
+                    stateAnwser = COMING;
                     moment.setState(COMING);
                     updateRSVPBloc();
                     facebook();
+                    updateStateServer(oldState, COMING);
                 }
 
                 @Override
