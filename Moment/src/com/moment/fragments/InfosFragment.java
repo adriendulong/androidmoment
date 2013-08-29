@@ -51,9 +51,13 @@ import com.moment.util.Utils;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
+import org.apache.http.entity.StringEntity;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -291,39 +295,70 @@ public class InfosFragment extends Fragment {
         System.out.println("Going");
         final int oldState = stateAnwser;
 
-        if (moment.getState() != OWNER) {
-            if (stateAnwser != COMING) {
+        if(moment.getState() == null)
+        {
+            StringEntity entity = null;
+            try {
+                JSONArray users = new JSONArray();
+                users.put(AppMoment.getInstance().user.getUserToJSON());
+                JSONObject tab = new JSONObject();
+                tab.put("users", users);
+                entity = new StringEntity(tab.toString());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
 
-                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                alertDialog.setTitle(getResources().getString(R.string.rsvp_title));
-                alertDialog.setMessage(getResources().getString(R.string.rsvp_text));
-                alertDialog.setPositiveButton("Envoyer", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        stateAnwser = COMING;
-                        moment.setState(COMING);
-                        facebook();
-                        updateRSVPBloc();
-                        updateStateServer(oldState, COMING);
-                        dialog.cancel();
-                    }
-                });
+            MomentApi.postJSON(getActivity(), "newguests/"+ momentId, entity, new JsonHttpResponseHandler() {
+                @Override
+                public void onSuccess(JSONObject result) {
+                    moment.setState(COMING);
+                    updateRSVPBloc();
+                    facebook();
+                }
 
-                alertDialog.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+                @Override
+                public void onFailure(Throwable e, JSONObject response) {
+                    e.printStackTrace();
+                    response.toString();
+                }
+            });
+        } else {
 
-                    public void onClick(DialogInterface dialog, int which) {
-                        stateAnwser = COMING;
-                        moment.setState(COMING);
-                        updateRSVPBloc();
-                        updateStateServer(oldState, COMING);
-                        dialog.dismiss();
+            if (moment.getState() != OWNER) {
+                if (stateAnwser != COMING) {
 
-                    }
-                });
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                    alertDialog.setTitle(getResources().getString(R.string.rsvp_title));
+                    alertDialog.setMessage(getResources().getString(R.string.rsvp_text));
+                    alertDialog.setPositiveButton("Envoyer", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            stateAnwser = COMING;
+                            moment.setState(COMING);
+                            facebook();
+                            updateRSVPBloc();
+                            updateStateServer(oldState, COMING);
+                            dialog.cancel();
+                        }
+                    });
 
-                alertDialog.show();
+                    alertDialog.setNegativeButton("Annuler", new DialogInterface.OnClickListener() {
+
+                        public void onClick(DialogInterface dialog, int which) {
+                            stateAnwser = COMING;
+                            moment.setState(COMING);
+                            updateRSVPBloc();
+                            updateStateServer(oldState, COMING);
+                            dialog.dismiss();
+
+                        }
+                    });
+
+                    alertDialog.show();
+                }
             }
         }
-
     }
 
     public void notRsvp() {
