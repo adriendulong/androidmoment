@@ -31,11 +31,14 @@ import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Session;
 import com.facebook.UiLifecycleHelper;
 import com.facebook.model.GraphObject;
 import com.facebook.model.OpenGraphAction;
 import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.maps.MapView;
@@ -859,11 +862,53 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     uiHelper.trackPendingDialogCall(shareDialog.present());
             }
             else{
+                Bundle params = new Bundle();
+                params.putString("name", moment.getName());
+                params.putString("caption", moment.getUser().getFirstName());
+                params.putString("description", moment.getDescription());
+                params.putString("link", moment.getUniqueUrl());
+                params.putString("picture", moment.getUrlCover());
+
+                WebDialog feedDialog = (
+                        new WebDialog.FeedDialogBuilder(MomentInfosActivity.this,
+                                Session.getActiveSession(),
+                                params))
+                        .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                            @Override
+                            public void onComplete(Bundle values,
+                                                   FacebookException error) {
+                                if (error == null) {
+                                    final String postId = values.getString("post_id");
+                                    if (postId != null) {
+                                        Toast.makeText(MomentInfosActivity.this,
+                                                "Photo postée, id: "+postId,
+                                                Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Toast.makeText(MomentInfosActivity.this.getApplicationContext(),
+                                                "Partage annulé",
+                                                Toast.LENGTH_SHORT).show();
+                                    }
+                                } else if (error instanceof FacebookOperationCanceledException) {
+                                    // User clicked the "x" button
+                                    Toast.makeText(MomentInfosActivity.this.getApplicationContext(),
+                                            "Partage annulé",
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    // Generic, ex: network error
+                                    Toast.makeText(MomentInfosActivity.this.getApplicationContext(),
+                                            "Erreur lors du partage",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            }
+
+                        }).build();
+                feedDialog.show();
 
             }
         }
         else if(v.getTag().equals("twitter")){
-            String tweetUrl = "https://twitter.com/intent/tweet?text=" + getString(R.string.moment_mail) + " " + moment.getName() + " " + getString(R.string.moment_mail_2) + "&hashtag" + getString(R.string.partage_photo_twitter_text2) + "&url=" + moment.getUniqueUrl();
+            String tweetUrl = "https://twitter.com/intent/tweet?text=" + getString(R.string.moment_mail) + " " + moment.getName() + " " + getString(R.string.moment_mail_2) + " @" + getString(R.string.partage_photo_twitter_text2) + "&url=" + moment.getUniqueUrl();
             Uri uri = Uri.parse(tweetUrl);
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         }
@@ -887,17 +932,6 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                     + moment.getUniqueUrl());
             startActivity(Intent.createChooser(sendIntent, getString(R.string.multi_share)));
 
-            /*int sdk = android.os.Build.VERSION.SDK_INT;
-            if(sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-                android.text.ClipboardManager clipboard = (android.text.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                clipboard.setText("text to clip");
-            }
-            else {
-                android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                android.content.ClipData clip = android.content.ClipData.newPlainText("text label","text to clip");
-                clipboard.setPrimaryClip(clip);
-            }
-            Toast.makeText(MomentInfosActivity.this, getString(R.string.copier_coller), Toast.LENGTH_SHORT).show();*/
         }
     }
 

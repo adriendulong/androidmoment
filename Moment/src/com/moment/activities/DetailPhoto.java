@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.facebook.FacebookException;
+import com.facebook.FacebookOperationCanceledException;
 import com.facebook.Request;
 import com.facebook.Response;
 import com.facebook.Session;
@@ -30,6 +32,7 @@ import com.facebook.model.GraphObject;
 import com.facebook.model.OpenGraphAction;
 import com.facebook.model.OpenGraphObject;
 import com.facebook.widget.FacebookDialog;
+import com.facebook.widget.WebDialog;
 import com.google.analytics.tracking.android.EasyTracker;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
@@ -284,7 +287,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Twitter", null);
-                String tweetUrl = "https://twitter.com/intent/tweet?text=" + getResources().getString(R.string.partage_photo_facebook_text1) + " " + AppMoment.getInstance().user.getMomentById(momentID).getName() + "&hashtag" + getResources().getString(R.string.partage_photo_twitter_text2) + "&url=" + photo.getUrlUnique();
+                String tweetUrl = "https://twitter.com/intent/tweet?text=" + getResources().getString(R.string.partage_photo_facebook_text1) + " " + AppMoment.getInstance().user.getMomentById(momentID).getName() + " @" + getResources().getString(R.string.partage_photo_twitter_text2) + "&url=" + photo.getUrlUnique();
                 Uri uri = Uri.parse(tweetUrl);
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
             }
@@ -403,32 +406,65 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
     }
 
     private void sharePicture() {
+
         if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
                 FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
 
-            if (FacebookDialog.canPresentShareDialog(getApplicationContext(),
-                    FacebookDialog.ShareDialogFeature.SHARE_DIALOG)) {
+            FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
+                    .setLink(photo.getUrlUnique())
+                    .setDescription(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
+                            + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
+                            + getResources().getString(R.string.partage_photo_facebook_text2))
+                    .setApplicationName("Moment")
+                    .setPicture(photo.getUrlOriginal())
+                    .build();
 
-                FacebookDialog shareDialog = new FacebookDialog.ShareDialogBuilder(this)
-                        .setLink(photo.getUrlUnique())
-                        .setDescription(getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
-                                + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
-                                + getResources().getString(R.string.partage_photo_facebook_text2))
-                        .setApplicationName("Moment")
-                        .setPicture(photo.getUrlOriginal())
-                        .build();
+            uiHelper.trackPendingDialogCall(shareDialog.present());
+        }
+        else{
 
-                uiHelper.trackPendingDialogCall(shareDialog.present());
-            }
-            else{
-                Request request = Request.newUploadPhotoRequest(Session.getActiveSession(), imageView.getDrawingCache(), new Request.Callback() {
-                    @Override
-                    public void onCompleted(Response response) {
-                        Log.d("Upload Facebook", response.toString());
-                    }
-                });
-                request.executeAsync();
-            }
+            Bundle params = new Bundle();
+            params.putString("name", AppMoment.getInstance().user.getMomentById(momentID).getName());
+            params.putString("caption", AppMoment.getInstance().user.getMomentById(momentID).getDescription());
+            params.putString("description", getResources().getString(R.string.partage_photo_facebook_text1) + " " + AppMoment.getInstance().user.getMomentById(momentID).getName());
+            params.putString("link", photo.getUrlUnique());
+            params.putString("picture", photo.getUrlOriginal());
+
+            WebDialog feedDialog = (
+                    new WebDialog.FeedDialogBuilder(DetailPhoto.this,
+                            Session.getActiveSession(),
+                            params))
+                    .setOnCompleteListener(new WebDialog.OnCompleteListener() {
+
+                        @Override
+                        public void onComplete(Bundle values,
+                                               FacebookException error) {
+                            if (error == null) {
+                                final String postId = values.getString("post_id");
+                                if (postId != null) {
+                                    Toast.makeText(DetailPhoto.this,
+                                            "Photo postée, id: "+postId,
+                                            Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(DetailPhoto.this.getApplicationContext(),
+                                            "Partage annulé",
+                                            Toast.LENGTH_SHORT).show();
+                                }
+                            } else if (error instanceof FacebookOperationCanceledException) {
+                                // User clicked the "x" button
+                                Toast.makeText(DetailPhoto.this.getApplicationContext(),
+                                        "Partage annulé",
+                                        Toast.LENGTH_SHORT).show();
+                            } else {
+                                // Generic, ex: network error
+                                Toast.makeText(DetailPhoto.this.getApplicationContext(),
+                                        "Erreur lors du partage",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        }
+
+                    }).build();
+            feedDialog.show();
         }
     }
 
