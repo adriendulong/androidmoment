@@ -108,7 +108,8 @@
                                                   android:layout_alignParentLeft="true"
                                                   android:layout_centerVertical="true"
                                                   android:layout_marginLeft="60dp"
-                                                  android:text="Rechercher"
+                                                  android:ellipsize="end"
+                                                  android:text="Rechercher un Moment"
                                                   android:textColor="@color/white"
                                                   android:textSize="14dp"/>
 

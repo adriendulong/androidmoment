@@ -443,17 +443,17 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
                                 final String postId = values.getString("post_id");
                                 if (postId != null) {
                                     Toast.makeText(DetailPhoto.this,
-                                            "Photo postée, id: "+postId,
+                                            "Photo postÃ©e",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(DetailPhoto.this.getApplicationContext(),
-                                            "Partage annulé",
+                                            "Partage annulÃ©",
                                             Toast.LENGTH_SHORT).show();
                                 }
                             } else if (error instanceof FacebookOperationCanceledException) {
                                 // User clicked the "x" button
                                 Toast.makeText(DetailPhoto.this.getApplicationContext(),
-                                        "Partage annulé",
+                                        "Partage annulÃ©",
                                         Toast.LENGTH_SHORT).show();
                             } else {
                                 // Generic, ex: network error

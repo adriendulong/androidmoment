@@ -882,17 +882,17 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
                                     final String postId = values.getString("post_id");
                                     if (postId != null) {
                                         Toast.makeText(MomentInfosActivity.this,
-                                                "Photo postée, id: "+postId,
+                                                "Moment partagÃ©",
                                                 Toast.LENGTH_SHORT).show();
                                     } else {
                                         Toast.makeText(MomentInfosActivity.this.getApplicationContext(),
-                                                "Partage annulé",
+                                                "Partage annulÃ©",
                                                 Toast.LENGTH_SHORT).show();
                                     }
                                 } else if (error instanceof FacebookOperationCanceledException) {
                                     // User clicked the "x" button
                                     Toast.makeText(MomentInfosActivity.this.getApplicationContext(),
-                                            "Partage annulé",
+                                            "Partage annulÃ©",
                                             Toast.LENGTH_SHORT).show();
                                 } else {
                                     // Generic, ex: network error
