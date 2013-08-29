@@ -90,6 +90,7 @@ public class TimelineActivity extends SlidingFragmentActivity {
     private ImageView separator2;
     private ImageView separator3;
     private RelativeLayout search;
+    private BroadcastReceiver receiver;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,13 +105,15 @@ public class TimelineActivity extends SlidingFragmentActivity {
         //Broadcast Listener (when logout remove from history)
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.package.ACTION_LOGOUT");
-        registerReceiver(new BroadcastReceiver() {
+        receiver = new BroadcastReceiver() {
 
             @Override
             public void onReceive(Context context, Intent intent) {
+                Log.e("TIMELINE", "FINISH()");
                 finish();
             }
-        }, intentFilter);
+        };
+        registerReceiver(receiver, intentFilter);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
@@ -734,6 +737,12 @@ public class TimelineActivity extends SlidingFragmentActivity {
             DateTime dateTwo = new DateTime(rhs.getDateDebut());
             return dateOne.compareTo(dateTwo);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        unregisterReceiver(receiver);
+        super.onDestroy();
     }
 
 }
