@@ -857,7 +857,7 @@ public class MomentInfosActivity extends SherlockFragmentActivity {
             }
         }
         else if(v.getTag().equals("twitter")){
-            String tweetUrl = "https://twitter.com/intent/tweet?text=" + getString(R.string.moment_mail) + " " + moment.getName() + " " + getString(R.string.moment_mail_2) + "&url=" + moment.getUniqueUrl();
+            String tweetUrl = "https://twitter.com/intent/tweet?text=" + getString(R.string.moment_mail) + " " + moment.getName() + " " + getString(R.string.moment_mail_2) + "&hashtag" + getString(R.string.partage_photo_twitter_text2) + "&url=" + moment.getUniqueUrl();
             Uri uri = Uri.parse(tweetUrl);
             startActivity(new Intent(Intent.ACTION_VIEW, uri));
         }

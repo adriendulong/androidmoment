@@ -284,10 +284,7 @@ public class DetailPhoto extends SherlockFragmentActivity implements View.OnClic
             @Override
             public void onClick(View v) {
                 EasyTracker.getTracker().sendEvent("Photo", "button_press", "Share Twitter", null);
-                String tweetUrl = "https://twitter.com/intent/tweet?text="
-                        + getResources().getString(R.string.partage_photo_facebook_text1) + "\n"
-                        + AppMoment.getInstance().user.getMomentById(momentID).getName() + "\n"
-                        + getResources().getString(R.string.partage_photo_facebook_text2) + "&url=" + photo.getUrlUnique();
+                String tweetUrl = "https://twitter.com/intent/tweet?text=" + getResources().getString(R.string.partage_photo_facebook_text1) + " " + AppMoment.getInstance().user.getMomentById(momentID).getName() + "&hashtag" + getResources().getString(R.string.partage_photo_twitter_text2) + "&url=" + photo.getUrlUnique();
                 Uri uri = Uri.parse(tweetUrl);
                 startActivity(new Intent(Intent.ACTION_VIEW, uri));
             }
