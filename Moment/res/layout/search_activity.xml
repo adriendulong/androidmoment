@@ -26,5 +26,13 @@
         android:id="@+id/search_progress"
         android:indeterminate="false"
         android:layout_centerInParent="true" />
+    <com.moment.customfont.MomentTextView android:layout_width="wrap_content"
+                                          android:layout_height="wrap_content"
+                                          android:text="Aucun résultat pour cette recherche"
+                                          android:textSize="14dp"
+                                          android:textColor="@android:color/white"
+                                          android:layout_centerInParent="true"
+                                          android:id="@+id/no_result_search"
+                                          android:visibility="gone"/>
 
 </RelativeLayout>

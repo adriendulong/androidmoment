@@ -6,10 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.view.MenuItemCompat;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.ProgressBar;
+import android.widget.*;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockActivity;
@@ -44,6 +41,7 @@ public class SearchActivity extends SherlockActivity {
     private SearchView searchView;
     private ProgressBar searchProgress;
     private ProgressDialog progressDialog;
+    private TextView noResultText;
 
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -55,6 +53,8 @@ public class SearchActivity extends SherlockActivity {
         actionBar.setIcon(R.drawable.picto_o);
         actionBar.setDisplayShowTitleEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(true);
+
+        noResultText = (TextView)findViewById(R.id.no_result_search);
 
         moments = new ArrayList<Moment>();
         searchProgress = (ProgressBar) findViewById(R.id.search_progress);
@@ -93,6 +93,7 @@ public class SearchActivity extends SherlockActivity {
             public boolean onQueryTextSubmit(String query) {
                 searchView.clearFocus();
                 searchProgress.setVisibility(View.VISIBLE);
+                noResultText.setVisibility(View.GONE);
                 query = query.replaceAll("\\s", "");
                 MomentApi.get("search/" + query, null, new JsonHttpResponseHandler() {
                     @Override
@@ -107,7 +108,6 @@ public class SearchActivity extends SherlockActivity {
                                 JSONObject momentJSON = publics.getJSONObject(i);
                                 moment.setMomentFromJson(momentJSON);
                                 moments.add(moment);
-                                adapter.notifyDataSetChanged();
                             }
 
                             for (int i = 0; i < prives.length(); i++) {
@@ -115,12 +115,19 @@ public class SearchActivity extends SherlockActivity {
                                 JSONObject momentJSON = prives.getJSONObject(i);
                                 moment.setMomentFromJson(momentJSON);
                                 moments.add(moment);
-                                adapter.notifyDataSetChanged();
                             }
 
                             Collections.sort(moments, new CustomComparator());
 
                             searchProgress.setVisibility(View.INVISIBLE);
+                            adapter.notifyDataSetChanged();
+
+                            if(moments.size()==0){
+                                noResultText.setVisibility(View.VISIBLE);
+                            }
+                            else{
+                                noResultText.setVisibility(View.GONE);
+                            }
 
                         } catch (JSONException e) {
                             e.printStackTrace();
