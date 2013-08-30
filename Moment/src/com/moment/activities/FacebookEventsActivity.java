@@ -247,7 +247,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                     e.printStackTrace();
                 }
 
-
+                /*
                 if(invites != null)
                 {
                     StringEntity entity = null;
@@ -272,7 +272,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                             response.toString();
                         }
                     });
-                }
+                }*/
 
             }
 
