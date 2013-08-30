@@ -90,15 +90,29 @@ public class FacebookEventsActivity extends SherlockActivity {
         {
             invites = new JSONArray();
             JSONArray invitesJSON = event.getJSONObject("invited").getJSONArray("data");
-            for(int i = 0; i < invitesJSON.length(); i++)
-            {
-                String[] name = invitesJSON.getJSONObject(i).getString("name").split("\\s+");
-                JSONObject invitJSON = new JSONObject();
-                invitJSON.put("facebookId", invitesJSON.getJSONObject(i).getLong("id"));
-                invitJSON.put("firstname", name[0]);
-                invitJSON.put("lastname", name[1]);
-                invites.put(invitJSON);
+            if(invitesJSON.length()>500){
+                for(int i = 0; i < 500; i++)
+                {
+                    String[] name = invitesJSON.getJSONObject(i).getString("name").split("\\s+");
+                    JSONObject invitJSON = new JSONObject();
+                    invitJSON.put("facebookId", invitesJSON.getJSONObject(i).getLong("id"));
+                    invitJSON.put("firstname", name[0]);
+                    invitJSON.put("lastname", name[1]);
+                    invites.put(invitJSON);
+                }
             }
+            else{
+                for(int i = 0; i < invitesJSON.length(); i++)
+                {
+                    String[] name = invitesJSON.getJSONObject(i).getString("name").split("\\s+");
+                    JSONObject invitJSON = new JSONObject();
+                    invitJSON.put("facebookId", invitesJSON.getJSONObject(i).getLong("id"));
+                    invitJSON.put("firstname", name[0]);
+                    invitJSON.put("lastname", name[1]);
+                    invites.put(invitJSON);
+                }
+            }
+
 
         }
 
@@ -170,28 +184,27 @@ public class FacebookEventsActivity extends SherlockActivity {
     }
 
     public void getUserInfo(String userFacebookId, final FbEvent fbEvent) {
-        String fqlQuery = "SELECT pic FROM user WHERE uid='"+ userFacebookId +"'";
         Bundle params = new Bundle();
-        params.putString("q", fqlQuery);
-        Request request = new Request(session, "/fql", params, HttpMethod.GET,
+        //nvited.fields(id, name, picture.width(200).height(200)).limit(500)
+        params.putString("fields","name,picture.height(600).width(600)");
+
+        Request request = new Request(session, userFacebookId+"", params, HttpMethod.GET,
                 new Request.Callback() {
 
                     @Override
                     public void onCompleted(Response response) {
-                        JSONArray user = null;
-                        try {
-                            user = response.getGraphObject().getInnerJSONObject().getJSONArray("data");
-                            eventOwner = user.getJSONObject(0);
-                            fbEvent.setOwner_picture_url(eventOwner.getString("pic"));
-                            try {
-                                uploadEvent(fbEvent);
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            Log.e("Final Event", fbEvent.toString());
-                        } catch (JSONException e) {
-                            Log.e("Failure", e.toString());
+                        try{
+                            JSONObject object = response.getGraphObject().getInnerJSONObject();
+                            fbEvent.setOwner_picture_url(object.getJSONObject("picture").getJSONObject("data").getString("url"));
+                            uploadEvent(fbEvent);
+
+                        }catch(JSONException e){
+                            e.printStackTrace();
+                        }catch(ParseException e){
+                            e.printStackTrace();
                         }
+
+
                     }
                 });
         Request.executeBatchAsync(request);
@@ -233,6 +246,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
 
                 if(invites != null)
                 {
