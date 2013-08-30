@@ -125,7 +125,7 @@
     <string name="dev_app_id">539966336039230</string>
 
     <!-- Import Facebook Events-->
-    <string name="pop_up_end_import_fb"> evènements importés </string>
+    <string name="pop_up_end_import_fb"> Evènements importés! </string>
 
     <!-- Ecran de recherche de lieu -->
     <string name="custome_loc">Votre localisation</string>

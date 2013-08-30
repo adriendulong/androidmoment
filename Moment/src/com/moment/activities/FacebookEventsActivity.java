@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.View;
 
 import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.view.MenuItem;
@@ -21,12 +22,15 @@ import com.moment.models.FbEvent;
 import com.moment.models.Moment;
 import com.moment.util.CommonUtilities;
 
+import org.apache.http.entity.StringEntity;
 import org.joda.time.DateTime;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
+import java.util.ArrayList;
 
 public class FacebookEventsActivity extends SherlockActivity {
 
@@ -36,6 +40,7 @@ public class FacebookEventsActivity extends SherlockActivity {
     private AlertDialog alertDialog;
     private int cursor;
     private int fail = 0;
+    private JSONArray invites;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -79,6 +84,22 @@ public class FacebookEventsActivity extends SherlockActivity {
         }
         else{
             if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
+        }
+
+        if(event.has("invited"))
+        {
+            invites = new JSONArray();
+            JSONArray invitesJSON = event.getJSONObject("invited").getJSONArray("data");
+            for(int i = 0; i < invitesJSON.length(); i++)
+            {
+                String[] name = invitesJSON.getJSONObject(i).getString("name").split("\\s+");
+                JSONObject invitJSON = new JSONObject();
+                invitJSON.put("facebookId", invitesJSON.getJSONObject(i).getLong("id"));
+                invitJSON.put("firstname", name[0]);
+                invitJSON.put("lastname", name[1]);
+                invites.put(invitJSON);
+            }
+
         }
 
         if(event.has("owner")) {
@@ -195,7 +216,7 @@ public class FacebookEventsActivity extends SherlockActivity {
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(FacebookEventsActivity.this);
                         alertDialogBuilder
                                 .setTitle("Facebook")
-                                .setMessage((events.length() - fail) + " " + getResources().getString(R.string.pop_up_end_import_fb))
+                                .setMessage(getResources().getString(R.string.pop_up_end_import_fb))
                                 .setCancelable(false)
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
 
@@ -212,6 +233,33 @@ public class FacebookEventsActivity extends SherlockActivity {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
+
+                if(invites != null)
+                {
+                    StringEntity entity = null;
+                    try {
+                        entity = new StringEntity(new JSONObject().put("users", invites).toString());
+                        entity.setContentType("application/json");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    MomentApi.postJSON(FacebookEventsActivity.this, "newguests/"+ moment.getId(), entity, new JsonHttpResponseHandler() {
+                        @Override
+                        public void onSuccess(JSONObject result) {
+                            result.toString();
+                        }
+
+                        @Override
+                        public void onFailure(Throwable e, JSONObject response) {
+                            e.printStackTrace();
+                            response.toString();
+                        }
+                    });
+                }
+
             }
 
             @Override

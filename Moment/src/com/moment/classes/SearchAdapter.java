@@ -90,6 +90,7 @@ public class SearchAdapter extends ArrayAdapter<Moment> {
                             JSONObject tab = new JSONObject();
                             tab.put("users", users);
                             entity = new StringEntity(tab.toString());
+                            entity.setContentType("application/json");
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (UnsupportedEncodingException e) {
