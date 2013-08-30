@@ -122,11 +122,30 @@ public class CreationActivity extends SherlockActivity {
     private Session.StatusCallback fbStatusCallback = new Session.StatusCallback() {
         public void call(Session session, SessionState state, Exception exception) {
             if (state.isOpened()) {
-                Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
+                Request.newMeRequest(session, new Request.GraphUserCallback() {
                     public void onCompleted(GraphUser user, Response response) {
                         if (response != null) {
                             try {
                                 facebookUserId = user.getId();
+                                AppMoment.getInstance().user.setFacebookId(Long.parseLong(user.getId()));
+
+                                if(AppMoment.getInstance().user.getFacebookId() == null)
+                                {
+
+                                    RequestParams params = new RequestParams();
+                                    params.put("facebookId", facebookUserId);
+
+                                    MomentApi.post("user", params, new JsonHttpResponseHandler() {
+                                        @Override
+                                        public void onSuccess(JSONObject response) {
+
+                                            if(AppMoment.getInstance().user != null)
+                                            {
+                                                AppMoment.getInstance().userDao.update(AppMoment.getInstance().user);
+                                            }
+                                        }
+                                    });
+                                }
                                 getUserEvents();
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -142,17 +161,6 @@ public class CreationActivity extends SherlockActivity {
     public void getUserEvents() {
         Bundle params = new Bundle();
         params.putString("fields","id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture, invited.fields(id, name, picture.width(200).height(200))");
-
-        if(AppMoment.getInstance().user.getFacebookId() == null)
-        {
-            Request.executeMeRequestAsync(session, new Request.GraphUserCallback() {
-
-                @Override
-                public void onCompleted(GraphUser user, Response response) {
-                    AppMoment.getInstance().user.setFacebookId(Long.parseLong(user.getId()));
-                }
-            });
-        }
 
         Request request = new Request(session, "me/events", params, HttpMethod.GET,
                 new Request.Callback() {
