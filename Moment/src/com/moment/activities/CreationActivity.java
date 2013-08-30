@@ -141,7 +141,7 @@ public class CreationActivity extends SherlockActivity {
 
     public void getUserEvents() {
         Bundle params = new Bundle();
-        params.putString("fields","id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture");
+        params.putString("fields","id,cover,description,is_date_only,name,owner,location,privacy,rsvp_status,start_time,end_time,admins,picture,cover");
 
         if(AppMoment.getInstance().user.getFacebookId() == null)
         {

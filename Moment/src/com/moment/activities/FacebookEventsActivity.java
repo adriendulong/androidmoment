@@ -73,7 +73,13 @@ public class FacebookEventsActivity extends SherlockActivity {
         if(event.has("location")) { fbEvent.setAddress(event.getString("location")); }
         if(event.has("description")) { fbEvent.setDescription(event.getString("description")); }
         if(event.has("name")) { fbEvent.setName(event.getString("name")); }
-        if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
+
+        if(event.has("cover")){
+            fbEvent.setCover_photo_url(event.getJSONObject("cover").getString("source"));
+        }
+        else{
+            if(event.has("picture")) { fbEvent.setCover_photo_url(event.getJSONObject("picture").getJSONObject("data").getString("url")); }
+        }
 
         if(event.has("owner")) {
             if(event.getJSONObject("owner").getString("id").equals(String.valueOf(AppMoment.getInstance().user.getFacebookId())))
